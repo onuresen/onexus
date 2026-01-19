@@ -1,0 +1,253 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "Sample Access Control System",
+    "languageDefault": "en",
+    "phases": ["Sekkei", "SeisanSekkei", "Kouji"]
+  },
+
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "SYS-ACCESS",
+          "nodeType": "System",
+          "category": "BuildingSystem",
+          "label": {
+            "en": "Access Control System",
+            "jp": "入退室管理システム"
+          }
+        }
+      },
+
+      {
+        "data": {
+          "id": "E-DOOR-001",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "Entrance Door A",
+            "jp": "出入口ドアA"
+          },
+          "revitCategory": "Doors",
+          "level": "Level 1"
+        }
+      },
+
+      {
+        "data": {
+          "id": "E-FR-001",
+          "nodeType": "Element",
+          "category": "SecurityDevice",
+          "label": {
+            "en": "Face Recognition Unit",
+            "jp": "顔認証装置"
+          },
+          "revitCategory": "Specialty Equipment",
+          "level": "Level 1"
+        }
+      },
+
+      {
+        "data": {
+          "id": "E-PANEL-001",
+          "nodeType": "Element",
+          "category": "ControlPanel",
+          "label": {
+            "en": "Access Control Panel",
+            "jp": "入退室管理盤"
+          },
+          "revitCategory": "Electrical Equipment",
+          "level": "Level 1"
+        }
+      },
+
+      {
+        "data": {
+          "id": "E-UPS-001",
+          "nodeType": "Element",
+          "category": "PowerSupply",
+          "label": {
+            "en": "UPS Unit",
+            "jp": "無停電電源装置"
+          },
+          "revitCategory": "Electrical Equipment",
+          "level": "Level 1"
+        }
+      },
+
+      {
+        "data": {
+          "id": "SPACE-SEC-ROOM",
+          "nodeType": "Space",
+          "category": "Room",
+          "label": {
+            "en": "Security Control Room",
+            "jp": "防災・警備室"
+          },
+          "level": "Level 1"
+        }
+      },
+
+      {
+        "data": {
+          "id": "ORG-ARCH",
+          "nodeType": "Organization",
+          "category": "DesignTeam",
+          "label": {
+            "en": "Architectural Team",
+            "jp": "建築設計チーム"
+          }
+        }
+      },
+
+      {
+        "data": {
+          "id": "ORG-ELEC",
+          "nodeType": "Organization",
+          "category": "Subcontractor",
+          "label": {
+            "en": "Electrical Subcontractor",
+            "jp": "電気サブコン"
+          }
+        }
+      },
+
+      {
+        "data": {
+          "id": "VENDOR-ABC",
+          "nodeType": "Vendor",
+          "category": "SecurityVendor",
+          "label": {
+            "en": "ABC Security Co.",
+            "jp": "ABCセキュリティ株式会社"
+          }
+        }
+      }
+    ],
+
+    "edges": [
+      {
+        "data": {
+          "id": "R-SYS-001",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "E-DOOR-001",
+          "target": "SYS-ACCESS",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+
+      {
+        "data": {
+          "id": "R-SYS-002",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "E-FR-001",
+          "target": "SYS-ACCESS",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+
+      {
+        "data": {
+          "id": "R-SYS-003",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "E-PANEL-001",
+          "target": "SYS-ACCESS",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+
+      {
+        "data": {
+          "id": "R-CTRL-001",
+          "type": "Controls",
+          "dimension": "System",
+          "source": "E-FR-001",
+          "target": "E-DOOR-001",
+          "directional": true,
+          "phase": ["Sekkei", "SeisanSekkei"],
+          "owner": "Electrical",
+          "intent": "Operational dependency",
+          "risk": "High",
+          "confidence": "Explicit",
+          "notes": "Authentication result triggers door unlock"
+        }
+      },
+
+      {
+        "data": {
+          "id": "R-PWR-001",
+          "type": "Supplies",
+          "dimension": "System",
+          "source": "E-UPS-001",
+          "target": "E-PANEL-001",
+          "directional": true,
+          "phase": ["SeisanSekkei", "Kouji"],
+          "owner": "Electrical",
+          "intent": "Power continuity",
+          "risk": "Medium",
+          "confidence": "Inferred",
+          "notes": "Backup power during outage"
+        }
+      },
+
+      {
+        "data": {
+          "id": "R-LOC-001",
+          "type": "LocatedIn",
+          "dimension": "Spatial",
+          "source": "E-FR-001",
+          "target": "SPACE-SEC-ROOM",
+          "directional": true,
+          "phase": ["Sekkei"],
+          "confidence": "Explicit"
+        }
+      },
+
+      {
+        "data": {
+          "id": "R-DES-001",
+          "type": "DesignedBy",
+          "dimension": "Responsibility",
+          "source": "E-DOOR-001",
+          "target": "ORG-ARCH",
+          "directional": false,
+          "phase": ["Sekkei"],
+          "confidence": "Explicit"
+        }
+      },
+
+      {
+        "data": {
+          "id": "R-BLD-001",
+          "type": "BuiltBy",
+          "dimension": "Responsibility",
+          "source": "E-PANEL-001",
+          "target": "ORG-ELEC",
+          "directional": false,
+          "phase": ["Kouji"],
+          "confidence": "Explicit"
+        }
+      },
+
+      {
+        "data": {
+          "id": "R-VND-001",
+          "type": "ProvidedBy",
+          "dimension": "Vendor",
+          "source": "E-FR-001",
+          "target": "VENDOR-ABC",
+          "directional": false,
+          "phase": ["Sekkei", "SeisanSekkei"],
+          "confidence": "Explicit"
+        }
+      }
+    ]
+  }
+}
