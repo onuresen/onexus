@@ -21,7 +21,7 @@ ONEXUS answers a simple but powerful question:
 
 > **“What is related to what — and *why*?”**
 
-It does **not** replace Revit or any CDE. Instead, it exposes hidden or implicit relationships in a clean, powerful visual map.
+It does **not** replace any CDE or tool. Instead, it exposes hidden or implicit relationships in a clean, powerful visual map.
 
 ---
 
