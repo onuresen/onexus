@@ -1,0 +1,91 @@
+
+*** Begin Patch
+*** Update File: src/graph-core.js
+@@
+   const state = {
+     language: "en",
+     focusDepth: 1,
+     focusedNode: null,
+     initialized: false,
+-    largeGraph: false,
+-    spacingBoost: 1.4
++    largeGraph: false,
++    spacingBoost: 1.4,      // will be tuned per graph size below
++    nodeCount: 0,
++    edgeCount: 0
+   };
+@@
+-  function applyLayout(type) {
+-    const animate = !state.largeGraph;
+-    const boost = state.spacingBoost;
++  function applyLayout(type) {
++    const animate = !state.largeGraph;
++    const boost = state.spacingBoost;
++    // For very small graphs reduce edge length/repulsion further
++    const tiny = state.nodeCount <= 10;
++    const small = state.nodeCount <= 25;
+     let layout;
+     switch (type) {
+       case "system":
+         layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "System"]'),
+-          directed:false, spacingFactor:1.8*boost, nodeDimensionsIncludeLabels:true, animate };
++          directed:false,
++          spacingFactor:(tiny ? 1.2 : small ? 1.5 : 1.8)*boost,
++          nodeDimensionsIncludeLabels:true, animate };
+         break;
+       case "responsibility":
+         layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "Organization"]'),
+-          directed:false, spacingFactor:1.7*boost, nodeDimensionsIncludeLabels:true, animate };
++          directed:false,
++          spacingFactor:(tiny ? 1.2 : small ? 1.45 : 1.7)*boost,
++          nodeDimensionsIncludeLabels:true, animate };
+         break;
+       case "spatial":
+         layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "Space"]'),
+-          directed:false, spacingFactor:1.75*boost, nodeDimensionsIncludeLabels:true, animate };
++          directed:false,
++          spacingFactor:(tiny ? 1.2 : small ? 1.5 : 1.75)*boost,
++          nodeDimensionsIncludeLabels:true, animate };
+         break;
+       default:
+-        layout = { name:"cose", animate, fit:false, nodeDimensionsIncludeLabels:true,
+-          idealEdgeLength: Math.round(110*boost),
+-          nodeRepulsion: Math.round(8000*boost),
+-          nodeOverlap:10, componentSpacing: Math.round(120*boost),
+-          gravity:1.0, numIter: state.largeGraph ? 2500 : 1500,
+-          initialTemp:200, coolingFactor:0.95, minTemp:1.0 };
++        layout = { name:"cose", animate, fit:false, nodeDimensionsIncludeLabels:true,
++          // pull nodes closer for tiny/small graphs
++          idealEdgeLength: Math.round((tiny ? 70 : small ? 90 : 110)*boost),
++          nodeRepulsion: Math.round((tiny ? 4000 : small ? 6000 : 8000)*boost),
++          nodeOverlap:10, componentSpacing: Math.round((tiny ? 70 : small ? 90 : 120)*boost),
++          gravity:1.0, numIter: state.largeGraph ? 2500 : 1500,
++          initialTemp:200, coolingFactor:0.95, minTemp:1.0 };
+     }
+     cy.layout(layout).run();
++    if (tiny) cy.fit(undefined, 50);
+   }
+@@
+   function loadJSON(event) {
+     const file = event?.target?.files?.[0];
+     if (!file) return;
+     const reader = new FileReader();
+     reader.onload = (e) => {
+@@
+-      const NODE_COUNT = data.elements.nodes.length;
+-      const EDGE_COUNT = data.elements.edges.length;
+-      state.largeGraph = NODE_COUNT > LARGENESS.NODES || EDGE_COUNT > LARGENESS.EDGES;
++      const NODE_COUNT = data.elements.nodes.length;
++      const EDGE_COUNT = data.elements.edges.length;
++      state.nodeCount = NODE_COUNT;
++      state.edgeCount = EDGE_COUNT;
++      state.largeGraph = NODE_COUNT > LARGENESS.NODES || EDGE_COUNT > LARGENESS.EDGES;
++      // Tune spacing for smaller graphs (tighter)
++      // <10  -> 0.75, <25 -> 0.9, else keep default 1.4 (for big)
++      state.spacingBoost = NODE_COUNT <= 10 ? 0.75 : NODE_COUNT <= 25 ? 0.9 : 1.4;
+@@
+       // add nodes first
+       cy.batch(() => { cy.add(data.elements.nodes); });
+       // language + UI
+       setLanguage(state.language);
+       buildCategoryFilter();

@@ -49,6 +49,26 @@
     lastTap = now;
   });
 
+  // --- Hover previews (tooltip) ---
+  const tip = document.getElementById('hover-tip');
+  function showTip(html, pos){
+    if (!tip) return;
+    tip.innerHTML = html;
+    tip.style.left = (pos.x + 12) + 'px';
+    tip.style.top  = (pos.y + 12) + 'px';
+    tip.style.display = 'block';
+  }
+  function hideTip(){ if (tip) tip.style.display = 'none'; }
+  cy.on('mouseover', 'node', (evt) => {
+    const d = evt.target.data();
+    showTip(`<b>${d.displayLabel}</b><br>${d.nodeType} / ${d.category}`, evt.renderedPosition);
+  });
+  cy.on('mouseover', 'edge', (evt) => {
+    const d = evt.target.data();
+    showTip(`<b>${d.displayType}</b><br>${d.dimension}`, evt.renderedPosition);
+  });
+  cy.on('mouseout', 'node,edge', hideTip);
+
   // ---------- LOD (zoom-driven) ----------
   function applyLOD() {
     const z = cy.zoom();
@@ -213,6 +233,8 @@
       // language + UI
       setLanguage(state.language);
       buildCategoryFilter();
+      // build Phase filter from meta (if any)
+      buildPhaseFilter(data.meta);
 
       // quick layout
       cy.layout({
@@ -346,6 +368,28 @@
       item.appendChild(line); item.appendChild(label); container.appendChild(item);
     });
   }, 80);
+
+  // Phase filter
+  function buildPhaseFilter(meta) {
+    const sel = document.getElementById('phaseFilter'); if (!sel) return;
+    sel.innerHTML = '';
+    const phases = (meta?.phases ?? []);
+    phases.forEach(ph => {
+      const opt = document.createElement('option');
+      opt.value = ph; opt.textContent = ph;
+      sel.appendChild(opt);
+    });
+    sel.onchange = () => {
+      const selected = Array.from(sel.selectedOptions).map(o => o.value);
+      cy.edges().forEach(e => {
+        const edgePhases = e.data('phase') ?? [];
+        const show = selected.length===0 || edgePhases.some(p => selected.includes(p));
+        e.style('display', show ? 'element' : 'none');
+      });
+      if (state.focusedNode) applyDepthFocus(state.focusedNode);
+      buildRelationshipLegend();
+    };
+   }
 
   // ---------- Navigation ----------
   function fitView()   { cy.fit(undefined, 50); }

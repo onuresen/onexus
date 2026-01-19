@@ -97,8 +97,8 @@ function buildStyle(themeKey) {
         "text-outline-color": T.outline,
         "font-size": "10px",
         "font-weight": "bold",
-        width: 60,
-        height: 60,
+        width: (ele) => Math.min(120, 40 + ele.degree()*4),
+        height: (ele) => Math.min(120, 40 + ele.degree()*4),
         "text-valign": "center",
         "text-halign": "center",
       },
@@ -186,7 +186,15 @@ function buildStyle(themeKey) {
         "text-opacity": 0.1,
       },
     },
-
+    // Highlight (search results)
+    {
+      selector: ".highlight",
+      style: {
+        "border-width": 4,
+        "border-color": "#2563eb",
+        "background-opacity": 0.95
+      }
+    },
     // --- LOD: default (if no class, behave like mid/high) is what you already have ---
 
     // Low zoom: hide all labels & arrows, use haystack edges (fast)

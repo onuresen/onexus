@@ -329,14 +329,14 @@
   <div id="toolbar">
     <div class="tool-group">
       <label>Language</label>
-      <select onchange="setLanguage(this.value)">
+      <select id="languageSelect" onchange="setLanguage(this.value)">
         <option value="en">English</option>
         <option value="jp">日本語</option>
       </select>
     </div>
     <div class="tool-group">
       <label>View</label>
-      <select onchange="applyLayout(this.value)">
+      <select id="layoutSelect" onchange="applyLayout(this.value)">
         <option value="default">Free</option>
         <option value="system">System</option>
         <option value="responsibility">Responsibility</option>
@@ -345,14 +345,19 @@
     </div>
     <div class="tool-group">
       <label>Theme</label>
-      <select onchange="setTheme(this.value)">
+      <select id="themeSelect" onchange="setTheme(this.value)">
         <option value="light">Light</option>
         <option value="dark">Dark</option>
       </select>
     </div>
     <div class="tool-group">
       <label>Load</label>
-      <input type="file" accept=".json" onchange="loadJSON(event)">
+      <input id="fileInput" type="file" accept=".json" onchange="loadJSON(event)">
+    </div>
+
+    <div class="tool-group">
+      <label>&nbsp;</label>
+      <button class="flat" id="btnLoadSample" style="padding:4px 8px;">Load sample</button>
     </div>
 
     <!-- Right aligned compact icons -->
@@ -432,9 +437,14 @@
   </div>
 
   <!-- Canvas -->
-  <div id="canvas-wrap">
+  <div id="canvas-wrap" aria-label="Graph canvas (supports drag & drop)">
     <div id="cy"></div>
-    <div id="minimap"></div> <!-- overlay -->
+    <div id="minimap"></div>
+    <div id="drop-hint" style="position:absolute;inset:0;display:none;
+        align-items:center;justify-content:center;background:rgba(0,0,0,.04);
+        color:#111827;font-weight:600;">
+      Drop JSON here
+    </div>
   </div>
 
   <!-- Sidebar (inspector) -->
@@ -449,6 +459,9 @@
     <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
     <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
     <button class="flat" onclick="showAllEdges()">All</button>
+    
+    <h3>Phase</h3>
+    <select id="phaseFilter" multiple size="4" style="width:100%"></select>
 
     <h3>Focus</h3>
     <div style="display:flex;align-items:center;gap:8px;">
@@ -461,6 +474,21 @@
 
     <h3>Details</h3>
     <div id="details">Click a node or relationship.</div>
+
+    <h3>Details</h3>
+    <div id="help" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
+            align-items:center;justify-content:center;">
+      <div style="background:#fff;padding:16px 20px;border-radius:10px;width:520px;">
+        <h3 style="margin-top:0;">Shortcuts</h3>
+        <pre style="font-size:12px;white-space:pre-wrap">
+        F: Fit   C: Center   R: Reset
+        P: PNG   V: SVG      J: JSON   S: CSV   L: Layout JSON
+        ?: Toggle this help
+        </pre>
+        <button class="flat" onclick="this.closest('#help').style.display='none'">Close</button>
+      </div>
+    </div>
+
   </aside>
 
   <!-- App scripts -->
