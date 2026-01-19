@@ -1,0 +1,173 @@
+{
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "E-DOOR-001",
+          "label": "Entrance Door A",
+          "category": "Door",
+          "revitCategory": "Doors",
+          "level": "Level 1",
+          "system": "Access Control"
+        }
+      },
+      {
+        "data": {
+          "id": "E-FR-001",
+          "label": "Face Recognition Unit",
+          "category": "SecurityDevice",
+          "revitCategory": "Specialty Equipment",
+          "level": "Level 1",
+          "system": "Access Control"
+        }
+      },
+      {
+        "data": {
+          "id": "E-PANEL-001",
+          "label": "Access Control Panel",
+          "category": "ControlPanel",
+          "revitCategory": "Electrical Equipment",
+          "level": "Level 1",
+          "system": "Access Control"
+        }
+      },
+      {
+        "data": {
+          "id": "E-UPS-001",
+          "label": "UPS Unit",
+          "category": "PowerSupply",
+          "revitCategory": "Electrical Equipment",
+          "level": "Level 1",
+          "system": "Electrical"
+        }
+      },
+      {
+        "data": {
+          "id": "E-ROOM-SEC",
+          "label": "Security Control Room",
+          "category": "Room",
+          "revitCategory": "Rooms",
+          "level": "Level 1"
+        }
+      },
+      {
+        "data": {
+          "id": "ORG-ARCH",
+          "label": "Architectural Team",
+          "category": "Organization"
+        }
+      },
+      {
+        "data": {
+          "id": "ORG-ELEC",
+          "label": "Electrical Subcontractor",
+          "category": "Organization"
+        }
+      },
+      {
+        "data": {
+          "id": "VENDOR-ABC",
+          "label": "ABC Security Co.",
+          "category": "Vendor"
+        }
+      }
+    ],
+
+    "edges": [
+      {
+        "data": {
+          "id": "R-001",
+          "source": "E-FR-001",
+          "target": "E-DOOR-001",
+          "type": "Controls",
+          "dimension": "System",
+          "directional": true,
+          "phase": ["Sekkei", "SeisanSekkei"],
+          "owner": "Electrical",
+          "confidence": "Explicit",
+          "notes": "Authentication logic for entrance door"
+        }
+      },
+      {
+        "data": {
+          "id": "R-002",
+          "source": "E-PANEL-001",
+          "target": "E-FR-001",
+          "type": "Controls",
+          "dimension": "System",
+          "directional": true,
+          "phase": ["SeisanSekkei", "Kouji"],
+          "owner": "Electrical",
+          "confidence": "Explicit",
+          "notes": "Panel sends open/close signal"
+        }
+      },
+      {
+        "data": {
+          "id": "R-003",
+          "source": "E-UPS-001",
+          "target": "E-PANEL-001",
+          "type": "Supplies",
+          "dimension": "System",
+          "directional": true,
+          "phase": ["SeisanSekkei", "Kouji"],
+          "owner": "Electrical",
+          "confidence": "Inferred",
+          "notes": "Backup power supply"
+        }
+      },
+      {
+        "data": {
+          "id": "R-004",
+          "source": "E-FR-001",
+          "target": "E-ROOM-SEC",
+          "type": "LocatedIn",
+          "dimension": "Spatial",
+          "directional": true,
+          "phase": ["Sekkei"],
+          "confidence": "Explicit",
+          "notes": "Installed inside security control room"
+        }
+      },
+      {
+        "data": {
+          "id": "R-005",
+          "source": "E-DOOR-001",
+          "target": "ORG-ARCH",
+          "type": "DesignedBy",
+          "dimension": "Responsibility",
+          "directional": false,
+          "phase": ["Sekkei"],
+          "confidence": "Explicit",
+          "notes": "Door design responsibility"
+        }
+      },
+      {
+        "data": {
+          "id": "R-006",
+          "source": "E-PANEL-001",
+          "target": "ORG-ELEC",
+          "type": "BuiltBy",
+          "dimension": "Responsibility",
+          "directional": false,
+          "phase": ["Kouji"],
+          "confidence": "Explicit",
+          "notes": "Panel installation and wiring"
+        }
+      },
+      {
+        "data": {
+          "id": "R-007",
+          "source": "E-FR-001",
+          "target": "VENDOR-ABC",
+          "type": "ProvidedBy",
+          "dimension": "Vendor",
+          "directional": false,
+          "phase": ["Sekkei", "SeisanSekkei"],
+          "confidence": "Explicit",
+          "notes": "Specified vendor product"
+        }
+      }
+    ]
+  }
+}

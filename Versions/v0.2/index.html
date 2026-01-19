@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ONEXUS – Relationship Layer</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape.js-navigator.css"></script>
+  <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape-navigator.js"></script>
+  <script src="https://unpkg.com/cytoscape-svg@latest"></script>
+
+  <style>
+    :root {
+      --gap: 10px;
+      --panel-bg: #f9f9f9;
+      --border: #ccc;
+      --toolbar-h: 54px;
+      --bottom-h: 240px; /* tweak as needed */
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: var(--toolbar-h) 1fr var(--bottom-h);
+      grid-template-columns: 1fr 320px; /* main canvas + right sidebar */
+      grid-template-areas:
+        "toolbar toolbar"
+        "canvas  sidebar"
+        "bottom  bottom";
+      gap: var(--gap);
+      padding: var(--gap);
+      background: #fff;
+    }
+
+    /* Top toolbar */
+    #toolbar {
+      grid-area: toolbar;
+      display: grid;
+      grid-template-columns: 220px 280px 180px 1fr; /* language | layout | theme | load */
+      gap: var(--gap);
+      align-items: center;
+    }
+    .tool-group {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tool-group label { font-size: 12px; color: #333; }
+    .tool-group select, .tool-group input[type="file"] {
+      width: 100%;
+    }
+
+    /* Canvas */
+    #canvas-wrap {
+      grid-area: canvas;
+      border: 1px solid var(--border);
+      background-color: #F5F7FA; /* light canvas default; theme will override via JS */
+      position: relative;
+      overflow: hidden;
+    }
+    #cy {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Right sidebar */
+    #sidebar {
+      grid-area: sidebar;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      padding: 10px;
+      overflow: auto;
+    }
+    h3 {
+      margin: 8px 0 6px;
+      font-size: 14px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 4px;
+    }
+    button, select {
+      width: 100%;
+      margin: 4px 0;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    .legend-line {
+      width: 18px;
+      height: 3px;
+      margin-right: 6px;
+    }
+
+    /* Bottom panel */
+    #bottom {
+      grid-area: bottom;
+      display: grid;
+      grid-template-columns: 320px 1fr 420px; /* minimap | nav & focus | export & details */
+      gap: var(--gap);
+    }
+
+    /* Minimap card */
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      padding: 10px;
+      overflow: hidden;
+    }
+    #minimap {
+      width: 100%;
+      height: 160px;
+      border: 1px solid var(--border);
+      background: #fff;
+      margin-top: 6px;
+      position: relative;   /* important for correct absolute positioning */
+      overflow: hidden;
+    }
+
+    /* Navigation & focus */
+    .stack > * { margin: 6px 0; }
+
+    /* Details area */
+    #details {
+      background: #fff;
+      border: 1px solid var(--border);
+      min-height: 120px;
+      padding: 8px;
+    }
+
+    .badge {
+      font-size: 10px;
+      background: #333;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 1100px) {
+      body {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "toolbar"
+          "canvas"
+          "bottom";
+      }
+      #sidebar {
+        display: none; /* hide sidebar on small screens; everything remains accessible via top/bottom */
+      }
+      #bottom {
+        grid-template-columns: 1fr; /* stack cards */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <div class="tool-group">
+      <label for="lang">Language</label>
+      <select id="lang" onchange="setLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="jp">日本語</option>
+      </select>
+      <span class="badge">ONEXUS</span>
+    </div>
+
+    <div class="tool-group">
+      <label for="view">View</label>
+      <select id="view" onchange="applyLayout(this.value)">
+        <option value="default">Default (Organic)</option>
+        <option value="system">System Atlas</option>
+        <option value="responsibility">Responsibility Atlas</option>
+        <option value="spatial">Spatial Stack</option>
+      </select>
+    </div>
+
+    <div class="tool-group">
+      <label for="theme">Theme</label>
+      <select id="theme" onchange="setTheme(this.value)">
+        <option value="light">Light Theme</option>
+        <option value="dark">Dark Theme</option>
+      </select>
+    </div>
+
+    <div class="tool-group">
+      <label for="file">Load JSON</label>
+      <input id="file" type="file" accept=".json" onchange="loadJSON(event)">
+    </div>
+  </div>
+
+  <div id="canvas-wrap">
+    <div id="cy"></div>
+  </div>
+
+  <aside id="sidebar">
+    <h3>Node Filter</h3>
+    <select id="categoryFilter" onchange="filterByCategory(this.value)">
+      <option value="ALL">All Categories</option>
+    </select>
+
+    <h3>Relationship Lens</h3>
+    <button onclick="filterByDimension('System')">System</button>
+    <button onclick="filterByDimension('Spatial')">Spatial</button>
+    <button onclick="filterByDimension('Responsibility')">Responsibility</button>
+    <button onclick="showAllEdges()">Show All</button>
+
+    <h3>Legend</h3>
+    <div id="legend"></div>
+  </aside>
+
+  <div id="bottom">
+    <!-- Minimap -->
+    <div class="card">
+      <h3>Navigation Minimap</h3>
+      <div id="minimap"></div>
+    </div>
+
+    <!-- Navigation & Focus -->
+    <div class="card stack">
+      <h3>Navigation</h3>
+      <button onclick="fitView()">Fit to Screen</button>
+      <button onclick="centerView()">Center</button>
+      <button onclick="resetView()">Reset View</button>
+
+      <h3>Focus Depth</h3>
+      <input type="range" min="1" max="2" value="1" step="1" id="depthSlider" oninput="setFocusDepth(this.value)">
+      <span id="depthLabel">1-hop</span>
+    </div>
+
+    <!-- Export & Details -->
+    <div class="card">
+      <h3>Export</h3>
+      <button onclick="exportPNG()">Export PNG</button>
+      <button onclick="exportSVG()">Export SVG</button>
+      <button onclick="exportJSON()">Export JSON (graph)</button>
+      <button onclick="exportCSV()">Export CSV (edges)</button>
+      <button onclick="exportLayout()">Export Layout (positions)</button>
+
+      <h3>Details</h3>
+      <div id="details">Click a node or relationship.</div>
+    </div>
+  </div>
+
+  <!-- App scripts -->
+  <script src="onexus-style.js"></script>
+  <script src="onexus-graph.js"></script>
+
+  <!-- Optional: resize helper so Cytoscape & Navigator adapt to layout changes -->
+  <script>
+    // Ensures the main canvas occupies its grid cell after window resizes.
+    window.addEventListener('resize', () => {
+      if (window.cy && typeof window.cy.resize === 'function') {
+        window.cy.resize();
+      }
+    });
+    // Also update the canvas wrapper background when theme changes (done in applyTheme via cy.container()).
+  </script>
+</body>
+</html>
