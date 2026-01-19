@@ -4,12 +4,16 @@
 (function () {
   // ---------- State & constants ----------
   const LABELS = {
-    en: { Controls:"Controls", Supplies:"Supplies", LocatedIn:"Located In",
-          DesignedBy:"Designed By", BuiltBy:"Built By",
-          ProvidedBy:"Provided By", PartOfSystem:"Part Of System" },
-    jp: { Controls:"制御", Supplies:"供給", LocatedIn:"設置場所",
-          DesignedBy:"設計担当", BuiltBy:"施工担当",
-          ProvidedBy:"提供元", PartOfSystem:"システム構成" }
+    en: {
+      Controls: "Controls", Supplies: "Supplies", LocatedIn: "Located In",
+      DesignedBy: "Designed By", BuiltBy: "Built By",
+      ProvidedBy: "Provided By", PartOfSystem: "Part Of System"
+    },
+    jp: {
+      Controls: "制御", Supplies: "供給", LocatedIn: "設置場所",
+      DesignedBy: "設計担当", BuiltBy: "施工担当",
+      ProvidedBy: "提供元", PartOfSystem: "システム構成"
+    }
   };
 
   const state = {
@@ -18,11 +22,13 @@
     focusedNode: null,
     initialized: false,
     largeGraph: false,
-    spacingBoost: 1.4
+    spacingBoost: 1.4,
+    nodeCount: 0,
+    edgeCount: 0
   };
 
-  const LARGENESS  = { NODES: 300, EDGES: 600 };
-  const ZOOM_TIER  = { LOW: 0.7, HIGH: 1.4 };
+  const LARGENESS = { NODES: 300, EDGES: 600 };
+  const ZOOM_TIER = { LOW: 0.7, HIGH: 1.4 };
 
   const debounce = (fn, ms = 120) => {
     let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
@@ -51,14 +57,14 @@
 
   // --- Hover previews (tooltip) ---
   const tip = document.getElementById('hover-tip');
-  function showTip(html, pos){
+  function showTip(html, pos) {
     if (!tip) return;
     tip.innerHTML = html;
     tip.style.left = (pos.x + 12) + 'px';
-    tip.style.top  = (pos.y + 12) + 'px';
+    tip.style.top = (pos.y + 12) + 'px';
     tip.style.display = 'block';
   }
-  function hideTip(){ if (tip) tip.style.display = 'none'; }
+  function hideTip() { if (tip) tip.style.display = 'none'; }
   cy.on('mouseover', 'node', (evt) => {
     const d = evt.target.data();
     showTip(`<b>${d.displayLabel}</b><br>${d.nodeType} / ${d.category}`, evt.renderedPosition);
@@ -182,29 +188,48 @@
   function applyLayout(type) {
     const animate = !state.largeGraph;
     const boost = state.spacingBoost;
+    // For very small graphs reduce edge length/repulsion further
+    const tiny = state.nodeCount <= 10;
+    const small = state.nodeCount <= 25;
     let layout;
     switch (type) {
       case "system":
-        layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "System"]'),
-                   directed:false, spacingFactor:1.8*boost, nodeDimensionsIncludeLabels:true, animate };
+        layout = {
+          name: "breadthfirst", roots: cy.nodes('[nodeType = "System"]'),
+          directed: false,
+          spacingFactor: (tiny ? 1.2 : small ? 1.5 : 1.8) * boost,
+          nodeDimensionsIncludeLabels: true, animate
+        };
         break;
       case "responsibility":
-        layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "Organization"]'),
-                   directed:false, spacingFactor:1.7*boost, nodeDimensionsIncludeLabels:true, animate };
+        layout = {
+          name: "breadthfirst", roots: cy.nodes('[nodeType = "Organization"]'),
+          directed: false,
+          spacingFactor: (tiny ? 1.2 : small ? 1.45 : 1.7) * boost,
+          nodeDimensionsIncludeLabels: true, animate
+        };
         break;
       case "spatial":
-        layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "Space"]'),
-                   directed:false, spacingFactor:1.75*boost, nodeDimensionsIncludeLabels:true, animate };
+        layout = {
+          name: "breadthfirst", roots: cy.nodes('[nodeType = "Space"]'),
+          directed: false,
+          spacingFactor: (tiny ? 1.2 : small ? 1.5 : 1.75) * boost,
+          nodeDimensionsIncludeLabels: true, animate
+        };
         break;
       default:
-        layout = { name:"cose", animate, fit:false, nodeDimensionsIncludeLabels:true,
-          idealEdgeLength: Math.round(110*boost),
-          nodeRepulsion:   Math.round(8000*boost),
-          nodeOverlap:10, componentSpacing: Math.round(120*boost),
-          gravity:1.0, numIter: state.largeGraph ? 2500 : 1500,
-          initialTemp:200, coolingFactor:0.95, minTemp:1.0 };
+        layout = {
+          name: "cose", animate, fit: false, nodeDimensionsIncludeLabels: true,
+          // pull nodes closer for tiny/small graphs
+          idealEdgeLength: Math.round((tiny ? 70 : small ? 90 : 110) * boost),
+          nodeRepulsion: Math.round((tiny ? 4000 : small ? 6000 : 8000) * boost),
+          nodeOverlap: 10, componentSpacing: Math.round((tiny ? 70 : small ? 90 : 120) * boost),
+          gravity: 1.0, numIter: state.largeGraph ? 2500 : 1500,
+          initialTemp: 200, coolingFactor: 0.95, minTemp: 1.0
+        };
     }
     cy.layout(layout).run();
+    if (tiny) cy.fit(undefined, 50);
   }
 
   // ---------- Load JSON (+ validation) ----------
@@ -222,7 +247,12 @@
 
       const NODE_COUNT = data.elements.nodes.length;
       const EDGE_COUNT = data.elements.edges.length;
+      state.nodeCount = NODE_COUNT;
+      state.edgeCount = EDGE_COUNT;
       state.largeGraph = NODE_COUNT > LARGENESS.NODES || EDGE_COUNT > LARGENESS.EDGES;
+      // Tune spacing for smaller graphs (tighter)
+      // <10  -> 0.75, <25 -> 0.9, else keep default 1.4 (for big)
+      state.spacingBoost = NODE_COUNT <= 10 ? 0.75 : NODE_COUNT <= 25 ? 0.9 : 1.4;
 
       // reset scene
       cy.elements().remove();
@@ -238,11 +268,11 @@
 
       // quick layout
       cy.layout({
-        name:"cose", animate:false, fit:false, nodeDimensionsIncludeLabels:true,
-        idealEdgeLength: Math.round(100*state.spacingBoost),
-        nodeRepulsion:   Math.round(7000*state.spacingBoost),
-        componentSpacing:Math.round(100*state.spacingBoost),
-        nodeOverlap:10, numIter: 1200
+        name: "cose", animate: false, fit: false, nodeDimensionsIncludeLabels: true,
+        idealEdgeLength: Math.round(100 * state.spacingBoost),
+        nodeRepulsion: Math.round(7000 * state.spacingBoost),
+        componentSpacing: Math.round(100 * state.spacingBoost),
+        nodeOverlap: 10, numIter: 1200
       }).run();
       cy.fit(undefined, 50);
 
@@ -252,11 +282,11 @@
       // optional second pass on very large graphs
       if (state.largeGraph) {
         cy.layout({
-          name:"cose", animate:false, fit:false, nodeDimensionsIncludeLabels:true,
-          idealEdgeLength: Math.round(120*state.spacingBoost),
-          nodeRepulsion:   Math.round(8000*state.spacingBoost),
-          componentSpacing:Math.round(120*state.spacingBoost),
-          nodeOverlap:10, numIter: 1600
+          name: "cose", animate: false, fit: false, nodeDimensionsIncludeLabels: true,
+          idealEdgeLength: Math.round(120 * state.spacingBoost),
+          nodeRepulsion: Math.round(8000 * state.spacingBoost),
+          componentSpacing: Math.round(120 * state.spacingBoost),
+          nodeOverlap: 10, numIter: 1600
         }).run();
       }
 
@@ -269,32 +299,32 @@
 
   function validateOnexusJson(data) {
     const errors = [];
-    if (!data || !data.elements) { errors.push("Missing `elements`."); return { valid:false, errors }; }
+    if (!data || !data.elements) { errors.push("Missing `elements`."); return { valid: false, errors }; }
     if (!Array.isArray(data.elements.nodes)) errors.push("`elements.nodes` must be an array.");
     if (!Array.isArray(data.elements.edges)) errors.push("`elements.edges` must be an array.");
-    (data.elements.nodes || []).forEach((n,i) => {
+    (data.elements.nodes || []).forEach((n, i) => {
       const d = n?.data || {};
-      if (!d.id)        errors.push(`nodes[${i}].data.id is required`);
-      if (!d.nodeType)  errors.push(`nodes[${i}].data.nodeType is required`);
-      if (!d.category)  errors.push(`nodes[${i}].data.category is required`);
+      if (!d.id) errors.push(`nodes[${i}].data.id is required`);
+      if (!d.nodeType) errors.push(`nodes[${i}].data.nodeType is required`);
+      if (!d.category) errors.push(`nodes[${i}].data.category is required`);
       if (typeof d.label !== "object") errors.push(`nodes[${i}].data.label must be an object`);
     });
-    (data.elements.edges || []).forEach((e,i) => {
+    (data.elements.edges || []).forEach((e, i) => {
       const d = e?.data || {};
-      if (!d.id)           errors.push(`edges[${i}].data.id is required`);
-      if (!d.type)         errors.push(`edges[${i}].data.type is required`);
-      if (!d.dimension)    errors.push(`edges[${i}].data.dimension is required`);
-      if (!d.source)       errors.push(`edges[${i}].data.source is required`);
-      if (!d.target)       errors.push(`edges[${i}].data.target is required`);
+      if (!d.id) errors.push(`edges[${i}].data.id is required`);
+      if (!d.type) errors.push(`edges[${i}].data.type is required`);
+      if (!d.dimension) errors.push(`edges[${i}].data.dimension is required`);
+      if (!d.source) errors.push(`edges[${i}].data.source is required`);
+      if (!d.target) errors.push(`edges[${i}].data.target is required`);
       if (typeof d.directional !== "boolean")
-                           errors.push(`edges[${i}].data.directional must be boolean`);
+        errors.push(`edges[${i}].data.directional must be boolean`);
     });
     return { valid: errors.length === 0, errors };
   }
 
   // ---------- Focus & details ----------
   function setFocusDepth(depth) {
-    state.focusDepth = parseInt(depth,10) || 1;
+    state.focusDepth = parseInt(depth, 10) || 1;
     const el = document.getElementById("depthLabel");
     if (el) el.textContent = `${state.focusDepth}-hop`;
     if (state.focusedNode) applyDepthFocus(state.focusedNode);
@@ -383,17 +413,17 @@
       const selected = Array.from(sel.selectedOptions).map(o => o.value);
       cy.edges().forEach(e => {
         const edgePhases = e.data('phase') ?? [];
-        const show = selected.length===0 || edgePhases.some(p => selected.includes(p));
+        const show = selected.length === 0 || edgePhases.some(p => selected.includes(p));
         e.style('display', show ? 'element' : 'none');
       });
       if (state.focusedNode) applyDepthFocus(state.focusedNode);
       buildRelationshipLegend();
     };
-   }
+  }
 
   // ---------- Navigation ----------
-  function fitView()   { cy.fit(undefined, 50); }
-  function centerView(){ cy.center(); }
+  function fitView() { cy.fit(undefined, 50); }
+  function centerView() { cy.center(); }
   function resetView() { applyLayout("default"); cy.fit(undefined, 50); clearFocus(); }
 
   // ---------- Exports ----------
@@ -405,12 +435,12 @@
   }
 
   function exportPNG() {
-    const png64 = cy.png({ full:true, scale:2, bg: window.THEMES[window.currentTheme].canvas });
+    const png64 = cy.png({ full: true, scale: 2, bg: window.THEMES[window.currentTheme].canvas });
     download("onexus-graph.png", "image/png", png64);
   }
   function exportSVG() {
     if (typeof cy.svg !== "function") { alert("SVG export requires cytoscape-svg plugin."); return; }
-    const svgStr = cy.svg({ full:true });
+    const svgStr = cy.svg({ full: true });
     const blob = new Blob([svgStr], { type: "image/svg+xml;charset=utf-8" });
     download("onexus-graph.svg", "image/svg+xml", blob);
   }
@@ -422,7 +452,7 @@
     download("onexus-graph.json", "application/json", blob);
   }
   function exportCSV() {
-    const rows = [[ "id","type","dimension","directional","source","target","phase","owner","risk","confidence","notes" ]];
+    const rows = [["id", "type", "dimension", "directional", "source", "target", "phase", "owner", "risk", "confidence", "notes"]];
     cy.edges(":visible").forEach((e) => {
       const d = e.data();
       rows.push([
@@ -458,21 +488,21 @@
   }
 
   // ---------- Expose to window (so index.html inline handlers still work) ----------
-  window.setLanguage            = setLanguage;
-  window.applyLayout            = applyLayout;
-  window.loadJSON               = loadJSON;
-  window.buildCategoryFilter    = buildCategoryFilter;
-  window.filterByCategory       = filterByCategory;
-  window.filterByDimension      = filterByDimension;
-  window.showAllEdges           = showAllEdges;
-  window.fitView                = fitView;
-  window.centerView             = centerView;
-  window.resetView              = resetView;
-  window.setFocusDepth          = setFocusDepth;
-  window.exportPNG              = exportPNG;
-  window.exportSVG              = exportSVG;
-  window.exportJSON             = exportJSON;
-  window.exportCSV              = exportCSV;
-  window.exportLayout           = exportLayout;
-  window.buildRelationshipLegend= buildRelationshipLegend;
+  window.setLanguage = setLanguage;
+  window.applyLayout = applyLayout;
+  window.loadJSON = loadJSON;
+  window.buildCategoryFilter = buildCategoryFilter;
+  window.filterByCategory = filterByCategory;
+  window.filterByDimension = filterByDimension;
+  window.showAllEdges = showAllEdges;
+  window.fitView = fitView;
+  window.centerView = centerView;
+  window.resetView = resetView;
+  window.setFocusDepth = setFocusDepth;
+  window.exportPNG = exportPNG;
+  window.exportSVG = exportSVG;
+  window.exportJSON = exportJSON;
+  window.exportCSV = exportCSV;
+  window.exportLayout = exportLayout;
+  window.buildRelationshipLegend = buildRelationshipLegend;
 })();
