@@ -6,8 +6,8 @@
   <title>ONEXUS – Relationship Layer</title>
 
   <!-- Libraries -->
-  <link rel="stylesheet" href="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape.js-navigator.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape.js-navigator.css"></script>
   <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape-navigator.js"></script>
   <script src="https://unpkg.com/cytoscape-svg@latest"></script>
 
@@ -353,6 +353,11 @@
     <div class="tool-group">
       <label>Load</label>
       <input id="fileInput" type="file" accept=".json" onchange="loadJSON(event)">
+    </div>
+
+    <div class="tool-group">
+      <label>&nbsp;</label>
+      <button class="flat" id="btnLoadSample" style="padding:4px 8px;">Load sample</button>
     </div>
 
     <!-- Right aligned compact icons -->

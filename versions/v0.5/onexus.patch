@@ -1,0 +1,196 @@
+
+*** Begin Patch
+*** Update File: src/graph-core.js
+@@
+   const state = {
+     language: "en",
+     focusDepth: 1,
+     focusedNode: null,
+     initialized: false,
+-    largeGraph: false,
+-    spacingBoost: 1.4,      // will be tuned per graph size below
++    largeGraph: false,
++    spacingBoost: 1.0,      // computed per graph size below
+     nodeCount: 0,
+     edgeCount: 0
+   };
+@@
++  /**
++   * Compute layout parameters smoothly by graph size.
++   * The goal: small graphs → close spacing; large graphs → more breathing room.
++   * We map nodeCount into a 0..1 range and interpolate reasonable ranges.
++   */
++  function computeLayoutParams(n, e) {
++    // Normalize size in [0,1] using a soft cap around ~1000 nodes & ~2000 edges
++    const ns = Math.min(1, n / 1000);
++    const es = Math.min(1, e / 2000);
++    const s = Math.max(ns, es); // take the larger pressure
++
++    // Interpolate between tiny and huge settings
++    const lerp = (a, b, t) => a + (b - a) * t;
++    const idealEdgeLength = Math.round(lerp(70, 200, s));     // 70 → 200
++    const nodeRepulsion   = Math.round(lerp(3500, 16000, s)); // 3.5k → 16k
++    const compSpacing     = Math.round(lerp(70,  200, s));    // 70 → 200
++    const spacingFactorBF = lerp(1.2, 2.2, s);               // breadthfirst spacing
++    const numIter         = Math.round(lerp(1200, 3000, s));  // more iterations for big
++
++    // spacingBoost used elsewhere; keep near 1 for neutral
++    const spacingBoost    = 1.0;
++
++    return { idealEdgeLength, nodeRepulsion, compSpacing, spacingFactorBF, numIter, spacingBoost };
++  }
++
+@@
+-  function applyLayout(type) {
+-    const animate = !state.largeGraph;
+-    const boost = state.spacingBoost;
+-    // For very small graphs reduce edge length/repulsion further
+-    const tiny = state.nodeCount <= 10;
+-    const small = state.nodeCount <= 25;
++  function applyLayout(type) {
++    const animate = !state.largeGraph;
++    const { idealEdgeLength, nodeRepulsion, compSpacing, spacingFactorBF, numIter, spacingBoost } =
++      computeLayoutParams(state.nodeCount, state.edgeCount);
++    state.spacingBoost = spacingBoost;
++    const tiny = state.nodeCount <= 10;
+     let layout;
+     switch (type) {
+       case "system":
+         layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "System"]'),
+-          directed:false,
+-          spacingFactor:(tiny ? 1.2 : small ? 1.5 : 1.8)*boost,
++          directed:false,
++          spacingFactor: spacingFactorBF,
+           nodeDimensionsIncludeLabels:true, animate };
+         break;
+       case "responsibility":
+         layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "Organization"]'),
+-          directed:false,
+-          spacingFactor:(tiny ? 1.2 : small ? 1.45 : 1.7)*boost,
++          directed:false,
++          spacingFactor: spacingFactorBF,
+           nodeDimensionsIncludeLabels:true, animate };
+         break;
+       case "spatial":
+         layout = { name:"breadthfirst", roots: cy.nodes('[nodeType = "Space"]'),
+-          directed:false,
+-          spacingFactor:(tiny ? 1.2 : small ? 1.5 : 1.75)*boost,
++          directed:false,
++          spacingFactor: spacingFactorBF,
+           nodeDimensionsIncludeLabels:true, animate };
+         break;
+       default:
+-        layout = { name:"cose", animate, fit:false, nodeDimensionsIncludeLabels:true,
+-          // pull nodes closer for tiny/small graphs
+-          idealEdgeLength: Math.round((tiny ? 70 : small ? 90 : 110)*boost),
+-          nodeRepulsion: Math.round((tiny ? 4000 : small ? 6000 : 8000)*boost),
+-          nodeOverlap:10, componentSpacing: Math.round((tiny ? 70 : small ? 90 : 120)*boost),
+-          gravity:1.0, numIter: state.largeGraph ? 2500 : 1500,
++        layout = { name:"cose", animate, fit:false, nodeDimensionsIncludeLabels:true,
++          idealEdgeLength,
++          nodeRepulsion,
++          nodeOverlap:10, componentSpacing: compSpacing,
++          gravity:1.0, numIter,
+           initialTemp:200, coolingFactor:0.95, minTemp:1.0 };
+     }
+     cy.layout(layout).run();
+-    if (tiny) cy.fit(undefined, 50);
++    // Always fit after layout to ensure centered view across sizes
++    cy.fit(undefined, 50);
++    cy.center();
+   }
+@@
+   function loadJSON(event) {
+     const file = event?.target?.files?.[0];
+     if (!file) return;
+     const reader = new FileReader();
+     reader.onload = (e) => {
+@@
+       const { valid, errors } = validateOnexusJson(data);
+       if (!valid) { alert("Schema errors:\n" + errors.join("\n")); return; }
+       const NODE_COUNT = data.elements.nodes.length;
+       const EDGE_COUNT = data.elements.edges.length;
+       state.nodeCount = NODE_COUNT;
+       state.edgeCount = EDGE_COUNT;
+       state.largeGraph = NODE_COUNT > LARGENESS.NODES || EDGE_COUNT > LARGENESS.EDGES;
+-      // Tune spacing for smaller graphs (tighter)
+-      // <10  -> 0.75, <25 -> 0.9, else keep default 1.4 (for big)
+-      state.spacingBoost = NODE_COUNT <= 10 ? 0.75 : NODE_COUNT <= 25 ? 0.9 : 1.4;
++      // Compute spacing profile (used by applyLayout)
++      const lp = computeLayoutParams(NODE_COUNT, EDGE_COUNT);
++      state.spacingBoost = lp.spacingBoost;
+ 
+       // reset scene
+       cy.elements().remove();
+       // add nodes first
+       cy.batch(() => { cy.add(data.elements.nodes); });
+-      // language + UI
++      // language + UI (nodes localized immediately)
+       setLanguage(state.language);
+       buildCategoryFilter();
+-      // build Phase filter from meta (if any)
+-      buildPhaseFilter(data.meta);
+-      // quick layout
+-      cy.layout({
+-        name:"cose", animate:false, fit:false, nodeDimensionsIncludeLabels:true,
+-        idealEdgeLength: Math.round(100*state.spacingBoost),
+-        nodeRepulsion: Math.round(7000*state.spacingBoost),
+-        componentSpacing:Math.round(100*state.spacingBoost),
+-        nodeOverlap:10, numIter: 1200
+-      }).run();
+-      cy.fit(undefined, 50);
+-      // add edges next
++      buildPhaseFilter(data.meta); // phase options
++
++      // add edges
+       cy.batch(() => { cy.add(data.elements.edges); });
+-      // Ensure edges get localized labels too (displayType)
++      // localize edges now that they exist
+       setLanguage(state.language);
+-      // optional second pass on very large graphs
+-      if (state.largeGraph) {
+-        cy.layout({
+-          name:"cose", animate:false, fit:false, nodeDimensionsIncludeLabels:true,
+-          idealEdgeLength: Math.round(120*state.spacingBoost),
+-          nodeRepulsion: Math.round(8000*state.spacingBoost),
+-          componentSpacing:Math.round(120*state.spacingBoost),
+-          nodeOverlap:10, numIter: 1600
+-        }).run();
+-      }
+-      buildRelationshipLegend();
+-      applyLOD();
++      // final layout after both nodes & edges are present
++      applyLayout("default");
++      buildRelationshipLegend(); // build after displayType is set
++      applyLOD();
+       state.initialized = true;
+     };
+     reader.readAsText(file);
+   }
+@@
+   const buildRelationshipLegend = debounce(() => {
+     const container = document.getElementById("legend");
+     if (!container) return;
+     container.innerHTML = "";
+     const seen = new Set();
+     cy.edges(":visible").forEach((e) => {
+       const type = e.data("type");
+       if (seen.has(type)) return;
+       seen.add(type);
+       const color = e.style("line-color");
+       const item = document.createElement("div"); item.className = "legend-item";
+       const line = document.createElement("div"); line.className = "legend-line"; line.style.backgroundColor = color;
+-      // Derive label from current language mapping as a fallback
+-      const lang = state.language || "en";
+-      const map = (LABELS[lang] || LABELS["en"] || {});
+-      const labelText = e.data("displayType") || map[type] || type;
++      // Robust label: prefer displayType; else fall back to language map; else raw type
++      const lang = state.language || "en";
++      const map = (LABELS[lang] || LABELS["en"] || {});
++      const dt = e.data("displayType");
++      const labelText = (typeof dt === 'string' && dt.trim().length > 0) ? dt : (map[type] || type);
+       const label = document.createElement("span"); label.textContent = labelText;
+       item.appendChild(line); item.appendChild(label); container.appendChild(item);
+     });
+   }, 80);
+*** End Patch
