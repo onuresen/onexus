@@ -35,6 +35,7 @@
     language: "en",
     focusDepth: 1,
     focusedNode: null,
+    showEdgeLabels: true, // new: global toggle for edge text
   };
 
   // Debounce helper for performance-sensitive handlers
@@ -237,6 +238,18 @@
     cy.layout(layout).run();
   }
 
+  function applyEdgeLabelVisibility() {
+    const opacity = state.showEdgeLabels ? 1 : 0;
+    cy.edges().forEach((e) => {
+      e.style("text-opacity", opacity);
+    });
+  }
+
+  function setEdgeLabelVisibility(show) {
+    state.showEdgeLabels = !!show;
+    applyEdgeLabelVisibility();
+  }
+
   /* Load JSON (with validation) */
   function loadJSON(event) {
     const file = event.target.files[0];
@@ -269,6 +282,9 @@
       // Layout & fit
       applyLayout("default");
       cy.fit(undefined, 50);
+
+      // Edge label visibility (respects current state)
+      applyEdgeLabelVisibility();
 
       // Legend after elements + language are set
       buildRelationshipLegend();
@@ -572,6 +588,7 @@
   window.centerView = centerView;
   window.resetView = resetView;
   window.setFocusDepth = setFocusDepth;
+  window.setEdgeLabelVisibility = setEdgeLabelVisibility; // NEW
   window.exportPNG = exportPNG;
   window.exportSVG = exportSVG;
   window.exportJSON = exportJSON;
