@@ -236,6 +236,18 @@
       border-radius: 2px;
     }
 
+    .legend-item.active {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .legend-item:hover {
+      cursor: pointer;
+      background: var(--bg-soft);
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
+
     /* Details panel now in sidebar */
     #details {
       background: #ffffff;
@@ -454,7 +466,7 @@
     <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
     <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
     <button class="flat" onclick="showAllEdges()">All</button>
-    
+
     <h3>Phase</h3>
     <select id="phaseFilter" multiple size="4" style="width:100%"></select>
 
@@ -464,8 +476,23 @@
       <span id="depthLabel">1-hop</span>
     </div>
 
+
     <h3>Legend</h3>
     <div id="legend"></div>
+
+<div style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;">
+  <label>
+    <input type="checkbox" id="toggleEdgeLabels" checked />
+    Show edge labels
+  </label>
+  <label>
+    <input type="checkbox" id="toggleNodeLabels" checked />
+    Show node labels
+  </label>
+</div>
+
+    <h3>Metrics</h3>
+    <div id="metrics">–</div>
 
     <h3>Details</h3>
     <div id="details">Click a node or relationship.</div>
