@@ -235,6 +235,17 @@
       height: 3px;
       border-radius: 2px;
     }
+    
+    .legend-item.active {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .legend-item:hover {
+      cursor: pointer;
+      background: var(--bg-soft);
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
 
     /* Details panel now in sidebar */
     #details {
@@ -464,8 +475,12 @@
       <span id="depthLabel">1-hop</span>
     </div>
 
+
     <h3>Legend</h3>
     <div id="legend"></div>
+
+    <h3>Metrics</h3>
+    <div id="metrics">–</div>
 
     <h3>Details</h3>
     <div id="details">Click a node or relationship.</div>
