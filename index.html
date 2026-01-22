@@ -235,11 +235,12 @@
       height: 3px;
       border-radius: 2px;
     }
-    
+
     .legend-item.active {
       font-weight: 600;
       color: var(--text-main);
     }
+
     .legend-item:hover {
       cursor: pointer;
       background: var(--bg-soft);
@@ -465,7 +466,7 @@
     <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
     <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
     <button class="flat" onclick="showAllEdges()">All</button>
-    
+
     <h3>Phase</h3>
     <select id="phaseFilter" multiple size="4" style="width:100%"></select>
 
@@ -478,6 +479,13 @@
 
     <h3>Legend</h3>
     <div id="legend"></div>
+
+    <div style="margin-top:6px;font-size:11px;color:var(--text-muted);">
+      <label>
+        <input type="checkbox" id="toggleEdgeLabels" checked />
+        Show edge labels
+      </label>
+    </div>
 
     <h3>Metrics</h3>
     <div id="metrics">–</div>
