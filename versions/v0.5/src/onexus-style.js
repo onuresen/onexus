@@ -1,6 +1,4 @@
-/* -------------------------------
-   Theme palettes
--------------------------------- */
+/* Theme palettes */
 const THEMES = {
   light: {
     canvas: "#F5F7FA",
@@ -44,9 +42,7 @@ const THEMES = {
 // current theme state (used by exporters too)
 let currentTheme = "light";
 
-/* -------------------------------
-   Category & relationship colors
--------------------------------- */
+/* Category & relationship colors */
 const CATEGORY_COLORS = {
   Door: "#FF9800",
   SecurityDevice: "#E91E63",
@@ -69,17 +65,10 @@ const RELATIONSHIP_COLORS = {
   PartOfSystem: "#607D8B",
 };
 
-function nodeColor(category) {
-  return CATEGORY_COLORS[category] ?? "#666";
-}
-function edgeColor(type) {
-  return RELATIONSHIP_COLORS[type] ?? "#999";
-}
+const nodeColor = (category) => CATEGORY_COLORS[category] ?? "#666";
+const edgeColor = (type) => RELATIONSHIP_COLORS[type] ?? "#999";
 
-/* -------------------------------
-   Style factory (pure function)
-   Returns Cytoscape style JSON for a given theme
--------------------------------- */
+/* Style factory (returns Cytoscape style JSON) */
 function buildStyle(themeKey) {
   const T = THEMES[themeKey] ?? THEMES.light;
 
@@ -248,70 +237,47 @@ function buildStyle(themeKey) {
   ];
 }
 
-/* -------------------------------
-   Global style (initialized here)
--------------------------------- */
+/* Global style instance */
 let NEXUS_STYLE = buildStyle(currentTheme);
 
-/* -------------------------------
-   Theme application
-   (kept compatible with current app)
--------------------------------- */
+/* Apply theme and update canvas/cy */
 function applyTheme(themeKey) {
   currentTheme = themeKey;
-
-  // Apply root class for CSS variable switching
-  const root = document.documentElement; // <html>
+  const root = document.documentElement;
   root.classList.remove("theme-light", "theme-dark");
   root.classList.add(themeKey === "dark" ? "theme-dark" : "theme-light");
 
-  // Update CSS custom properties based on theme.ui
+  // Update CSS variables
   const ui = THEMES[currentTheme].ui;
   if (ui) {
-    root.style.setProperty("--bg-main", ui.page);
-    root.style.setProperty("--bg-panel", ui.panel);
-    root.style.setProperty("--bg-soft", ui.soft);
-    root.style.setProperty("--stroke", ui.stroke);
-    root.style.setProperty("--text-main", currentTheme === "dark" ? "#E6E9EE" : "#111827");
-    root.style.setProperty("--text-muted", ui.muted);
-    root.style.setProperty("--icon-color", ui.icon);
-    root.style.setProperty("--btn-bg", ui.buttonBg);
-    root.style.setProperty("--btn-bg-hover", ui.buttonHover);
-    // Canvas var (used by #canvas-wrap fallback if needed)
-    root.style.setProperty("--bg-canvas", THEMES[currentTheme].canvas);
+    const cssProps = {
+      "--bg-main": ui.page,
+      "--bg-panel": ui.panel,
+      "--bg-soft": ui.soft,
+      "--stroke": ui.stroke,
+      "--text-main": currentTheme === "dark" ? "#E6E9EE" : "#111827",
+      "--text-muted": ui.muted,
+      "--icon-color": ui.icon,
+      "--btn-bg": ui.buttonBg,
+      "--btn-bg-hover": ui.buttonHover,
+      "--bg-canvas": THEMES[currentTheme].canvas,
+    };
+    Object.entries(cssProps).forEach(([k, v]) => root.style.setProperty(k, v));
   }
 
-  // Update Cytoscape if available
+  // Update Cytoscape instance if available
   const cy = window.cy;
-  if (!cy || !cy.container) {
-    // Still rebuild style so future init can use it
-    NEXUS_STYLE = buildStyle(currentTheme);
-    return;
-  }
-
-  // Update cy canvas background
-  cy.container().style.backgroundColor = THEMES[currentTheme].canvas;
-
-  // Rebuild + apply style (nodes/edges)
   NEXUS_STYLE = buildStyle(currentTheme);
-  cy.style(NEXUS_STYLE);
-
-  // Optional: rebuild legend to reflect any color changes
-  if (typeof window.buildRelationshipLegend === "function") {
-    window.buildRelationshipLegend();
+  if (cy?.container) {
+    cy.container().style.backgroundColor = THEMES[currentTheme].canvas;
+    cy.style(NEXUS_STYLE);
   }
+
+  // Rebuild legend
+  window.buildRelationshipLegend?.();
 }
 
-/* -------------------------------
-   UI wrapper (index.html calls this)
--------------------------------- */
-function setTheme(themeKey) {
-  applyTheme(themeKey);
-}
-
-// Expose for external usage (exports rely on currentTheme & THEMES)
+// Expose for external use
 window.THEMES = THEMES;
-window.currentTheme = currentTheme;
 window.NEXUS_STYLE = NEXUS_STYLE;
 window.applyTheme = applyTheme;
-window.setTheme = setTheme;
