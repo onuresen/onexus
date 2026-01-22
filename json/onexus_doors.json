@@ -1,0 +1,5174 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "TWC01_OC_BLD_S5_3B_PIM_R21_ZZ_v2024_detached_detached",
+    "languageDefault": "en",
+    "phases": []
+  },
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "DOOR-38281167",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-3a_2270x3882.5"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-3a_2270x3882.5"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39914896",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: Frame_AD1-3a_AW1-SSBP"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "Frame_AD1-3a_AW1-SSBP"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15287627",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_B_折れ分け4枚_ver2-3: AD1-3"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_B_折れ分け4枚_ver2-3",
+          "typeName": "AD1-3"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15105958",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_k_框_ver21: 開き戸用"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_k_框_ver21",
+          "typeName": "開き戸用"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39913303",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2: Panel_AD1-3a"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2",
+          "typeName": "Panel_AD1-3a"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39799867",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUh_水平2連_ver2-2: Fx2 2"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUh_水平2連_ver2-2",
+          "typeName": "Fx2 2"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-46924428",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_P_突出し_NAO: BP"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_P_突出し_NAO",
+          "typeName": "BP"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-33666365",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_ガラスBP_TWC: ガラス"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_ガラスBP_TWC",
+          "typeName": "ガラス"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-28592805",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-3b_2210x4870"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-3b_2210x4870"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39488550",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: Frame_AD1-3b_AW1-TSBPC"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "Frame_AD1-3b_AW1-TSBPC"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39488594",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2: Panel_AD1-3b"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2",
+          "typeName": "Panel_AD1-3b"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39886551",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUh_水平2連_ver2-2: FBx2"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUh_水平2連_ver2-2",
+          "typeName": "FBx2"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-38327217",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-3bA_2180x4870"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-3bA_2180x4870"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-37540518",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-3bA_2180x4857"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-3bA_2180x4857"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-33784291",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: Frame_AD1-3b_AG1-TS"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "Frame_AD1-3b_AG1-TS"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15287615",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUh_水平2連_ver2-2: Panel_GG"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUh_水平2連_ver2-2",
+          "typeName": "Panel_GG"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15287611",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_ガラリ_ver2-1: ガラリ"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_ガラリ_ver2-1",
+          "typeName": "ガラリ"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-42040604",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: SSD-1-1d_2570x3950"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "SSD-1-1d_2570x3950"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42056736",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: SSD1_1d_AW1-2TBPA"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "SSD1_1d_AW1-2TBPA"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42060885",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と右袖_ver2-2: Panel_SSD1-d_R"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と右袖_ver2-2",
+          "typeName": "Panel_SSD1-d_R"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42061052",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_H_片引き左勝手_ver2-3: 框 47"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_H_片引き左勝手_ver2-3",
+          "typeName": "框 47"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42489903",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_k_框_ver21: SUS引き戸用 SSD"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_k_框_ver21",
+          "typeName": "SUS引き戸用 SSD"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-8733871",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_ガラス下框_ver2-2: ガラス下框"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_ガラス下框_ver2-2",
+          "typeName": "ガラス下框"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756699",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: gSD-1-1FB_900x1600"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "gSD-1-1FB_900x1600"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-44325833",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "IPS_D_点検片開き_ver2-2_NAO2: フラッシュ_点線 2"
+          },
+          "revitCategory": "Doors",
+          "familyName": "IPS_D_点検片開き_ver2-2_NAO2",
+          "typeName": "フラッシュ_点線 2"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-16473050",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2-3: gSSD-3-1Fa_900x2100_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2-3",
+          "typeName": "gSSD-3-1Fa_900x2100_E"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-9380825",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPSe_D_外部片開き_ver2-4: 框"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPSe_D_外部片開き_ver2-4",
+          "typeName": "框"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-8741238",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_k_框_ver2-2: 開き戸用"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_k_框_ver2-2",
+          "typeName": "開き戸用"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-42905383",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2-3: gSSD-3-1Fb_900x2100_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2-3",
+          "typeName": "gSSD-3-1Fb_900x2100_E"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756970",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: nSD-2-1FA_700x2400"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "nSD-2-1FA_700x2400"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756703",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: kSD-3-1F_2807x1900"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "kSD-3-1F_2807x1900"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-44554579",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "IPU_点検2連_ver22: 親子+親子"
+          },
+          "revitCategory": "Doors",
+          "familyName": "IPU_点検2連_ver22",
+          "typeName": "親子+親子"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-44554581",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "IPS_Y_点検親子開き_ver2-2_TWC: フラッシュ_親W956"
+          },
+          "revitCategory": "Doors",
+          "familyName": "IPS_Y_点検親子開き_ver2-2_TWC",
+          "typeName": "フラッシュ_親W956"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756973",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: nSD-2-1FB_700x1600"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "nSD-2-1FB_700x1600"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756692",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver1: gSD-1-1F_900x2400"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver1",
+          "typeName": "gSD-1-1F_900x2400"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-44298524",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPS_D_内部片開き_ver1: フラッシュ"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPS_D_内部片開き_ver1",
+          "typeName": "フラッシュ"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-40045653",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-2a_2270x3882.5"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-2a_2270x3882.5"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15333983",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: Frame_AD1-1a_AW-000"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "Frame_AD1-1a_AW-000"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-19042522",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_FD-02_RF"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_FD-02_RF"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-7819905",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_D_両開き_ver2-3: 框"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_D_両開き_ver2-3",
+          "typeName": "框"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-39912444",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-3a_2270x3892.5"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-3a_2270x3892.5"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-38271486",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-3aA_2360x3892.5"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-3aA_2360x3892.5"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-40557085",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-3aA_2360x3869.5"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-3aA_2360x3869.5"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-33898554",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: Frame_AD1-3a_AG1-T"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "Frame_AD1-3a_AG1-T"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-28369363",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: SSD-1-1b_2430x4930"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "SSD-1-1b_2430x4930"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-41989251",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: SSD1_1b_AG1-2T"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "SSD1_1b_AG1-2T"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-41992196",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_SSD1-1b"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_SSD1-1b"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-41995797",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_H_片引き右勝手_ver2-3: 框 47"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_H_片引き右勝手_ver2-3",
+          "typeName": "框 47"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50678131",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2-3: cSD-1-T_850x2450_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2-3",
+          "typeName": "cSD-1-T_850x2450_E"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-9324387",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPU_開き戸ランマ付用_ver2-2: 片開き_上部外倒し"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPU_開き戸ランマ付用_ver2-2",
+          "typeName": "片開き_上部外倒し"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-21686322",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPS_D_内部片開き_ver2-4: フラッシュ_床付戸当"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPS_D_内部片開き_ver2-4",
+          "typeName": "フラッシュ_床付戸当"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-7810150",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_P_外倒し_ver2-2: 框_延長あり"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_P_外倒し_ver2-2",
+          "typeName": "框_延長あり"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-8741240",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_k_框_ver2-2: STランマ用"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_k_框_ver2-2",
+          "typeName": "STランマ用"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756985",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: gSD-2-T_700x2400"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "gSD-2-T_700x2400"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44298523",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver1: gSD-1-T_900x1901"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver1",
+          "typeName": "gSD-1-T_900x1901"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756993",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver1: gSD-1-TA_900x1901"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver1",
+          "typeName": "gSD-1-TA_900x1901"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-30497643",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: SSD-2-1c_2260x2400_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "SSD-2-1c_2260x2400_E"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-48171248",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2: Panel_SSD2-1c"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2",
+          "typeName": "Panel_SSD2-1c"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42193816",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と右袖_ver2-2: Panel_SSD2-c_R"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と右袖_ver2-2",
+          "typeName": "Panel_SSD2-c_R"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15287613",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_tp_ガラス上下框_ver2-2: ガラス上下框"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_tp_ガラス上下框_ver2-2",
+          "typeName": "ガラス上下框"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756706",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: nSD-2-1F_1453x2400_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "nSD-2-1F_1453x2400_E"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-45153034",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPS_Y_内部親子開き_ver2-4: フラッシュ_親W955 潰し"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPS_Y_内部親子開き_ver2-4",
+          "typeName": "フラッシュ_親W955 潰し"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44560960",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: nSD-11-1F_1453x2400_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "nSD-11-1F_1453x2400_E"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-42883800",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: AG-2-1_1115x2355"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "AG-2-1_1115x2355"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42883802",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "IPS_D_点検片開き_ver2-2_NAO1: AG2-1"
+          },
+          "revitCategory": "Doors",
+          "familyName": "IPS_D_点検片開き_ver2-2_NAO1",
+          "typeName": "AG2-1"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50265245",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_OD_常開片開き_732.5_ver2-3: cSD-2-TA_1200x2410"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_OD_常開片開き_732.5_ver2-3",
+          "typeName": "cSD-2-TA_1200x2410"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-50252769",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "OPS_常開2枚_ver2-2: 常開戸2枚_戸先10 732.5"
+          },
+          "revitCategory": "Doors",
+          "familyName": "OPS_常開2枚_ver2-2",
+          "typeName": "常開戸2枚_戸先10 732.5"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-7735641",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "OP_常開2枚_ver2-2: 常開2枚 背面なし"
+          },
+          "revitCategory": "Doors",
+          "familyName": "OP_常開2枚_ver2-2",
+          "typeName": "常開2枚 背面なし"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44349833",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_内部戸当り無し枠_ver2-3: nSSD-2-1F_2520x2100_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_内部戸当り無し枠_ver2-3",
+          "typeName": "nSSD-2-1F_2520x2100_E"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42499309",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_nSSD2-1F"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_nSSD2-1F"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45863446",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2: WD-2-T_710x2095"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2",
+          "typeName": "WD-2-T_710x2095"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-8192844",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPS_D_内部片開き_ver2-4: フラッシュ"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPS_D_内部片開き_ver2-4",
+          "typeName": "フラッシュ"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45863408",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2: WD-2-T_810x2095"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2",
+          "typeName": "WD-2-T_810x2095"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-51089568",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_H_外付け片引き戸_ver2-5: WD-7-T_800x2085"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_H_外付け片引き戸_ver2-5",
+          "typeName": "WD-7-T_800x2085"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-20821251",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "HPS_H用1枚引き_ver2-3: フラッシュ"
+          },
+          "revitCategory": "Doors",
+          "familyName": "HPS_H用1枚引き_ver2-3",
+          "typeName": "フラッシュ"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-37220836",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_F_三方_ver2-3: WF-1-T_758x2072"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_F_三方_ver2-3",
+          "typeName": "WF-1-T_758x2072"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-40177834",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: SSD-1-1c_2430x4350"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "SSD-1-1c_2430x4350"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42090355",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: SSD1_1c_AW1-2TBP"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "SSD1_1c_AW1-2TBP"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42093982",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_SSD1-1c"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_SSD1-1c"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-38327554",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-3bB_2090x4870"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-3bB_2090x4870"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45863533",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2: WD-2-T_810x2215(片)"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2",
+          "typeName": "WD-2-T_810x2215(片)"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756989",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: gSD-3-T_700x1900"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "gSD-3-T_700x1900"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50253282",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_OD_常開片開き_732.5_ver2-3: cSD-2-T_950x2410"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_OD_常開片開き_732.5_ver2-3",
+          "typeName": "cSD-2-T_950x2410"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-16470662",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2-3: nLSD-1-T_700x2100"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2-3",
+          "typeName": "nLSD-1-T_700x2100"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-51187943",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_H_外付け片引き戸_ver2-5: WD-6-T_700x2085"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_H_外付け片引き戸_ver2-5",
+          "typeName": "WD-6-T_700x2085"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-34929956",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_H_外付け片引き戸(枠なし)_ver2-5: WD-6-T_750x2085"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_H_外付け片引き戸(枠なし)_ver2-5",
+          "typeName": "WD-6-T_750x2085"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-42196651",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: SSD-2-1b_2570x2400_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "SSD-2-1b_2570x2400_E"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-48158059",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2: Panel_SSD2-1b"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2",
+          "typeName": "Panel_SSD2-1b"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42201819",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_SSD2-1b"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_SSD2-1b"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-30499629",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: SSD-2-1a_2660x2455"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "SSD-2-1a_2660x2455"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-48138993",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2: Panel_SSD2-1a"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2",
+          "typeName": "Panel_SSD2-1a"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42205334",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_SSD2-1a"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_SSD2-1a"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-19372670",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1: SSD-2-1e_2570x2400_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1",
+          "typeName": "SSD-2-1e_2570x2400_E"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-48177566",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2: Panel_SSD2-1e"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2",
+          "typeName": "Panel_SSD2-1e"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15287623",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_SSD2-1e"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_SSD2-1e"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15105970",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_H_片引き右勝手_ver2-3: 框"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_H_片引き右勝手_ver2-3",
+          "typeName": "框"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15105956",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_k_框_ver21: SUS引き戸用"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_k_框_ver21",
+          "typeName": "SUS引き戸用"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44345325",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1: SSD-2-1d_2010x2400_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1",
+          "typeName": "SSD-2-1d_2010x2400_E"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-48179964",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2: Panel_SSD2-1d"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2",
+          "typeName": "Panel_SSD2-1d"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42220663",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_SSD2-1d"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_SSD2-1d"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-28332670",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: SSD-1-1a_2520x4950"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "SSD-1-1a_2520x4950"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42018498",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: SSD1_1a_AW1-2TBPB"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "SSD1_1a_AW1-2TBPB"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-42017860",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUo_開閉部と左袖_ver2-2: Panel_SSD1-1a"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUo_開閉部と左袖_ver2-2",
+          "typeName": "Panel_SSD1-1a"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-36249345",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_外部戸当り無し枠_ver2-1_TWC3Block: AD-1-2b_2210x4770"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_外部戸当り無し枠_ver2-1_TWC3Block",
+          "typeName": "AD-1-2b_2210x4770"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39422324",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: Frame_AD1-2b_AW1-TBP*"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "Frame_AD1-2b_AW1-TBP*"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39441016",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUh_水平不均等3連_ver2-3: Panel_FD-03_DFF 2"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUh_水平不均等3連_ver2-3",
+          "typeName": "Panel_FD-03_DFF 2"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-39441028",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2_TWC: Frame_AD1-2b"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2_TWC",
+          "typeName": "Frame_AD1-2b"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-11374240",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_D_片開き左勝手_ver2-3: 框"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_D_片開き左勝手_ver2-3",
+          "typeName": "框"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-8731313",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DP_ガラス_ver2-2: ガラス"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DP_ガラス_ver2-2",
+          "typeName": "ガラス"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-40354378",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPUv_垂直2段_ver2-2: Panel_2TBP"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPUv_垂直2段_ver2-2",
+          "typeName": "Panel_2TBP"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44554590",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: kSD-2-T_2807x1900"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "kSD-2-T_2807x1900"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44294958",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: kSD-5-T_1307x1900"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "kSD-5-T_1307x1900"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-44294960",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPS_Y_内部親子開き_ver2-4: フラッシュ_親W955"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPS_Y_内部親子開き_ver2-4",
+          "typeName": "フラッシュ_親W955"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-17351313",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2-3: gSSD-2-T_900x2400_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2-3",
+          "typeName": "gSSD-2-T_900x2400_E"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45863489",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2: WD-2-T_760x2095"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2",
+          "typeName": "WD-2-T_760x2095"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-48632246",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_内部戸当り無し枠_ver21: P-1-T_2383x2450"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_内部戸当り無し枠_ver21",
+          "typeName": "P-1-T_2383x2450"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-15517380",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "VPS_Z3_3枚建_TWC_ver3-1: Panel_FD-05"
+          },
+          "revitCategory": "Doors",
+          "familyName": "VPS_Z3_3枚建_TWC_ver3-1",
+          "typeName": "Panel_FD-05"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44606440",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: kSD-4-T_700x1900"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "kSD-4-T_700x1900"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44637305",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: gSD-4-T_700x1600"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "gSD-4-T_700x1600"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-48395681",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_F_三方_ver2-3: WF-1-T_658x2072"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_F_三方_ver2-3",
+          "typeName": "WF-1-T_658x2072"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50864129",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: kSD-2-T_2807x1886"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "kSD-2-T_2807x1886"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44656675",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_OD_常開片開き_ver2-3: cSD-2-TB_950x2410"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_OD_常開片開き_ver2-3",
+          "typeName": "cSD-2-TB_950x2410"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-7751484",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "OPS_常開2枚_ver2-2: 常開戸2枚_戸先10"
+          },
+          "revitCategory": "Doors",
+          "familyName": "OPS_常開2枚_ver2-2",
+          "typeName": "常開戸2枚_戸先10"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-51144792",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2: WD-2-T_810x2215"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2",
+          "typeName": "WD-2-T_810x2215"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-8195522",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPS_R_内部両開き_ver2-4: フラッシュ"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPS_R_内部両開き_ver2-4",
+          "typeName": "フラッシュ"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-51274782",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_内部戸当り無し枠_NAO_ver2-3: gOtr_**P15_3枚_2596x2450"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_内部戸当り無し枠_NAO_ver2-3",
+          "typeName": "gOtr_**P15_3枚_2596x2450"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-35388499",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_TD_外部開き_ver2-3: AG--_800x2100"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_TD_外部開き_ver2-3",
+          "typeName": "AG--_800x2100"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-49543329",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_H_外付け片引き戸(枠なし)_ver2-5: WD-6-T_785x2450"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_H_外付け片引き戸(枠なし)_ver2-5",
+          "typeName": "WD-6-T_785x2450"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-35613211",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_TD_外部開き_ver22: SD-2-T_750x2450"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_TD_外部開き_ver22",
+          "typeName": "SD-2-T_750x2450"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-8200562",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "DPSe_D_外部片開き_ver2-4: フラッシュ"
+          },
+          "revitCategory": "Doors",
+          "familyName": "DPSe_D_外部片開き_ver2-4",
+          "typeName": "フラッシュ"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-48315338",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_H_外付け片引き戸(枠なし)_ver2-5: WD-7-T_900x2450"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_H_外付け片引き戸(枠なし)_ver2-5",
+          "typeName": "WD-7-T_900x2450"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45863919",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2: WD-4-T_1224x1965"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2",
+          "typeName": "WD-4-T_1224x1965"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-51095419",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_H_外付け片引き戸_ver2-5: WD-6-T_750x2085"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_H_外付け片引き戸_ver2-5",
+          "typeName": "WD-6-T_750x2085"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-37527124",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_F_三方_ver2-3: WF-1-T_1315.5x2083.5"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_F_三方_ver2-3",
+          "typeName": "WF-1-T_1315.5x2083.5"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44543377",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_LK_片側引込み_ver21: WD-1-T_800x2085"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_LK_片側引込み_ver21",
+          "typeName": "WD-1-T_800x2085"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-12588412",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "KPS_LK用1枚引き_ver2-3: フラッシュ"
+          },
+          "revitCategory": "Doors",
+          "familyName": "KPS_LK用1枚引き_ver2-3",
+          "typeName": "フラッシュ"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45496446",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_LK_片側引込み_ver1: WD-7-T_900x2105"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_LK_片側引込み_ver1",
+          "typeName": "WD-7-T_900x2105"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50748787",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2: WD-4-T_610x1995"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2",
+          "typeName": "WD-4-T_610x1995"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50756695",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: gSD-1-1FA_700x1600"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "gSD-1-1FA_700x1600"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44325829",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ID_点検扉_ver2-2: nSD-1-T_700x2400"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ID_点検扉_ver2-2",
+          "typeName": "nSD-1-T_700x2400"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44623820",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver21: SD-T01_900x2400_E"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver21",
+          "typeName": "SD-T01_900x2400_E"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-44338958",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_F_三方_ver2-3: SF-1-T_800x1900"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_F_三方_ver2-3",
+          "typeName": "SF-1-T_800x1900"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45021628",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_TD_外部開き_ver4-0: B3SD-T-01_650x2100"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_TD_外部開き_ver4-0",
+          "typeName": "B3SD-T-01_650x2100"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45148404",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_SW_普通枠_ver4-0: SW-01-_5820x2850"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_SW_普通枠_ver4-0",
+          "typeName": "SW-01-_5820x2850"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45148804",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_SW_普通枠_ver4-0: SW-03B-_2775x2700"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_SW_普通枠_ver4-0",
+          "typeName": "SW-03B-_2775x2700"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45148652",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_SW_普通枠_ver4-0: SW-03A-_2775x2450"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_SW_普通枠_ver4-0",
+          "typeName": "SW-03A-_2775x2450"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45150315",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_SW_普通枠_ver4-0: SW-04-_2320x2450"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_SW_普通枠_ver4-0",
+          "typeName": "SW-04-_2320x2450"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45151283",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_SW_普通枠_ver4-0: SW-02-_2320x2850"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_SW_普通枠_ver4-0",
+          "typeName": "SW-02-_2320x2850"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-45152165",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_SW_普通枠_ver4-0: SW-10A-_2420x1941.5"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_SW_普通枠_ver4-0",
+          "typeName": "SW-10A-_2420x1941.5"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50173686",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_SW_普通枠_ver4-0: SW-03A-_2775x2400"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_SW_普通枠_ver4-0",
+          "typeName": "SW-03A-_2775x2400"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-49570275",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_LK_片側引込み_枠204ver21: WD-1-T_800x2085"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_LK_片側引込み_枠204ver21",
+          "typeName": "WD-1-T_800x2085"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50225431",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ホスト無し_ver4-1_TWC (1): 2連均等_2465x2355"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ホスト無し_ver4-1_TWC (1)",
+          "typeName": "2連均等_2465x2355"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-50224965",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "IPU_点検2連_TWC: AG2-1"
+          },
+          "revitCategory": "Doors",
+          "familyName": "IPU_点検2連_TWC",
+          "typeName": "AG2-1"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-50224933",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "IPS_R_点検親子開き_mesh_TWC: AG2-2_left"
+          },
+          "revitCategory": "Doors",
+          "familyName": "IPS_R_点検親子開き_mesh_TWC",
+          "typeName": "AG2-2_left"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-50224932",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "IPS_R_点検親子開き_mesh_TWC: AG2-2_right"
+          },
+          "revitCategory": "Doors",
+          "familyName": "IPS_R_点検親子開き_mesh_TWC",
+          "typeName": "AG2-2_right"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50226053",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ホスト無し_ver4-1_TWC (1): 片開き_1035x2355"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ホスト無し_ver4-1_TWC (1)",
+          "typeName": "片開き_1035x2355"
+        }
+      },
+      {
+        "data": {
+          "id": "COMP-50224966",
+          "nodeType": "Element",
+          "category": "Doors",
+          "label": {
+            "en": "IPS_D_点検片開き_mesh_TWC: 下地表示"
+          },
+          "revitCategory": "Doors",
+          "familyName": "IPS_D_点検片開き_mesh_TWC",
+          "typeName": "下地表示"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-50225289",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ホスト無し_ver4-1_TWC (1): 2連均等_2520x2355"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ホスト無し_ver4-1_TWC (1)",
+          "typeName": "2連均等_2520x2355"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-52479036",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_ホスト無し_ver4-1_TWC: 2連均等_2520x2355"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_ホスト無し_ver4-1_TWC",
+          "typeName": "2連均等_2520x2355"
+        }
+      },
+      {
+        "data": {
+          "id": "DOOR-52641373",
+          "nodeType": "Element",
+          "category": "Door",
+          "label": {
+            "en": "_D_内部開き_ver2: WD-2-T_800x2215(片) _2"
+          },
+          "revitCategory": "Doors",
+          "familyName": "_D_内部開き_ver2",
+          "typeName": "WD-2-T_800x2215(片) _2"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "data": {
+          "id": "R-SYS-0001",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39914896",
+          "target": "DOOR-38281167",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0002",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287627",
+          "target": "COMP-39914896",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0003",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0004",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0005",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0006",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0007",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39913303",
+          "target": "COMP-39914896",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0008",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39913303",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0009",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0010",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0011",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0012",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0013",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39913303",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0014",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0015",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0016",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0017",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0018",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39488550",
+          "target": "DOOR-28592805",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0019",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287627",
+          "target": "COMP-39488550",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0020",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0021",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0022",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0023",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0024",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39488594",
+          "target": "COMP-39488550",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0025",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39488594",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0026",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0027",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0028",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0029",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0030",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39886551",
+          "target": "COMP-39488594",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0031",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0032",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0033",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39488550",
+          "target": "DOOR-38327217",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0034",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287627",
+          "target": "COMP-39488550",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0035",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0036",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0037",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0038",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0039",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39488594",
+          "target": "COMP-39488550",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0040",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39488594",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0041",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0042",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0043",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0044",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0045",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39886551",
+          "target": "COMP-39488594",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0046",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0047",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0048",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33784291",
+          "target": "DOOR-37540518",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0049",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287627",
+          "target": "COMP-33784291",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0050",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0051",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0052",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0053",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0054",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287615",
+          "target": "COMP-33784291",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0055",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0056",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0057",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42056736",
+          "target": "DOOR-42040604",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0058",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42060885",
+          "target": "COMP-42056736",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0059",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42061052",
+          "target": "COMP-42060885",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0060",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-42061052",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0061",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-42060885",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0062",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-42056736",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0063",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-50756699",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0064",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-9380825",
+          "target": "DOOR-16473050",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0065",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8741238",
+          "target": "COMP-9380825",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0066",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-9380825",
+          "target": "DOOR-42905383",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0067",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8741238",
+          "target": "COMP-9380825",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0068",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-50756970",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0069",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554579",
+          "target": "DOOR-50756703",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0070",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554581",
+          "target": "COMP-44554579",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0071",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554581",
+          "target": "COMP-44554579",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0072",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-50756973",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0073",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44298524",
+          "target": "DOOR-50756692",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0074",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15333983",
+          "target": "DOOR-40045653",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0075",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-19042522",
+          "target": "COMP-15333983",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0076",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-19042522",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0077",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-7819905",
+          "target": "COMP-19042522",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0078",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8741238",
+          "target": "COMP-7819905",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0079",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8741238",
+          "target": "COMP-7819905",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0080",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39886551",
+          "target": "COMP-15333983",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0081",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0082",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0083",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39914896",
+          "target": "DOOR-39912444",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0084",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287627",
+          "target": "COMP-39914896",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0085",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0086",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0087",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0088",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0089",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39913303",
+          "target": "COMP-39914896",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0090",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39913303",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0091",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0092",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0093",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0094",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0095",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39913303",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0096",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0097",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0098",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0099",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0100",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39914896",
+          "target": "DOOR-38271486",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0101",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287627",
+          "target": "COMP-39914896",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0102",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0103",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0104",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0105",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0106",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39913303",
+          "target": "COMP-39914896",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0107",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39913303",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0108",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0109",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0110",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0111",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0112",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39913303",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0113",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0114",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0115",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0116",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0117",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33898554",
+          "target": "DOOR-40557085",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0118",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287627",
+          "target": "COMP-33898554",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0119",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0120",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0121",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0122",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0123",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287615",
+          "target": "COMP-33898554",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0124",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0125",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0126",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41989251",
+          "target": "DOOR-28369363",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0127",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41992196",
+          "target": "COMP-41989251",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0128",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-41992196",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0129",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41995797",
+          "target": "COMP-41992196",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0130",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-41995797",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0131",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287615",
+          "target": "COMP-41989251",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0132",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0133",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0134",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-9324387",
+          "target": "DOOR-50678131",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0135",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-21686322",
+          "target": "COMP-9324387",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0136",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-7810150",
+          "target": "COMP-9324387",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0137",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8741240",
+          "target": "COMP-7810150",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0138",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-50756985",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0139",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44298524",
+          "target": "DOOR-44298523",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0140",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44298524",
+          "target": "DOOR-50756993",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0141",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-48171248",
+          "target": "DOOR-30497643",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0142",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42193816",
+          "target": "COMP-48171248",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0143",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42061052",
+          "target": "COMP-42193816",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0144",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-42061052",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0145",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287613",
+          "target": "COMP-42193816",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0146",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287615",
+          "target": "COMP-48171248",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0147",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0148",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0149",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-45153034",
+          "target": "DOOR-50756706",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0150",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-45153034",
+          "target": "DOOR-44560960",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0151",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42883802",
+          "target": "DOOR-42883800",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0152",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50252769",
+          "target": "DOOR-50265245",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0153",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-7735641",
+          "target": "COMP-50252769",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0154",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42499309",
+          "target": "DOOR-44349833",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0155",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-42499309",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0156",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41995797",
+          "target": "COMP-42499309",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0157",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-41995797",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0158",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8192844",
+          "target": "DOOR-45863446",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0159",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-21686322",
+          "target": "DOOR-45863408",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0160",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-20821251",
+          "target": "DOOR-51089568",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0161",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42090355",
+          "target": "DOOR-40177834",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0162",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42093982",
+          "target": "COMP-42090355",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0163",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-42093982",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0164",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41995797",
+          "target": "COMP-42093982",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0165",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-41995797",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0166",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-42090355",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0167",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39488550",
+          "target": "DOOR-38327554",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0168",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287627",
+          "target": "COMP-39488550",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0169",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0170",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0171",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0172",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105958",
+          "target": "COMP-15287627",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0173",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39488594",
+          "target": "COMP-39488550",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0174",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39799867",
+          "target": "COMP-39488594",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0175",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0176",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0177",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-46924428",
+          "target": "COMP-39799867",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0178",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-46924428",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0179",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39886551",
+          "target": "COMP-39488594",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0180",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0181",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0182",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-21686322",
+          "target": "DOOR-45863533",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0183",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-50756989",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0184",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50252769",
+          "target": "DOOR-50253282",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0185",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-7735641",
+          "target": "COMP-50252769",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0186",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-16470662",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0187",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-20821251",
+          "target": "DOOR-51187943",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0188",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-20821251",
+          "target": "DOOR-34929956",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0189",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-48158059",
+          "target": "DOOR-42196651",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0190",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42201819",
+          "target": "COMP-48158059",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0191",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-42201819",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0192",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41995797",
+          "target": "COMP-42201819",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0193",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-41995797",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0194",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287615",
+          "target": "COMP-48158059",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0195",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0196",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0197",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-48138993",
+          "target": "DOOR-30499629",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0198",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42205334",
+          "target": "COMP-48138993",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0199",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287613",
+          "target": "COMP-42205334",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0200",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41995797",
+          "target": "COMP-42205334",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0201",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-41995797",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0202",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287615",
+          "target": "COMP-48138993",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0203",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0204",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0205",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-48177566",
+          "target": "DOOR-19372670",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0206",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287623",
+          "target": "COMP-48177566",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0207",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287613",
+          "target": "COMP-15287623",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0208",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105970",
+          "target": "COMP-15287623",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0209",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15105956",
+          "target": "COMP-15105970",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0210",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287615",
+          "target": "COMP-48177566",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0211",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0212",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0213",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-48179964",
+          "target": "DOOR-44345325",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0214",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42220663",
+          "target": "COMP-48179964",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0215",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-42220663",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0216",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41995797",
+          "target": "COMP-42220663",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0217",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-41995797",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0218",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287615",
+          "target": "COMP-48179964",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0219",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0220",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-15287615",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0221",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42018498",
+          "target": "DOOR-28332670",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0222",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42017860",
+          "target": "COMP-42018498",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0223",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-42017860",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0224",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-41995797",
+          "target": "COMP-42017860",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0225",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-42489903",
+          "target": "COMP-41995797",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0226",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15287611",
+          "target": "COMP-42018498",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0227",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39422324",
+          "target": "DOOR-36249345",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0228",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39441016",
+          "target": "COMP-39422324",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0229",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-39441016",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0230",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8733871",
+          "target": "COMP-39441016",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0231",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39441028",
+          "target": "COMP-39441016",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0232",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-11374240",
+          "target": "COMP-39441028",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0233",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8741238",
+          "target": "COMP-11374240",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0234",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8731313",
+          "target": "COMP-39441028",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0235",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-40354378",
+          "target": "COMP-39422324",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0236",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39886551",
+          "target": "COMP-40354378",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0237",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0238",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0239",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-39886551",
+          "target": "COMP-40354378",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0240",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0241",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-33666365",
+          "target": "COMP-39886551",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0242",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554579",
+          "target": "DOOR-44554590",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0243",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554581",
+          "target": "COMP-44554579",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0244",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554581",
+          "target": "COMP-44554579",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0245",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44294960",
+          "target": "DOOR-44294958",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0246",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8192844",
+          "target": "DOOR-17351313",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0247",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8192844",
+          "target": "DOOR-45863489",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0248",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-15517380",
+          "target": "DOOR-48632246",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0249",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-44606440",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0250",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-44637305",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0251",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554579",
+          "target": "DOOR-50864129",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0252",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554581",
+          "target": "COMP-44554579",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0253",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44554581",
+          "target": "COMP-44554579",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0254",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-7751484",
+          "target": "DOOR-44656675",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0255",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-7735641",
+          "target": "COMP-7751484",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0256",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8195522",
+          "target": "DOOR-51144792",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0257",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-20821251",
+          "target": "DOOR-49543329",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0258",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8200562",
+          "target": "DOOR-35613211",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0259",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-20821251",
+          "target": "DOOR-48315338",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0260",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8195522",
+          "target": "DOOR-45863919",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0261",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-20821251",
+          "target": "DOOR-51095419",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0262",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-12588412",
+          "target": "DOOR-44543377",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0263",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-12588412",
+          "target": "DOOR-45496446",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0264",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8195522",
+          "target": "DOOR-50748787",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0265",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-50756695",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0266",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44325833",
+          "target": "DOOR-44325829",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0267",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-44298524",
+          "target": "DOOR-44623820",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0268",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-8200562",
+          "target": "DOOR-45021628",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0269",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-12588412",
+          "target": "DOOR-49570275",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0270",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224965",
+          "target": "DOOR-50225431",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0271",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224933",
+          "target": "COMP-50224965",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0272",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224932",
+          "target": "COMP-50224965",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0273",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224966",
+          "target": "DOOR-50226053",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0274",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224965",
+          "target": "DOOR-50225289",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0275",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224933",
+          "target": "COMP-50224965",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0276",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224932",
+          "target": "COMP-50224965",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0277",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224965",
+          "target": "DOOR-52479036",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0278",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224933",
+          "target": "COMP-50224965",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0279",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-50224932",
+          "target": "COMP-50224965",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-0280",
+          "type": "PartOfSystem",
+          "dimension": "System",
+          "source": "COMP-21686322",
+          "target": "DOOR-52641373",
+          "directional": false,
+          "confidence": "Explicit"
+        }
+      }
+    ]
+  }
+}
