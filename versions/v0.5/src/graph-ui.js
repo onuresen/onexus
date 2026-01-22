@@ -23,7 +23,7 @@ const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn)
     window.applyTheme?.(e.target.value);
   });
   on('fileInput', 'change', e => window.loadJSON?.(e));
-  
+
   // Restore preferences on startup
   window.addEventListener('DOMContentLoaded', () => {
     const lang = readPref('onexus.lang', 'en');
@@ -70,6 +70,15 @@ const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn)
   on('lensSpatial', 'click', () => window.filterByDimension?.('Spatial'));
   on('lensResp', 'click', () => window.filterByDimension?.('Responsibility'));
   on('lensAll', 'click', () => window.showAllEdges?.());
+
+  // Show / hide edge labels
+  on('toggleEdgeLabels', 'change', e =>
+    window.setEdgeLabelVisibility?.(e.target.checked)
+  );
+
+  on('toggleNodeLabels', 'change', e =>
+    window.setNodeLabelVisibility?.(e.target.checked)
+  );
 
   // Focus depth slider
   on('focusRange', 'input', e => window.setFocusDepth?.(e.target.value));

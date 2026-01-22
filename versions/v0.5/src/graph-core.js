@@ -35,6 +35,8 @@
     language: "en",
     focusDepth: 1,
     focusedNode: null,
+    showEdgeLabels: true, // existing toggle
+    showNodeLabels: true  // NEW: global toggle for node text
   };
 
   // Debounce helper for performance-sensitive handlers
@@ -136,6 +138,7 @@
     // Focus recalculation on filter change
     if (state.focusedNode) applyDepthFocus(state.focusedNode);
     buildRelationshipLegend();
+    updateMetrics();
   }
 
   function filterByDimension(dim) {
@@ -145,12 +148,48 @@
     // When edges are hidden, recompute details/legend/focus
     if (state.focusedNode) applyDepthFocus(state.focusedNode);
     buildRelationshipLegend();
+    updateMetrics();
   }
 
-  function showAllEdges() {
+  // --- Relationship-type filter (legend click) ---
+  let relationshipFilter = null; // current relationship type, or null for "no filter"
+
+  function filterByRelationshipType(type) {
+    // toggle behavior: clicking again clears the filter
+    if (relationshipFilter === type) {
+      relationshipFilter = null;
+    } else {
+      relationshipFilter = type;
+    }
+
+    cy.edges().forEach((e) => {
+      const matchesType = !relationshipFilter || e.data("type") === relationshipFilter;
+      // NOTE: this operates on top of any existing "display" state
+      // from dimension/phase/category filters, so "hiding" edges
+      // here can only further reduce what is visible.
+      e.style("display", matchesType ? "element" : "none");
+    });
+
+    if (state.focusedNode) applyDepthFocus(state.focusedNode);
+    buildRelationshipLegend();
+    updateMetrics();
+
+  }
+
+  function clearRelationshipFilter() {
+    relationshipFilter = null;
     cy.edges().style("display", "element");
     if (state.focusedNode) applyDepthFocus(state.focusedNode);
     buildRelationshipLegend();
+    updateMetrics();
+  }
+
+  function showAllEdges() {
+    relationshipFilter = null;
+    cy.edges().style("display", "element");
+    if (state.focusedNode) applyDepthFocus(state.focusedNode);
+    buildRelationshipLegend();
+    updateMetrics();
   }
 
   // Hide edges whose endpoints are hidden
@@ -200,6 +239,30 @@
     cy.layout(layout).run();
   }
 
+  function applyEdgeLabelVisibility() {
+    const opacity = state.showEdgeLabels ? 1 : 0;
+    cy.edges().forEach((e) => {
+      e.style("text-opacity", opacity);
+    });
+  }
+
+  function setEdgeLabelVisibility(show) {
+    state.showEdgeLabels = !!show;
+    applyEdgeLabelVisibility();
+  }
+
+  function applyNodeLabelVisibility() {
+    const opacity = state.showNodeLabels ? 1 : 0;
+    cy.nodes().forEach((n) => {
+      n.style("text-opacity", opacity);
+    });
+  }
+
+  function setNodeLabelVisibility(show) {
+    state.showNodeLabels = !!show;
+    applyNodeLabelVisibility();
+  }
+
   /* Load JSON (with validation) */
   function loadJSON(event) {
     const file = event.target.files[0];
@@ -233,8 +296,13 @@
       applyLayout("default");
       cy.fit(undefined, 50);
 
+      // Edge label visibility (respects current state)
+      applyEdgeLabelVisibility();
+      applyNodeLabelVisibility();
+
       // Legend after elements + language are set
       buildRelationshipLegend();
+      updateMetrics();
 
       // mark as loaded (kept here for compatibility if needed)
     };
@@ -320,21 +388,52 @@
       seen.add(type);
 
       const color = e.style("line-color");
+      const displayType = e.data("displayType") || type;
+
       const item = document.createElement("div");
       item.className = "legend-item";
+      if (relationshipFilter === type) {
+        item.classList.add("active"); // highlight selected type
+      }
 
       const line = document.createElement("div");
       line.className = "legend-line";
       line.style.backgroundColor = color;
 
       const label = document.createElement("span");
-      label.textContent = e.data("displayType");
+      label.textContent = displayType;
+
+      // Click: toggle filter for this relationship type
+      item.addEventListener("click", () => {
+        window.filterByRelationshipType?.(type);
+      });
 
       item.appendChild(line);
       item.appendChild(label);
       container.appendChild(item);
     });
   }, 80);
+
+  function updateMetrics() {
+    const box = document.getElementById("metrics");
+    if (!box) return;
+
+    const totalNodes = cy.nodes().length;
+    const visibleNodes = cy.nodes(":visible").length;
+    const totalEdges = cy.edges().length;
+    const visibleEdges = cy.edges(":visible").length;
+
+    let density = "0";
+    if (visibleNodes > 1) {
+      density = (visibleEdges / (visibleNodes * (visibleNodes - 1))).toFixed(3);
+    }
+
+    box.innerHTML = `
+        <div>Total nodes: ${totalNodes} (visible: ${visibleNodes})</div>
+        <div>Total edges: ${totalEdges} (visible: ${visibleEdges})</div>
+        <div>Density (visible): ${density}</div>
+      `;
+  }
 
   /* Navigation */
   const fitView = () => cy.fit(undefined, 50);
@@ -493,21 +592,22 @@
   window.setLanguage = setLanguage;
   window.applyLayout = applyLayout;
   window.loadJSON = loadJSON;
-
   window.buildCategoryFilter = buildCategoryFilter;
   window.filterByCategory = filterByCategory;
   window.filterByDimension = filterByDimension;
+  window.filterByRelationshipType = filterByRelationshipType;
+  window.clearRelationshipFilter = clearRelationshipFilter;
   window.showAllEdges = showAllEdges;
-
   window.fitView = fitView;
   window.centerView = centerView;
   window.resetView = resetView;
-
   window.setFocusDepth = setFocusDepth;
-
+  window.setEdgeLabelVisibility = setEdgeLabelVisibility;
+  window.setNodeLabelVisibility = setNodeLabelVisibility;
   window.exportPNG = exportPNG;
   window.exportSVG = exportSVG;
   window.exportJSON = exportJSON;
   window.exportCSV = exportCSV;
   window.exportLayout = exportLayout;
+
 })();
