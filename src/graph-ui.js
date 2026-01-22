@@ -76,6 +76,10 @@ const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn)
     window.setEdgeLabelVisibility?.(e.target.checked)
   );
 
+  on('toggleNodeLabels', 'change', e =>
+    window.setNodeLabelVisibility?.(e.target.checked)
+  );
+
   // Focus depth slider
   on('focusRange', 'input', e => window.setFocusDepth?.(e.target.value));
 
