@@ -588,6 +588,35 @@
     }
   }
 
+  function loadGraphObject(graph) {
+    try {
+      const res = typeof validateOnexusJson === 'function'
+        ? validateOnexusJson(graph)
+        : { valid: true, errors: [] };
+      if (res && res.valid === false) {
+        console.error('ONEXUS schema errors:', res.errors);
+        alert('Invalid ONEXUS JSON:\n' + res.errors.join('\n'));
+        return;
+      }
+      const cy = window.cy;
+      if (!cy) { console.error('Cytoscape not ready'); return; }
+      cy.elements().remove();
+      cy.add(graph.elements?.nodes ?? []);
+      cy.add(graph.elements?.edges ?? []);
+      // language / UI
+      if (typeof window.setLanguage === 'function') window.setLanguage('en');
+      if (typeof window.buildCategoryFilter === 'function') window.buildCategoryFilter();
+      if (typeof window.applyTheme === 'function') window.applyTheme(localStorage.getItem('onexus.theme') || 'light');
+      if (typeof window.applyLayout === 'function') window.applyLayout('default');
+      cy.fit(undefined, 50);
+      if (typeof window.setEdgeLabelVisibility === 'function') window.setEdgeLabelVisibility(true);
+      if (typeof window.setNodeLabelVisibility === 'function') window.setNodeLabelVisibility(true);
+    } catch (e) {
+      console.error('Failed to load graph object:', e);
+      alert('Failed to load graph: ' + e.message);
+    }
+  }
+
   /* Expose functions (for index.html) */
   window.setLanguage = setLanguage;
   window.applyLayout = applyLayout;
@@ -609,5 +638,18 @@
   window.exportJSON = exportJSON;
   window.exportCSV = exportCSV;
   window.exportLayout = exportLayout;
+
+  // Global entry for Revit
+  window.onexusLoadGraph = loadGraphObject;
+
+  // WebView2 message bridge
+  if (window.chrome && window.chrome.webview) {
+    window.chrome.webview.addEventListener('message', (e) => {
+      if (!e || !e.data) return;
+      if (e.data.type === 'onexus-graph') {
+        loadGraphObject(e.data.graph);
+      }
+    });
+  }
 
 })();
