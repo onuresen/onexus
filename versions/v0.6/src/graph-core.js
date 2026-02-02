@@ -76,18 +76,6 @@
 
   /* Interactions */
   cy.on("tap", "node", (evt) => {
-    const d = evt.target.data();
-    // --- notify Revit host (include both ElementId & UniqueId arrays if present) ---
-    if (window.chrome && window.chrome.webview) {
-      window.chrome.webview.postMessage({
-        type: "select-node",
-        id: d.id,
-        revitInstanceIds: d.revitInstanceIds || [],
-        revitInstanceUids: d.revitInstanceUids || []
-      });
-    }
-
-    // existing local UI logic
     state.focusedNode = evt.target;
     applyDepthFocus(state.focusedNode);
     updateDetailsForNode(state.focusedNode);
@@ -654,29 +642,12 @@
   // Global entry for Revit
   window.onexusLoadGraph = loadGraphObject;
 
-  // WebView2 message bridge (existing block)
+  // WebView2 message bridge
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener('message', (e) => {
       if (!e || !e.data) return;
       if (e.data.type === 'onexus-graph') {
-        loadGraphObject(e.data.graph);             // existing
-        return;
-      }
-      if (e.data.type === 'highlight-nodes') {     // NEW
-        const ids = new Set(e.data.ids || []);
-        const cy = window.cy;
-        cy.nodes().removeClass('highlight');
-        const hits = cy.nodes().filter(n => ids.has(n.id()));
-        hits.addClass('highlight');
-        if (hits.nonempty && hits.nonempty()) cy.fit(hits, 60);
-        return;
-      }
-      if (e.data.type === 'apply-layout') {        // NEW
-        const positions = e.data.positions || [];
-        if (Array.isArray(positions) && positions.length) {
-          window.applyLayoutPositions(positions);
-        }
-        return;
+        loadGraphObject(e.data.graph);
       }
     });
   }
