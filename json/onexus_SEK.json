@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "SEP Demo – Converted",
+    "languageDefault": "en",
+    "phases": ["Sekkei", "SeisanSekkei", "Kouji"]
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "comp_gateway", "nodeType": "Element", "category": "network",   "label": { "en": "network (comp_gateway)",   "jp": "network（comp_gateway）" } } },
+      { "data": { "id": "comp_cam01",   "nodeType": "Element", "category": "sensor",    "label": { "en": "sensor (comp_cam01)",     "jp": "sensor（comp_cam01）" } } },
+      { "data": { "id": "comp_cam02",   "nodeType": "Element", "category": "sensor",    "label": { "en": "sensor (comp_cam02)",     "jp": "sensor（comp_cam02）" } } },
+      { "data": { "id": "comp_vms",     "nodeType": "Element", "category": "processor", "label": { "en": "processor (comp_vms)",    "jp": "processor（comp_vms）" } } },
+      { "data": { "id": "comp_store_a", "nodeType": "Element", "category": "storage",   "label": { "en": "storage (comp_store_a)",  "jp": "storage（comp_store_a）" } } },
+      { "data": { "id": "comp_store_b", "nodeType": "Element", "category": "storage",   "label": { "en": "storage (comp_store_b)",  "jp": "storage（comp_store_b）" } } },
+      { "data": { "id": "comp_nvr",     "nodeType": "Element", "category": "processor", "label": { "en": "processor (comp_nvr)",    "jp": "processor（comp_nvr）" } } },
+      { "data": { "id": "comp_edge01",  "nodeType": "Element", "category": "processor", "label": { "en": "processor (comp_edge01)", "jp": "processor（comp_edge01）" } } },
+      { "data": { "id": "comp_edge02",  "nodeType": "Element", "category": "processor", "label": { "en": "processor (comp_edge02)", "jp": "processor（comp_edge02）" } } },
+      { "data": { "id": "comp_ups",     "nodeType": "Element", "category": "actuator",  "label": { "en": "actuator (comp_ups)",     "jp": "actuator（comp_ups）" } } },
+      { "data": { "id": "comp_senshub", "nodeType": "Element", "category": "network",   "label": { "en": "network (comp_senshub)",  "jp": "network（comp_senshub）" } } },
+      { "data": { "id": "comp_analytics","nodeType": "Element","category": "processor", "label": { "en": "processor (comp_analytics)","jp":"processor（comp_analytics）" } } }
+    ],
+    "edges": [
+      { "data": { "id": "r1",  "type": "ConnectsTo", "dimension": "System", "source": "comp_cam01",    "target": "comp_senshub", "directional": false, "strength": 0.80 } },
+      { "data": { "id": "r2",  "type": "ConnectsTo", "dimension": "System", "source": "comp_cam02",    "target": "comp_senshub", "directional": false, "strength": 0.78 } },
+      { "data": { "id": "r3",  "type": "ConnectsTo", "dimension": "System", "source": "comp_senshub",  "target": "comp_gateway", "directional": false, "strength": 0.85 } },
+      { "data": { "id": "r4",  "type": "DependsOn",  "dimension": "System", "source": "comp_gateway",  "target": "comp_vms",     "directional": true,  "strength": 0.65 } },
+      { "data": { "id": "r5",  "type": "DependsOn",  "dimension": "System", "source": "comp_vms",      "target": "comp_store_a", "directional": false, "strength": 0.72 } },
+      { "data": { "id": "r6",  "type": "DependsOn",  "dimension": "System", "source": "comp_vms",      "target": "comp_store_b", "directional": false, "strength": 0.40 } },
+      { "data": { "id": "r7",  "type": "Monitors",   "dimension": "System", "source": "comp_edge01",   "target": "comp_cam01",   "directional": true,  "strength": 0.55 } },
+      { "data": { "id": "r8",  "type": "Monitors",   "dimension": "System", "source": "comp_edge02",   "target": "comp_cam02",   "directional": true,  "strength": 0.50 } },
+      { "data": { "id": "r9",  "type": "Controls",   "dimension": "System", "source": "comp_nvr",      "target": "comp_vms",     "directional": false, "strength": 0.60 } },
+      { "data": { "id": "r10", "type": "Monitors",   "dimension": "System", "source": "comp_analytics","target": "comp_vms",     "directional": false, "strength": 0.75 } },
+      { "data": { "id": "r11", "type": "DependsOn",  "dimension": "System", "source": "comp_ups",      "target": "comp_nvr",     "directional": true,  "strength": 0.90 } },
+      { "data": { "id": "r12", "type": "DependsOn",  "dimension": "System", "source": "comp_ups",      "target": "comp_store_a", "directional": true,  "strength": 0.90 } },
+      { "data": { "id": "r13", "type": "ConnectsTo", "dimension": "System", "source": "comp_gateway",  "target": "comp_analytics","directional": false,"strength": 0.66 } },
+      { "data": { "id": "r14", "type": "DependsOn",  "dimension": "System", "source": "comp_analytics","target": "comp_store_a", "directional": false, "strength": 0.70 } },
+      { "data": { "id": "r15", "type": "Controls",   "dimension": "System", "source": "comp_senshub",  "target": "comp_edge01",  "directional": false, "strength": 0.45 } },
+      { "data": { "id": "r16", "type": "Controls",   "dimension": "System", "source": "comp_senshub",  "target": "comp_edge02",  "directional": false, "strength": 0.35 } }
+    ]
+  }
+}

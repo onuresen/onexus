@@ -1,0 +1,49 @@
+{
+  "export_info": {
+    "timestamp": "2026-02-03T00:00:00Z",
+    "solution_count": 1,
+    "format": "json"
+  },
+  "solutions": [
+    {
+      "id": "demo_solution_breadth_first_01",
+      "structure": {
+        "components": [
+          { "id": "comp_gateway", "type": "network",  "properties": {"capacity": 85, "priority": "high",   "active": true} },
+          { "id": "comp_cam01",   "type": "sensor",   "properties": {"capacity": 30, "priority": "medium", "active": true} },
+          { "id": "comp_cam02",   "type": "sensor",   "properties": {"capacity": 30, "priority": "medium", "active": true} },
+          { "id": "comp_vms",     "type": "processor","properties": {"capacity": 92, "priority": "high",   "active": true} },
+          { "id": "comp_store_a", "type": "storage",  "properties": {"capacity": 64, "priority": "high",   "active": true} },
+          { "id": "comp_store_b", "type": "storage",  "properties": {"capacity": 32, "priority": "medium", "active": false} },
+          { "id": "comp_nvr",     "type": "processor","properties": {"capacity": 70, "priority": "medium", "active": true} },
+          { "id": "comp_edge01",  "type": "processor","properties": {"capacity": 40, "priority": "low",    "active": true} },
+          { "id": "comp_edge02",  "type": "processor","properties": {"capacity": 40, "priority": "low",    "active": false} },
+          { "id": "comp_ups",     "type": "actuator", "properties": {"capacity": 100,"priority": "high",   "active": true} },
+          { "id": "comp_senshub", "type": "network",  "properties": {"capacity": 55, "priority": "medium", "active": true} },
+          { "id": "comp_analytics","type": "processor","properties":{"capacity": 88, "priority": "high",   "active": true} }
+        ],
+        "relationships": [
+          { "id": "r1",  "source_id": "comp_cam01",   "target_id": "comp_senshub", "type": "connects_to", "properties": {"strength": 0.80, "bidirectional": true} },
+          { "id": "r2",  "source_id": "comp_cam02",   "target_id": "comp_senshub", "type": "connects_to", "properties": {"strength": 0.78, "bidirectional": true} },
+          { "id": "r3",  "source_id": "comp_senshub", "target_id": "comp_gateway", "type": "connects_to", "properties": {"strength": 0.85, "bidirectional": true} },
+          { "id": "r4",  "source_id": "comp_gateway", "target_id": "comp_vms",     "type": "depends_on",  "properties": {"strength": 0.65, "bidirectional": false} },
+          { "id": "r5",  "source_id": "comp_vms",     "target_id": "comp_store_a", "type": "depends_on",  "properties": {"strength": 0.72, "bidirectional": true} },
+          { "id": "r6",  "source_id": "comp_vms",     "target_id": "comp_store_b", "type": "depends_on",  "properties": {"strength": 0.40, "bidirectional": true} },
+          { "id": "r7",  "source_id": "comp_edge01",  "target_id": "comp_cam01",   "type": "monitors",    "properties": {"strength": 0.55, "bidirectional": false} },
+          { "id": "r8",  "source_id": "comp_edge02",  "target_id": "comp_cam02",   "type": "monitors",    "properties": {"strength": 0.50, "bidirectional": false} },
+          { "id": "r9",  "source_id": "comp_nvr",     "target_id": "comp_vms",     "type": "controls",    "properties": {"strength": 0.60, "bidirectional": true} },
+          { "id": "r10", "source_id": "comp_analytics","target_id":"comp_vms",     "type": "monitors",    "properties": {"strength": 0.75, "bidirectional": true} },
+          { "id": "r11", "source_id": "comp_ups",     "target_id": "comp_nvr",     "type": "depends_on",  "properties": {"strength": 0.90, "bidirectional": false} },
+          { "id": "r12", "source_id": "comp_ups",     "target_id": "comp_store_a", "type": "depends_on",  "properties": {"strength": 0.90, "bidirectional": false} },
+          { "id": "r13", "source_id": "comp_gateway", "target_id": "comp_analytics","type":"connects_to", "properties": {"strength": 0.66, "bidirectional": true} },
+          { "id": "r14", "source_id": "comp_analytics","target_id":"comp_store_a", "type":"depends_on",   "properties": {"strength": 0.70, "bidirectional": true} },
+          { "id": "r15", "source_id": "comp_senshub", "target_id": "comp_edge01",  "type": "controls",    "properties": {"strength": 0.45, "bidirectional": true} },
+          { "id": "r16", "source_id": "comp_senshub", "target_id": "comp_edge02",  "type": "controls",    "properties": {"strength": 0.35, "bidirectional": true} }
+        ],
+        "structural_constraints": 0
+      },
+      "variables": { "assignments": {}, "domains": {}, "dependencies": {} },
+      "metadata": { "generation_strategy": "breadth_first", "iteration": 12, "timestamp": 1769499999.0 }
+    }
+  ]
+}
