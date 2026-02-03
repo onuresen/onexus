@@ -86,8 +86,8 @@ function buildStyle(themeKey) {
         "text-outline-color": T.outline,
         "font-size": "10px",
         "font-weight": "bold",
-        width: (ele) => Math.min(120, 40 + ele.degree()*4),
-        height: (ele) => Math.min(120, 40 + ele.degree()*4),
+        width: (ele) => Math.min(120, 40 + ele.degree() * 4),
+        height: (ele) => Math.min(120, 40 + ele.degree() * 4),
         "text-valign": "center",
         "text-halign": "center",
       },
@@ -233,7 +233,10 @@ function buildStyle(themeKey) {
         'curve-style': 'bezier',
         'target-arrow-shape': (ele) => ele.data('directional') ? 'triangle' : 'none'
       }
-    }
+    },
+    // Emphasize used nesting edges, de-emphasize others
+    { selector: 'edge.nestEdge', style: { 'line-color': '#607D8B', 'width': 4 } },
+    { selector: 'edge.nonNestEdge', style: { 'opacity': 0.25 } },
   ];
 }
 

@@ -214,42 +214,338 @@
     });
   }, 60);
 
+  // -------- Helpers for generalized views --------
+
+  // 1) Category Swimlanes
+  function layoutCategorySwimlanes() {
+    // Compute category buckets
+    const cats = {};
+    cy.nodes(':visible').forEach(n => {
+      const cat = n.data('category') || n.data('revitCategory') || 'Uncategorized';
+      if (!cats[cat]) cats[cat] = [];
+      cats[cat].push(n.id());
+    });
+
+    // Compute vertical bands and positions using 'grid' to keep it simple and fast
+    const categories = Object.keys(cats);
+    const rows = categories.length;
+    const colSize = Math.ceil(Math.sqrt(cy.nodes(':visible').length));
+
+    // Assign a lane index to nodes
+    categories.forEach((cat, rowIdx) => {
+      cats[cat].forEach((id, i) => {
+        const node = cy.getElementById(id);
+        node.data('_laneRow', rowIdx);
+        node.data('_laneCol', i % colSize);
+      });
+    });
+
+    cy.layout({
+      name: 'grid',
+      rows: rows,
+      cols: colSize,
+      // Custom position function (supported by grid) using data fields we set
+      position: (node) => {
+        return {
+          row: node.data('_laneRow') ?? 0,
+          col: node.data('_laneCol') ?? 0
+        };
+      },
+      avoidOverlap: true,
+      animate: true
+    }).run();
+  }
+
+  // 2) Degree Rings (concentric by degree)
+  function layoutDegreeRings() {
+    cy.layout({
+      name: 'concentric',
+      animate: true,
+      concentric: n => n.degree(),  // hubs in the center
+      levelWidth: () => 2,
+      minNodeSpacing: 20
+    }).run();
+  }
+
+  // 3) Dependency Flow (directed breadth-first with surrogate roots)
+  function layoutDependencyFlow() {
+    // Use only edges that are effectively directional
+    const dirEdges = cy.edges(':visible').filter(e => !!e.data('directional'));
+    const touchedNodes = dirEdges.connectedNodes();
+
+    let roots = touchedNodes.filter(n => n.indegree() === 0);
+    if (roots.length === 0) {
+      // Surrogate: top out-degree nodes
+      roots = touchedNodes.sort((a, b) => b.outdegree() - a.outdegree()).slice(0, 3);
+    }
+
+    cy.layout({
+      name: 'breadthfirst',
+      roots: roots,
+      directed: true,
+      spacingFactor: 1.4,
+      animate: true
+    }).run();
+  }
+
+  // 4) Assembly Chains (build simple columns from PartOfSystem chains)
+  function layoutAssemblyChains() {
+    // Find chains using PartOfSystem edges only
+    const chainEdgeType = 'PartOfSystem';
+    const edges = cy.edges(`[type = "${chainEdgeType}"]`);
+    if (edges.length === 0) {
+      // Fallback: Degree rings if no chains exist
+      return layoutDegreeRings();
+    }
+
+    // Build adjacency and indegree
+    const adj = new Map();
+    const indeg = new Map();
+    cy.nodes(':visible').forEach(n => { adj.set(n.id(), []); indeg.set(n.id(), 0); });
+    edges.forEach(e => {
+      const s = e.data('source'), t = e.data('target');
+      adj.get(s)?.push(t);
+      indeg.set(t, (indeg.get(t) || 0) + 1);
+    });
+
+    // Roots = nodes that have outgoing PartOfSystem but no incoming (heads of assemblies)
+    const roots = [];
+    adj.forEach((list, id) => {
+      if (list.length > 0 && (indeg.get(id) || 0) === 0) roots.push(id);
+    });
+    if (roots.length === 0) roots.push(...adj.keys()); // safety
+
+    // Assign chain positions (column index per root, row by BFS depth)
+    const colIndex = new Map();
+    roots.forEach((r, i) => colIndex.set(r, i));
+    const visited = new Set();
+    const depth = new Map();
+    const queue = [...roots];
+    roots.forEach(r => depth.set(r, 0));
+
+    while (queue.length) {
+      const cur = queue.shift();
+      if (!visited.has(cur)) {
+        visited.add(cur);
+        const d = depth.get(cur) || 0;
+        const neighbors = adj.get(cur) || [];
+        neighbors.forEach(n => {
+          if (!visited.has(n)) {
+            depth.set(n, d + 1);
+            if (!colIndex.has(n)) colIndex.set(n, colIndex.get(cur));
+            queue.push(n);
+          }
+        });
+      }
+    }
+
+    // Store row/col on nodes
+    cy.nodes(':visible').forEach(n => {
+      n.data('_chainCol', colIndex.get(n.id()) ?? 0);
+      n.data('_chainRow', depth.get(n.id()) ?? 0);
+    });
+
+    // Lay out as grid columns
+    const cols = Math.max(...Array.from(colIndex.values())) + 1;
+    const rows = Math.max(...Array.from(depth.values())) + 1;
+
+    cy.layout({
+      name: 'grid',
+      rows: rows,
+      cols: cols,
+      position: (node) => {
+        return {
+          row: node.data('_chainRow') ?? 0,
+          col: node.data('_chainCol') ?? 0
+        };
+      },
+      avoidOverlap: true,
+      animate: true
+    }).run();
+  }
+
+  // ---------------- Generic Tree (Nested) helpers ----------------
+
+  // Decide which edge type to treat as "nesting" for this graph.
+  // Priority: PartOfSystem -> LocatedIn -> (SEP directional): DependsOn/Controls/Monitors/ConnectsTo
+  function pickNestingEdgeType() {
+    const candidates = [
+      'PartOfSystem',      // DOORS assemblies are full of this
+      'LocatedIn',         // sample has spatial nesting
+      'DependsOn', 'Controls', 'Monitors', 'ConnectsTo' // SEP/SEK style directional edges
+    ];
+
+    for (const t of candidates) {
+      const count = cy.edges(`[type = "${t}"]`).length;
+      if (count > 0) return t;
+    }
+    return null;
+  }
+
+  // Build a directed edge collection for the chosen nesting type.
+  // For PartOfSystem & LocatedIn: always treated as directed from parent->child (source->target in data).
+  // For SEP types: respect data('directional'); if not directional, we will still include it but as a soft link.
+  function buildNestingEdges(edgeType) {
+    let edges = cy.edges(`[type = "${edgeType}"]`);
+
+    // If SEP-type and many edges are marked non-directional, prefer the ones explicitly directional
+    if (['DependsOn', 'Controls', 'Monitors', 'ConnectsTo'].includes(edgeType)) {
+      const directional = edges.filter(e => !!e.data('directional'));
+      if (directional.length > 0) edges = directional;
+    }
+
+    return edges;
+  }
+
+  // Find tree roots: nodes that have outgoing edges in nesting relation but no incoming.
+  // If none found, pick top out-degree nodes as surrogates (up to K).
+  function findTreeRoots(nestingEdges, K = 5) {
+    const incoming = new Map();
+    const outgoing = new Map();
+
+    nestingEdges.forEach(e => {
+      const s = e.data('source');
+      const t = e.data('target');
+      outgoing.set(s, (outgoing.get(s) || 0) + 1);
+      incoming.set(t, (incoming.get(t) || 0) + 1);
+    });
+
+    const candidateNodes = new Set();
+    nestingEdges.connectedNodes().forEach(n => candidateNodes.add(n.id()));
+
+    const roots = [];
+    candidateNodes.forEach(id => {
+      if (!incoming.get(id) && outgoing.get(id)) roots.push(id);
+    });
+
+    if (roots.length > 0) return cy.collection(roots.map(id => cy.getElementById(id)));
+
+    // Surrogate: pick top out-degree nodes in the subgraph
+    const ranked = Array.from(candidateNodes).sort((a, b) => {
+      const oa = outgoing.get(a) || 0;
+      const ob = outgoing.get(b) || 0;
+      return ob - oa;
+    });
+    const picks = ranked.slice(0, Math.min(K, ranked.length));
+    return cy.collection(picks.map(id => cy.getElementById(id)));
+  }
+
+  // Layout the forest as a directed breadth-first tree.
+  function layoutTreeNested() {
+    const edgeType = pickNestingEdgeType();
+
+    if (!edgeType) {
+      // Fallback if nothing matches: show degree rings
+      cy.layout({
+        name: 'concentric',
+        animate: true,
+        concentric: n => n.degree(),
+        levelWidth: () => 2
+      }).run();
+      showTransientMessage('Tree (Nested): no nesting relations found — showing Degree Rings.');
+      return;
+    }
+
+    const nestingEdges = buildNestingEdges(edgeType);
+    const roots = findTreeRoots(nestingEdges);
+
+    // Optionally, dim non-nesting edges to emphasize hierarchy
+    cy.edges().removeClass('nestEdge');
+    cy.edges().removeClass('nonNestEdge');
+    nestingEdges.addClass('nestEdge');
+    cy.edges().not(nestingEdges).addClass('nonNestEdge');
+
+    // Run directed breadth-first from computed roots
+    cy.layout({
+      name: 'breadthfirst',
+      roots: roots,
+      directed: true,
+      spacingFactor: 1.35,
+      animate: true,
+      padding: 30
+    }).run();
+
+    // Inform what relation we used
+    showTransientMessage(`Tree (Nested): using "${edgeType}" as hierarchy relation.`);
+  }
+
+  // Tiny toast/helper (optional). Implement minimally with an overlay div.
+  function showTransientMessage(text, timeoutMs = 1800) {
+    let el = document.getElementById('onexus-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'onexus-toast';
+      Object.assign(el.style, {
+        position: 'absolute',
+        right: '12px',
+        bottom: '12px',
+        background: 'rgba(0,0,0,0.65)',
+        color: '#fff',
+        padding: '8px 10px',
+        borderRadius: '6px',
+        fontSize: '12px',
+        zIndex: 9999,
+        pointerEvents: 'none',
+        maxWidth: '50vw'
+      });
+      document.body.appendChild(el);
+    }
+    el.textContent = text;
+    el.style.display = 'block';
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => (el.style.display = 'none'), timeoutMs);
+  }
+
   /* Layouts */
   function applyLayout(type) {
-    let layout;
+    // Existing helpers from earlier message:
+    function pickSurrogateRoots(k = 3) {
+      const arr = cy.nodes(':visible').sort((a, b) => b.degree() - a.degree());
+      return arr.slice(0, Math.min(k, arr.length));
+    }
+    function breadthWithRoots(roots) {
+      return { name: "breadthfirst", roots, directed: false, spacingFactor: 1.4, animate: true };
+    }
+
+    let layout = null;
+
     switch (type) {
-      case "system":
-        layout = {
-          name: "breadthfirst",
-          roots: cy.nodes('[nodeType = "System"]'),
-          directed: false,
-          spacingFactor: 1.6,
-          animate: true,
-        };
+      case "system": {
+        const roots = cy.nodes('[nodeType = "System"]');
+        if (roots.length > 0) layout = breadthWithRoots(roots);
+        else {
+          const picks = pickSurrogateRoots(3);
+          layout = picks.length ? breadthWithRoots(picks) : { name: "concentric", animate: true };
+        }
         break;
-      case "responsibility":
-        layout = {
-          name: "breadthfirst",
-          roots: cy.nodes('[nodeType = "Organization"]'),
-          directed: false,
-          spacingFactor: 1.4,
-          animate: true,
-        };
+      }
+      case "responsibility": {
+        const roots = cy.nodes('[nodeType = "Organization"]');
+        layout = roots.length ? breadthWithRoots(roots) : breadthWithRoots(pickSurrogateRoots(3));
         break;
-      case "spatial":
-        layout = {
-          name: "breadthfirst",
-          roots: cy.nodes('[nodeType = "Space"]'),
-          directed: false,
-          spacingFactor: 1.5,
-          animate: true,
-        };
+      }
+      case "spatial": {
+        const roots = cy.nodes('[nodeType = "Space"]');
+        layout = roots.length ? breadthWithRoots(roots) : breadthWithRoots(pickSurrogateRoots(3));
         break;
+      }
+      case "tree_nested":
+        return layoutTreeNested();
+      case "category_lanes":
+        return layoutCategorySwimlanes();
+      case "degree_rings":
+        return layoutDegreeRings();
+      case "dependency_flow":
+        return layoutDependencyFlow();
+      case "assembly_chains":
+        return layoutAssemblyChains();
       default:
         layout = { name: "cose", animate: true };
     }
+
     cy.layout(layout).run();
   }
+  ``
 
   function applyEdgeLabelVisibility() {
     const opacity = state.showEdgeLabels ? 1 : 0;
