@@ -103,99 +103,53 @@ Enable GitHub Pages → Done.
 Each data file contains:
 
 ```json
+# ONEXUS — Browser Relationship Viewer
+
+ONEXUS is a lightweight, browser-based visualization viewer that reveals relationships between BIM elements, systems, spaces, and organizations. Originally built as a companion viewer for a Revit add-in, the project now exists as a standalone browser tool and a history of snapshots in the `versions/` folder.
+
+**Quick summary:** open `index.html` (root) or one of the example pages in `versions/` to explore the graph UI and sample data.
+
+**What's changed**
+- The codebase evolved over multiple snapshots stored in `versions/` (v0.0 → v0.6+).
+- Sample data sets moved to the `json/` folder and larger examples are available in `assets/`.
+
+**Quick Start**
+- Option A — Open the UI locally: open [index.html](index.html).
+- Option B — Run a simple server and browse:
+```
+npx http-server .
+# then open http://localhost:8080
+```
+
+**Project Structure (high level)**
+- `index.html` — main demo page
+- `src/` — app source files (`graph-core.js`, `graph-ui.js`, `onexus-style.js`)
+- `json/` — sample/large JSON data files (`onexus_sample.json`, `onexus_doors.json`, ...)
+- `assets/` — images and media used by demos
+- `versions/` — archived snapshots and historical builds
+
+**Using your own data**
+- Drag-and-drop or load any JSON matching the project's simple graph schema (see `json/` examples).
+
+Minimal expected JSON shape:
+```
 {
-  "meta": {
-    "schema": "onexus-1.1",
-    "project": "Sample Access Control System",
-    "languageDefault": "en",
-    "phases": ["Sekkei", "SeisanSekkei", "Kouji"]
-  },
-  "elements": {
-    "nodes": [...],
-    "edges": [...]
-  }
+  "meta": { "schema": "onexus-1.x", "project": "..." },
+  "elements": { "nodes": [...], "edges": [...] }
 }
 ```
 
-### Nodes
-- `id`
-- `nodeType` (System / Element / Space / Organization / Vendor)
-- `category`
-- `label` (with `en` and `jp`)
-- Optional: `level`, `revitCategory`
+Node basics: `id`, `nodeType`, `category`, `label` (multi-language). Edge basics: `id`, `source`, `target`, `type`.
 
-### Edges
-- `id`, `type`, `dimension`
-- `source`, `target`
-- `directional`
-- Optional: `phase[]`, `owner`, `risk`, `notes`
+**Development**
+- Edit UI/logic in `src/graph-core.js` and `src/graph-ui.js`.
+- Open `index.html` or use a local server while developing.
 
----
+**Versions & history**
+- Historical snapshots are preserved under `versions/`. Use these to compare UI/feature changes or to run older demos.
 
-## 🧪 Sample JSON (included)
-See full file: `onexus_sample.json`
+**Contributing**
+- PRs, issue reports, and small fixes are welcome. If you change on-disk behavior, update the README and add a short note under `versions/` or a changelog file.
 
-```json
-{
-  "id": "E-FR-001",
-  "nodeType": "Element",
-  "category": "SecurityDevice",
-  "label": { "en": "Face Recognition", "jp": "顔認証装置" }
-}
-```
-
----
-
-## 🖼️ Screenshots
-(Replace with actual images)
-```
-![System Layout](assets/system_layout.png)
-![Spatial Lens](assets/spatial.png)
-![Legend + Details](assets/details.png)
-```
-
----
-
-## 🔧 Developer Notes
-- Graph logic in `graph-core.js`
-- UI bindings in `graph-ui.js`
-- Theme engine in `onexus-style.js`
-- Navigation uses Cytoscape Navigator plugin
-- LOD driven by zoom tier thresholds
-
----
-
-## 🗺️ Roadmap
-### Phase 1 — Relationship Layer (Current)
-- Graph
-- Filters & Lenses
-- Export tools
-
-### Phase 2 — Authoring Assist
-- Manual editing of relationships
-
-### Phase 3 — Revit Integration
-- Round-trip element selection
-- Non-destructive parameter hints
-
-### Phase 4 — Additional Layers
-- Intent Layer
-- Lifecycle Layer
-- Risk Layer
-
----
-
-## 🤝 Contributing
-Pull requests welcome.
-
----
-
-## 📜 License
-MIT License.
-
----
-
-## 🙏 Acknowledgements
-Built for clarity in BIM communication.
-
----
+**License**
+- MIT
