@@ -23,6 +23,7 @@ const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn)
     window.applyTheme?.(e.target.value);
   });
   on('fileInput', 'change', e => window.loadJSON?.(e));
+  on('cobieInput', 'change', e => window.loadCOBieCSVs?.(e));
 
   // Restore preferences on startup
   window.addEventListener('DOMContentLoaded', () => {
