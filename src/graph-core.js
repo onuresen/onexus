@@ -941,6 +941,178 @@
   }
 
   /* Expose functions (for index.html) */
+  // ---------------- Right-click context menu ----------------
+  function createContextMenu() {
+    const container = document.getElementById('cy');
+    if (!container) return;
+
+    // create menu root
+    let menu = document.getElementById('cy-context-menu');
+    if (!menu) {
+      menu = document.createElement('div');
+      menu.id = 'cy-context-menu';
+      document.body.appendChild(menu);
+
+      // basic styling
+      Object.assign(menu.style, {
+        position: 'fixed',
+        display: 'none',
+        minWidth: '180px',
+        background: '#fff',
+        color: '#111',
+        border: '1px solid rgba(0,0,0,0.12)',
+        boxShadow: '0 6px 14px rgba(0,0,0,0.14)',
+        borderRadius: '6px',
+        padding: '6px 0',
+        zIndex: 10050,
+        fontSize: '13px',
+      });
+
+      // inject simple item style via a tiny <style> so CSS survives reloads
+      const style = document.createElement('style');
+      style.textContent = `
+        #cy-context-menu .cm-item{ padding:8px 12px; cursor:pointer; white-space:nowrap }
+        #cy-context-menu .cm-item:hover{ background:rgba(0,0,0,0.05) }
+        #cy-context-menu .cm-divider{ height:1px; margin:6px 0; background:rgba(0,0,0,0.06) }
+      `;
+      document.head.appendChild(style);
+    }
+
+    function hideContextMenu() {
+      menu.style.display = 'none';
+    }
+
+    function renderMenu(items, x, y) {
+      menu.innerHTML = '';
+      items.forEach((it) => {
+        if (it.type === 'divider') {
+          const d = document.createElement('div');
+          d.className = 'cm-divider';
+          menu.appendChild(d);
+          return;
+        }
+        const el = document.createElement('div');
+        el.className = 'cm-item';
+        el.textContent = it.label;
+        el.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          hideContextMenu();
+          try {
+            it.action && it.action();
+          } catch (e) {
+            console.error('Context menu action failed', e);
+          }
+        });
+        menu.appendChild(el);
+      });
+
+      // position and clamp to viewport
+      menu.style.display = 'block';
+      const rect = menu.getBoundingClientRect();
+      const ww = window.innerWidth;
+      const wh = window.innerHeight;
+      let left = x;
+      let top = y;
+      if (left + rect.width > ww) left = Math.max(8, ww - rect.width - 8);
+      if (top + rect.height > wh) top = Math.max(8, wh - rect.height - 8);
+      menu.style.left = left + 'px';
+      menu.style.top = top + 'px';
+    }
+
+    function buildItemsForNode(node) {
+      return [
+        { label: 'Focus (1-hop)', action: () => { setFocusDepth(1); state.focusedNode = node; applyDepthFocus(node); } },
+        { label: 'Focus (2-hop)', action: () => { setFocusDepth(2); state.focusedNode = node; applyDepthFocus(node); } },
+        { label: 'Center on node', action: () => { if (node && node.nonempty && node.nonempty()) cy.center(node); } },
+        { label: 'Select (host)', action: () => {
+            if (window.chrome && window.chrome.webview) {
+              window.chrome.webview.postMessage({
+                type: 'select-node',
+                id: node.id(),
+                revitInstanceIds: node.data('revitInstanceIds') || [],
+                revitInstanceUids: node.data('revitInstanceUids') || []
+              });
+            }
+          }
+        },
+        { type: 'divider' },
+        { label: 'Export node JSON', action: () => {
+            const payload = { elements: { nodes: [{ data: node.data() }], edges: [] }, meta: { exportedAt: new Date().toISOString() } };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            download(node.id() + '.json', 'application/json', blob);
+          }
+        }
+      ];
+    }
+
+    function buildItemsForBackground() {
+      return [
+        { label: 'Fit view', action: fitView },
+        { label: 'Center view', action: centerView },
+        { label: 'Reset view', action: resetView },
+        { type: 'divider' },
+        { label: state.showEdgeLabels ? 'Hide edge labels' : 'Show edge labels', action: () => setEdgeLabelVisibility(!state.showEdgeLabels) },
+        { label: state.showNodeLabels ? 'Hide node labels' : 'Show node labels', action: () => setNodeLabelVisibility(!state.showNodeLabels) },
+        { type: 'divider' },
+        { label: 'Show all edges', action: showAllEdges },
+        { label: 'Clear relationship filter', action: clearRelationshipFilter },
+        { type: 'divider' },
+        { label: 'Export PNG', action: exportPNG },
+        { label: 'Export JSON (visible)', action: exportJSON },
+        { label: 'Export CSV (edges)', action: exportCSV },
+        { label: 'Export layout', action: exportLayout },
+        { type: 'divider' },
+        { label: 'Layout: System', action: () => applyLayout('system') },
+        { label: 'Layout: Responsibility', action: () => applyLayout('responsibility') },
+        { label: 'Layout: Spatial', action: () => applyLayout('spatial') },
+        { label: 'Layout: Tree (Nested)', action: () => applyLayout('tree_nested') },
+        { label: 'Layout: Category lanes', action: () => applyLayout('category_lanes') },
+        { label: 'Layout: Degree rings', action: () => applyLayout('degree_rings') },
+      ];
+    }
+
+    // cytoscape cxttap events for right-click (works on desktop)
+    cy.on('cxttap', 'node', (evt) => {
+      const node = evt.target;
+      const ex = evt.originalEvent ? evt.originalEvent.clientX : window.event.clientX;
+      const ey = evt.originalEvent ? evt.originalEvent.clientY : window.event.clientY;
+      const items = buildItemsForNode(node);
+      renderMenu(items, ex, ey);
+    });
+
+    cy.on('cxttap', (evt) => {
+      if (evt.target === cy) {
+        const ex = evt.originalEvent ? evt.originalEvent.clientX : window.event.clientX;
+        const ey = evt.originalEvent ? evt.originalEvent.clientY : window.event.clientY;
+        const items = buildItemsForBackground();
+        renderMenu(items, ex, ey);
+      }
+    });
+
+    // Prevent native browser context menu when right-clicking inside the Cytoscape
+    // container or our custom context menu. Use a document-level handler so
+    // clicks on canvas layers or child elements are also covered.
+    document.addEventListener('contextmenu', (ev) => {
+      try {
+        const t = ev.target;
+        if (t && t.closest && (t.closest('#cy') || t.closest('#cy-context-menu'))) {
+          ev.preventDefault();
+        }
+      } catch (e) {
+        // defensive: if anything goes wrong, don't block normal behavior
+      }
+    });
+
+    // hide on outside click / esc
+    document.addEventListener('click', hideContextMenu);
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') hideContextMenu(); });
+
+    // expose hide for external callers
+    window.hideContextMenu = hideContextMenu;
+  }
+
+  // initialize menu
+  createContextMenu();
   window.setLanguage = setLanguage;
   window.applyLayout = applyLayout;
   window.loadJSON = loadJSON;
