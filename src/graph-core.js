@@ -545,7 +545,6 @@
 
     cy.layout(layout).run();
   }
-  ``
 
   function applyEdgeLabelVisibility() {
     const opacity = state.showEdgeLabels ? 1 : 0;
@@ -906,11 +905,11 @@
         alert('Invalid ONEXUS JSON:\n' + res.errors.join('\n'));
         return;
       }
-      const cy = window.cy;
-      if (!cy) { console.error('Cytoscape not ready'); return; }
-      cy.elements().remove();
-      cy.add(graph.elements?.nodes ?? []);
-      cy.add(graph.elements?.edges ?? []);
+      const cyInstance = window.cy;
+      if (!cyInstance) { console.error('Cytoscape not ready'); return; }
+      cyInstance.elements().remove();
+      cyInstance.add(graph.elements?.nodes ?? []);
+      cyInstance.add(graph.elements?.edges ?? []);
       // language / UI
       if (typeof window.setLanguage === 'function') window.setLanguage('en');
       if (typeof window.buildCategoryFilter === 'function') window.buildCategoryFilter();
@@ -923,6 +922,22 @@
       console.error('Failed to load graph object:', e);
       alert('Failed to load graph: ' + e.message);
     }
+  }
+
+  // Apply explicit node positions (used by remote host via WebView message)
+  function applyLayoutPositions(positions) {
+    if (!Array.isArray(positions) || positions.length === 0) return;
+    positions.forEach((p) => {
+      if (!p || !p.id) return;
+      const node = cy.getElementById(p.id);
+      if (node && node.nonempty && node.nonempty()) {
+        if (p.position && typeof p.position.x === 'number' && typeof p.position.y === 'number') {
+          node.position(p.position);
+        }
+      }
+    });
+    // Keep viewport sensible after applying positions
+    cy.fit(undefined, 50);
   }
 
   /* Expose functions (for index.html) */

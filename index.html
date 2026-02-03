@@ -353,7 +353,7 @@
         <option value="tree_nested">Tree (Nested)</option>
         <option value="system">System</option>
         <option value="responsibility">Responsibility</option>
-        <option value="spatial">Spatial</option>      
+        <option value="spatial">Spatial</option>
         <option value="category_lanes">Category Swimlanes</option>
         <option value="degree_rings">Degree Rings</option>
         <option value="dependency_flow">Dependency Flow</option>
@@ -466,41 +466,28 @@
       <option value="ALL">All Categories</option>
     </select>
 
-    <h3>Lens</h3>
-    <button class="flat" onclick="filterByDimension('System')">System</button>
-    <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
-    <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
-    <button class="flat" onclick="showAllEdges()">All</button>
-
-    <h3>Phase</h3>
-    <select id="phaseFilter" multiple size="4" style="width:100%"></select>
-
     <h3>Focus</h3>
     <div style="display:flex;align-items:center;gap:8px;">
       <input type="range" min="1" max="2" value="1" oninput="setFocusDepth(this.value)" style="flex:1;">
       <span id="depthLabel">1-hop</span>
     </div>
 
-
     <h3>Legend</h3>
     <div id="legend"></div>
 
-<div style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;">
-  <label>
-    <input type="checkbox" id="toggleEdgeLabels" checked />
-    Show edge labels
-  </label>
-  <label>
-    <input type="checkbox" id="toggleNodeLabels" checked />
-    Show node labels
-  </label>
-</div>
+    <div style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;">
+      <label>
+        <input type="checkbox" id="toggleEdgeLabels" checked />
+        Show edge labels
+      </label>
+      <label>
+        <input type="checkbox" id="toggleNodeLabels" checked />
+        Show node labels
+      </label>
+    </div>
 
     <h3>Metrics</h3>
     <div id="metrics">–</div>
-
-    <h3>Details</h3>
-    <div id="details">Click a node or relationship.</div>
 
     <h3>Details</h3>
     <div id="help" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
@@ -515,6 +502,15 @@
         <button class="flat" onclick="this.closest('#help').style.display='none'">Close</button>
       </div>
     </div>
+
+    <h3>Lens</h3>
+    <button class="flat" onclick="filterByDimension('System')">System</button>
+    <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
+    <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
+    <button class="flat" onclick="showAllEdges()">All</button>
+
+    <h3>Phase</h3>
+    <select id="phaseFilter" multiple size="4" style="width:100%"></select>
 
   </aside>
 
