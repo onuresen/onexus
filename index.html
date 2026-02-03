@@ -10,6 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
   <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape-navigator.js"></script>
   <script src="https://unpkg.com/cytoscape-svg@latest"></script>
+  <script src=./src/importers/cobie-importer.js></script>
 
   <style>
     :root {
@@ -371,6 +372,10 @@
       <label>Load</label>
       <input id="fileInput" type="file" accept=".json" onchange="loadJSON(event)">
     </div>
+    <div class="tool-group">
+      <label>COBie</label>
+      <input id="cobieInput" type="file" accept=".csv" multiple onchange="loadCOBieCSVs(event)">
+    </div>
 
     <!-- Right aligned compact icons -->
 
@@ -492,7 +497,6 @@
     <h3>Details</h3>
     <div id="details">Click a node or relationship.</div>
 
-    <h3>Details</h3>
     <div id="help" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
             align-items:center;justify-content:center;">
       <div style="background:#fff;padding:16px 20px;border-radius:10px;width:520px;">
