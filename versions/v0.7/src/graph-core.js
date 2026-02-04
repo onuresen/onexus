@@ -2,10 +2,46 @@
 */
 (function () {
   /* ====== Constants & UI state ====== */
-  const LABELS = {
-    en: { Controls:"Controls", Supplies:"Supplies", LocatedIn:"Located In", DesignedBy:"Designed By", BuiltBy:"Built By", ProvidedBy:"Provided By", PartOfSystem:"Part Of System" },
-    jp: { Controls:"制御", Supplies:"供給", LocatedIn:"設置場所", DesignedBy:"設計担当", BuiltBy:"施工担当", ProvidedBy:"提供元", PartOfSystem:"システム構成" },
-  };
+/* ====== Constants & UI state ====== */
+const LABELS = {
+  en: {
+    // Existing
+    Controls: "Controls",
+    Supplies: "Supplies",
+    LocatedIn: "Located In",
+    DesignedBy: "Designed By",
+    BuiltBy: "Built By",
+    ProvidedBy: "Provided By",
+    PartOfSystem: "Part Of System",
+
+    // IFC additions
+    OfType: "Of Type",
+    HasProperties: "Has Properties",
+    InZone: "In Zone",
+    ConnectsTo: "Connects To",
+    PortOf: "Port Of",
+    FillsOpeningIn: "Fills Opening In",
+  },
+  jp: {
+    // 既存
+    Controls: "制御",
+    Supplies: "供給",
+    LocatedIn: "設置場所",
+    DesignedBy: "設計担当",
+    BuiltBy: "施工担当",
+    ProvidedBy: "提供元",
+    PartOfSystem: "システム構成",
+
+    // IFC 追加
+    OfType: "型式",
+    HasProperties: "プロパティ有",
+    InZone: "ゾーン所属",
+    ConnectsTo: "接続",
+    PortOf: "ポート所属",
+    FillsOpeningIn: "開口充填",
+  },
+};
+
   const state = { language:"en", focusDepth:1, focusedNode:null, showEdgeLabels:true, showNodeLabels:true };
   const editState = { linkSource:null }; // pending “from” node for manual link
   const DIMENSION_DEFAULTS = ["System","Spatial","Responsibility","Vendor"]; // fallback dimensions for new graphs
