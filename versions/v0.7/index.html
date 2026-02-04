@@ -11,6 +11,7 @@
   <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape-navigator.js"></script>
   <script src="https://unpkg.com/cytoscape-svg@latest"></script>
   <script src=./src/importers/cobie-importer.js></script>
+  <script src=./src/importers/ifc-importer.js></script>
 
   <style>
     :root {
@@ -370,15 +371,10 @@
     </div>
     <div class="tool-group">
       <label>Load</label>
-      <input id="fileInput" type="file" accept=".json" onchange="loadJSON(event)">
-    </div>
-    <div class="tool-group">
-      <label>COBie</label>
-      <input id="cobieInput" type="file" accept=".csv" multiple onchange="loadCOBieCSVs(event)">
+      <input id="fileInput" type="file" accept=".json,.csv,.ifc" multiple>
     </div>
 
     <!-- Right aligned compact icons -->
-
     <div class="iconbar" aria-label="Actions">
       <!-- Navigation -->
       <button class="icon-btn" onclick="fitView()" title="Fit (F)" aria-label="Fit">
