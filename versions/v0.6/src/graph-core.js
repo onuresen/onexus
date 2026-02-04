@@ -76,6 +76,18 @@
 
   /* Interactions */
   cy.on("tap", "node", (evt) => {
+    const d = evt.target.data();
+    // --- notify Revit host (include both ElementId & UniqueId arrays if present) ---
+    if (window.chrome && window.chrome.webview) {
+      window.chrome.webview.postMessage({
+        type: "select-node",
+        id: d.id,
+        revitInstanceIds: d.revitInstanceIds || [],
+        revitInstanceUids: d.revitInstanceUids || []
+      });
+    }
+
+    // existing local UI logic
     state.focusedNode = evt.target;
     applyDepthFocus(state.focusedNode);
     updateDetailsForNode(state.focusedNode);
@@ -202,40 +214,335 @@
     });
   }, 60);
 
+  // -------- Helpers for generalized views --------
+
+  // 1) Category Swimlanes
+  function layoutCategorySwimlanes() {
+    // Compute category buckets
+    const cats = {};
+    cy.nodes(':visible').forEach(n => {
+      const cat = n.data('category') || n.data('revitCategory') || 'Uncategorized';
+      if (!cats[cat]) cats[cat] = [];
+      cats[cat].push(n.id());
+    });
+
+    // Compute vertical bands and positions using 'grid' to keep it simple and fast
+    const categories = Object.keys(cats);
+    const rows = categories.length;
+    const colSize = Math.ceil(Math.sqrt(cy.nodes(':visible').length));
+
+    // Assign a lane index to nodes
+    categories.forEach((cat, rowIdx) => {
+      cats[cat].forEach((id, i) => {
+        const node = cy.getElementById(id);
+        node.data('_laneRow', rowIdx);
+        node.data('_laneCol', i % colSize);
+      });
+    });
+
+    cy.layout({
+      name: 'grid',
+      rows: rows,
+      cols: colSize,
+      // Custom position function (supported by grid) using data fields we set
+      position: (node) => {
+        return {
+          row: node.data('_laneRow') ?? 0,
+          col: node.data('_laneCol') ?? 0
+        };
+      },
+      avoidOverlap: true,
+      animate: true
+    }).run();
+  }
+
+  // 2) Degree Rings (concentric by degree)
+  function layoutDegreeRings() {
+    cy.layout({
+      name: 'concentric',
+      animate: true,
+      concentric: n => n.degree(),  // hubs in the center
+      levelWidth: () => 2,
+      minNodeSpacing: 20
+    }).run();
+  }
+
+  // 3) Dependency Flow (directed breadth-first with surrogate roots)
+  function layoutDependencyFlow() {
+    // Use only edges that are effectively directional
+    const dirEdges = cy.edges(':visible').filter(e => !!e.data('directional'));
+    const touchedNodes = dirEdges.connectedNodes();
+
+    let roots = touchedNodes.filter(n => n.indegree() === 0);
+    if (roots.length === 0) {
+      // Surrogate: top out-degree nodes
+      roots = touchedNodes.sort((a, b) => b.outdegree() - a.outdegree()).slice(0, 3);
+    }
+
+    cy.layout({
+      name: 'breadthfirst',
+      roots: roots,
+      directed: true,
+      spacingFactor: 1.4,
+      animate: true
+    }).run();
+  }
+
+  // 4) Assembly Chains (build simple columns from PartOfSystem chains)
+  function layoutAssemblyChains() {
+    // Find chains using PartOfSystem edges only
+    const chainEdgeType = 'PartOfSystem';
+    const edges = cy.edges(`[type = "${chainEdgeType}"]`);
+    if (edges.length === 0) {
+      // Fallback: Degree rings if no chains exist
+      return layoutDegreeRings();
+    }
+
+    // Build adjacency and indegree
+    const adj = new Map();
+    const indeg = new Map();
+    cy.nodes(':visible').forEach(n => { adj.set(n.id(), []); indeg.set(n.id(), 0); });
+    edges.forEach(e => {
+      const s = e.data('source'), t = e.data('target');
+      adj.get(s)?.push(t);
+      indeg.set(t, (indeg.get(t) || 0) + 1);
+    });
+
+    // Roots = nodes that have outgoing PartOfSystem but no incoming (heads of assemblies)
+    const roots = [];
+    adj.forEach((list, id) => {
+      if (list.length > 0 && (indeg.get(id) || 0) === 0) roots.push(id);
+    });
+    if (roots.length === 0) roots.push(...adj.keys()); // safety
+
+    // Assign chain positions (column index per root, row by BFS depth)
+    const colIndex = new Map();
+    roots.forEach((r, i) => colIndex.set(r, i));
+    const visited = new Set();
+    const depth = new Map();
+    const queue = [...roots];
+    roots.forEach(r => depth.set(r, 0));
+
+    while (queue.length) {
+      const cur = queue.shift();
+      if (!visited.has(cur)) {
+        visited.add(cur);
+        const d = depth.get(cur) || 0;
+        const neighbors = adj.get(cur) || [];
+        neighbors.forEach(n => {
+          if (!visited.has(n)) {
+            depth.set(n, d + 1);
+            if (!colIndex.has(n)) colIndex.set(n, colIndex.get(cur));
+            queue.push(n);
+          }
+        });
+      }
+    }
+
+    // Store row/col on nodes
+    cy.nodes(':visible').forEach(n => {
+      n.data('_chainCol', colIndex.get(n.id()) ?? 0);
+      n.data('_chainRow', depth.get(n.id()) ?? 0);
+    });
+
+    // Lay out as grid columns
+    const cols = Math.max(...Array.from(colIndex.values())) + 1;
+    const rows = Math.max(...Array.from(depth.values())) + 1;
+
+    cy.layout({
+      name: 'grid',
+      rows: rows,
+      cols: cols,
+      position: (node) => {
+        return {
+          row: node.data('_chainRow') ?? 0,
+          col: node.data('_chainCol') ?? 0
+        };
+      },
+      avoidOverlap: true,
+      animate: true
+    }).run();
+  }
+
+  // ---------------- Generic Tree (Nested) helpers ----------------
+
+  // Decide which edge type to treat as "nesting" for this graph.
+  // Priority: PartOfSystem -> LocatedIn -> (SEP directional): DependsOn/Controls/Monitors/ConnectsTo
+  function pickNestingEdgeType() {
+    const candidates = [
+      'PartOfSystem',      // DOORS assemblies are full of this
+      'LocatedIn',         // sample has spatial nesting
+      'DependsOn', 'Controls', 'Monitors', 'ConnectsTo' // SEP/SEK style directional edges
+    ];
+
+    for (const t of candidates) {
+      const count = cy.edges(`[type = "${t}"]`).length;
+      if (count > 0) return t;
+    }
+    return null;
+  }
+
+  // Build a directed edge collection for the chosen nesting type.
+  // For PartOfSystem & LocatedIn: always treated as directed from parent->child (source->target in data).
+  // For SEP types: respect data('directional'); if not directional, we will still include it but as a soft link.
+  function buildNestingEdges(edgeType) {
+    let edges = cy.edges(`[type = "${edgeType}"]`);
+
+    // If SEP-type and many edges are marked non-directional, prefer the ones explicitly directional
+    if (['DependsOn', 'Controls', 'Monitors', 'ConnectsTo'].includes(edgeType)) {
+      const directional = edges.filter(e => !!e.data('directional'));
+      if (directional.length > 0) edges = directional;
+    }
+
+    return edges;
+  }
+
+  // Find tree roots: nodes that have outgoing edges in nesting relation but no incoming.
+  // If none found, pick top out-degree nodes as surrogates (up to K).
+  function findTreeRoots(nestingEdges, K = 5) {
+    const incoming = new Map();
+    const outgoing = new Map();
+
+    nestingEdges.forEach(e => {
+      const s = e.data('source');
+      const t = e.data('target');
+      outgoing.set(s, (outgoing.get(s) || 0) + 1);
+      incoming.set(t, (incoming.get(t) || 0) + 1);
+    });
+
+    const candidateNodes = new Set();
+    nestingEdges.connectedNodes().forEach(n => candidateNodes.add(n.id()));
+
+    const roots = [];
+    candidateNodes.forEach(id => {
+      if (!incoming.get(id) && outgoing.get(id)) roots.push(id);
+    });
+
+    if (roots.length > 0) return cy.collection(roots.map(id => cy.getElementById(id)));
+
+    // Surrogate: pick top out-degree nodes in the subgraph
+    const ranked = Array.from(candidateNodes).sort((a, b) => {
+      const oa = outgoing.get(a) || 0;
+      const ob = outgoing.get(b) || 0;
+      return ob - oa;
+    });
+    const picks = ranked.slice(0, Math.min(K, ranked.length));
+    return cy.collection(picks.map(id => cy.getElementById(id)));
+  }
+
+  // Layout the forest as a directed breadth-first tree.
+  function layoutTreeNested() {
+    const edgeType = pickNestingEdgeType();
+
+    if (!edgeType) {
+      // Fallback if nothing matches: show degree rings
+      cy.layout({
+        name: 'concentric',
+        animate: true,
+        concentric: n => n.degree(),
+        levelWidth: () => 2
+      }).run();
+      showTransientMessage('Tree (Nested): no nesting relations found — showing Degree Rings.');
+      return;
+    }
+
+    const nestingEdges = buildNestingEdges(edgeType);
+    const roots = findTreeRoots(nestingEdges);
+
+    // Optionally, dim non-nesting edges to emphasize hierarchy
+    cy.edges().removeClass('nestEdge');
+    cy.edges().removeClass('nonNestEdge');
+    nestingEdges.addClass('nestEdge');
+    cy.edges().not(nestingEdges).addClass('nonNestEdge');
+
+    // Run directed breadth-first from computed roots
+    cy.layout({
+      name: 'breadthfirst',
+      roots: roots,
+      directed: true,
+      spacingFactor: 1.35,
+      animate: true,
+      padding: 30
+    }).run();
+
+    // Inform what relation we used
+    showTransientMessage(`Tree (Nested): using "${edgeType}" as hierarchy relation.`);
+  }
+
+  // Tiny toast/helper (optional). Implement minimally with an overlay div.
+  function showTransientMessage(text, timeoutMs = 1800) {
+    let el = document.getElementById('onexus-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'onexus-toast';
+      Object.assign(el.style, {
+        position: 'absolute',
+        right: '12px',
+        bottom: '12px',
+        background: 'rgba(0,0,0,0.65)',
+        color: '#fff',
+        padding: '8px 10px',
+        borderRadius: '6px',
+        fontSize: '12px',
+        zIndex: 9999,
+        pointerEvents: 'none',
+        maxWidth: '50vw'
+      });
+      document.body.appendChild(el);
+    }
+    el.textContent = text;
+    el.style.display = 'block';
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => (el.style.display = 'none'), timeoutMs);
+  }
+
   /* Layouts */
   function applyLayout(type) {
-    let layout;
+    // Existing helpers from earlier message:
+    function pickSurrogateRoots(k = 3) {
+      const arr = cy.nodes(':visible').sort((a, b) => b.degree() - a.degree());
+      return arr.slice(0, Math.min(k, arr.length));
+    }
+    function breadthWithRoots(roots) {
+      return { name: "breadthfirst", roots, directed: false, spacingFactor: 1.4, animate: true };
+    }
+
+    let layout = null;
+
     switch (type) {
-      case "system":
-        layout = {
-          name: "breadthfirst",
-          roots: cy.nodes('[nodeType = "System"]'),
-          directed: false,
-          spacingFactor: 1.6,
-          animate: true,
-        };
+      case "system": {
+        const roots = cy.nodes('[nodeType = "System"]');
+        if (roots.length > 0) layout = breadthWithRoots(roots);
+        else {
+          const picks = pickSurrogateRoots(3);
+          layout = picks.length ? breadthWithRoots(picks) : { name: "concentric", animate: true };
+        }
         break;
-      case "responsibility":
-        layout = {
-          name: "breadthfirst",
-          roots: cy.nodes('[nodeType = "Organization"]'),
-          directed: false,
-          spacingFactor: 1.4,
-          animate: true,
-        };
+      }
+      case "responsibility": {
+        const roots = cy.nodes('[nodeType = "Organization"]');
+        layout = roots.length ? breadthWithRoots(roots) : breadthWithRoots(pickSurrogateRoots(3));
         break;
-      case "spatial":
-        layout = {
-          name: "breadthfirst",
-          roots: cy.nodes('[nodeType = "Space"]'),
-          directed: false,
-          spacingFactor: 1.5,
-          animate: true,
-        };
+      }
+      case "spatial": {
+        const roots = cy.nodes('[nodeType = "Space"]');
+        layout = roots.length ? breadthWithRoots(roots) : breadthWithRoots(pickSurrogateRoots(3));
         break;
+      }
+      case "tree_nested":
+        return layoutTreeNested();
+      case "category_lanes":
+        return layoutCategorySwimlanes();
+      case "degree_rings":
+        return layoutDegreeRings();
+      case "dependency_flow":
+        return layoutDependencyFlow();
+      case "assembly_chains":
+        return layoutAssemblyChains();
       default:
         layout = { name: "cose", animate: true };
     }
+
     cy.layout(layout).run();
   }
 
@@ -598,11 +905,11 @@
         alert('Invalid ONEXUS JSON:\n' + res.errors.join('\n'));
         return;
       }
-      const cy = window.cy;
-      if (!cy) { console.error('Cytoscape not ready'); return; }
-      cy.elements().remove();
-      cy.add(graph.elements?.nodes ?? []);
-      cy.add(graph.elements?.edges ?? []);
+      const cyInstance = window.cy;
+      if (!cyInstance) { console.error('Cytoscape not ready'); return; }
+      cyInstance.elements().remove();
+      cyInstance.add(graph.elements?.nodes ?? []);
+      cyInstance.add(graph.elements?.edges ?? []);
       // language / UI
       if (typeof window.setLanguage === 'function') window.setLanguage('en');
       if (typeof window.buildCategoryFilter === 'function') window.buildCategoryFilter();
@@ -617,7 +924,195 @@
     }
   }
 
+  // Apply explicit node positions (used by remote host via WebView message)
+  function applyLayoutPositions(positions) {
+    if (!Array.isArray(positions) || positions.length === 0) return;
+    positions.forEach((p) => {
+      if (!p || !p.id) return;
+      const node = cy.getElementById(p.id);
+      if (node && node.nonempty && node.nonempty()) {
+        if (p.position && typeof p.position.x === 'number' && typeof p.position.y === 'number') {
+          node.position(p.position);
+        }
+      }
+    });
+    // Keep viewport sensible after applying positions
+    cy.fit(undefined, 50);
+  }
+
   /* Expose functions (for index.html) */
+  // ---------------- Right-click context menu ----------------
+  function createContextMenu() {
+    const container = document.getElementById('cy');
+    if (!container) return;
+
+    // create menu root
+    let menu = document.getElementById('cy-context-menu');
+    if (!menu) {
+      menu = document.createElement('div');
+      menu.id = 'cy-context-menu';
+      document.body.appendChild(menu);
+
+      // basic styling
+      Object.assign(menu.style, {
+        position: 'fixed',
+        display: 'none',
+        minWidth: '180px',
+        background: '#fff',
+        color: '#111',
+        border: '1px solid rgba(0,0,0,0.12)',
+        boxShadow: '0 6px 14px rgba(0,0,0,0.14)',
+        borderRadius: '6px',
+        padding: '6px 0',
+        zIndex: 10050,
+        fontSize: '13px',
+      });
+
+      // inject simple item style via a tiny <style> so CSS survives reloads
+      const style = document.createElement('style');
+      style.textContent = `
+        #cy-context-menu .cm-item{ padding:8px 12px; cursor:pointer; white-space:nowrap }
+        #cy-context-menu .cm-item:hover{ background:rgba(0,0,0,0.05) }
+        #cy-context-menu .cm-divider{ height:1px; margin:6px 0; background:rgba(0,0,0,0.06) }
+      `;
+      document.head.appendChild(style);
+    }
+
+    function hideContextMenu() {
+      menu.style.display = 'none';
+    }
+
+    function renderMenu(items, x, y) {
+      menu.innerHTML = '';
+      items.forEach((it) => {
+        if (it.type === 'divider') {
+          const d = document.createElement('div');
+          d.className = 'cm-divider';
+          menu.appendChild(d);
+          return;
+        }
+        const el = document.createElement('div');
+        el.className = 'cm-item';
+        el.textContent = it.label;
+        el.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          hideContextMenu();
+          try {
+            it.action && it.action();
+          } catch (e) {
+            console.error('Context menu action failed', e);
+          }
+        });
+        menu.appendChild(el);
+      });
+
+      // position and clamp to viewport
+      menu.style.display = 'block';
+      const rect = menu.getBoundingClientRect();
+      const ww = window.innerWidth;
+      const wh = window.innerHeight;
+      let left = x;
+      let top = y;
+      if (left + rect.width > ww) left = Math.max(8, ww - rect.width - 8);
+      if (top + rect.height > wh) top = Math.max(8, wh - rect.height - 8);
+      menu.style.left = left + 'px';
+      menu.style.top = top + 'px';
+    }
+
+    function buildItemsForNode(node) {
+      return [
+        { label: 'Focus (1-hop)', action: () => { setFocusDepth(1); state.focusedNode = node; applyDepthFocus(node); } },
+        { label: 'Focus (2-hop)', action: () => { setFocusDepth(2); state.focusedNode = node; applyDepthFocus(node); } },
+        { label: 'Center on node', action: () => { if (node && node.nonempty && node.nonempty()) cy.center(node); } },
+        { label: 'Select (host)', action: () => {
+            if (window.chrome && window.chrome.webview) {
+              window.chrome.webview.postMessage({
+                type: 'select-node',
+                id: node.id(),
+                revitInstanceIds: node.data('revitInstanceIds') || [],
+                revitInstanceUids: node.data('revitInstanceUids') || []
+              });
+            }
+          }
+        },
+        { type: 'divider' },
+        { label: 'Export node JSON', action: () => {
+            const payload = { elements: { nodes: [{ data: node.data() }], edges: [] }, meta: { exportedAt: new Date().toISOString() } };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            download(node.id() + '.json', 'application/json', blob);
+          }
+        }
+      ];
+    }
+
+    function buildItemsForBackground() {
+      return [
+        { label: 'Fit view', action: fitView },
+        { label: 'Center view', action: centerView },
+        { label: 'Reset view', action: resetView },
+        { type: 'divider' },
+        { label: state.showEdgeLabels ? 'Hide edge labels' : 'Show edge labels', action: () => setEdgeLabelVisibility(!state.showEdgeLabels) },
+        { label: state.showNodeLabels ? 'Hide node labels' : 'Show node labels', action: () => setNodeLabelVisibility(!state.showNodeLabels) },
+        { type: 'divider' },
+        { label: 'Show all edges', action: showAllEdges },
+        { label: 'Clear relationship filter', action: clearRelationshipFilter },
+        { type: 'divider' },
+        { label: 'Export PNG', action: exportPNG },
+        { label: 'Export JSON (visible)', action: exportJSON },
+        { label: 'Export CSV (edges)', action: exportCSV },
+        { label: 'Export layout', action: exportLayout },
+        { type: 'divider' },
+        { label: 'Layout: System', action: () => applyLayout('system') },
+        { label: 'Layout: Responsibility', action: () => applyLayout('responsibility') },
+        { label: 'Layout: Spatial', action: () => applyLayout('spatial') },
+        { label: 'Layout: Tree (Nested)', action: () => applyLayout('tree_nested') },
+        { label: 'Layout: Category lanes', action: () => applyLayout('category_lanes') },
+        { label: 'Layout: Degree rings', action: () => applyLayout('degree_rings') },
+      ];
+    }
+
+    // cytoscape cxttap events for right-click (works on desktop)
+    cy.on('cxttap', 'node', (evt) => {
+      const node = evt.target;
+      const ex = evt.originalEvent ? evt.originalEvent.clientX : window.event.clientX;
+      const ey = evt.originalEvent ? evt.originalEvent.clientY : window.event.clientY;
+      const items = buildItemsForNode(node);
+      renderMenu(items, ex, ey);
+    });
+
+    cy.on('cxttap', (evt) => {
+      if (evt.target === cy) {
+        const ex = evt.originalEvent ? evt.originalEvent.clientX : window.event.clientX;
+        const ey = evt.originalEvent ? evt.originalEvent.clientY : window.event.clientY;
+        const items = buildItemsForBackground();
+        renderMenu(items, ex, ey);
+      }
+    });
+
+    // Prevent native browser context menu when right-clicking inside the Cytoscape
+    // container or our custom context menu. Use a document-level handler so
+    // clicks on canvas layers or child elements are also covered.
+    document.addEventListener('contextmenu', (ev) => {
+      try {
+        const t = ev.target;
+        if (t && t.closest && (t.closest('#cy') || t.closest('#cy-context-menu'))) {
+          ev.preventDefault();
+        }
+      } catch (e) {
+        // defensive: if anything goes wrong, don't block normal behavior
+      }
+    });
+
+    // hide on outside click / esc
+    document.addEventListener('click', hideContextMenu);
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') hideContextMenu(); });
+
+    // expose hide for external callers
+    window.hideContextMenu = hideContextMenu;
+  }
+
+  // initialize menu
+  createContextMenu();
   window.setLanguage = setLanguage;
   window.applyLayout = applyLayout;
   window.loadJSON = loadJSON;
@@ -642,12 +1137,29 @@
   // Global entry for Revit
   window.onexusLoadGraph = loadGraphObject;
 
-  // WebView2 message bridge
+  // WebView2 message bridge (existing block)
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener('message', (e) => {
       if (!e || !e.data) return;
       if (e.data.type === 'onexus-graph') {
-        loadGraphObject(e.data.graph);
+        loadGraphObject(e.data.graph);             // existing
+        return;
+      }
+      if (e.data.type === 'highlight-nodes') {     // NEW
+        const ids = new Set(e.data.ids || []);
+        const cy = window.cy;
+        cy.nodes().removeClass('highlight');
+        const hits = cy.nodes().filter(n => ids.has(n.id()));
+        hits.addClass('highlight');
+        if (hits.nonempty && hits.nonempty()) cy.fit(hits, 60);
+        return;
+      }
+      if (e.data.type === 'apply-layout') {        // NEW
+        const positions = e.data.positions || [];
+        if (Array.isArray(positions) && positions.length) {
+          window.applyLayoutPositions(positions);
+        }
+        return;
       }
     });
   }
