@@ -43,7 +43,9 @@ const THEMES = {
 let currentTheme = "light";
 
 /* Category & relationship colors */
+/* Category & relationship colors */
 const CATEGORY_COLORS = {
+  // existing
   Door: "#FF9800",
   SecurityDevice: "#E91E63",
   ControlPanel: "#9C27B0",
@@ -53,9 +55,18 @@ const CATEGORY_COLORS = {
   Subcontractor: "#455A64",
   SecurityVendor: "#6D4C41",
   BuildingSystem: "#607D8B",
+
+  // IFC-full additions
+  Zone: "#3B82F6",
+  PropertySet: "#0EA5E9",
+  Port: "#14B8A6",
+  Type: "#6366F1",
+  Wall: "#9CA3AF",
+  DoorLike: "#F59E0B",
 };
 
 const RELATIONSHIP_COLORS = {
+  // existing
   Controls: "#FF9800",
   Supplies: "#795548",
   LocatedIn: "#4CAF50",
@@ -63,6 +74,14 @@ const RELATIONSHIP_COLORS = {
   BuiltBy: "#9C27B0",
   ProvidedBy: "#E91E63",
   PartOfSystem: "#607D8B",
+
+  // IFC-full additions
+  OfType: "#6366F1",
+  HasProperties: "#0EA5E9",
+  InZone: "#3B82F6",
+  ConnectsTo: "#10B981",
+  PortOf: "#14B8A6",
+  FillsOpeningIn: "#F59E0B",
 };
 
 const nodeColor = (category) => CATEGORY_COLORS[category] ?? "#666";
@@ -130,6 +149,42 @@ function buildStyle(themeKey) {
       },
     },
 
+    // New shapes for IFC graph
+    {
+      selector: 'node[nodeType = "ComponentType"]',
+      style: {
+        shape: "round-rectangle",
+        width: 80,
+        height: 36,
+        "border-width": 1,
+        "border-color": THEMES[currentTheme]?.text ?? "#111",
+        "font-size": "10px",
+      },
+    },
+    {
+      selector: 'node[nodeType = "PropertySet"]',
+      style: {
+        shape: "rectangle",
+        width: 90,
+        height: 36,
+        "background-opacity": 0.9,
+        "border-width": 1,
+        "border-color": THEMES[currentTheme]?.text ?? "#111",
+        "font-size": "10px",
+      },
+    },
+    {
+      selector: 'node[nodeType = "Port"]',
+      style: {
+        shape: "vee",         // visually distinct for ports
+        width: 46,
+        height: 46,
+        "border-width": 1,
+        "border-color": THEMES[currentTheme]?.text ?? "#111",
+        "font-size": "9px",
+      },
+    },
+
     // Base edge
     {
       selector: "edge",
@@ -166,6 +221,13 @@ function buildStyle(themeKey) {
         opacity: 0.6,
       },
     },
+    // Optional: subtle per-relation strokes
+    { selector: 'edge[type = "OfType"]', style: { 'line-style': 'dashed', 'width': 2 } },
+    { selector: 'edge[type = "HasProperties"]', style: { 'line-style': 'dotted', 'width': 2 } },
+    { selector: 'edge[type = "InZone"]', style: { 'line-style': 'solid', 'width': 2 } },
+    { selector: 'edge[type = "ConnectsTo"]', style: { 'curve-style': 'straight', 'width': 2 } },
+    { selector: 'edge[type = "PortOf"]', style: { 'line-style': 'solid', 'width': 2 } },
+    { selector: 'edge[type = "FillsOpeningIn"]', style: { 'line-style': 'solid', 'width': 3 } },
 
     // Faded class (focus feature)
     {
