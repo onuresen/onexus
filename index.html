@@ -444,6 +444,19 @@
           <path d="M7.8 7.8L10.5 16M16.2 7.8L13.5 16" />
         </svg>
       </button>
+
+      <!-- Add this in #toolbar, e.g., after the export icons group -->
+      <button class="icon-btn" id="btnCompare" title="Compare (A/B)" aria-label="Compare (A/B)">
+        <!-- simple double-square icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <rect x="4" y="4" width="9" height="9" rx="1.5"></rect>
+          <rect x="11" y="11" width="9" height="9" rx="1.5"></rect>
+        </svg>
+      </button>
+
+      <!-- Hidden file input dedicated to A/B compare -->
+      <input id="fileCompareAB" type="file" accept=".json" multiple style="display:none">
     </div>
 
     <span class="badge">ONEXUS</span>
@@ -527,6 +540,7 @@
   <script src=./src/core/graph-core.io.js></script>
   <script src=./src/core/graph-core.context.js></script>
   <script src=./src/core/graph-core.path.js></script>
+  <script src=./src/core/graph-core.compare.js></script>
   <!-- UI bindings (unchanged) -->
   <script src=./src/graph-ui.js></script>
 
