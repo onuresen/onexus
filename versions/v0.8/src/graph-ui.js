@@ -42,9 +42,9 @@ function classifyCsvText(name, text) {
     const lang = readPref('onexus.lang', 'en');
     const theme = readPref('onexus.theme', 'light');
     const layout = readPref('onexus.layout', 'default');
-    const $lang = document.getElementById('languageSelect'); if ($lang) $lang.value = lang;
-    const $theme = document.getElementById('themeSelect'); if ($theme) $theme.value = theme;
-    const $layout = document.getElementById('layoutSelect'); if ($layout) $layout.value = layout;
+    document.getElementById('languageSelect')?.setAttribute('value', lang);
+    document.getElementById('themeSelect')?.setAttribute('value', theme);
+    document.getElementById('layoutSelect')?.setAttribute('value', layout);
     window.setLanguage?.(lang);
     window.applyTheme?.(theme);
     window.applyLayout?.(layout);
@@ -83,7 +83,6 @@ function classifyCsvText(name, text) {
   on('lensSpatial', 'click', () => window.filterByDimension?.('Spatial'));
   on('lensResp', 'click', () => window.filterByDimension?.('Responsibility'));
   on('lensAll', 'click', () => window.showAllEdges?.());
-  on('lensVendor', 'click', () => window.filterByDimension?.('Vendor'));
 
   // Show / hide edge labels
   on('toggleEdgeLabels', 'change', e =>

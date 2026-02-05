@@ -77,7 +77,6 @@
       cy.add(data.elements.nodes); cy.add(data.elements.edges);
       window.setLanguage?.(window.__onexus_state?.language ?? "en");
       window.buildCategoryFilter?.(); window.applyTheme?.(localStorage.getItem('onexus.theme') ?? 'light');
-      window.buildPhaseFilter?.();
       window.applyLayout?.("default"); cy.fit(undefined, 50);
       window.setEdgeLabelVisibility?.(true); window.setNodeLabelVisibility?.(true);
       window.buildRelationshipLegend?.(); window.updateMetrics?.();
@@ -89,25 +88,11 @@
   function loadGraphObject(graph) {
     try {
       const res = validateOnexusJson(graph);
-      if (res && res.valid === false) {
-        console.error('ONEXUS schema errors:', res.errors);
-        alert('Invalid ONEXUS JSON:\n' + res.errors.join('\n'));
-        return;
-      }
-      const c = window.cy; if (!c) {
-        console.error('Cytoscape not ready');
-        return;
-      }
-      c.elements().remove(); c.add(graph.elements?.nodes ?? []);
-      c.add(graph.elements?.edges ?? []);
-      window.setLanguage?.('en');
-      window.buildCategoryFilter?.();
-      window.buildPhaseFilter?.();
-      window.applyTheme?.(localStorage.getItem('onexus.theme') ?? 'light');
-      window.applyLayout?.('default');
-      cy.fit(undefined, 50);
-      window.setEdgeLabelVisibility?.(true);
-      window.setNodeLabelVisibility?.(true);
+      if (res && res.valid === false) { console.error('ONEXUS schema errors:', res.errors); alert('Invalid ONEXUS JSON:\n' + res.errors.join('\n')); return; }
+      const c = window.cy; if (!c) { console.error('Cytoscape not ready'); return; }
+      c.elements().remove(); c.add(graph.elements?.nodes ?? []); c.add(graph.elements?.edges ?? []);
+      window.setLanguage?.('en'); window.buildCategoryFilter?.(); window.applyTheme?.(localStorage.getItem('onexus.theme') ?? 'light'); window.applyLayout?.('default');
+      cy.fit(undefined, 50); window.setEdgeLabelVisibility?.(true); window.setNodeLabelVisibility?.(true);
     } catch (e) { console.error('Failed to load graph object:', e); alert('Failed to load graph: ' + e.message); }
   }
   function applyLayoutPositions(positions) {

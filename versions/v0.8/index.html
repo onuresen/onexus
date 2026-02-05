@@ -469,7 +469,7 @@
 
     <h3>Focus</h3>
     <div style="display:flex;align-items:center;gap:8px;">
-      <input type="range" min="1" max="3" value="1" oninput="setFocusDepth(this.value)" style="flex:1;">
+      <input type="range" min="1" max="2" value="1" oninput="setFocusDepth(this.value)" style="flex:1;">
       <span id="depthLabel">1-hop</span>
     </div>
 
@@ -507,11 +507,10 @@
     </div>
 
     <h3>Lens</h3>
-    <button class="flat" onclick="showAllEdges()">All</button>
     <button class="flat" onclick="filterByDimension('System')">System</button>
     <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
     <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
-    <button class="flat" id="lensVendor" onclick="filterByDimension('Vendor')">Vendor</button>
+    <button class="flat" onclick="showAllEdges()">All</button>
 
     <h3>Phase</h3>
     <select id="phaseFilter" multiple size="4" style="width:100%"></select>
@@ -521,13 +520,13 @@
   <!-- App scripts -->
   <script src=./src/onexus-style.js></script>
   <!-- NEW: split core -->
-  <script src=./src/core/graph-core.state.js></script>
-  <script src=./src/core/graph-core.layouts.js></script>
-  <script src=./src/core/graph-core.filters.js></script>
-  <script src=./src/core/graph-core.io.js></script>
-  <script src=./src/core/graph-core.context.js></script>
+    <script src=./src/core/graph-core.state.js></script>
+    <script src=./src/core/graph-core.layouts.js></script>
+    <script src=./src/core/graph-core.filters.js></script>
+    <script src=./src/core/graph-core.io.js></script>
+    <script src=./src/core/graph-core.context.js></script>
   <!-- UI bindings (unchanged) -->
-  <script src=./src/graph-ui.js></script>
+    <script src=./src/graph-ui.js></script>
 
   <!-- Resize safety -->
   <script>
