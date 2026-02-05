@@ -53,13 +53,14 @@
     const existingEdge = opts.edge ?? null;
     const srcId = sourceNode.id(), tgtId = targetNode.id();
     const typeOpts = [...new Set(cy.edges().map(e => e.data('type')))].filter(Boolean);
-    const dimOpts  = [...new Set(cy.edges().map(e => e.data('dimension')))].filter(Boolean);
+    const dimOpts = [...new Set(cy.edges().map(e => e.data('dimension')))].filter(Boolean);
     const typeOptions = typeOpts.length ? typeOpts : ["Controls", "Supplies", "LocatedIn", "DesignedBy", "BuiltBy", "ProvidedBy", "PartOfSystem"];
-    const dimOptions  = dimOpts.length  ? dimOpts  : DIMENSION_DEFAULTS;
-    const defaultDim  = (sourceNode.data('nodeType') === 'Space' || targetNode.data('nodeType') === 'Space') ? 'Spatial' : (dimOpts[0] ?? 'System');
+    const dimOptions = dimOpts.length ? dimOpts : DIMENSION_DEFAULTS;
+    const defaultDim = (sourceNode.data('nodeType') === 'Space' || targetNode.data('nodeType') === 'Space') ? 'Spatial' : (dimOpts[0] ?? 'System');
 
     let overlay = document.getElementById('onexus-edge-wizard');
-    if (!overlay) { overlay = document.createElement('div'); overlay.id = 'onexus-edge-wizard';
+    if (!overlay) {
+      overlay = document.createElement('div'); overlay.id = 'onexus-edge-wizard';
       Object.assign(overlay.style, { position: 'fixed', inset: '0', background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10060 });
       document.body.appendChild(overlay);
     }
@@ -152,6 +153,7 @@
       let left = x, top = y; if (left + rect.width > ww) left = Math.max(8, ww - rect.width - 8); if (top + rect.height > wh) top = Math.max(8, wh - rect.height - 8);
       menu.style.left = left + 'px'; menu.style.top = top + 'px';
     }
+
     function itemsForNode(node) {
       const base = [
         { label: 'Focus (1-hop)', action: () => { window.setFocusDepth?.(1); state.focusedNode = node; window.applyDepthFocus?.(node); } },
@@ -173,6 +175,8 @@
           }
         }
       ];
+
+      // existing link (manual relation) items
       const linkItems = [{ type: 'divider' }];
       if (!editState.linkSource) linkItems.push({ label: 'Start relation from here…', action: () => beginManualLink(node) });
       else if (editState.linkSource.id() === node.id()) linkItems.push({ label: 'Cancel pending link', action: () => cancelManualLink() });
@@ -180,8 +184,38 @@
         { label: 'Connect relation to here…', action: () => openEdgeWizard(editState.linkSource, node, { mode: 'create' }) },
         { label: 'Cancel pending link', action: () => cancelManualLink() }
       );
-      return base.concat(linkItems);
+
+      // NEW: pathfinder items
+      const pathItems = [{ type: 'divider' }];
+      // Start/Cancel source
+      if (!window.onexusPath?.beginFrom) {
+        // path module missing; no items
+      } else {
+        const src = window.__onexus_path_src; // not used; module tracks internally
+        if (!window.onexusPath._dummy) { /* placeholder; nothing */ }
+        if (!window.onexusPath._noSource && !window.onexusPath._hasSource) { /* we cannot introspect; show generic menu */ }
+
+        // Always offer Up/Downstream
+        pathItems.push(
+          { label: 'Upstream (N-hop)', action: () => window.onexusPath?.upstreamFrom(node) },
+          { label: 'Downstream (N-hop)', action: () => window.onexusPath?.downstreamFrom(node) }
+        );
+
+        // Offer path start/complete
+        if (!document.getElementById('onexus-path-chip') || document.getElementById('onexus-path-chip').style.display === 'none') {
+          pathItems.push({ label: 'Start path from here…', action: () => window.onexusPath?.beginFrom(node) });
+        } else {
+          pathItems.push(
+            { label: 'Shortest path: source → here', action: () => window.onexusPath?.shortestTo(node) },
+            { label: 'Cancel path selection', action: () => window.onexusPath?.cancel() }
+          );
+        }
+      }
+
+      return base.concat(linkItems).concat(pathItems);
     }
+
+
     function itemsForEdge(edge) {
       return [
         { label: 'Edit relation…', action: () => openEdgeWizard(edge.source(), edge.target(), { mode: 'edit', edge }) },
@@ -208,6 +242,7 @@
           { label: 'Show all edges', action: window.showAllEdges },
           { label: 'Clear relationship filter', action: window.clearRelationshipFilter },
           { type: 'divider' },
+          { label: 'Clear path highlight', action: () => window.onexusPath?.clearHighlight() },
         ], ex, ey);
       }
     });
