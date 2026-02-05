@@ -400,6 +400,24 @@
         </svg>
       </button>
 
+      <!-- NEW: Undo / Redo -->
+      <button class="icon-btn" id="btnUndo" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">
+        <!-- curved arrow left -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 5l-5 5 5 5" />
+          <path d="M20 19a8 8 0 0 0 0-14H9" />
+        </svg>
+      </button>
+      <button class="icon-btn" id="btnRedo" title="Redo (Shift+Ctrl/Cmd+Z or Ctrl/Cmd+Y)" aria-label="Redo">
+        <!-- curved arrow right -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 5l5 5-5 5" />
+          <path d="M4 19a8 8 0 0 1 0-14h11" />
+        </svg>
+      </button>
+
       <span class="divider" aria-hidden="true"></span>
 
       <!-- Export -->
@@ -512,7 +530,8 @@
         <h3 style="margin-top:0;">Shortcuts</h3>
         <pre style="font-size:12px;white-space:pre-wrap">
         F: Fit   C: Center   R: Reset
-        P: PNG   V: SVG      J: JSON   S: CSV   L: Layout JSON
+        Undo: Ctrl/Cmd+Z
+        Redo: Shift+Ctrl/Cmd+Z or Ctrl/Cmd+Y
         ?: Toggle this help
         </pre>
         <button class="flat" onclick="this.closest('#help').style.display='none'">Close</button>
@@ -533,12 +552,13 @@
 
   <!-- App scripts -->
   <script src=./src/helpers/onexus-style.js></script>
-  <!-- NEW: split core -->
+  <!-- Core -->
   <script src=./src/core/graph-core.state.js></script>
   <script src=./src/core/graph-core.layouts.js></script>
   <script src=./src/core/graph-core.filters.js></script>
   <script src=./src/core/graph-core.io.host.js></script>
   <script src=./src/core/graph-core.io.export.js></script>
+  <script src=./src/core/graph-core.undo.js></script>
   <script src=./src/core/graph-core.context.link.js></script>
   <script src=./src/core/graph-core.context.menu.js></script>
   <script src=./src/core/graph-core.path.js></script>
@@ -547,7 +567,6 @@
   <script src=./src/ui/graph-ui.loader.js></script>
   <script src=./src/ui/graph-ui.bindings.js></script>
 
-  <!-- Resize safety -->
   <script>
     window.addEventListener("resize", () => {
       if (window.cy && typeof window.cy.resize === "function") {
@@ -555,20 +574,35 @@
       }
     });
 
-    // Keyboard shortcuts (F, C, R, P, V, J, S, L)
+    // Keyboard shortcuts (F, C, R, P, V, J, S, L + Undo/Redo)
     document.addEventListener("keydown", (e) => {
-      const tag = (e.target || {}).tagName;
+      const tag = (e.target ?? {}).tagName;
       if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
 
-      switch ((e.key || "").toLowerCase()) {
+      const key = (e.key ?? "").toLowerCase();
+
+      // View/Export shortcuts
+      switch (key) {
         case "f": window.fitView && fitView(); break;
         case "c": window.centerView && centerView(); break;
         case "r": window.resetView && resetView(); break;
-        case "p": window.exportPNG && exportPNG(); break;
-        case "v": window.exportSVG && exportSVG(); break;
-        case "j": window.exportJSON && exportJSON(); break;
-        case "s": window.exportCSV && exportCSV(); break;
-        case "l": window.exportLayout && exportLayout(); break;
+      }
+
+      // Undo / Redo
+      const isMac = navigator.platform?.toUpperCase().includes('MAC');
+      const mod = isMac ? e.metaKey : e.ctrlKey;
+
+      // Undo: Cmd/Ctrl+Z
+      if (mod && !e.shiftKey && key === 'z') {
+        e.preventDefault();
+        window.ONEXUS_UNDO?.undo?.();
+        return;
+      }
+      // Redo: Shift+Cmd/Ctrl+Z  OR  Cmd/Ctrl+Y
+      if ((mod && e.shiftKey && key === 'z') || (mod && key === 'y')) {
+        e.preventDefault();
+        window.ONEXUS_UNDO?.redo?.();
+        return;
       }
     });
   </script>
