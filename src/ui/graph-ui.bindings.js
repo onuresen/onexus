@@ -45,6 +45,17 @@ function classifyCsvText(name, text) {
     window.setLanguage?.(lang);
     window.applyTheme?.(theme);
     window.applyLayout?.(layout);
+    // restore size scale
+    const savedScale = parseFloat(readPref('onexus.scale', '1'));
+    const $scale = document.getElementById('sizeScale');
+    if ($scale && !Number.isNaN(savedScale)) {
+      $scale.value = String(savedScale);
+      updateScaleLabel(savedScale);
+      window.applyScale?.(savedScale);
+    } else {
+      updateScaleLabel(1);
+      window.applyScale?.(1);
+    }
   });
 
   // Icon buttons: navigation
@@ -88,6 +99,17 @@ function classifyCsvText(name, text) {
   on('toggleEdgeLabels', 'change', e => window.setEdgeLabelVisibility?.(e.target.checked));
   on('toggleNodeLabels', 'change', e => window.setNodeLabelVisibility?.(e.target.checked));
   on('focusRange', 'input', e => window.setFocusDepth?.(e.target.value));
+  // Size scale (visual scale; no relayout)
+  const updateScaleLabel = (v) => {
+    const el = document.getElementById('sizeScaleLabel');
+    if (el) el.textContent = `${Number(v).toFixed(2)}×`;
+  };
+  on('sizeScale', 'input', (e) => {
+    const v = parseFloat(e.target.value || '1');
+    writePref('onexus.scale', String(v));
+    updateScaleLabel(v);
+    window.applyScale?.(v);
+  });
 
   // Compare (A/B)
   on('btnCompare', 'click', () => {
