@@ -1,53 +1,14 @@
-/* ONEXUS – IO (load/validate), Export, Host Integration */
+/* ONEXUS – IO Host & Validation (load/validate JSON, host bridge, apply positions) */
 (function () {
   const cy = window.cy;
-  const LABELS = window.__onexus_labels;
 
-  // ---- download helper
-  function download(filename, mime, dataUrlOrBlob) {
-    const a = document.createElement("a");
-    a.href = typeof dataUrlOrBlob === "string" ? dataUrlOrBlob : URL.createObjectURL(dataUrlOrBlob);
-    a.download = filename; a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  }
-
-  // ---- exports
-  function exportPNG() {
-    const png = cy.png({ full: true, scale: 2, bg: THEMES[currentTheme].canvas });
-    download("onexus-graph.png", "image/png", png);
-  }
-  function exportSVG() {
-    if (typeof cy.svg === "function") {
-      const svg = cy.svg({ full: true });
-      download("onexus-graph.svg", "image/svg+xml", new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
-    } else { alert("SVG export requires cytoscape-svg plugin."); }
-  }
-  function exportJSON() {
-    const nodes = cy.nodes(":visible").map(n => ({ data: n.data() }));
-    const edges = cy.edges(":visible").map(e => ({ data: e.data() }));
-    const blob = new Blob([JSON.stringify({ elements: { nodes, edges }, meta: { exportedAt: new Date().toISOString() } }, null, 2)], { type: "application/json" });
-    download("onexus-graph.json", "application/json", blob);
-  }
-  function exportCSV() {
-    const rows = [["id", "type", "dimension", "directional", "source", "target", "phase", "owner", "risk", "confidence", "notes"]];
-    cy.edges(":visible").forEach(e => {
-      const d = e.data();
-      rows.push([d.id, d.type, d.dimension, d.directional ? "1" : "0", d.source, d.target, (d.phase ?? []).join("\n"), d.owner ?? "", d.risk ?? "", d.confidence ?? "", (d.notes ?? "").replace(/\n/g, " ")]);
-    });
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
-    download("onexus-edges.csv", "text/csv", new Blob([csv], { type: "text/csv" }));
-  }
-  function exportLayout() {
-    const pos = cy.nodes().map(n => ({ id: n.id(), position: n.position() }));
-    download("onexus-layout.json", "application/json", new Blob([JSON.stringify({ positions: pos }, null, 2)], { type: "application/json" }));
-  }
-
-  // ---- load JSON & validation
+  // --- ONEXUS JSON validator (unchanged rules)
   function validateOnexusJson(data) {
     const errors = [];
     if (!data || !data.elements) { errors.push("Missing `elements`."); return { valid: false, errors }; }
     if (!Array.isArray(data.elements.nodes)) errors.push("`elements.nodes` must be an array.");
     if (!Array.isArray(data.elements.edges)) errors.push("`elements.edges` must be an array.");
+
     (data.elements.nodes ?? []).forEach((n, i) => {
       const d = n?.data ?? {};
       if (!d.id) errors.push(`nodes[${i}].data.id is required`);
@@ -55,6 +16,7 @@
       if (!d.category) errors.push(`nodes[${i}].data.category is required`);
       if (typeof d.label !== "object") errors.push(`nodes[${i}].data.label must be an object`);
     });
+
     (data.elements.edges ?? []).forEach((e, i) => {
       const d = e?.data ?? {};
       if (!d.id) errors.push(`edges[${i}].data.id is required`);
@@ -64,28 +26,42 @@
       if (!d.target) errors.push(`edges[${i}].data.target is required`);
       if (typeof d.directional !== "boolean") errors.push(`edges[${i}].data.directional must be boolean`);
     });
+
     return { valid: errors.length === 0, errors };
   }
 
+  // --- File input: load a single ONEXUS JSON file
   function loadJSON(event) {
     const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      let data; try { data = JSON.parse(e.target.result); } catch (err) { alert("Invalid JSON: " + err.message); return; }
-      const { valid, errors } = validateOnexusJson(data); if (!valid) { alert("Schema errors:\n" + errors.join("\n")); return; }
+      let data;
+      try { data = JSON.parse(e.target.result); } catch (err) { alert("Invalid JSON: " + err.message); return; }
+
+      const { valid, errors } = validateOnexusJson(data);
+      if (!valid) { alert("Schema errors:\n" + errors.join("\n")); return; }
+
       cy.elements().remove();
-      cy.add(data.elements.nodes); cy.add(data.elements.edges);
+      cy.add(data.elements.nodes);
+      cy.add(data.elements.edges);
+
       window.setLanguage?.(window.__onexus_state?.language ?? "en");
-      window.buildCategoryFilter?.(); window.applyTheme?.(localStorage.getItem('onexus.theme') ?? 'light');
+      window.buildCategoryFilter?.();
+      window.applyTheme?.(localStorage.getItem('onexus.theme') ?? 'light');
       window.buildPhaseFilter?.();
-      window.applyLayout?.("default"); cy.fit(undefined, 50);
-      window.setEdgeLabelVisibility?.(true); window.setNodeLabelVisibility?.(true);
-      window.buildRelationshipLegend?.(); window.updateMetrics?.();
+
+      window.applyLayout?.("default");
+      cy.fit(undefined, 50);
+
+      window.setEdgeLabelVisibility?.(true);
+      window.setNodeLabelVisibility?.(true);
+      window.buildRelationshipLegend?.();
+      window.updateMetrics?.();
     };
     reader.readAsText(file);
   }
 
-  // ---- host integration
+  // --- Host integration: load graph object (used by unified loader & compare)
   function loadGraphObject(graph) {
     try {
       const res = validateOnexusJson(graph);
@@ -94,12 +70,13 @@
         alert('Invalid ONEXUS JSON:\n' + res.errors.join('\n'));
         return;
       }
-      const c = window.cy; if (!c) {
-        console.error('Cytoscape not ready');
-        return;
-      }
-      c.elements().remove(); c.add(graph.elements?.nodes ?? []);
+      const c = window.cy;
+      if (!c) { console.error('Cytoscape not ready'); return; }
+
+      c.elements().remove();
+      c.add(graph.elements?.nodes ?? []);
       c.add(graph.elements?.edges ?? []);
+
       window.setLanguage?.('en');
       window.buildCategoryFilter?.();
       window.buildPhaseFilter?.();
@@ -108,8 +85,13 @@
       cy.fit(undefined, 50);
       window.setEdgeLabelVisibility?.(true);
       window.setNodeLabelVisibility?.(true);
-    } catch (e) { console.error('Failed to load graph object:', e); alert('Failed to load graph: ' + e.message); }
+    } catch (e) {
+      console.error('Failed to load graph object:', e);
+      alert('Failed to load graph: ' + e.message);
+    }
   }
+
+  // --- Apply absolute positions from exported layout
   function applyLayoutPositions(positions) {
     if (!Array.isArray(positions) || !positions.length) return;
     positions.forEach(p => {
@@ -120,6 +102,8 @@
     });
     cy.fit(undefined, 50);
   }
+
+  // --- WebView2 bridge (optional)
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener('message', (e) => {
       if (!e || !e.data) return;
@@ -141,11 +125,7 @@
 
   // expose
   window.loadJSON = loadJSON;
-  window.exportPNG = exportPNG;
-  window.exportSVG = exportSVG;
-  window.exportJSON = exportJSON;
-  window.exportCSV = exportCSV;
-  window.exportLayout = exportLayout;
   window.onexusLoadGraph = loadGraphObject;
   window.applyLayoutPositions = applyLayoutPositions;
+  window.validateOnexusJson = validateOnexusJson;
 })();

@@ -532,17 +532,20 @@
   </aside>
 
   <!-- App scripts -->
-  <script src=./src/onexus-style.js></script>
+  <script src=./src/helpers/onexus-style.js></script>
   <!-- NEW: split core -->
   <script src=./src/core/graph-core.state.js></script>
   <script src=./src/core/graph-core.layouts.js></script>
   <script src=./src/core/graph-core.filters.js></script>
-  <script src=./src/core/graph-core.io.js></script>
-  <script src=./src/core/graph-core.context.js></script>
+  <script src=./src/core/graph-core.io.host.js></script>
+  <script src=./src/core/graph-core.io.export.js></script>
+  <script src=./src/core/graph-core.context.link.js></script>
+  <script src=./src/core/graph-core.context.menu.js></script>
   <script src=./src/core/graph-core.path.js></script>
   <script src=./src/core/graph-core.compare.js></script>
-  <!-- UI bindings (unchanged) -->
-  <script src=./src/graph-ui.js></script>
+  <!-- UI bindings -->
+  <script src=./src/ui/graph-ui.loader.js></script>
+  <script src=./src/ui/graph-ui.bindings.js></script>
 
   <!-- Resize safety -->
   <script>
