@@ -1,5 +1,4 @@
-/* ONEXUS – Core State, Boot, i18n, Focus, Details, Nav */
-
+/* ONEXUS – Core State, Boot, i18n, Focus (N-hop), Details, Nav, LOD */
 (function () {
   // ---- constants & state
   const LABELS = {
@@ -36,15 +35,14 @@
   };
   const DIMENSION_DEFAULTS = ["System", "Spatial", "Responsibility", "Vendor"];
   const debounce = (fn, ms = 120) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
-
-  const state = { language: "en", focusDepth: 1, focusedNode: null, showEdgeLabels: true, showNodeLabels: true };
+  const state = { language: "en", focusDepth: 1, focusedNode: null, showEdgeLabels: true, showNodeLabels: true, lodLevel: "high" };
   const editState = { linkSource: null };
 
   // ---- cytoscape boot
   const cy = cytoscape({
     container: document.getElementById("cy"),
     elements: [],
-    style: NEXUS_STYLE,    // from onexus-style.js
+    style: NEXUS_STYLE, // from onexus-style.js
     minZoom: 0.2, maxZoom: 3, wheelSensitivity: 0.2,
   });
   window.cy = cy;
@@ -53,9 +51,7 @@
   function initNavigator() {
     const host = document.querySelector("#minimap");
     if (!host || typeof cy.navigator !== "function") return;
-    try {
-      cy.navigator({ container: "#minimap", viewLiveFramerate: 0, thumbnailEventFramerate: 30, thumbnailLiveFramerate: false, dblClickDelay: 200 });
-    } catch { /* noop */ }
+    try { cy.navigator({ container: "#minimap", viewLiveFramerate: 0, thumbnailEventFramerate: 30, thumbnailLiveFramerate: false, dblClickDelay: 200 }); } catch { /* noop */ }
   }
   initNavigator();
 
@@ -101,7 +97,7 @@
     });
     cy.edges().forEach(e => {
       const t = e.data("type");
-      e.data("displayType", LABELS[lang][t] ?? t);
+      e.data("displayType", LABELS[lang]?.[t] ?? t);
     });
     window.buildRelationshipLegend?.();
   }
@@ -112,29 +108,33 @@
   function applyNodeLabelVisibility() { const o = state.showNodeLabels ? 1 : 0; cy.nodes().forEach(n => n.style("text-opacity", o)); }
   function setNodeLabelVisibility(show) { state.showNodeLabels = !!show; applyNodeLabelVisibility(); }
 
-  // ---- focus
+  // ---- focus (N-hop)
   function setFocusDepth(depth) {
     state.focusDepth = parseInt(depth, 10) ?? 1;
     const lab = document.getElementById("depthLabel"); if (lab) lab.textContent = `${state.focusDepth}-hop`;
     if (state.focusedNode) applyDepthFocus(state.focusedNode);
   }
+
   function applyDepthFocus(node) {
+    const maxHop = Math.max(1, state.focusDepth | 0);
     cy.elements().addClass("faded");
-    let neigh = node.closedNeighborhood().filter(":visible");
-    if (state.focusDepth >= 2) {
-      const one = node.neighborhood().filter(":visible");
-      const two = one.neighborhood().filter(":visible");
-      neigh = neigh.union(two);
+    let frontier = node.collection();
+    let seen = frontier;
+    for (let hop = 1; hop <= maxHop; hop++) {
+      const neigh = frontier.closedNeighborhood().filter(":visible");
+      seen = seen.union(neigh);
+      frontier = neigh.nodes();
     }
-    neigh.removeClass("faded");
+    seen.removeClass("faded");
   }
+
   function clearFocus() { state.focusedNode = null; cy.elements().removeClass("faded"); }
 
   // ---- details
   function setDetailsMessage(html) { const el = document.getElementById("details"); if (el) el.innerHTML = html; }
   function updateDetailsForNode(node) {
     const d = node.data();
-    setDetailsMessage(`<b>${d.displayLabel}</b><br>Type: ${d.nodeType ?? "-"}<br>Category: ${d.category ?? "-"}<br>Level: ${d.level ?? "-"}`);
+    setDetailsMessage(`<b>${d.displayLabel}</b><br>Type: ${d.nodeType ?? "-"}<br>Category: ${d.category ?? d.revitCategory ?? "-"}<br>Level: ${d.level ?? "-"}`);
   }
   function updateDetailsForEdge(edge) {
     const d = edge.data();
@@ -145,6 +145,25 @@
   const fitView = () => cy.fit(undefined, 50);
   const centerView = () => cy.center();
   function resetView() { window.applyLayout?.("default"); cy.fit(undefined, 50); clearFocus(); }
+
+  // ---- LOD (apply classes based on zoom) – matches styles in onexus-style.js
+  function applyLOD() {
+    const z = cy.zoom();
+    let level = "high";
+    if (z < 0.6) level = "low";
+    else if (z < 1.4) level = "mid";
+    if (level === state.lodLevel) return;
+    state.lodLevel = level;
+
+    cy.nodes().removeClass("lod-low lod-mid lod-high");
+    cy.edges().removeClass("lod-low lod-mid lod-high");
+    const clazz = `lod-${level}`;
+    cy.nodes().addClass(clazz);
+    cy.edges().addClass(clazz);
+  }
+  cy.on("zoom", debounce(applyLOD, 50));
+  // initialize once
+  applyLOD();
 
   // ---- expose
   window.setLanguage = setLanguage;
