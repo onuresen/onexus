@@ -97,6 +97,25 @@ function classifyCsvText(name, text) {
   // Focus depth slider
   on('focusRange', 'input', e => window.setFocusDepth?.(e.target.value));
 
+  // Compare (A/B) button opens a dedicated file picker
+  on('btnCompare', 'click', () => {
+    const inp = document.getElementById('fileCompareAB');
+    if (inp) {
+      inp.value = ''; // reset selection
+      inp.click();
+    }
+  });
+
+  // Handle two-file selection for compare
+  on('fileCompareAB', 'change', (e) => {
+    const files = Array.from(e?.target?.files ?? []);
+    if (files.length !== 2) {
+      alert('Please select exactly two JSON files for A/B compare.');
+      return;
+    }
+    window.ONEXUS_COMPARE?.compareFromFilePair(files[0], files[1]);
+  });
+
   // Keyboard shortcuts (? for help)
   document.addEventListener('keydown', e => {
     const tag = e.target?.tagName;
@@ -125,75 +144,190 @@ function classifyCsvText(name, text) {
   wrap.addEventListener('drop', e => {
     e.preventDefault();
     setHint(false);
-    const file = e.dataTransfer.files?.[0];
-    if (!file) return;
-    const lower = file.name.toLowerCase();
-    if (lower.endsWith('.json')) {
-      window.loadJSON?.({ target: { files: [file] } });
-    } else if (lower.endsWith('.csv')) {
-      window.handleUnifiedLoad?.({ target: { files: [file] } });
-    } else if (lower.endsWith('.ifc')) {
-      window.ONEXUS_IFC?.loadIFC({ target: { files: [file] } });
-    } else {
-      alert('Please drop JSON, CSV, or IFC here');
-    }
+
+    const files = Array.from(e.dataTransfer?.files ?? []);
+    if (!files.length) return;
+
+    // Route the entire file list through the unified loader
+    // (handles 1 JSON, 2+ JSON merge, CSV/COBie, IFC)
+    window.handleUnifiedLoad?.({ target: { files } });
   });
 
   // Unified loader for .json and .csv (COBie or ONEXUS edges CSV)
   (function () {
-    async function handleUnifiedLoad(event) {
-      const files = Array.from(event?.target?.files ?? []);
-      if (!files.length) return;
+    // Unified loader for .json and .csv (COBie or ONEXUS edges CSV)
+    (function () {
+      // Unified loader for .json and .csv (COBie or ONEXUS edges CSV)
+      (function () {
+        async function handleUnifiedLoad(event) {
+          const files = Array.from(event?.target?.files ?? []);
+          if (!files.length) return;
 
-      // Split by extension first
-      const jsonFiles = files.filter(f => f.name.toLowerCase().endsWith('.json'));
-      const csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv'));
-      const ifcFiles = files.filter(f => f.name.toLowerCase().endsWith('.ifc'));
+          // Split by extension first
+          const jsonFiles = files.filter(f => f.name.toLowerCase().endsWith('.json'));
+          const csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv'));
+          const ifcFiles = files.filter(f => f.name.toLowerCase().endsWith('.ifc'));
 
-      // JSON: pass-through
-      if (jsonFiles.length) {
-        // load first JSON (or loop if you prefer)
-        const evt = { target: { files: [jsonFiles[0]] } };
-        window.loadJSON?.(evt); // existing core function
-      }
+          // --- JSON: 1 => normal, >=2 => merge then load
+          if (jsonFiles.length === 1) {
+            const evt = { target: { files: [jsonFiles[0]] } };
+            window.loadJSON?.(evt); // core loader replaces the graph
+          } else if (jsonFiles.length >= 2) {
+            try {
+              const merged = await mergeJsonFiles(jsonFiles);
+              // Use public load entry (validates, rebuilds filters/metrics/layout)
+              window.onexusLoadGraph?.(merged);
+            } catch (err) {
+              alert('Failed to merge JSON files: ' + (err?.message || err));
+            }
+          }
 
-      if (ifcFiles.length) {
-        // pass the whole event; importer grabs the first IFC
-        return window.ONEXUS_IFC?.loadIFC(event);
-      }
+          // IFC: pass entire selection to importer (unchanged)
+          if (ifcFiles.length) {
+            return window.ONEXUS_IFC?.loadIFC(event);
+          }
 
-      if (!csvFiles.length) return;
+          // CSV: decide COBie vs ONEXUS Edges (unchanged)
+          if (!csvFiles.length) return;
+          const first = csvFiles[0];
+          const text = await first.text().catch(() => '');
+          const kind = classifyCsvText(first.name, text);
 
-      // Read first CSV to decide path; if multiple, we’ll route all accordingly
-      const first = csvFiles[0];
-      const text = await first.text().catch(() => '');
-      const kind = classifyCsvText(first.name, text);
-
-      // If clearly ONEXUS edges CSV:
-      if (kind === 'onexus-edges') {
-        injectOnexusEdgesCsv(text);
-        return;
-      }
-      // If clearly COBie or filename hints indicate COBie:
-      if (kind === 'cobie') {
-        // Reuse your existing multi-CSV COBie loader
-        const evt = { target: { files: csvFiles } };
-        window.loadCOBieCSVs?.(evt);
-        return;
-      }
-
-      // Ambiguous: prompt user to choose
-      openCsvChoiceDialog()
-        .then(choice => {
-          if (choice === 'cobie') {
+          if (kind === 'onexus-edges') {
+            injectOnexusEdgesCsv(text);
+            return;
+          }
+          if (kind === 'cobie') {
             const evt = { target: { files: csvFiles } };
             window.loadCOBieCSVs?.(evt);
-          } else if (choice === 'onexus-edges') {
-            injectOnexusEdgesCsv(text);
+            return;
           }
-        })
-        .catch(() => {/* cancelled */ });
-    }
+
+          // Ambiguous: prompt user
+          openCsvChoiceDialog()
+            .then(choice => {
+              if (choice === 'cobie') {
+                const evt = { target: { files: csvFiles } };
+                window.loadCOBieCSVs?.(evt);
+              } else if (choice === 'onexus-edges') {
+                injectOnexusEdgesCsv(text);
+              }
+            })
+            .catch(() => { /* cancelled */ });
+        }
+
+        // --- MERGE HELPERS (ONEXUS schema) ---
+        async function mergeJsonFiles(jsonFiles) {
+          const texts = await Promise.all(jsonFiles.map(f => f.text()));
+          const graphs = texts.map(t => JSON.parse(t));
+
+          // Normalization helpers for schema compliance
+          const normNode = (d) => {
+            const out = { ...d };
+            out.id = out.id ?? `N_${Math.random().toString(36).slice(2)}`;
+            out.nodeType = out.nodeType ?? 'Component';
+            out.category = out.category ?? out.revitCategory ?? 'Uncategorized';
+            if (typeof out.label !== 'object' || out.label === null) {
+              const base = out.displayLabel || out.id;
+              out.label = { en: String(base), jp: String(base) };
+            }
+            return out;
+          };
+          const edgeKey = (d) =>
+            `${d.type}|${d.dimension}|${d.source}|${d.target}|${d.directional ? 1 : 0}`;
+
+          // Merge nodes by id (prefer later files), with normalization
+          const nodeMap = new Map();
+          for (const g of graphs) {
+            for (const n of (g?.elements?.nodes ?? [])) {
+              const d = normNode(n?.data || {});
+              const prev = nodeMap.get(d.id);
+              nodeMap.set(d.id, { data: prev ? { ...prev.data, ...d } : { ...d } });
+            }
+          }
+
+          // Merge edges by tuple (type, dimension, source, target, directional)
+          const edgeMap = new Map();
+          for (const g of graphs) {
+            for (const e of (g?.elements?.edges ?? [])) {
+              const raw = e?.data || {};
+              // skip obviously invalid edges early
+              if (!raw.type || !raw.dimension || !raw.source || !raw.target || typeof raw.directional !== 'boolean') continue;
+              const k = edgeKey(raw);
+              const prev = edgeMap.get(k);
+              edgeMap.set(k, { data: prev ? { ...prev.data, ...raw } : { ...raw } });
+            }
+          }
+
+          // Ensure edge ids are unique & present
+          const usedIds = new Set();
+          const edges = [];
+          let seq = 0;
+          edgeMap.forEach((wrap) => {
+            const d = wrap.data;
+            let id = d.id && !usedIds.has(d.id) ? d.id : null;
+            if (!id) id = `E_${++seq}`;
+            usedIds.add(id);
+            edges.push({ data: { ...d, id } });
+          });
+
+          const nodes = Array.from(nodeMap.values());
+          return { elements: { nodes, edges } };
+        }
+
+        // Expose
+        window.handleUnifiedLoad = handleUnifiedLoad;
+      })();
+
+      // --- MERGE HELPERS (ONEXUS schema) ---
+      async function mergeJsonFiles(jsonFiles) {
+        const texts = await Promise.all(jsonFiles.map(f => f.text()));
+        const graphs = texts.map(t => JSON.parse(t));
+
+        // Merge nodes by id (prefer later files); shallow merge of data
+        const nodeMap = new Map();
+        for (const g of graphs) {
+          for (const n of (g?.elements?.nodes ?? [])) {
+            const d = n?.data || {};
+            if (!d.id) continue;
+            const prev = nodeMap.get(d.id);
+            nodeMap.set(d.id, { data: prev ? { ...prev.data, ...d } : { ...d } });
+          }
+        }
+
+        // Merge edges by tuple (type, dimension, source, target, directional)
+        const edgeKey = (d) =>
+          `${d.type}|${d.dimension}|${d.source}|${d.target}|${d.directional ? 1 : 0}`;
+        const edgeMap = new Map();
+        for (const g of graphs) {
+          for (const e of (g?.elements?.edges ?? [])) {
+            const d = e?.data || {};
+            if (!d.type || !d.dimension || !d.source || !d.target || typeof d.directional !== 'boolean') continue;
+            const k = edgeKey(d);
+            const prev = edgeMap.get(k);
+            edgeMap.set(k, { data: prev ? { ...prev.data, ...d } : { ...d } });
+          }
+        }
+
+        // Ensure edge ids are unique and present
+        const usedIds = new Set();
+        const edges = [];
+        let seq = 0;
+        edgeMap.forEach((wrap, k) => {
+          const d = wrap.data;
+          let id = d.id && !usedIds.has(d.id) ? d.id : null;
+          if (!id) id = `E_${++seq}`;
+          usedIds.add(id);
+          edges.push({ data: { ...d, id } });
+        });
+
+        const nodes = Array.from(nodeMap.values());
+        return { elements: { nodes, edges } };
+      }
+
+      // Expose
+      window.handleUnifiedLoad = handleUnifiedLoad;
+    })();
 
     // Minimal dialog
     function openCsvChoiceDialog() {

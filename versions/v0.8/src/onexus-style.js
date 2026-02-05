@@ -246,6 +246,33 @@ function buildStyle(themeKey) {
         "background-opacity": 0.95
       }
     },
+    // Path / flow highlighting
+    {
+      selector: "node.path", style: {
+        'border-width': 4,
+        'border-color': '#2563eb',
+        'background-opacity': 0.98,
+      }
+    },
+    {
+      selector: "edge.path", style: {
+        'line-color': '#2563eb',
+        'target-arrow-color': '#2563eb',
+        'width': 5,
+      }
+    },
+    {
+      selector: "edge.path.upstream", style: {
+        'line-color': '#f59e0b',
+        'target-arrow-color': '#f59e0b',
+      }
+    },
+    {
+      selector: "edge.path.downstream", style: {
+        'line-color': '#10b981',
+        'target-arrow-color': '#10b981',
+      }
+    },
     // --- LOD: default (if no class, behave like mid/high) is what you already have ---
 
     // Low zoom: hide all labels & arrows, use haystack edges (fast)
@@ -299,6 +326,14 @@ function buildStyle(themeKey) {
     // Emphasize used nesting edges, de-emphasize others
     { selector: 'edge.nestEdge', style: { 'line-color': '#607D8B', 'width': 4 } },
     { selector: 'edge.nonNestEdge', style: { 'opacity': 0.25 } },
+    // --- Scenario Compare (A/B) diff markers ---
+    { selector: "node.diff-added", style: { 'border-width': 4, 'border-color': '#10b981' } }, // green
+    { selector: "node.diff-removed", style: { 'border-width': 4, 'border-color': '#ef4444', 'opacity': 0.65 } }, // red
+    { selector: "node.diff-changed", style: { 'border-width': 4, 'border-color': '#f59e0b' } }, // amber
+
+    { selector: "edge.diff-added", style: { 'line-color': '#10b981', 'target-arrow-color': '#10b981', 'width': 5 } },
+    { selector: "edge.diff-removed", style: { 'line-color': '#ef4444', 'target-arrow-color': '#ef4444', 'line-style': 'dashed', 'width': 4, 'opacity': 0.7 } },
+    { selector: "edge.diff-changed", style: { 'line-color': '#f59e0b', 'target-arrow-color': '#f59e0b', 'width': 5 } },
   ];
 }
 
