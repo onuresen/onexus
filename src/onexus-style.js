@@ -246,6 +246,33 @@ function buildStyle(themeKey) {
         "background-opacity": 0.95
       }
     },
+    // Path / flow highlighting
+    {
+      selector: "node.path", style: {
+        'border-width': 4,
+        'border-color': '#2563eb',
+        'background-opacity': 0.98,
+      }
+    },
+    {
+      selector: "edge.path", style: {
+        'line-color': '#2563eb',
+        'target-arrow-color': '#2563eb',
+        'width': 5,
+      }
+    },
+    {
+      selector: "edge.path.upstream", style: {
+        'line-color': '#f59e0b',
+        'target-arrow-color': '#f59e0b',
+      }
+    },
+    {
+      selector: "edge.path.downstream", style: {
+        'line-color': '#10b981',
+        'target-arrow-color': '#10b981',
+      }
+    },
     // --- LOD: default (if no class, behave like mid/high) is what you already have ---
 
     // Low zoom: hide all labels & arrows, use haystack edges (fast)
