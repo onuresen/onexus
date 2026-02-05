@@ -59,6 +59,10 @@ function classifyCsvText(name, text) {
   on('btnCsv', 'click', () => window.exportCSV?.());
   on('btnLayout', 'click', () => window.exportLayout?.());
 
+  // Undo/Redo buttons
+  on('btnUndo', 'click', () => window.ONEXUS_UNDO?.undo?.());
+  on('btnRedo', 'click', () => window.ONEXUS_UNDO?.redo?.());
+
   // Node search (label/id); highlight class/style is defined in onexus-style.js
   on('nodeSearch', 'input', e => {
     const q = (e.target.value ?? '').toLowerCase().trim();

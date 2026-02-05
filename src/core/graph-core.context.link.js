@@ -28,26 +28,20 @@
   function beginManualLink(node) { cancelManualLink(); editState.linkSource = node; node.addClass('highlight'); updateLinkChip(); window.showTransientMessage?.('Pick a target node to connect…'); }
   function cancelManualLink() { if (editState.linkSource) editState.linkSource.removeClass('highlight'); editState.linkSource = null; updateLinkChip(); }
 
+  // --- Mutations via Undo/Redo actions
   function deleteEdge(edge) {
     if (!edge || !edge.nonempty || !edge.nonempty()) return;
-    if (confirm('Delete this edge?')) {
-      cy.remove(edge);
-      window.buildRelationshipLegend?.(); window.updateMetrics?.(); window.setDetailsMessage?.('Edge deleted.');
-    }
+    const d = { ...edge.data() };
+    window.ONEXUS_UNDO?.do(window.ONEXUS_UNDO.actions.removeEdge(d.id, d));
+    window.showTransientMessage?.('Edge deleted. (Undo: Ctrl/Cmd+Z)');
   }
   function reverseEdge(edge) {
     if (!edge || !edge.nonempty || !edge.nonempty()) return;
-    const d = { ...edge.data() };
-    const newData = { ...d, source: d.target, target: d.source };
-    const keepId = d.id;
-    edge.remove();
-    const e2 = cy.add({ data: newData });
-    e2.data('id', keepId);
-    const t = e2.data('type'); e2.data('displayType', (LABELS[state.language] ?? {})[t] ?? t);
-    e2.style('text-opacity', state.showEdgeLabels ? 1 : 0);
-    window.buildRelationshipLegend?.(); window.updateMetrics?.(); window.updateDetailsForEdge?.(e2);
-    window.showTransientMessage?.('Edge direction reversed.');
+    const id = edge.data('id');
+    window.ONEXUS_UNDO?.do(window.ONEXUS_UNDO.actions.reverseEdge(id));
+    window.showTransientMessage?.('Edge direction reversed. (Undo: Ctrl/Cmd+Z)');
   }
+
   function uniqueEdgeId(base) { let id = base, k = 1; const exists = () => { const col = cy.getElementById(id); return col && col.nonempty && col.nonempty(); }; while (exists()) { k += 1; id = `${base}-${k}`; } return id; }
 
   function openEdgeWizard(sourceNode, targetNode, opts = {}) {
@@ -110,28 +104,27 @@
     panel.querySelector('#rel-cancel').addEventListener('click', close);
     panel.querySelector('#rel-apply').addEventListener('click', () => {
       const type = $type.value, dimension = $dim.value, directional = $dir.checked, notes = $notes.value ?? "";
+
       if (mode === 'edit' && existingEdge) {
-        existingEdge.data({ ...existingEdge.data(), type, dimension, directional: !!directional, notes });
-        const t = existingEdge.data('type');
-        existingEdge.data('displayType', (LABELS[state.language] ?? {})[t] ?? t);
-        existingEdge.style('text-opacity', state.showEdgeLabels ? 1 : 0);
-        window.buildRelationshipLegend?.(); window.updateMetrics?.(); window.updateDetailsForEdge?.(existingEdge);
-        window.showTransientMessage?.('Relation updated.'); close(); return;
+        const before = existingEdge.data();
+        const afterPatch = { type, dimension, directional: !!directional, notes };
+        window.ONEXUS_UNDO?.do(window.ONEXUS_UNDO.actions.editEdge(before.id, before, afterPatch));
+        window.showTransientMessage?.('Relation updated. (Undo: Ctrl/Cmd+Z)');
+        close(); return;
       }
+
       const dup = cy.edges().filter(e => e.data('source') === srcId && e.data('target') === tgtId && e.data('type') === type);
       if (dup.length > 0) { alert('An identical edge already exists.'); return; }
+
       const id = uniqueEdgeId(`e_${srcId}_${type}_${tgtId}`);
       const edgeData = { id, type, dimension, directional: !!directional, source: srcId, target: tgtId, notes };
-      const edgeEle = cy.add({ data: edgeData });
-      const t = edgeData.type; edgeEle.data('displayType', (LABELS[state.language] ?? {})[t] ?? t);
-      edgeEle.style('text-opacity', state.showEdgeLabels ? 1 : 0);
-      window.buildRelationshipLegend?.(); window.updateMetrics?.(); window.updateDetailsForEdge?.(edgeEle);
-      window.showTransientMessage?.(`Added: ${edgeEle.data('displayType')} (${edgeData.source} → ${edgeData.target})`);
+      window.ONEXUS_UNDO?.do(window.ONEXUS_UNDO.actions.addEdge(edgeData));
+      window.showTransientMessage?.(`Added: ${type} (${edgeData.source} → ${edgeData.target}) (Undo: Ctrl/Cmd+Z)`);
       close();
     });
   }
 
-  // expose for menu & taps in state module
+  // expose
   window.openEdgeWizard = openEdgeWizard;
   window.__onexusLink = { beginManualLink, cancelManualLink, deleteEdge, reverseEdge };
 })();
