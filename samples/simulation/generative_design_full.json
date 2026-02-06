@@ -1,0 +1,297 @@
+{
+  "type": "onexus/generative-design",
+  "version": "1.0",
+  "project": {
+    "id": "OBY-HQ",
+    "name": "Obayashi HQ Upgrade",
+    "modelId": "Revit:RVT-2026-OBY-HQ"
+  },
+  "problem": {
+    "id": "GD-Lobby-Circulation-01",
+    "name": "Lobby Circulation & Kiosk Placement",
+    "description": "Balance circulation efficiency, daylight, and cost.",
+    "tags": [
+      "circulation",
+      "daylight",
+      "kiosk"
+    ]
+  },
+  "variables": [
+    {
+      "id": "kioskCount",
+      "type": "integer",
+      "name": "Kiosk Count",
+      "domain": {
+        "min": 0,
+        "max": 4,
+        "step": 1
+      }
+    },
+    {
+      "id": "kioskGridX",
+      "type": "continuous",
+      "name": "Kiosk Grid X",
+      "domain": {
+        "min": 0.0,
+        "max": 12.0,
+        "step": 0.2
+      },
+      "unit": "m"
+    },
+    {
+      "id": "entranceWidth",
+      "type": "continuous",
+      "name": "Entrance Width",
+      "domain": {
+        "min": 2.0,
+        "max": 6.0,
+        "step": 0.1
+      },
+      "unit": "m"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "avgFlowTime",
+      "name": "Average Flow Time",
+      "direction": "minimize",
+      "unit": "s",
+      "weight": 0.6
+    },
+    {
+      "id": "daylight",
+      "name": "Lobby Daylight",
+      "direction": "maximize",
+      "unit": "Wh/m2",
+      "weight": 0.4
+    },
+    {
+      "id": "cost",
+      "name": "Cost",
+      "direction": "minimize",
+      "unit": "JPY"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "maxCost",
+      "name": "Max Cost",
+      "op": "<=",
+      "rhs": 12000000,
+      "unit": "JPY"
+    },
+    {
+      "id": "minThroughput",
+      "name": "Min Throughput",
+      "op": ">=",
+      "rhs": 110,
+      "unit": "pax/min"
+    }
+  ],
+  "options": [
+    {
+      "id": "opt-101",
+      "name": "W=3.6m / 1 kiosk",
+      "seed": 12345,
+      "parameters": {
+        "kioskCount": 1,
+        "kioskGridX": 6.0,
+        "entranceWidth": 3.6
+      },
+      "scores": {
+        "avgFlowTime": 24.2,
+        "daylight": 3100,
+        "cost": 10800000
+      },
+      "constraintsEval": {
+        "maxCost": {
+          "satisfied": true
+        },
+        "minThroughput": {
+          "satisfied": true
+        }
+      },
+      "pareto": true,
+      "rank": 1,
+      "affected": {
+        "nodes": [
+          {
+            "id": "Room-Lobby-1F",
+            "metrics": {
+              "utilization": 0.75,
+              "daylightDelta": 180
+            }
+          },
+          {
+            "id": "Door-Entrance-01",
+            "metrics": {
+              "throughput": 128
+            }
+          },
+          {
+            "id": "Kiosk-Set",
+            "metrics": {
+              "footprint": 3.0
+            }
+          }
+        ],
+        "edges": [
+          {
+            "source": "Door-Entrance-01",
+            "target": "Room-Lobby-1F",
+            "type": "DependsOn",
+            "dimension": "System",
+            "directional": true,
+            "metrics": {
+              "flowShare": 0.62
+            }
+          }
+        ]
+      },
+      "attachments": [
+        {
+          "type": "image",
+          "name": "Plan.png",
+          "href": "file:///runs/opt-101/plan.png"
+        },
+        {
+          "type": "csv",
+          "name": "Metrics.csv",
+          "href": "file:///runs/opt-101/metrics.csv"
+        }
+      ],
+      "createdAt": "2026-02-05T08:20:00Z",
+      "notes": "Balanced tradeoff; strong candidate."
+    },
+    {
+      "id": "opt-205",
+      "name": "W=4.5m / 2 kiosks",
+      "seed": 22331,
+      "parameters": {
+        "kioskCount": 2,
+        "kioskGridX": 8.0,
+        "entranceWidth": 4.5
+      },
+      "scores": {
+        "avgFlowTime": 22.9,
+        "daylight": 2980,
+        "cost": 12950000
+      },
+      "constraintsEval": {
+        "maxCost": {
+          "satisfied": false,
+          "violation": 0.079
+        },
+        "minThroughput": {
+          "satisfied": true
+        }
+      },
+      "pareto": false,
+      "rank": 4,
+      "affected": {
+        "nodes": [
+          {
+            "id": "Room-Lobby-1F",
+            "metrics": {
+              "utilization": 0.81,
+              "daylightDelta": 60
+            }
+          },
+          {
+            "id": "Door-Entrance-01",
+            "metrics": {
+              "throughput": 142
+            }
+          },
+          {
+            "id": "Kiosk-Set",
+            "metrics": {
+              "footprint": 6.0
+            }
+          }
+        ],
+        "edges": [
+          {
+            "source": "Kiosk-Set",
+            "target": "Room-Lobby-1F",
+            "type": "LocatedIn",
+            "dimension": "Spatial",
+            "directional": false,
+            "metrics": {
+              "obstruction": 0.22
+            }
+          }
+        ]
+      },
+      "attachments": [
+        {
+          "type": "image",
+          "name": "Plan.png",
+          "href": "file:///runs/opt-205/plan.png"
+        }
+      ],
+      "createdAt": "2026-02-05T08:33:19Z"
+    },
+    {
+      "id": "opt-307",
+      "name": "W=3.2m / 0 kiosk",
+      "seed": 43512,
+      "parameters": {
+        "kioskCount": 0,
+        "kioskGridX": 0.0,
+        "entranceWidth": 3.2
+      },
+      "scores": {
+        "avgFlowTime": 25.6,
+        "daylight": 3380,
+        "cost": 10050000
+      },
+      "constraintsEval": {
+        "maxCost": {
+          "satisfied": true
+        },
+        "minThroughput": {
+          "satisfied": false,
+          "violation": 0.06
+        }
+      },
+      "pareto": true,
+      "rank": 2,
+      "affected": {
+        "nodes": [
+          {
+            "id": "Room-Lobby-1F",
+            "metrics": {
+              "utilization": 0.69,
+              "daylightDelta": 240
+            }
+          },
+          {
+            "id": "Door-Entrance-01",
+            "metrics": {
+              "throughput": 112
+            }
+          }
+        ],
+        "edges": []
+      },
+      "createdAt": "2026-02-05T09:02:05Z"
+    }
+  ],
+  "render": {
+    "primaryObjective": "avgFlowTime",
+    "nodeMetricKey": "utilization",
+    "edgeMetricKey": "flowShare",
+    "palette": "gendesign",
+    "unit": "%",
+    "scale": {
+      "mode": "auto"
+    },
+    "applyTo": "both"
+  },
+  "meta": {
+    "author": "DX/Strategy",
+    "engine": "ExternalToolX 3.1",
+    "notes": "Options include 0–2 kiosks. Cost model v2."
+  }
+}
