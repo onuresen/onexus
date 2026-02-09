@@ -12,7 +12,8 @@
     respect: 'onexus.anim.respectLayout',
     running: 'onexus.anim.running',
   };
-  const ALLOWED_MODES = new Set(['off', 'bounce', 'orbit', 'blackhole', 'breath']);
+
+  const ALLOWED_MODES = new Set(['off', 'bounce', 'orbit', 'blackhole', 'breath', 'edgeflow']);
   const LEGACY_MODE_MAP = Object.freeze({
     solar: 'orbit',
     pulse: 'breath',
@@ -41,6 +42,13 @@
     maxFps: 60,
     parentMap: new Map(), // id(child) -> id(parent)  (orbit)
     holeOverlay: null,    // HTMLElement
+    edgeFlow: { dimension: null, pattern: [10, 6] },
+    orbitDepthScale: 0.20, // +20% radius per depth level
+  };
+
+  // Allow UI to set specific anim fields at runtime (safe narrow hook)
+  window.__onexus_anim_hook = function (key, value) {
+    try { if (key in anim) anim[key] = value; } catch { }
   };
 
   // ---------- utils ----------
@@ -333,6 +341,7 @@
       case 'orbit': return applyOrbit(cy, t);
       case 'blackhole': return applyBlackHole(cy, t);
       case 'breath': return applyBreath(cy, t);
+      case 'edgeflow': return applyEdgeFlow(cy, t);
       default: return;
     }
   }
@@ -394,6 +403,39 @@
     if ($badge) $badge.textContent = anim.running ? 'Running' : 'Stopped';
   }
 
+  function applyEdgeFlow(cy, t) {
+    // targets: respect selection scope
+    const targets = getTargetNodes(cy);
+    const targetIds = new Set(targets.map(n => n.id()));
+
+    // filter edges by dimension (if set)
+    const dim = anim.edgeFlow.dimension; // null => all
+    let edges = cy.edges(':visible');
+    if (dim) edges = edges.filter(e => (e.data('dimension') === dim));
+
+    // limit to edges touching target set when scope=selection
+    if (anim.scope === 'selection') {
+      edges = edges.filter(e => targetIds.has(e.data('source')) || targetIds.has(e.data('target')));
+    }
+
+    // apply dashed style and animate offset
+    const dash = anim.edgeFlow.pattern || [10, 6];
+    const offset = (t * 60 * anim.speed) % (dash[0] + dash[1]);
+    edges.forEach(e => {
+      e.style({
+        'line-style': 'dashed',
+        'line-dash-pattern': dash,
+        'line-dash-offset': offset
+      });
+    });
+  }
+
+  function computeDepth(parentMap, id) {
+    let d = 0, cur = id, guard = 0;
+    while (parentMap.has(cur) && guard++ < 64) { d++; cur = parentMap.get(cur); }
+    return d;
+  }
+
   // ---------- API ----------
   window.setAnimMode = (mode) => {
     const m = sanitizeMode(mode);
@@ -450,6 +492,35 @@
     writePref(PREF.mode, 'off');
     writePref(PREF.running, '0');
     syncUi();
+  };
+  // Set flow dimension: null|'System'|'Spatial'|'Responsibility'|'Vendor'
+  window.setEdgeFlowDimension = (dimOrNull) => { anim.edgeFlow.dimension = dimOrNull || null; };
+  // Set flow dash pattern
+  window.setEdgeFlowPattern = (a = 10, b = 6) => { anim.edgeFlow.pattern = [a, b]; };
+
+  // Phase reveal playback
+  window.playPhaseReveal = async function playPhaseReveal({ order = [], perPhaseMs = 700, includeNodes = true } = {}) {
+    const cy = window.cy; if (!cy) return;
+    // reset visibility
+    cy.edges().style('display', 'none'); if (includeNodes) cy.nodes().style('display', 'none');
+
+    const uniq = (arr) => [...new Set(arr)];
+    const phases = order.length ? order : uniq(cy.edges().map(e => (e.data('phase') || [])).flat());
+    for (const ph of phases) {
+      const batch = cy.edges().filter(e => (e.data('phase') || []).some(x => String(x) === String(ph)));
+      batch.style('display', 'element');
+      if (includeNodes) {
+        const touched = batch.connectedNodes();
+        touched.style('display', 'element');
+      }
+      window.buildRelationshipLegend?.(); window.updateMetrics?.();
+      await new Promise(r => setTimeout(r, perPhaseMs));
+    }
+  };
+  window.stopPhaseReveal = function stopPhaseReveal() {
+    const cy = window.cy; if (!cy) return;
+    cy.edges().style('display', 'element'); cy.nodes().style('display', 'element');
+    window.buildRelationshipLegend?.(); window.updateMetrics?.();
   };
 
   // ---------- boot ----------
