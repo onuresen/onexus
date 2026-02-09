@@ -36,6 +36,22 @@
 
   function itemsForNode(node) {
     const base = [
+      { label: 'Edit node…', action: () => window.openNodeWizard?.({ mode: 'edit', node }) },
+      { label: 'Delete node', action: () => window.ONEXUS_NODES?.deleteNode(node) },
+      {
+        label: 'Duplicate', action: () => {
+          const newId = window.ONEXUS_NODES?.duplicateNode(node, { dx: 40, dy: 40, cloneEdges: false });
+          if (newId) cy.getElementById(newId).select();
+        }
+      },
+      {
+        label: 'Duplicate + edges', action: () => {
+          const newId = window.ONEXUS_NODES?.duplicateNode(node, { dx: 40, dy: 40, cloneEdges: true });
+          if (newId) cy.getElementById(newId).select();
+        }
+      },
+      { label: 'Duplicate grid 3×2', action: () => window.ONEXUS_NODES?.duplicateNodeGrid(node, { countX: 3, countY: 2, gapX: 120, gapY: 80, cloneEdges: false }) },
+      { type: 'divider' },
       { label: 'Focus (1-hop)', action: () => { window.setFocusDepth?.(1); state.focusedNode = node; window.applyDepthFocus?.(node); } },
       { label: 'Focus (2-hop)', action: () => { window.setFocusDepth?.(2); state.focusedNode = node; window.applyDepthFocus?.(node); } },
       { label: 'Center on node', action: () => { if (node && node.nonempty && node.nonempty()) cy.center(node); } },
@@ -53,7 +69,7 @@
           const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
           const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = node.id() + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
         }
-      }
+      },
     ];
 
     // Manual relation (link API)
@@ -69,6 +85,7 @@
         { label: 'Cancel pending link', action: () => window.__onexusLink.cancelManualLink() }
       );
     }
+
 
     // Pathfinder
     const pathItems = [{ type: 'divider' }];
@@ -108,6 +125,12 @@
       const ex = evt.originalEvent ? evt.originalEvent.clientX : window.event.clientX;
       const ey = evt.originalEvent ? evt.originalEvent.clientY : window.event.clientY;
       render([
+        {
+          label: 'Add node…', action: () => {
+            window.openNodeWizard?.({ mode: 'create', position: evt.position });
+          }
+        },
+        { type: 'divider' },
         { label: 'Fit view', action: window.fitView },
         { label: 'Center view', action: window.centerView },
         { label: 'Reset view', action: window.resetView },

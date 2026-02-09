@@ -18,6 +18,12 @@
     e.style('text-opacity', state?.showEdgeLabels ? 1 : 0);
   }
 
+  function refreshNode(n) {
+    window.buildCategoryFilter?.();
+    window.updateMetrics?.();
+    if (n && n.nonempty?.()) window.updateDetailsForNode?.(n);
+  }
+
   const actions = {
     addEdge(data) {
       const snapshot = (typeof structuredClone === 'function') ? structuredClone(data) : JSON.parse(JSON.stringify(data));
@@ -92,7 +98,100 @@
           e.data(d); setEdgeDisplayType(e); refresh(e);
         }
       };
-    }
+    },
+
+    addNode(data, position /* {x,y} optional */) {
+      const snapshot = (typeof structuredClone === 'function') ? structuredClone(data) : JSON.parse(JSON.stringify(data));
+      const pos = position ? { x: position.x, y: position.y } : null;
+      return {
+        name: 'addNode',
+        data: snapshot,
+        position: pos,
+        apply() {
+          const payload = this.position ? { data: this.data, position: this.position } : { data: this.data };
+          const n = cy.add(payload);
+          const lang = window.__onexus_state?.language ?? 'en';
+          const lbl = n.data('label');
+          n.data('displayLabel', (lbl && (lbl[lang] ?? lbl['en'])) ?? n.data('id'));
+          window.buildCategoryFilter?.();  // refresh filters & metrics like edges do
+          window.updateMetrics?.();
+          if (n && n.nonempty?.()) window.updateDetailsForNode?.(n);
+        },
+        revert() {
+          const n = cy.getElementById(this.data.id);
+          if (n && n.nonempty?.()) cy.remove(n);
+          window.buildCategoryFilter?.();
+          window.updateMetrics?.();
+        }
+      };
+    },
+    removeNode(nodeId, nodeData, incidentEdges /* optional: data[] */) {
+      const savedN = (typeof structuredClone === 'function') ? structuredClone(nodeData) : JSON.parse(JSON.stringify(nodeData));
+      const savedE = (typeof structuredClone === 'function') ? structuredClone(incidentEdges ?? []) : JSON.parse(JSON.stringify(incidentEdges ?? []));
+      return {
+        name: 'removeNode',
+        id: nodeId,
+        node: savedN,
+        edges: savedE,
+        apply() {
+          const n = cy.getElementById(this.id);
+          if (n && n.nonempty?.()) {
+            // removing node also removes its incident edges in cy
+            cy.remove(n);
+          }
+          refreshNode();
+        },
+        revert() {
+          const n = cy.add({ data: this.node });
+          // restore edges (only if endpoints exist)
+          this.edges.forEach(e => {
+            if (cy.getElementById(e.id).nonempty?.()) return;
+            const sOk = cy.getElementById(e.source).nonempty?.();
+            const tOk = cy.getElementById(e.target).nonempty?.();
+            if (sOk && tOk) {
+              const added = cy.add({ data: e });
+              // mirror edge label/i18n like other actions
+              const map = (window.__onexus_labels?.[window.__onexus_state?.language] ?? {});
+              added.data('displayType', map[added.data('type')] ?? added.data('type'));
+              added.style('text-opacity', window.__onexus_state?.showEdgeLabels ? 1 : 0);
+            }
+          });
+          // i18n display label
+          const lang = window.__onexus_state?.language ?? 'en';
+          const lbl = n.data('label');
+          n.data('displayLabel', (lbl && (lbl[lang] ?? lbl['en'])) ?? n.data('id'));
+          refreshNode(n);
+        }
+      };
+    },
+    editNode(nodeId, beforeData, afterPatch) {
+      const before = (typeof structuredClone === 'function') ? structuredClone(beforeData) : JSON.parse(JSON.stringify(beforeData));
+      const after = { ...before, ...afterPatch, id: nodeId };
+      return {
+        name: 'editNode',
+        id: nodeId,
+        before, after,
+        apply() {
+          const n = cy.getElementById(this.id);
+          if (!n || !n.nonempty?.()) return;
+          n.data(this.after);
+          // keep display label in sync with i18n
+          const lang = window.__onexus_state?.language ?? 'en';
+          const lbl = n.data('label');
+          n.data('displayLabel', (lbl && (lbl[lang] ?? lbl['en'])) ?? n.data('id'));
+          refreshNode(n);
+        },
+        revert() {
+          const n = cy.getElementById(this.id);
+          if (!n || !n.nonempty?.()) return;
+          n.data(this.before);
+          const lang = window.__onexus_state?.language ?? 'en';
+          const lbl = n.data('label');
+          n.data('displayLabel', (lbl && (lbl[lang] ?? lbl['en'])) ?? n.data('id'));
+          refreshNode(n);
+        }
+      };
+    },
   };
 
   function apply(cmd) { cmd.apply?.(); }

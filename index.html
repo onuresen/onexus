@@ -647,6 +647,7 @@
   <script src=./src/core/graph-core.io.host.js></script>
   <script src=./src/core/graph-core.io.export.js></script>
   <script src=./src/core/graph-core.undo.js></script>
+  <script src=./src/core/graph-core.nodes.js></script>
   <script src=./src/core/graph-core.context.link.js></script>
   <script src=./src/core/graph-core.context.menu.js></script>
   <script src=./src/core/graph-core.path.js></script>
@@ -692,6 +693,24 @@
         e.preventDefault();
         window.ONEXUS_UNDO?.redo?.();
         return;
+      }
+      // Delete selected node(s) with Delete/Backspace
+      if ((key === 'delete' || key === 'backspace') && !mod) {
+        const sel = window.cy?.nodes(':selected');
+        if (sel && sel.length) {
+          sel.forEach(n => window.ONEXUS_NODES?.deleteNode(n));
+          e.preventDefault();
+          return;
+        }
+      }
+      // Alt+D => duplicate selected node (fast)
+      if (e.altKey && !e.ctrlKey && !e.metaKey && key === 'd') {
+        const sel = window.cy?.nodes(':selected');
+        if (sel && sel.length) {
+          const n = sel[0];
+          const newId = window.ONEXUS_NODES?.duplicateNode(n, { dx: 40, dy: 40, cloneEdges: false });
+          if (newId) window.cy.getElementById(newId).select();
+        }
       }
     });
   </script>
