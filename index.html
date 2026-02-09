@@ -557,60 +557,46 @@
 
     <h3>Animation Lab</h3>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;gap:8px;align-items:center;">
-        <select id="animMode" style="flex:1;" onchange="window.ONEXUS_ANIM.setMode(this.value)">
-          <option value="off">Off</option>
-          <option value="bounce">Modal Bounce</option>
-          <option value="orbit">Solar Orbit</option>
-          <option value="blackhole">Black Hole</option>
-          <option value="breath">Breathing</option>
-        </select>
-        <button class="flat" style="min-width:86px;" onclick="
-        const A = window.ONEXUS_ANIM;
-        if(!A) return;
-        const isOff = (A.getMode && A.getMode()) === 'off';
-        if(isOff) {
-          A.setMode(document.getElementById('animMode').value|| 'bounce');          
-        }
-        else {
-          A.setMode('off');
-          A.stop;
-        }
-        document.getElementById('animStatus').textContent = 
-        (A.getMode && A.getMode()) === 'off' ? 'Running' : 'Stopped';
-        ">
-          <span id="animStatus">Stopped</span>
-        </button>
-      </div>
+      <select id="animMode" style="flex:1;" onchange="setAnimMode(this.value)">
+        <option value="off">Off</option>
+        <option value="bounce">Modal Bounce</option>
+        <option value="orbit">Solar Orbit</option>
+        <option value="blackhole">Black Hole</option>
+        <option value="breath">Breathing</option>
+      </select>
+      <button class="flat" style="min-width:86px;" onclick="toggleAnimRunning()">
+        <span id="animStatus">Stopped</span>
+      </button>
+    </div>
 
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Intensity</span>
-        <input id="animIntensity" type="range" min="0" max="30" step="1" value="10" style="flex:1;"
-          oninput="window.ONEXUS_ANIM.setIntensity(this.value)">
-      </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Intensity</span>
+      <input id="animIntensity" type="range" min="0" max="30" step="1" value="10" style="flex:1;"
+        oninput="setAnimIntensity(this.value)">
+    </div>
 
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
-        <input id="animSpeed" type="range" min="0.2" max="3.0" step="0.1" value="1.0" style="flex:1;"
-          oninput="window.ONEXUS_ANIM.setSpeed(this.value/10)">
-      </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
+      <input id="animSpeed" type="range" min="0.2" max="3.0" step="0.1" value="1.0" style="flex:1;"
+        oninput="setAnimSpeed(this.value)">
+    </div>
 
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Scope</span>
-        <select id="animScope" style="flex:1;" onchange="setAnimScope(this.value)">
-          <option value="all">All</option>
-          <option value="selection">Selection + neighborhood</option>
-        </select>
-      </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Scope</span>
+      <select id="animScope" style="flex:1;" onchange="setAnimScope(this.value)">
+        <option value="all">All nodes</option>
+        <option value="selection">Selection + neighborhood</option>
+      </select>
+    </div>
 
-      <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
-        <input type="checkbox" id="animFollow" checked onchange="window.ONEXUS_ANIM.setFollowLayouts(this.checked)" />
-        Follow new layouts
-      </label>
+    <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
+      <input type="checkbox" id="animRespectLayout" checked onchange="setAnimRespectLayout(this.checked)">
+      Follow new layouts
+    </label>
 
-      <div style="font-size:11px;color:var(--text-muted);line-height:1.35;">
-        Tip: select a node to make it the “center” for orbit/black hole.
-      </div>
+    <div style="font-size:11px;color:var(--text-muted);line-height:1.35;">
+      Tip: select a node to make it the “center” for orbit/black hole.
+    </div>
     </div>
 
   </aside>
