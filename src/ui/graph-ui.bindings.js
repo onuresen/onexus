@@ -122,6 +122,67 @@ function classifyCsvText(name, text) {
     window.ONEXUS_COMPARE?.compareFromFilePair(files[0], files[1]);
   });
 
+  // === Edge Flow: start/stop ===
+  on('animEdgeFlowOn', 'click', () => {
+    // switch to edgeflow mode (doesn't auto-run; user toggles the main Run/Stop as before)
+    window.setAnimMode?.('edgeflow');
+    // apply current UI settings
+    const dim = document.getElementById('animEdgeFlowDim')?.value || '';
+    const dash = document.getElementById('animEdgeFlowDash')?.value || '10,6';
+    const parts = dash.split(',').map(s => parseInt(s.trim(), 10)).filter(n => Number.isFinite(n) && n > 0);
+    if (window.setEdgeFlowDimension) window.setEdgeFlowDimension(dim || null);
+    if (window.setEdgeFlowPattern && parts.length >= 2) window.setEdgeFlowPattern(parts[0], parts[1]);
+  });
+
+  on('animEdgeFlowOff', 'click', () => {
+    // revert to "off" or any preferred neutral mode
+    window.setAnimMode?.('off');
+  });
+
+  // Live-update settings
+  on('animEdgeFlowDim', 'change', (e) => {
+    if (window.setEdgeFlowDimension) window.setEdgeFlowDimension(e.target.value || null);
+  });
+  on('animEdgeFlowDash', 'change', (e) => {
+    const parts = String(e.target.value || '10,6').split(',')
+      .map(s => parseInt(s.trim(), 10)).filter(n => Number.isFinite(n) && n > 0);
+    if (window.setEdgeFlowPattern && parts.length >= 2) window.setEdgeFlowPattern(parts[0], parts[1]);
+  });
+
+  // === Orbit depth scale ===
+  const updateOrbitDepthScaleLabel = (v) => {
+    const el = document.getElementById('orbitDepthScaleLabel');
+    if (el) el.textContent = `+${Math.round((Number(v) || 0) * 100)}%`;
+  };
+  on('orbitDepthScale', 'input', (e) => {
+    const v = Math.max(0, Math.min(0.5, parseFloat(e.target.value || '0.2')));
+    updateOrbitDepthScaleLabel(v);
+    // write into anim object through a convenience hook
+    if (!window.__onexus_setOrbitDepthScale) {
+      // create a thin setter if not present
+      window.__onexus_setOrbitDepthScale = (x) => { try { window.__onexus_anim_hook?.('orbitDepthScale', x); } catch { } };
+    }
+    window.__onexus_setOrbitDepthScale(v);
+  });
+  // initialize label at startup
+  window.addEventListener('DOMContentLoaded', () => {
+    const v = document.getElementById('orbitDepthScale')?.value || '0.2';
+    updateOrbitDepthScaleLabel(v);
+  });
+
+  // === Phase Reveal player ===
+  on('btnPhasePlay', 'click', () => {
+    const perMs = parseInt(document.getElementById('phaseSpeedMs')?.value || '700', 10);
+    window.playPhaseReveal?.({ perPhaseMs: Math.max(100, perMs) });
+  });
+  on('btnPhaseStop', 'click', () => window.stopPhaseReveal?.());
+
+  on('animModeTop', 'change', (e) => window.setAnimMode?.(e.target.value));
+  window.addEventListener('DOMContentLoaded', () => {
+    const $m = document.getElementById('animModeTop');
+    if ($m) $m.value = 'off';
+  });
+
   // Canvas resize
   window.addEventListener('resize', () => window.cy?.resize?.());
 

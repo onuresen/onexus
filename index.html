@@ -554,15 +554,15 @@
     <h3>Phase</h3>
     <select id="phaseFilter" multiple size="4" style="width:100%"></select>
 
-
     <h3>Animation Lab</h3>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <select id="animMode" style="flex:1;" onchange="setAnimMode(this.value)">
         <option value="off">Off</option>
-        <option value="bounce">Modal Bounce</option>
-        <option value="orbit">Solar Orbit</option>
+        <option value="bounce">Bounce</option>
+        <option value="orbit">Orbit</option>
         <option value="blackhole">Black Hole</option>
-        <option value="breath">Breathing</option>
+        <option value="breath">Breath</option>
+        <option value="edgeflow">Edge Flow</option>
       </select>
       <button class="flat" style="min-width:86px;" onclick="toggleAnimRunning()">
         <span id="animStatus">Stopped</span>
@@ -597,6 +597,43 @@
     <div style="font-size:11px;color:var(--text-muted);line-height:1.35;">
       Tip: select a node to make it the “center” for orbit/black hole.
     </div>
+    </div>
+
+    <!-- === Edge Flow controls === -->
+    <h3>Edge Flow</h3>
+    <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+      <button class="flat" id="animEdgeFlowOn">Flow On</button>
+      <button class="flat" id="animEdgeFlowOff">Flow Off</button>
+    </div>
+    <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+      <select id="animEdgeFlowDim">
+        <option value="">All dimensions</option>
+        <option value="System">System</option>
+        <option value="Spatial">Spatial</option>
+        <option value="Responsibility">Responsibility</option>
+        <option value="Vendor">Vendor</option>
+      </select>
+      <input id="animEdgeFlowDash" type="text" value="10,6" placeholder="dash, gap"
+        title="line dash pattern: e.g., 10,6" />
+    </div>
+
+    <!-- === Orbit depth scale === -->
+    <h3>Orbit Depth</h3>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <input id="orbitDepthScale" type="range" min="0.00" max="0.50" step="0.02" value="0.20" style="flex:1;">
+      <span id="orbitDepthScaleLabel">+20%</span>
+    </div>
+
+    <!-- === Phase Reveal player === -->
+    <h3>Phase Reveal</h3>
+    <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+      <button class="flat" id="btnPhasePlay">Play</button>
+      <button class="flat" id="btnPhaseStop">Stop</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
+      <input id="phaseSpeedMs" type="number" min="100" step="100" value="700" style="flex:1;"
+        title="milliseconds per phase (default 700)" />
     </div>
 
   </aside>
