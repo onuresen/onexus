@@ -63,39 +63,63 @@ It does **not** replace any CDE or tool. Instead, it exposes hidden or implicit 
 
 ## 📁 Directory Structure
 ```
-/README.md
-/index.html
-/src/
-   graph-core.js
-   graph-ui.js
-   onexus-style.js
-/onexus_sample.json
-/assets/
-   banner.png (optional)
+README.md                   # Project overview and usage (this file)
+index.html                  # Main demo page / UI loader
+src/                        # Application source code
+  core/                     # Graph core logic (layouts, graph ops)
+  importers/                # Data importers (COBie, IFC, CSV, GD)
+  ui/                       # UI bindings and loader scripts
+  helpers/                  # Small utilities and style helpers
+json/                       # Sample JSON datasets used by demos
+samples/                    # Example datasets and raw exports (COBie, IFC, etc.)
+assets/                     # Images, WASM and miscellaneous media (see folder)
+versions/                   # Archived snapshots / historical builds
 ```
 
 ---
 
 ## 📦 Installation & Usage
-No installation required.
+This project runs entirely in the browser — there is no build step. Follow one of the simple options below.
 
-### Option A — Open Locally
-Simply open:
-```
-index.html
-```
+Option A — Open directly (quickest)
+- On Windows: double-click `index.html` or right-click and choose "Open with" → pick Chrome/Edge/Firefox.
+- Note: some browsers restrict loading local files (especially `.ifc`). If a file won't load, use Option B.
 
-### Option B — Local Web Server
-```
+Option B — Run a local static server (recommended)
+- With Node (no install required if you have Node):
+```bash
 npx http-server .
 ```
-Then open:
+- Or with Python 3:
+```bash
+python -m http.server 8080
 ```
+- Then open:
+```text
 http://localhost:8080
 ```
 
-### Option C — GitHub Pages
-Enable GitHub Pages → Done.
+Loading data (beginner steps)
+- Use the `Load` file selector in the toolbar or drag-and-drop files onto the page.
+- Start with the included sample JSON: `json/onexus_sample.json` to see a working graph.
+- Supported file types: `.json` (ONEXUS graph), `.csv` (tabular imports), `.ifc` (IFC model imports). Multiple files are allowed.
+
+Basic controls
+- Language: switch UI language (English / Japanese).
+- View / Layout: pick a layout preset to rearrange the graph.
+- Theme: Light / Dark mode.
+- Pan / zoom: drag to pan, mouse wheel to zoom; use the minimap to jump around.
+- Keyboard shortcuts: `F` = Fit view, `C` = Center, `R` = Reset layout.
+
+Exporting
+- Use the export buttons in the toolbar to save the current view or data as PNG, SVG, JSON (layout + metadata) or CSV.
+
+Troubleshooting
+- If a drag-and-drop or IFC import fails, try the file selector or open the demo via a local server (Option B).
+- For large IFC files, try smaller samples from `samples/ifc` or pre-convert data into the JSON schema in `json/`.
+
+Option C — GitHub Pages
+- To publish the demo online, enable GitHub Pages for this repository and point to the project root or `index.html`.
 
 ---
 
