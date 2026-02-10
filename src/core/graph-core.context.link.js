@@ -1,6 +1,6 @@
 /* ONEXUS – Context: Manual Relation Editing (Link Wizard API)
-   PATCH: drag-to-connect preview (rubber-band) + Alt+Drag start from node
-   Keeps existing context menu start/cancel and tap-to-connect behavior.
+   PATCH (Option A follow-up): prefer ONEXUS.util helpers (exists/clone/idSafe) with safe fallbacks.
+   Behavior unchanged; exports unchanged: window.openEdgeWizard + window.__onexusLink.
 */
 (function () {
   const cy = window.cy;
@@ -8,6 +8,15 @@
   const editState = window.__onexus_edit;
   const LABELS = window.__onexus_labels;
   const DIMENSION_DEFAULTS = window.__onexus_dims;
+
+  // Prefer ONEXUS namespace helpers if present (Option A follow-up)
+  const U = window.ONEXUS?.util || {};
+  const exists = U.exists || function (col) { return !!col && !!col.nonempty && col.nonempty(); };
+  const clone = U.clone || function (x) {
+    return (typeof structuredClone === "function") ? structuredClone(x) : JSON.parse(JSON.stringify(x));
+  };
+  // Keep idSafe available (not used by default to avoid any behavior change in IDs)
+  const idSafe = U.idSafe || function (s) { return String(s ?? "").replace(/[^\w\-:.]+/g, "_"); };
 
   // --- internal drag-preview state
   const drag = {
@@ -19,20 +28,17 @@
     hoverTarget: null,
     hooked: false,
     dpr: 1,
-    // NEW: Alt+Drag state
+    // Alt+Drag state
     altDrag: {
-      armed: false,       // Alt pressed on a node (started link)
-      sourceId: null,     // id of source node at arming time
+      armed: false,
+      sourceId: null,
     }
   };
-
-  function exists(col) { return !!col && !!col.nonempty && col.nonempty(); }
 
   // --- UI chip (existing)
   function ensureLinkChip() {
     let chip = document.getElementById("onexus-link-chip");
     if (chip) return chip;
-
     const toolbar = document.getElementById("toolbar");
     if (!toolbar) return null;
 
@@ -78,7 +84,6 @@
   function updateLinkChip() {
     const chip = ensureLinkChip();
     if (!chip) return;
-
     const text = document.getElementById("onexus-link-chip-text");
     if (editState?.linkSource) {
       chip.style.display = "flex";
@@ -92,7 +97,6 @@
   // --- rubber-band canvas overlay
   function ensureLinkCanvas() {
     if (drag.canvas && drag.canvas.isConnected) return drag.canvas;
-
     const host = cy?.container?.();
     if (!host) return null;
 
@@ -104,7 +108,6 @@
       pointerEvents: "none",
       zIndex: 6,
     });
-
     host.style.position = host.style.position || "relative";
     host.appendChild(c);
 
@@ -136,7 +139,6 @@
     if (!drag.ctx || !drag.canvas) return;
     const host = cy?.container?.();
     if (!host) return;
-
     const rect = host.getBoundingClientRect();
     drag.ctx.clearRect(0, 0, rect.width, rect.height);
   }
@@ -165,12 +167,10 @@
     ctx.strokeStyle = "#2563eb";
     ctx.shadowColor = "rgba(37,99,235,0.18)";
     ctx.shadowBlur = 6;
-
     ctx.beginPath();
     ctx.moveTo(p0.x, p0.y);
     ctx.lineTo(p1.x, p1.y);
     ctx.stroke();
-
     ctx.setLineDash([]);
     ctx.fillStyle = "#2563eb";
     ctx.beginPath();
@@ -225,20 +225,20 @@
     if (drag.hooked) return;
     drag.hooked = true;
 
-    // NEW: Alt+Drag start on node
+    // Alt+Drag start on node
     cy.on("mousedown", "node", (evt) => {
       const oe = evt?.originalEvent;
       if (!oe || !oe.altKey) return;
 
-      // prevent normal node dragging/panning while Alt-dragging link
       try { oe.preventDefault?.(); oe.stopPropagation?.(); } catch { }
 
       const n = evt.target;
       if (!n || !exists(n)) return;
 
-      beginManualLink(n);               // sets linkSource + chip + highlight
+      beginManualLink(n);
       drag.altDrag.armed = true;
       drag.altDrag.sourceId = n.id();
+
       startPreview();
       if (evt?.renderedPosition) setDragEndFromRenderedPos(evt.renderedPosition);
     });
@@ -246,11 +246,8 @@
     // mouse move
     cy.on("mousemove", (evt) => {
       if (!editState?.linkSource) return;
-
-      // while linking, keep preview updated
       if (evt?.renderedPosition) setDragEndFromRenderedPos(evt.renderedPosition);
       else if (evt?.originalEvent) setDragEndFromClientXY(evt.originalEvent.clientX, evt.originalEvent.clientY);
-
       startPreview();
     });
 
@@ -268,7 +265,6 @@
       if (!n || !exists(n)) return;
       if (editState.linkSource && n.id() !== editState.linkSource.id()) setHoverTarget(n);
     });
-
     cy.on("mouseout", "node", () => {
       if (!editState?.linkSource) return;
       setHoverTarget(null);
@@ -352,10 +348,7 @@
 
   function uniqueEdgeId(base) {
     let id = base, k = 1;
-    const existsId = () => {
-      const col = cy.getElementById(id);
-      return col && col.nonempty && col.nonempty();
-    };
+    const existsId = () => exists(cy.getElementById(id));
     while (existsId()) { k += 1; id = `${base}-${k}`; }
     return id;
   }
@@ -365,11 +358,17 @@
     const existingEdge = opts.edge ?? null;
 
     const srcId = sourceNode.id(), tgtId = targetNode.id();
+
     const typeOpts = [...new Set(cy.edges().map(e => e.data("type")))].filter(Boolean);
     const dimOpts = [...new Set(cy.edges().map(e => e.data("dimension")))].filter(Boolean);
 
-    const typeOptions = typeOpts.length ? typeOpts : ["Controls", "Supplies", "LocatedIn", "DesignedBy", "BuiltBy", "ProvidedBy", "PartOfSystem"];
-    const dimOptions = dimOpts.length ? dimOpts : (DIMENSION_DEFAULTS ?? ["System", "Spatial", "Responsibility", "Vendor"]);
+    const typeOptions = typeOpts.length
+      ? typeOpts
+      : ["Controls", "Supplies", "LocatedIn", "DesignedBy", "BuiltBy", "ProvidedBy", "PartOfSystem"];
+
+    const dimOptions = dimOpts.length
+      ? dimOpts
+      : (DIMENSION_DEFAULTS ?? ["System", "Spatial", "Responsibility", "Vendor"]);
 
     const defaultDim =
       (sourceNode.data("nodeType") === "Space" || targetNode.data("nodeType") === "Space")
@@ -417,6 +416,7 @@
             ${typeOptions.map(t => `<option value="${t}">${t}</option>`).join("")}
           </select>
         </label>
+
         <label>Dimension
           <select id="rel-dim" style="width:100%;margin-top:4px;">
             ${dimOptions.map(d => `<option value="${d}">${d}</option>`).join("")}
@@ -463,6 +463,7 @@
     const close = () => { overlay.remove(); cancelManualLink(); };
 
     panel.querySelector("#rel-cancel").addEventListener("click", close);
+
     panel.querySelector("#rel-apply").addEventListener("click", () => {
       const type = $type.value;
       const dimension = $dim.value;
@@ -485,8 +486,10 @@
       );
       if (dup.length > 0) { alert("An identical edge already exists."); return; }
 
+      // NOTE: keep ID generation unchanged to avoid behavioral differences.
       const id = uniqueEdgeId(`e_${srcId}_${type}_${tgtId}`);
       const edgeData = { id, type, dimension, directional: !!directional, source: srcId, target: tgtId, notes };
+
       window.ONEXUS_UNDO?.do(window.ONEXUS_UNDO.actions.addEdge(edgeData));
       window.showTransientMessage?.(`Added: ${type} (${edgeData.source} → ${edgeData.target}) (Undo: Ctrl/Cmd+Z)`);
       close();
@@ -498,10 +501,10 @@
     if (ev.key === "Escape") cancelManualLink();
   });
 
-  // ---- ensure Alt+Drag works before any context-menu linking occurs
+  // ensure Alt+Drag works early
   setTimeout(() => { try { ensureDragHooks(); } catch { } }, 0);
 
-  // expose
+  // expose (unchanged)
   window.openEdgeWizard = openEdgeWizard;
   window.__onexusLink = { beginManualLink, cancelManualLink, deleteEdge, reverseEdge };
 })();
