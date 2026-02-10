@@ -75,50 +75,15 @@
   // ---- taps
   let lastTap = 0;
   cy.on("tap", (evt) => { const now = Date.now(); if (evt.target === cy && now - lastTap < 300) cy.fit(undefined, 50); lastTap = now; });
-  // ---- node interactions: single click = details, double click = focus (N-hop)
-  let __lastNodeTapAt = 0;
-  let __lastNodeTapId = null;
-
   cy.on("tap", "node", (evt) => {
-    const node = evt.target;
-    const now = Date.now();
-
-    // 0) If manual linking is in progress, DO NOT apply focus fading.
-    //    Keep your existing "pending link -> open wizard" behavior.
-    if (editState.linkSource) {
-      if (node !== editState.linkSource) {
-        window.hideContextMenu?.();
-        window.openEdgeWizard?.(editState.linkSource, node, { mode: "create" });
-      }
-      // always show details on tap during linking
-      updateDetailsForNode(node);
-      return;
-    }
-
-    // 1) Host bridge selection (keep existing behavior)
-    const d = node.data();
+    // manual link jump to wizard if pending (from context module)
+    if (editState.linkSource && evt.target !== editState.linkSource) { window.hideContextMenu?.(); window.openEdgeWizard?.(editState.linkSource, evt.target, { mode: 'create' }); return; }
+    // host bridge (WebView2)
+    const d = evt.target.data();
     if (window.chrome && window.chrome.webview) {
-      window.chrome.webview.postMessage({
-        type: "select-node",
-        id: d.id,
-        revitInstanceIds: d.revitInstanceIds ?? [],
-        revitInstanceUids: d.revitInstanceUids ?? []
-      });
+      window.chrome.webview.postMessage({ type: "select-node", id: d.id, revitInstanceIds: d.revitInstanceIds ?? [], revitInstanceUids: d.revitInstanceUids ?? [] });
     }
-
-    // 2) Always update details on single click
-    updateDetailsForNode(node);
-
-    // 3) Double click/tap on same node => apply focus (N-hop)
-    const isDouble = (__lastNodeTapId === node.id()) && (now - __lastNodeTapAt < 320);
-    __lastNodeTapAt = now;
-    __lastNodeTapId = node.id();
-
-    if (isDouble) {
-      state.focusedNode = node;
-      applyDepthFocus(node);
-      window.showTransientMessage?.(`Focus applied (${state.focusDepth}-hop).`);
-    }
+    state.focusedNode = evt.target; applyDepthFocus(state.focusedNode); updateDetailsForNode(state.focusedNode);
   });
   cy.on("tap", "edge", (evt) => updateDetailsForEdge(evt.target));
   cy.on("tap", (evt) => { if (evt.target === cy) { clearFocus(); setDetailsMessage("Click a node or relationship."); } });

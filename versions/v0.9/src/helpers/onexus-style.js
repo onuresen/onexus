@@ -194,8 +194,6 @@ function buildStyle(themeKey) {
         "font-size": `${clamp(9 * S, 7, 15)}px`,
       },
     },
-    // Link target hover (during drag-to-connect)
-    { selector: "node.linkTarget", style: { "border-width": 4, "border-color": "#a855f7" } },
 
     // Base edge
     {
