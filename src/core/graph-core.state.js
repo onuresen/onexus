@@ -109,6 +109,15 @@
     // 2) Always update details on single click
     updateDetailsForNode(node);
 
+    // Optional shortcut: Shift+Click => focus immediately
+    const oe = evt.originalEvent;
+    if (oe && oe.shiftKey) {
+      state.focusedNode = node;
+      applyDepthFocus(node);
+      window.showTransientMessage?.(`Focus applied (${state.focusDepth}-hop).`);
+      return;
+    }
+
     // 3) Double click/tap on same node => apply focus (N-hop)
     const isDouble = (__lastNodeTapId === node.id()) && (now - __lastNodeTapAt < 320);
     __lastNodeTapAt = now;
