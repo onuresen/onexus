@@ -498,6 +498,9 @@
     if (ev.key === "Escape") cancelManualLink();
   });
 
+  // ---- ensure Alt+Drag works before any context-menu linking occurs
+  setTimeout(() => { try { ensureDragHooks(); } catch { } }, 0);
+
   // expose
   window.openEdgeWizard = openEdgeWizard;
   window.__onexusLink = { beginManualLink, cancelManualLink, deleteEdge, reverseEdge };
