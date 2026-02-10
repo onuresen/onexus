@@ -8,6 +8,98 @@ const writePref = (k, v) => localStorage.setItem(k, v);
 // attach helper
 const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn);
 
+// ===============================
+// ONEXUS – Undo/Redo UI Sync (enable/disable buttons, auto-refresh)
+// Depends on: window.ONEXUS_UNDO, #btnUndo, #btnRedo
+// ===============================
+(function () {
+  function setBtnState(id, enabled) {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.disabled = !enabled;
+    b.style.opacity = enabled ? "1" : "0.45";
+    b.style.cursor = enabled ? "pointer" : "not-allowed";
+    b.setAttribute("aria-disabled", (!enabled).toString());
+  }
+
+  function refreshUndoRedoButtons() {
+    const U = window.ONEXUS_UNDO;
+    const canUndo = !!U?.canUndo?.();
+    const canRedo = !!U?.canRedo?.();
+    setBtnState("btnUndo", canUndo);
+    setBtnState("btnRedo", canRedo);
+  }
+
+  function hookUndoApiOnce() {
+    const U = window.ONEXUS_UNDO;
+    if (!U || U.__uiHooked) return;
+    U.__uiHooked = true;
+
+    const _do = U.do?.bind(U);
+    const _undo = U.undo?.bind(U);
+    const _redo = U.redo?.bind(U);
+    const _clear = U.clear?.bind(U);
+
+    if (_do) {
+      U.do = (cmd) => {
+        const r = _do(cmd);
+        refreshUndoRedoButtons();
+        return r;
+      };
+    }
+    if (_undo) {
+      U.undo = () => {
+        const r = _undo();
+        refreshUndoRedoButtons();
+        return r;
+      };
+    }
+    if (_redo) {
+      U.redo = () => {
+        const r = _redo();
+        refreshUndoRedoButtons();
+        return r;
+      };
+    }
+    if (_clear) {
+      U.clear = () => {
+        const r = _clear();
+        refreshUndoRedoButtons();
+        return r;
+      };
+    }
+
+    // initial
+    refreshUndoRedoButtons();
+  }
+
+  function hookCyEventsOnce() {
+    const cy = window.cy;
+    if (!cy || cy.__undoUiHooked) return;
+    cy.__undoUiHooked = true;
+
+    // Layout stop is a good "graph stabilized" moment after loads/layout changes
+    cy.on("layoutstop", () => refreshUndoRedoButtons());
+
+    // If graph is reloaded or elements change, reflect that
+    cy.on("add remove", () => refreshUndoRedoButtons());
+  }
+
+  // Boot: ONEXUS_UNDO might be defined after bindings load, so try multiple times safely
+  function boot() {
+    hookUndoApiOnce();
+    hookCyEventsOnce();
+    refreshUndoRedoButtons();
+  }
+
+  window.addEventListener("DOMContentLoaded", boot);
+  // also run soon after script load (covers cases where DOM is already ready)
+  setTimeout(boot, 120);
+
+  // Expose (optional for debugging / other modules)
+  window.refreshUndoRedoButtons = refreshUndoRedoButtons;
+})();
+
 // ---- CSV quick classifier (filename/header peek) ----
 // NOTE: kept lightweight here so we can quickly route to CSV choice without parsing full file.
 function classifyCsvText(name, text) {
