@@ -1,0 +1,3753 @@
+{
+  "meta": {
+    "schema": "onexus-1.x",
+    "title": "Kanji Study Graph – Mixed 100 (phonetic + radical)",
+    "generated": "2026-02-11T12:00:33.958437Z"
+  },
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "PH_青",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "青",
+            "en": "青"
+          },
+          "displayLabel": "青"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_令",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "令",
+            "en": "令"
+          },
+          "displayLabel": "令"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_包",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "包",
+            "en": "包"
+          },
+          "displayLabel": "包"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_反",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "反",
+            "en": "反"
+          },
+          "displayLabel": "反"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_申",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "申",
+            "en": "申"
+          },
+          "displayLabel": "申"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_交",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "交",
+            "en": "交"
+          },
+          "displayLabel": "交"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_京",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "京",
+            "en": "京"
+          },
+          "displayLabel": "京"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_良",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "良",
+            "en": "良"
+          },
+          "displayLabel": "良"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_昔",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "昔",
+            "en": "昔"
+          },
+          "displayLabel": "昔"
+        }
+      },
+      {
+        "data": {
+          "id": "PH_票",
+          "nodeType": "Phonetic",
+          "category": "Component",
+          "label": {
+            "jp": "票",
+            "en": "票"
+          },
+          "displayLabel": "票"
+        }
+      },
+      {
+        "data": {
+          "id": "R_氵",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "氵",
+            "en": "氵"
+          },
+          "displayLabel": "氵"
+        }
+      },
+      {
+        "data": {
+          "id": "R_忄",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "忄",
+            "en": "忄"
+          },
+          "displayLabel": "忄"
+        }
+      },
+      {
+        "data": {
+          "id": "R_言",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "言",
+            "en": "言"
+          },
+          "displayLabel": "言"
+        }
+      },
+      {
+        "data": {
+          "id": "R_日",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "日",
+            "en": "日"
+          },
+          "displayLabel": "日"
+        }
+      },
+      {
+        "data": {
+          "id": "R_木",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "木",
+            "en": "木"
+          },
+          "displayLabel": "木"
+        }
+      },
+      {
+        "data": {
+          "id": "R_亻",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "亻",
+            "en": "亻"
+          },
+          "displayLabel": "亻"
+        }
+      },
+      {
+        "data": {
+          "id": "R_金",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "金",
+            "en": "金"
+          },
+          "displayLabel": "金"
+        }
+      },
+      {
+        "data": {
+          "id": "R_月",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "月",
+            "en": "月"
+          },
+          "displayLabel": "月"
+        }
+      },
+      {
+        "data": {
+          "id": "R_礻",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "礻",
+            "en": "礻"
+          },
+          "displayLabel": "礻"
+        }
+      },
+      {
+        "data": {
+          "id": "R_雨",
+          "nodeType": "Radical",
+          "category": "Radical",
+          "label": {
+            "jp": "雨",
+            "en": "雨"
+          },
+          "displayLabel": "雨"
+        }
+      },
+      {
+        "data": {
+          "id": "情",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "情",
+            "en": "情"
+          },
+          "displayLabel": "情",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "晴",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "晴",
+            "en": "晴"
+          },
+          "displayLabel": "晴",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "静",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "静",
+            "en": "静"
+          },
+          "displayLabel": "静",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "清",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "清",
+            "en": "清"
+          },
+          "displayLabel": "清",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "請",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "請",
+            "en": "請"
+          },
+          "displayLabel": "請",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "精",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "精",
+            "en": "精"
+          },
+          "displayLabel": "精",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "靖",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "靖",
+            "en": "靖"
+          },
+          "displayLabel": "靖",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "静",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "静",
+            "en": "静"
+          },
+          "displayLabel": "静",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "青",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "青",
+            "en": "青"
+          },
+          "displayLabel": "青",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "整",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "整",
+            "en": "整"
+          },
+          "displayLabel": "整",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "冷",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "冷",
+            "en": "冷"
+          },
+          "displayLabel": "冷",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "鈴",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "鈴",
+            "en": "鈴"
+          },
+          "displayLabel": "鈴",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "零",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "零",
+            "en": "零"
+          },
+          "displayLabel": "零",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "領",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "領",
+            "en": "領"
+          },
+          "displayLabel": "領",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "齢",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "齢",
+            "en": "齢"
+          },
+          "displayLabel": "齢",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "例",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "例",
+            "en": "例"
+          },
+          "displayLabel": "例",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "礼",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "礼",
+            "en": "礼"
+          },
+          "displayLabel": "礼",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "霊",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "霊",
+            "en": "霊"
+          },
+          "displayLabel": "霊",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "隷",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "隷",
+            "en": "隷"
+          },
+          "displayLabel": "隷",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "令",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "令",
+            "en": "令"
+          },
+          "displayLabel": "令",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "泡",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "泡",
+            "en": "泡"
+          },
+          "displayLabel": "泡",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "胞",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "胞",
+            "en": "胞"
+          },
+          "displayLabel": "胞",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "抱",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "抱",
+            "en": "抱"
+          },
+          "displayLabel": "抱",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "砲",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "砲",
+            "en": "砲"
+          },
+          "displayLabel": "砲",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "飽",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "飽",
+            "en": "飽"
+          },
+          "displayLabel": "飽",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "包",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "包",
+            "en": "包"
+          },
+          "displayLabel": "包",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "放",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "放",
+            "en": "放"
+          },
+          "displayLabel": "放",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "訪",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "訪",
+            "en": "訪"
+          },
+          "displayLabel": "訪",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "法",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "法",
+            "en": "法"
+          },
+          "displayLabel": "法",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "報",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "報",
+            "en": "報"
+          },
+          "displayLabel": "報",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "飯",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "飯",
+            "en": "飯"
+          },
+          "displayLabel": "飯",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "板",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "板",
+            "en": "板"
+          },
+          "displayLabel": "板",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "版",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "版",
+            "en": "版"
+          },
+          "displayLabel": "版",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "返",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "返",
+            "en": "返"
+          },
+          "displayLabel": "返",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "反",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "反",
+            "en": "反"
+          },
+          "displayLabel": "反",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "販",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "販",
+            "en": "販"
+          },
+          "displayLabel": "販",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "坂",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "坂",
+            "en": "坂"
+          },
+          "displayLabel": "坂",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "阪",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "阪",
+            "en": "阪"
+          },
+          "displayLabel": "阪",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "判",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "判",
+            "en": "判"
+          },
+          "displayLabel": "判",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "般",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "般",
+            "en": "般"
+          },
+          "displayLabel": "般",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "伸",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "伸",
+            "en": "伸"
+          },
+          "displayLabel": "伸",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "神",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "神",
+            "en": "神"
+          },
+          "displayLabel": "神",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "申",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "申",
+            "en": "申"
+          },
+          "displayLabel": "申",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "深",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "深",
+            "en": "深"
+          },
+          "displayLabel": "深",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "信",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "信",
+            "en": "信"
+          },
+          "displayLabel": "信",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "臣",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "臣",
+            "en": "臣"
+          },
+          "displayLabel": "臣",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "審",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "審",
+            "en": "審"
+          },
+          "displayLabel": "審",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "慎",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "慎",
+            "en": "慎"
+          },
+          "displayLabel": "慎",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "震",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "震",
+            "en": "震"
+          },
+          "displayLabel": "震",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "新",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "新",
+            "en": "新"
+          },
+          "displayLabel": "新",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "校",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "校",
+            "en": "校"
+          },
+          "displayLabel": "校",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "効",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "効",
+            "en": "効"
+          },
+          "displayLabel": "効",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "交",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "交",
+            "en": "交"
+          },
+          "displayLabel": "交",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "較",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "較",
+            "en": "較"
+          },
+          "displayLabel": "較",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "郊",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "郊",
+            "en": "郊"
+          },
+          "displayLabel": "郊",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "構",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "構",
+            "en": "構"
+          },
+          "displayLabel": "構",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "講",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "講",
+            "en": "講"
+          },
+          "displayLabel": "講",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "航",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "航",
+            "en": "航"
+          },
+          "displayLabel": "航",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "港",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "港",
+            "en": "港"
+          },
+          "displayLabel": "港",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "降",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "降",
+            "en": "降"
+          },
+          "displayLabel": "降",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "京",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "京",
+            "en": "京"
+          },
+          "displayLabel": "京",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "景",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "景",
+            "en": "景"
+          },
+          "displayLabel": "景",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "敬",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "敬",
+            "en": "敬"
+          },
+          "displayLabel": "敬",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "警",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "警",
+            "en": "警"
+          },
+          "displayLabel": "警",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "軽",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "軽",
+            "en": "軽"
+          },
+          "displayLabel": "軽",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "競",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "競",
+            "en": "競"
+          },
+          "displayLabel": "競",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "境",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "境",
+            "en": "境"
+          },
+          "displayLabel": "境",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "驚",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "驚",
+            "en": "驚"
+          },
+          "displayLabel": "驚",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "鏡",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "鏡",
+            "en": "鏡"
+          },
+          "displayLabel": "鏡",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "径",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "径",
+            "en": "径"
+          },
+          "displayLabel": "径",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "良",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "良",
+            "en": "良"
+          },
+          "displayLabel": "良",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "朗",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "朗",
+            "en": "朗"
+          },
+          "displayLabel": "朗",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "浪",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "浪",
+            "en": "浪"
+          },
+          "displayLabel": "浪",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "郎",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "郎",
+            "en": "郎"
+          },
+          "displayLabel": "郎",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "廊",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "廊",
+            "en": "廊"
+          },
+          "displayLabel": "廊",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "老",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "老",
+            "en": "老"
+          },
+          "displayLabel": "老",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "労",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "労",
+            "en": "労"
+          },
+          "displayLabel": "労",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "路",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "路",
+            "en": "路"
+          },
+          "displayLabel": "路",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "露",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "露",
+            "en": "露"
+          },
+          "displayLabel": "露",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "漏",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "漏",
+            "en": "漏"
+          },
+          "displayLabel": "漏",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "昔",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "昔",
+            "en": "昔"
+          },
+          "displayLabel": "昔",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "借",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "借",
+            "en": "借"
+          },
+          "displayLabel": "借",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "惜",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "惜",
+            "en": "惜"
+          },
+          "displayLabel": "惜",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "錯",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "錯",
+            "en": "錯"
+          },
+          "displayLabel": "錯",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "策",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "策",
+            "en": "策"
+          },
+          "displayLabel": "策",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "責",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "責",
+            "en": "責"
+          },
+          "displayLabel": "責",
+          "level": "N1"
+        }
+      },
+      {
+        "data": {
+          "id": "積",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "積",
+            "en": "積"
+          },
+          "displayLabel": "積",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "績",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "績",
+            "en": "績"
+          },
+          "displayLabel": "績",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "籍",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "籍",
+            "en": "籍"
+          },
+          "displayLabel": "籍",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "赤",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "赤",
+            "en": "赤"
+          },
+          "displayLabel": "赤",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "票",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "票",
+            "en": "票"
+          },
+          "displayLabel": "票",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "標",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "標",
+            "en": "標"
+          },
+          "displayLabel": "標",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "漂",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "漂",
+            "en": "漂"
+          },
+          "displayLabel": "漂",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "表",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "表",
+            "en": "表"
+          },
+          "displayLabel": "表",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "俵",
+          "nodeType": "Kanji",
+          "category": "JLPT N5",
+          "label": {
+            "jp": "俵",
+            "en": "俵"
+          },
+          "displayLabel": "俵",
+          "level": "N5"
+        }
+      },
+      {
+        "data": {
+          "id": "評",
+          "nodeType": "Kanji",
+          "category": "JLPT N4",
+          "label": {
+            "jp": "評",
+            "en": "評"
+          },
+          "displayLabel": "評",
+          "level": "N4"
+        }
+      },
+      {
+        "data": {
+          "id": "秒",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "秒",
+            "en": "秒"
+          },
+          "displayLabel": "秒",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "描",
+          "nodeType": "Kanji",
+          "category": "JLPT N3",
+          "label": {
+            "jp": "描",
+            "en": "描"
+          },
+          "displayLabel": "描",
+          "level": "N3"
+        }
+      },
+      {
+        "data": {
+          "id": "猫",
+          "nodeType": "Kanji",
+          "category": "JLPT N2",
+          "label": {
+            "jp": "猫",
+            "en": "猫"
+          },
+          "displayLabel": "猫",
+          "level": "N2"
+        }
+      },
+      {
+        "data": {
+          "id": "苗",
+          "nodeType": "Kanji",
+          "category": "JLPT N1",
+          "label": {
+            "jp": "苗",
+            "en": "苗"
+          },
+          "displayLabel": "苗",
+          "level": "N1"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "data": {
+          "id": "has_phonetic:情->PH_青:1",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "情",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:情->R_礻:2",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "情",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:晴->PH_青:3",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "晴",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:晴->R_礻:4",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "晴",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:静->PH_青:5",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "静",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:静->R_亻:6",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "静",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:清->PH_青:7",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "清",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:清->R_亻:8",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "清",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:請->PH_青:9",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "請",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:請->R_亻:10",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "請",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:精->PH_青:11",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "精",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:精->R_木:12",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "精",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:靖->PH_青:13",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "靖",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:靖->R_礻:14",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "靖",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:静->PH_青:15",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "静",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:静->R_月:16",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "静",
+          "target": "R_月"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:青->PH_青:17",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "青",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:青->R_木:18",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "青",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:整->PH_青:19",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "整",
+          "target": "PH_青"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:整->R_言:20",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "整",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:冷->PH_令:21",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "冷",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:冷->R_礻:22",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "冷",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:鈴->PH_令:23",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "鈴",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:鈴->R_礻:24",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "鈴",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:零->PH_令:25",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "零",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:零->R_雨:26",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "零",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:領->PH_令:27",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "領",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:領->R_日:28",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "領",
+          "target": "R_日"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:齢->PH_令:29",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "齢",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:齢->R_忄:30",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "齢",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:例->PH_令:31",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "例",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:例->R_金:32",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "例",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:礼->PH_令:33",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "礼",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:礼->R_雨:34",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "礼",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:霊->PH_令:35",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "霊",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:霊->R_礻:36",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "霊",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:隷->PH_令:37",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "隷",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:隷->R_日:38",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "隷",
+          "target": "R_日"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:令->PH_令:39",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "令",
+          "target": "PH_令"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:令->R_木:40",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "令",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:泡->PH_包:41",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "泡",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:泡->R_日:42",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "泡",
+          "target": "R_日"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:胞->PH_包:43",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "胞",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:胞->R_氵:44",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "胞",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:抱->PH_包:45",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "抱",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:抱->R_日:46",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "抱",
+          "target": "R_日"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:砲->PH_包:47",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "砲",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:砲->R_忄:48",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "砲",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:飽->PH_包:49",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "飽",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:飽->R_金:50",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "飽",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:包->PH_包:51",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "包",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:包->R_木:52",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "包",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:放->PH_包:53",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "放",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:放->R_言:54",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "放",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:訪->PH_包:55",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "訪",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:訪->R_雨:56",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "訪",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:法->PH_包:57",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "法",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:法->R_雨:58",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "法",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:報->PH_包:59",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "報",
+          "target": "PH_包"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:報->R_金:60",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "報",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:飯->PH_反:61",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "飯",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:飯->R_忄:62",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "飯",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:板->PH_反:63",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "板",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:板->R_氵:64",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "板",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:版->PH_反:65",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "版",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:版->R_氵:66",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "版",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:返->PH_反:67",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "返",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:返->R_氵:68",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "返",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:反->PH_反:69",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "反",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:反->R_雨:70",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "反",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:販->PH_反:71",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "販",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:販->R_亻:72",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "販",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:坂->PH_反:73",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "坂",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:坂->R_言:74",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "坂",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:阪->PH_反:75",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "阪",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:阪->R_雨:76",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "阪",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:判->PH_反:77",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "判",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:判->R_亻:78",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "判",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:般->PH_反:79",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "般",
+          "target": "PH_反"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:般->R_亻:80",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "般",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:伸->PH_申:81",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "伸",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:伸->R_礻:82",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "伸",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:神->PH_申:83",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "神",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:神->R_言:84",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "神",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:申->PH_申:85",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "申",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:申->R_忄:86",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "申",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:深->PH_申:87",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "深",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:深->R_氵:88",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "深",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:信->PH_申:89",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "信",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:信->R_亻:90",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "信",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:臣->PH_申:91",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "臣",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:臣->R_言:92",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "臣",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:審->PH_申:93",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "審",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:審->R_雨:94",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "審",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:慎->PH_申:95",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "慎",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:慎->R_木:96",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "慎",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:震->PH_申:97",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "震",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:震->R_氵:98",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "震",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:新->PH_申:99",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "新",
+          "target": "PH_申"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:新->R_金:100",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "新",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:校->PH_交:101",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "校",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:校->R_金:102",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "校",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:効->PH_交:103",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "効",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:効->R_木:104",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "効",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:交->PH_交:105",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "交",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:交->R_忄:106",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "交",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:較->PH_交:107",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "較",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:較->R_金:108",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "較",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:郊->PH_交:109",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "郊",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:郊->R_言:110",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "郊",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:構->PH_交:111",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "構",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:構->R_金:112",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "構",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:講->PH_交:113",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "講",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:講->R_木:114",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "講",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:航->PH_交:115",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "航",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:航->R_忄:116",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "航",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:港->PH_交:117",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "港",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:港->R_言:118",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "港",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:降->PH_交:119",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "降",
+          "target": "PH_交"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:降->R_月:120",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "降",
+          "target": "R_月"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:京->PH_京:121",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "京",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:京->R_木:122",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "京",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:景->PH_京:123",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "景",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:景->R_金:124",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "景",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:敬->PH_京:125",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "敬",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:敬->R_礻:126",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "敬",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:警->PH_京:127",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "警",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:警->R_日:128",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "警",
+          "target": "R_日"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:軽->PH_京:129",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "軽",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:軽->R_礻:130",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "軽",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:競->PH_京:131",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "競",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:競->R_亻:132",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "競",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:境->PH_京:133",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "境",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:境->R_月:134",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "境",
+          "target": "R_月"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:驚->PH_京:135",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "驚",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:驚->R_金:136",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "驚",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:鏡->PH_京:137",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "鏡",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:鏡->R_雨:138",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "鏡",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:径->PH_京:139",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "径",
+          "target": "PH_京"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:径->R_礻:140",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "径",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:良->PH_良:141",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "良",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:良->R_金:142",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "良",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:朗->PH_良:143",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "朗",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:朗->R_亻:144",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "朗",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:浪->PH_良:145",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "浪",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:浪->R_忄:146",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "浪",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:郎->PH_良:147",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "郎",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:郎->R_雨:148",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "郎",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:廊->PH_良:149",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "廊",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:廊->R_亻:150",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "廊",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:老->PH_良:151",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "老",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:老->R_氵:152",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "老",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:労->PH_良:153",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "労",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:労->R_亻:154",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "労",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:路->PH_良:155",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "路",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:路->R_月:156",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "路",
+          "target": "R_月"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:露->PH_良:157",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "露",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:露->R_日:158",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "露",
+          "target": "R_日"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:漏->PH_良:159",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "漏",
+          "target": "PH_良"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:漏->R_日:160",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "漏",
+          "target": "R_日"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:昔->PH_昔:161",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "昔",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:昔->R_言:162",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "昔",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:借->PH_昔:163",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "借",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:借->R_言:164",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "借",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:惜->PH_昔:165",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "惜",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:惜->R_亻:166",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "惜",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:錯->PH_昔:167",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "錯",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:錯->R_雨:168",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "錯",
+          "target": "R_雨"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:策->PH_昔:169",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "策",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:策->R_忄:170",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "策",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:責->PH_昔:171",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "責",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:責->R_忄:172",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "責",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:積->PH_昔:173",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "積",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:積->R_忄:174",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "積",
+          "target": "R_忄"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:績->PH_昔:175",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "績",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:績->R_礻:176",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "績",
+          "target": "R_礻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:籍->PH_昔:177",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "籍",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:籍->R_亻:178",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "籍",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:赤->PH_昔:179",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "赤",
+          "target": "PH_昔"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:赤->R_木:180",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "赤",
+          "target": "R_木"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:票->PH_票:181",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "票",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:票->R_金:182",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "票",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:標->PH_票:183",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "標",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:標->R_月:184",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "標",
+          "target": "R_月"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:漂->PH_票:185",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "漂",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:漂->R_亻:186",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "漂",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:表->PH_票:187",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "表",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:表->R_金:188",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "表",
+          "target": "R_金"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:俵->PH_票:189",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "俵",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:俵->R_亻:190",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "俵",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:評->PH_票:191",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "評",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:評->R_氵:192",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "評",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:秒->PH_票:193",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "秒",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:秒->R_亻:194",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "秒",
+          "target": "R_亻"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:描->PH_票:195",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "描",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:描->R_言:196",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "描",
+          "target": "R_言"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:猫->PH_票:197",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "猫",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:猫->R_氵:198",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "猫",
+          "target": "R_氵"
+        }
+      },
+      {
+        "data": {
+          "id": "has_phonetic:苗->PH_票:199",
+          "type": "has_phonetic",
+          "displayType": "has_phonetic",
+          "dimension": "Kanji-Phonetic",
+          "directional": true,
+          "source": "苗",
+          "target": "PH_票"
+        }
+      },
+      {
+        "data": {
+          "id": "has_radical:苗->R_月:200",
+          "type": "has_radical",
+          "displayType": "has_radical",
+          "dimension": "Kanji-Radical",
+          "directional": true,
+          "source": "苗",
+          "target": "R_月"
+        }
+      }
+    ]
+  }
+}
