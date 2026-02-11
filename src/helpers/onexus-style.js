@@ -82,6 +82,66 @@ const RELATIONSHIP_COLORS = {
 const nodeColor = (category) => CATEGORY_COLORS[category] ?? "#666";
 const edgeColor = (type) => RELATIONSHIP_COLORS[type] ?? "#999";
 
+// --- Colorize mode ---
+let currentColorMode = "json_category";
+
+// nice palette (stable, readable)
+const COLOR_PALETTE = [
+  "#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6",
+  "#06B6D4", "#84CC16", "#F97316", "#EC4899", "#64748B"
+];
+
+function hashString(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0);
+}
+function colorFromKey(key) {
+  const idx = hashString(String(key)) % COLOR_PALETTE.length;
+  return COLOR_PALETTE[idx];
+}
+
+function nodeColorByMode(ele) {
+  const d = ele.data() || {};
+
+  // 1) respect explicit color if present in JSON
+  const explicit = d.color || d.fill || d.bg || d.background;
+  if (explicit) return explicit;
+
+  // helpers
+  const category = d.category || "";
+  const nodeType = d.nodeType || d.type || "";
+  const level = d.level || d.jlpt || d.JLPT || "";
+
+  switch (currentColorMode) {
+    case "nodeType":
+      return colorFromKey(nodeType || category || d.id);
+
+    case "level":
+      return colorFromKey(level || "NO_LEVEL");
+
+    case "degree": {
+      const deg = ele.degree(false); // undirected degree
+      // bucket it
+      if (deg <= 1) return "#94A3B8";
+      if (deg <= 3) return "#3B82F6";
+      if (deg <= 6) return "#F59E0B";
+      return "#EF4444";
+    }
+
+    case "stableRandom":
+      return colorFromKey(d.id);
+
+    case "json_category":
+    default:
+      // current behavior, but with explicit-color priority above
+      return CATEGORY_COLORS[category] ?? colorFromKey(category || nodeType || d.id);
+  }
+}
+
 /* Style factory (returns Cytoscape style JSON)
    NOTE: This version multiplies node/edge sizes & fonts by current scale (S) without changing positions. */
 function buildStyle(themeKey) {
@@ -109,7 +169,7 @@ function buildStyle(themeKey) {
       selector: "node",
       style: {
         label: "data(displayLabel)",
-        "background-color": (ele) => nodeColor(ele.data("category")),
+        "background-color": (ele) => nodeColorByMode(ele),
         color: T.text,
         "text-wrap": "wrap",
         "text-max-width": `${clamp(90 * S, 60, 160)}px`,
@@ -343,6 +403,16 @@ function applyScale(scale) {
   }
   window.buildRelationshipLegend?.();
 }
+
+function applyColorMode(mode) {
+  currentColorMode = mode || "json_category";
+  const cy = window.cy;
+  NEXUS_STYLE = buildStyle(currentTheme);
+  if (cy?.style) cy.style(NEXUS_STYLE);
+  window.buildRelationshipLegend?.();
+}
+window.applyColorMode = applyColorMode;
+window.currentColorMode = () => currentColorMode;
 
 // Expose
 window.THEMES = THEMES;

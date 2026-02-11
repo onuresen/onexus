@@ -148,6 +148,18 @@ function classifyCsvText(name, text) {
       updateScaleLabel(1);
       window.applyScale?.(1);
     }
+
+    // restore color mode
+    const savedMode = readPref("onexus.colorMode", "json_category");
+    const $mode = document.getElementById("colorModeSelect");
+    if ($mode) {
+      $mode.value = savedMode;
+      window.applyColorMode?.(savedMode);
+      $mode.addEventListener("change", () => {
+        writePref("onexus.colorMode", $mode.value);
+        window.applyColorMode?.($mode.value);
+      });
+    }
   });
 
   // Icon buttons: navigation

@@ -554,6 +554,15 @@
     <h3>Phase</h3>
     <select id="phaseFilter" multiple size="4" style="width:100%"></select>
 
+    <h3>Colorize</h3>
+    <select id="colorModeSelect">
+      <option value="json_category">JSON / Category</option>
+      <option value="nodeType">Node Type</option>
+      <option value="level">Level (JLPT)</option>
+      <option value="degree">Degree (Hubs)</option>
+      <option value="stableRandom">Stable Random</option>
+    </select>
+
     <h3>Animation Lab</h3>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <select id="animMode" style="flex:1;" onchange="setAnimMode(this.value)">
