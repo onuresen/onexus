@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>ONEXUS – Relationship Layer</title>
+
+  <!-- Libraries -->
+  <link rel="stylesheet" href="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape.js-navigator.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape-navigator.js"></script>
+  <script src="https://unpkg.com/cytoscape-svg@latest"></script>
+  <script src=./src/importers/cobie-importer.js></script>
+  <script src=./src/importers/ifc-importer.js></script>
+
+  <style>
+    :root {
+      --bg-main: #ffffff;
+      --bg-panel: #f8f9fb;
+      --bg-soft: #f3f4f6;
+      --bg-canvas: #f5f7fa;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --stroke: #e5e7eb;
+      --icon-color: #111827;
+      --btn-bg: #ffffff;
+      --btn-bg-hover: #eef2ff;
+
+      --radius: 10px;
+      --gap: 12px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: grid;
+      /* 2 rows now: toolbar + main; bottom row removed */
+      grid-template-rows: auto 1fr;
+      grid-template-columns: 1fr 320px;
+      grid-template-areas:
+        "toolbar toolbar"
+        "canvas  sidebar";
+      gap: var(--gap);
+      padding: var(--gap);
+      background: var(--bg-main);
+      font-family:
+        Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Noto Sans JP", sans-serif;
+      color: var(--text-main);
+      background: var(--bg-main);
+    }
+
+    /* ---- Toolbar (single surface) ---- */
+    #toolbar {
+      grid-area: toolbar;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      color: var(--text-main);
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tool-group label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    select,
+    input[type="file"] {
+      font-size: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+    }
+
+    .badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #111827;
+      color: #ffffff;
+    }
+
+    /* Toolbar icon buttons */
+    .iconbar {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover {
+      background: #eef2ff;
+    }
+
+    .icon-btn svg {
+      width: 18px;
+      height: 18px;
+      color: #111827;
+    }
+
+    /* currentColor */
+    .divider {
+      width: 1px;
+      height: 22px;
+      background: #e5e7eb;
+      margin: 0 6px;
+    }
+
+    /* ---- Canvas ---- */
+    #canvas-wrap {
+      grid-area: canvas;
+      position: relative;
+      background: var(--bg-canvas);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    #cy {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Minimap overlay (moved from bottom to canvas corner) */
+    #minimap {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      width: 240px;
+      height: 150px;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--stroke);
+      overflow: hidden;
+    }
+
+    /* ---- Sidebar (Inspector style) ---- */
+    #sidebar {
+      grid-area: sidebar;
+      background: var(--bg-panel);
+      border-radius: var(--radius);
+      padding: 14px;
+      overflow-y: auto;
+      box-shadow: var(--shadow-sm);
+    }
+
+    h3 {
+      margin: 14px 0 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    select {
+      width: 100%;
+    }
+
+    /* Flat buttons (kept for lens) */
+    button.flat {
+      width: 100%;
+      padding: 6px 10px;
+      margin: 4px 0;
+      font-size: 12px;
+      background: var(--bg-soft);
+      color: var(--text-main);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button.flat:hover {
+      background: #e5e7eb;
+    }
+
+
+    .icon-btn {
+      background: var(--btn-bg);
+      border: 1px solid var(--stroke);
+    }
+
+    .icon-btn:hover {
+      background: var(--btn-bg-hover);
+    }
+
+    .icon-btn svg {
+      color: var(--icon-color);
+    }
+
+    /* Legend */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .legend-line {
+      width: 18px;
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    .legend-item.active {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .legend-item:hover {
+      cursor: pointer;
+      background: var(--bg-soft);
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
+
+    /* Details panel now in sidebar */
+    #details {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 12px;
+      min-height: 120px;
+      color: var(--text-main);
+      border: 1px solid var(--stroke);
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      body {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "toolbar"
+          "canvas";
+      }
+
+      #sidebar {
+        display: none;
+      }
+
+      /* Make minimap smaller on narrow screens */
+      #minimap {
+        width: 180px;
+        height: 120px;
+        background: var(--bg-panel);
+        border: 1px solid var(--stroke);
+      }
+    }
+  
+    /* ---- Left Icon Rail + Drawer (overlay; does NOT affect layout grid) ---- */
+    #leftRail {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 30;
+    }
+
+    #leftRail .rail-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #ffffff;
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      user-select: none;
+      font-size: 18px;
+    }
+
+    #leftRail .rail-btn:hover {
+      background: var(--btn-bg-hover);
+    }
+
+    #leftRail .rail-btn.active {
+      outline: 2px solid rgba(17, 24, 39, 0.18);
+      background: #ffffff;
+    }
+
+    #leftDrawer {
+      position: absolute;
+      top: 12px;
+      left: 66px; /* rail width + gap */
+      width: 360px;
+      max-width: min(360px, calc(100vw - 120px));
+      bottom: 12px;
+      background: var(--bg-panel);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      z-index: 29;
+      display: none; /* closed by default */
+    }
+
+    #leftDrawer.open {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(6px);
+    }
+
+    .drawer-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .drawer-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      border: 1px solid var(--stroke);
+      background: #fff;
+      cursor: pointer;
+    }
+    .drawer-close:hover { background: var(--btn-bg-hover); }
+
+    #drawerBody {
+      padding: 12px 14px;
+      overflow: auto;
+    }
+
+    .drawer-panel { display: none; }
+    .drawer-panel.show { display: block; }
+
+    /* Keep minimap visible above canvas elements */
+    #minimap { z-index: 10; }
+
+    @media (max-width: 1100px) {
+      #leftDrawer { width: 320px; left: 60px; }
+      #leftRail { top: 10px; left: 10px; }
+    }
+
+  </style>
+
+  <!-- Tiny inline SVG sprite for icons -->
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <!-- Fit -->
+    <symbol id="i-fit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" />
+    </symbol>
+    <!-- Center (crosshair) -->
+    <symbol id="i-center" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3v4M12 17v4M21 12h-4M7 12H3" />
+    </symbol>
+    <!-- Reset (rotate) -->
+    <symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M20 7V4l-3 3" />
+      <path d="M20 7a8 8 0 1 0 2 5" />
+    </symbol>
+    <!-- PNG (image) -->
+    <symbol id="i-png" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+      stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="8" cy="10" r="2" />
+      <path d="M3 17l5-4 3 3 4-3 6 4" />
+    </symbol>
+    <!-- SVG (< >) -->
+    <symbol id="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M8 8l-4 4 4 4M16 8l4 4-4 4" />
+    </symbol>
+    <!-- JSON ({ }) -->
+    <symbol id="i-json" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M8 7c-2 0-3 1-3 5s1 5 3 5" />
+      <path d="M16 7c2 0 3 1 3 5s-1 5-3 5" />
+    </symbol>
+    <!-- CSV (grid) -->
+    <symbol id="i-csv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+      stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 11h18M9 5v14M15 5v14" />
+    </symbol>
+    <!-- Layout (nodes) -->
+    <symbol id="i-layout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="6" cy="6" r="2.5" />
+      <circle cx="18" cy="6" r="2.5" />
+      <circle cx="12" cy="18" r="2.5" />
+      <path d="M7.8 7.8L10.5 16M16.2 7.8L13.5 16" />
+    </symbol>
+  </svg>
+</head>
+
+<body>
+  <!-- Toolbar -->
+  <div id="toolbar">
+    <div class="tool-group">
+      <label>Language</label>
+      <select id="languageSelect" onchange="setLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="jp">日本語</option>
+      </select>
+    </div>
+    <div class="tool-group">
+      <label>View</label>
+      <select id="layoutSelect" onchange="applyLayout(this.value)">
+        <option value="default">Free</option>
+        <option value="tree_nested">Tree (Nested)</option>
+        <option value="system">System</option>
+        <option value="responsibility">Responsibility</option>
+        <option value="spatial">Spatial</option>
+        <option value="category_lanes">Category Swimlanes</option>
+        <option value="degree_rings">Degree Rings</option>
+        <option value="dependency_flow">Dependency Flow</option>
+        <option value="assembly_chains">Assembly Chains</option>
+      </select>
+    </div>
+    <div class="tool-group">
+      <label>Theme</label>
+      <select id="themeSelect" onchange="applyTheme(this.value)">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+    <div class="tool-group">
+      <label>Load</label>
+      <input id="fileInput" type="file" accept=".json,.csv,.ifc" multiple>
+    </div>
+
+    <!-- Right aligned compact icons -->
+    <div class="iconbar" aria-label="Actions">
+      <!-- Navigation -->
+      <button class="icon-btn" onclick="fitView()" title="Fit (F)" aria-label="Fit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" />
+        </svg>
+      </button>
+
+      <button class="icon-btn" onclick="centerView()" title="Center (C)" aria-label="Center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 3v4M12 17v4M21 12h-4M7 12H3" />
+        </svg>
+      </button>
+
+      <button class="icon-btn" onclick="resetView()" title="Reset Layout (R)" aria-label="Reset">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 7V4l-3 3" />
+          <path d="M20 7a8 8 0 1 0 2 5" />
+        </svg>
+      </button>
+
+      <!-- NEW: Undo / Redo -->
+      <button class="icon-btn" id="btnUndo" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">
+        <!-- curved arrow left -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 5l-5 5 5 5" />
+          <path d="M20 19a8 8 0 0 0 0-14H9" />
+        </svg>
+      </button>
+      <button class="icon-btn" id="btnRedo" title="Redo (Shift+Ctrl/Cmd+Z or Ctrl/Cmd+Y)" aria-label="Redo">
+        <!-- curved arrow right -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 5l5 5-5 5" />
+          <path d="M4 19a8 8 0 0 1 0-14h11" />
+        </svg>
+      </button>
+
+      <span class="divider" aria-hidden="true"></span>
+
+      <!-- Export -->
+      <button class="icon-btn" onclick="exportPNG()" title="Export PNG (P)" aria-label="Export PNG">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <circle cx="8" cy="10" r="2" />
+          <path d="M3 17l5-4 3 3 4-3 6 4" />
+        </svg>
+      </button>
+
+      <button class="icon-btn" onclick="exportSVG()" title="Export SVG (V)" aria-label="Export SVG">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 8l-4 4 4 4M16 8l4 4-4 4" />
+        </svg>
+      </button>
+
+      <button class="icon-btn" onclick="exportJSON()" title="Export Graph JSON (J)" aria-label="Export JSON">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 7c-2 0-3 1-3 5s1 5 3 5" />
+          <path d="M16 7c2 0 3 1 3 5s-1 5-3 5" />
+        </svg>
+      </button>
+
+      <button class="icon-btn" onclick="exportCSV()" title="Export Edges CSV (S)" aria-label="Export CSV">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <path d="M3 11h18M9 5v14M15 5v14" />
+        </svg>
+      </button>
+
+      <button class="icon-btn" onclick="exportLayout()" title="Export Layout JSON (L)" aria-label="Export Layout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <circle cx="6" cy="6" r="2.5" />
+          <circle cx="18" cy="6" r="2.5" />
+          <circle cx="12" cy="18" r="2.5" />
+          <path d="M7.8 7.8L10.5 16M16.2 7.8L13.5 16" />
+        </svg>
+      </button>
+
+      <!-- Add this in #toolbar, e.g., after the export icons group -->
+      <button class="icon-btn" id="btnCompare" title="Compare (A/B)" aria-label="Compare (A/B)">
+        <!-- simple double-square icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <rect x="4" y="4" width="9" height="9" rx="1.5"></rect>
+          <rect x="11" y="11" width="9" height="9" rx="1.5"></rect>
+        </svg>
+      </button>
+
+      <!-- Hidden file input dedicated to A/B compare -->
+      <input id="fileCompareAB" type="file" accept=".json" multiple style="display:none">
+    </div>
+
+    <span class="badge">ONEXUS</span>
+  </div>
+
+  <!-- Canvas -->
+  <div id="canvas-wrap" aria-label="Graph canvas (supports drag & drop)">
+    <div id="cy"></div>
+    <div id="minimap"></div>
+
+    <!-- Left icon rail (tools) -->
+    <div id="leftRail" aria-label="Tools">
+      <div class="rail-btn" data-panel="panelFilter" title="Filter / Lens">🧪</div>
+      <div class="rail-btn" data-panel="panelStyle" title="Style">🎨</div>
+      <div class="rail-btn" data-panel="panelAnim" title="Animation">🌀</div>
+    </div>
+
+    <!-- Left drawer (panels) -->
+    <aside id="leftDrawer" aria-label="Tool drawer">
+      <div class="drawer-header">
+        <div id="drawerTitle" class="drawer-title">Panel</div>
+        <button id="drawerClose" class="drawer-close" title="Close" aria-label="Close">✕</button>
+      </div>
+      <div id="drawerBody">
+        <!-- Filter panel -->
+        <section id="panelFilter" class="drawer-panel">
+          <h3>Filter</h3>
+          <select id="categoryFilter" onchange="filterByCategory(this.value)">
+            <option value="ALL">All Categories</option>
+          </select>
+
+          <h3>Focus</h3>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="range" min="1" max="3" value="1" oninput="setFocusDepth(this.value)" style="flex:1;">
+            <span id="depthLabel">1-hop</span>
+          </div>
+
+          <h3>Lens</h3>
+          <button class="flat" onclick="showAllEdges()">All</button>
+          <button class="flat" onclick="filterByDimension('System')">System</button>
+          <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
+          <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
+          <button class="flat" id="lensVendor" onclick="filterByDimension('Vendor')">Vendor</button>
+
+          <h3>Phase</h3>
+          <select id="phaseFilter" multiple size="4" style="width:100%"></select>
+        </section>
+
+        <!-- Style panel -->
+        <section id="panelStyle" class="drawer-panel">
+          <h3>Size</h3>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input id="sizeScale" type="range" min="0.6" max="1.6" step="0.05" value="1.00" style="flex:1;">
+            <span id="sizeScaleLabel">1.00×</span>
+          </div>
+
+          <h3>Colorize</h3>
+          <select id="colorModeSelect">
+            <option value="json_category">JSON / Category</option>
+            <option value="nodeType">Node Type</option>
+            <option value="level">Level (JLPT)</option>
+            <option value="degree">Degree (Hubs)</option>
+            <option value="stableRandom">Stable Random</option>
+          </select>
+        </section>
+
+        <!-- Animation panel -->
+        <section id="panelAnim" class="drawer-panel">
+          <h3>Animation Lab</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <select id="animMode" style="flex:1;" onchange="setAnimMode(this.value)">
+              <option value="off">Off</option>
+              <option value="bounce">Bounce</option>
+              <option value="orbit">Orbit</option>
+              <option value="blackhole">Black Hole</option>
+              <option value="breath">Breath</option>
+              <option value="edgeflow">Edge Flow</option>
+            </select>
+            <button class="flat" style="min-width:86px;" onclick="toggleAnimRunning()">
+              <span id="animStatus">Stopped</span>
+            </button>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Intensity</span>
+            <input id="animIntensity" type="range" min="0" max="30" step="1" value="10" style="flex:1;"
+              oninput="setAnimIntensity(this.value)">
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
+            <input id="animSpeed" type="range" min="0.2" max="3.0" step="0.1" value="1.0" style="flex:1;"
+              oninput="setAnimSpeed(this.value)">
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Scope</span>
+            <select id="animScope" style="flex:1;" onchange="setAnimScope(this.value)">
+              <option value="all">All nodes</option>
+              <option value="selection">Selection + neighborhood</option>
+            </select>
+          </div>
+
+          <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="animRespectLayout" checked onchange="setAnimRespectLayout(this.checked)">
+            Follow new layouts
+          </label>
+
+          <div style="font-size:11px;color:var(--text-muted);line-height:1.35;margin-bottom:10px;">
+            Tip: select a node to make it the “center” for orbit/black hole.
+          </div>
+
+          <h3>Edge Flow</h3>
+          <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+            <button class="flat" id="animEdgeFlowOn">Flow On</button>
+            <button class="flat" id="animEdgeFlowOff">Flow Off</button>
+          </div>
+          <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+            <select id="animEdgeFlowDim">
+              <option value="">All dimensions</option>
+              <option value="System">System</option>
+              <option value="Spatial">Spatial</option>
+              <option value="Responsibility">Responsibility</option>
+              <option value="Vendor">Vendor</option>
+            </select>
+            <input id="animEdgeFlowDash" type="text" value="10,6" placeholder="dash, gap"
+              title="line dash pattern: e.g., 10,6" />
+          </div>
+
+          <h3>Orbit Depth</h3>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input id="orbitDepthScale" type="range" min="0.00" max="0.50" step="0.02" value="0.20" style="flex:1;">
+            <span id="orbitDepthScaleLabel">+20%</span>
+          </div>
+
+          <h3>Phase Reveal</h3>
+          <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+            <button class="flat" id="btnPhasePlay">Play</button>
+            <button class="flat" id="btnPhaseStop">Stop</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
+            <input id="phaseSpeedMs" type="number" min="100" step="100" value="700" style="flex:1;"
+              title="milliseconds per phase (default 700)" />
+          </div>
+        </section>
+      </div>
+    </aside>
+
+    <div id="drop-hint" style="position:absolute;inset:0;display:none;
+        align-items:center;justify-content:center;background:rgba(0,0,0,.04);
+        color:#111827;font-weight:600;">
+      Drop JSON here
+    </div>
+  </div>
+
+  <!-- Sidebar (inspector) -->
+  
+  <!-- Sidebar (Inspector) -->
+  <aside id="sidebar">
+    <h3>Legend</h3>
+    <div id="legend"></div>
+
+    <div style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;">
+      <label>
+        <input type="checkbox" id="toggleEdgeLabels" checked />
+        Show edge labels
+      </label>
+      <label>
+        <input type="checkbox" id="toggleNodeLabels" checked />
+        Show node labels
+      </label>
+    </div>
+
+    <h3>Metrics</h3>
+    <div id="metrics">–</div>
+
+    <h3>Details</h3>
+    <div id="details">Click a node or relationship.</div>
+
+    <button class="flat" style="margin-top:10px;" onclick="document.getElementById('help').style.display='flex'">Shortcuts</button>
+
+    <div id="help" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
+            align-items:center;justify-content:center;">
+      <div style="background:#fff;padding:16px 20px;border-radius:10px;width:520px;">
+        <h3 style="margin-top:0;">Shortcuts</h3>
+        <pre style="font-size:12px;white-space:pre-wrap">
+        F: Fit   C: Center   R: Reset
+        Undo: Ctrl/Cmd+Z
+        Redo: Shift+Ctrl/Cmd+Z or Ctrl/Cmd+Y
+        ?: Toggle this help
+        </pre>
+        <button class="flat" onclick="this.closest('#help').style.display='none'">Close</button>
+      </div>
+    </div>
+  </aside>
+
+
+  <!-- App scripts -->
+  <script src=./src/helpers/onexus-ns.js></script>
+  <script src=./src/helpers/onexus-style.js></script>
+  <!-- Core -->
+  <script src=./src/core/graph-core.state.js></script>
+  <script src=./src/core/graph-core.layouts.js></script>
+  <script src=./src/core/graph-core.filters.js></script>
+  <script src=./src/core/graph-core.io.host.js></script>
+  <script src=./src/core/graph-core.io.export.js></script>
+  <script src=./src/core/graph-core.undo.js></script>
+  <script src=./src/core/graph-core.nodes.js></script>
+  <script src=./src/core/graph-core.context.link.js></script>
+  <script src=./src/core/graph-core.context.menu.js></script>
+  <script src=./src/core/graph-core.path.js></script>
+  <script src=./src/core/graph-core.compare.js></script>
+  <script src=./src/core/graph-core.anim.js></script>
+  <!-- UI bindings -->
+  <script src=./src/ui/graph-ui.loader.js></script>
+  <script src=./src/ui/graph-ui.bindings.js></script>
+
+  <script>
+    window.addEventListener("resize", () => {
+      if (window.cy && typeof window.cy.resize === "function") {
+        window.cy.resize();
+      }
+    });
+
+    // Keyboard shortcuts (F, C, R, P, V, J, S, L + Undo/Redo)
+    document.addEventListener("keydown", (e) => {
+      const tag = (e.target ?? {}).tagName;
+      if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+
+      const key = (e.key ?? "").toLowerCase();
+
+      // View/Export shortcuts
+      switch (key) {
+        case "f": window.fitView && fitView(); break;
+        case "c": window.centerView && centerView(); break;
+        case "r": window.resetView && resetView(); break;
+      }
+
+      // Undo / Redo
+      const isMac = navigator.platform?.toUpperCase().includes('MAC');
+      const mod = isMac ? e.metaKey : e.ctrlKey;
+
+      // Undo: Cmd/Ctrl+Z
+      if (mod && !e.shiftKey && key === 'z') {
+        e.preventDefault();
+        window.ONEXUS_UNDO?.undo?.();
+        return;
+      }
+      // Redo: Shift+Cmd/Ctrl+Z  OR  Cmd/Ctrl+Y
+      if ((mod && e.shiftKey && key === 'z') || (mod && key === 'y')) {
+        e.preventDefault();
+        window.ONEXUS_UNDO?.redo?.();
+        return;
+      }
+      // Delete selected node(s) with Delete/Backspace
+      if ((key === 'delete' || key === 'backspace') && !mod) {
+        const sel = window.cy?.nodes(':selected');
+        if (sel && sel.length) {
+          sel.forEach(n => window.ONEXUS_NODES?.deleteNode(n));
+          e.preventDefault();
+          return;
+        }
+      }
+      // Alt+D => duplicate selected node (fast)
+      if (e.altKey && !e.ctrlKey && !e.metaKey && key === 'd') {
+        const sel = window.cy?.nodes(':selected');
+        if (sel && sel.length) {
+          const n = sel[0];
+          const newId = window.ONEXUS_NODES?.duplicateNode(n, { dx: 40, dy: 40, cloneEdges: false });
+          if (newId) window.cy.getElementById(newId).select();
+        }
+      }
+    });
+  </script>
+
+  <script>
+    // Left rail + drawer toggle (overlay)
+    (function () {
+      const rail = document.getElementById("leftRail");
+      const drawer = document.getElementById("leftDrawer");
+      const title = document.getElementById("drawerTitle");
+      const closeBtn = document.getElementById("drawerClose");
+
+      const panels = ["panelFilter","panelStyle","panelAnim"];
+      const TITLES = {
+        panelFilter: "Filter / Lens",
+        panelStyle: "Style",
+        panelAnim: "Animation"
+      };
+
+      function showPanel(id) {
+        panels.forEach(pid => {
+          const el = document.getElementById(pid);
+          if (el) el.classList.toggle("show", pid === id);
+        });
+        title.textContent = TITLES[id] || "Panel";
+        drawer.classList.add("open");
+        rail.querySelectorAll(".rail-btn").forEach(b => b.classList.toggle("active", b.dataset.panel === id));
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove("open");
+        panels.forEach(pid => {
+          const el = document.getElementById(pid);
+          if (el) el.classList.remove("show");
+        });
+        rail.querySelectorAll(".rail-btn").forEach(b => b.classList.remove("active"));
+      }
+
+      rail?.addEventListener("click", (e) => {
+        const btn = e.target.closest(".rail-btn");
+        if (!btn) return;
+        const panelId = btn.dataset.panel;
+        if (!panelId) return;
+
+        const isOpen = drawer.classList.contains("open");
+        const currentActive = rail.querySelector(".rail-btn.active")?.dataset?.panel;
+
+        if (isOpen && currentActive === panelId) closeDrawer();
+        else showPanel(panelId);
+      });
+
+      closeBtn?.addEventListener("click", closeDrawer);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
+      });
+
+      // start closed
+      closeDrawer();
+    })();
+  </script>
+
+</body>
+
+</html>
