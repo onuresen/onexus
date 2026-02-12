@@ -24,6 +24,7 @@
         lastRect: null,
         lastTargetKind: null,
         pendingGate: null,
+        lastCyNode: null,
     };
 
     // ---------- CSS (injected) ----------
@@ -351,6 +352,22 @@
                 // cytoscape selector
                 if (evt.target && evt.target !== cy && evt.target.is && evt.target.is(sel)) {
                     cleanup();
+
+                    try {
+                        // remember last tapped node (for subsequent steps)
+                        if (evt.target && evt.target !== cy && evt.target.is && evt.target.is("node")) {
+                            state.lastCyNode = evt.target;
+                        }
+
+                        // If path chip is visible, a path source is active: compute shortest path to tapped target
+                        const chip = document.getElementById("onexus-path-chip");
+                        if (chip && chip.style.display !== "none" && window.onexusPath?.shortestTo) {
+                            if (evt.target && evt.target !== cy && evt.target.is && evt.target.is("node")) {
+                                window.onexusPath.shortestTo(evt.target);
+                            }
+                        }
+                    } catch { /* noop */ }
+
                     onSatisfied(evt.target);
                 }
             };
