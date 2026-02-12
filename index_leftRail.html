@@ -40,12 +40,12 @@
       margin: 0;
       height: 100vh;
       display: grid;
-      /* 2 rows now: toolbar + main; bottom row removed */
       grid-template-rows: auto 1fr;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr;
+      /* no right panel */
       grid-template-areas:
-        "toolbar toolbar"
-        "canvas  sidebar";
+        "toolbar"
+        "canvas";
       gap: var(--gap);
       padding: var(--gap);
       background: var(--bg-main);
@@ -53,7 +53,6 @@
         Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, "Noto Sans JP", sans-serif;
       color: var(--text-main);
-      background: var(--bg-main);
     }
 
     /* ---- Toolbar (single surface) ---- */
@@ -168,16 +167,6 @@
       overflow: hidden;
     }
 
-    /* ---- Sidebar (Inspector style) ---- */
-    #sidebar {
-      grid-area: sidebar;
-      background: var(--bg-panel);
-      border-radius: var(--radius);
-      padding: 14px;
-      overflow-y: auto;
-      box-shadow: var(--shadow-sm);
-    }
-
     h3 {
       margin: 14px 0 6px;
       font-size: 12px;
@@ -268,10 +257,6 @@
         grid-template-areas:
           "toolbar"
           "canvas";
-      }
-
-      #sidebar {
-        display: none;
       }
 
       /* Make minimap smaller on narrow screens */
@@ -402,15 +387,6 @@
       }
     }
 
-
-
-    /* ---- Inspector (right panel) glass + conditional sections ---- */
-    #sidebar {
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
     /* Slide-in micro animations */
     .inspector-section {
       transition: opacity .16s ease, transform .16s ease;
@@ -464,6 +440,41 @@
     /* enable interactions inside overlay */
     .onx-corner>* {
       pointer-events: auto;
+    }
+
+    /* Legend controls row (checkboxes above legend) */
+    #legendControls {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+      margin-bottom: 6px;
+      padding: 6px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    :root.theme-dark #legendControls {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(15, 17, 21, 0.40);
+    }
+
+    #legendControls label {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    #legendControls input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: #2563eb;
     }
 
     /* top-right legend */
@@ -777,7 +788,11 @@
     <div id="minimap"></div>
 
     <!-- Corner overlays (Legend + Metrics) -->
-    <div id="legendOverlay" class="onx-corner" aria-label="Legend overlay"></div>
+    <div id="legendOverlay" class="onx-corner" aria-label="Legend overlay">
+      <div id="legendControls" aria-label="Legend controls"></div>
+      <!-- #legend will be moved here by JS (keeps the same id) -->
+    </div>
+
     <div id="metricsOverlay" class="onx-corner" aria-label="Metrics overlay"></div>
 
     <!-- Floating Details (anchored near selection) -->
@@ -934,10 +949,6 @@
     </div>
   </div>
 
-  <!-- Sidebar (inspector) -->
-
-
-  <!-- Sidebar (Inspector) -->
   <aside id="sidebar">
     <section id="legendSection" class="inspector-section hidden">
       <h3>Legend</h3>
@@ -978,8 +989,6 @@
       </div>
     </div>
   </aside>
-
-
 
   <!-- App scripts -->
   <script src=./src/helpers/onexus-ns.js></script>
@@ -1123,67 +1132,6 @@
     })();
   </script>
 
-
-  <script>
-    // Inspector interactivity: show sections only when they have content
-    (function () {
-      const legendSection = document.getElementById("legendSection");
-      const metricsSection = document.getElementById("metricsSection");
-      const detailsSection = document.getElementById("detailsSection");
-      const legend = document.getElementById("legend");
-      const metrics = document.getElementById("metrics");
-      const details = document.getElementById("details");
-
-      function setHidden(el, hidden) {
-        if (!el) return;
-        el.classList.toggle("hidden", !!hidden);
-        el.classList.toggle("show", !hidden);
-      }
-
-      function legendHasContent() {
-        if (!legend) return false;
-        return legend.children.length > 0 || (legend.textContent || "").trim().length > 0;
-      }
-
-      function metricsHasContent() {
-        if (!metrics) return false;
-        const t = (metrics.textContent || "").trim();
-        return t.length > 0 && t !== "–";
-      }
-
-      const EMPTY_PHRASE = "Click a node or relationship.";
-      function detailsHasSelection() {
-        if (!details) return false;
-        const t = (details.textContent || "").trim();
-        return t.length > 0 && t !== EMPTY_PHRASE;
-      }
-
-      function refresh() {
-        setHidden(legendSection, !legendHasContent());
-        setHidden(metricsSection, !metricsHasContent());
-        setHidden(detailsSection, !detailsHasSelection());
-
-        if (details) {
-          details.classList.toggle("empty", !detailsHasSelection());
-        }
-      }
-
-      const obsCfg = { childList: true, subtree: true, characterData: true };
-      if (legend) new MutationObserver(refresh).observe(legend, obsCfg);
-      if (metrics) new MutationObserver(refresh).observe(metrics, obsCfg);
-      if (details) new MutationObserver(refresh).observe(details, obsCfg);
-
-      let ticks = 0;
-      const timer = setInterval(() => {
-        refresh();
-        ticks++;
-        if (ticks > 10) clearInterval(timer);
-      }, 120);
-
-      refresh();
-    })();
-  </script>
-
   <script>
     /* ==========================================================
        ONEXUS: Floating Details + Overlay relocation (Legend/Metrics)
@@ -1246,15 +1194,50 @@
       const dom = ensureOverlayContainers();
       if (!dom) return;
 
-      // ---------- Move #legend / #metrics into overlays (preserve IDs for core) ----------
       function relocateLegendAndMetrics() {
-        const legend = $("legend");
-        const metrics = $("metrics");
+        const legend = document.getElementById("legend");
+        const metrics = document.getElementById("metrics");
+        const controls = document.getElementById("legendControls");
+
+        // 1) Move legend into overlay
         if (legend && legend.parentElement !== dom.legendOverlay) {
           dom.legendOverlay.appendChild(legend);
         }
+
+        // 2) Move metrics into overlay
         if (metrics && metrics.parentElement !== dom.metricsOverlay) {
           dom.metricsOverlay.appendChild(metrics);
+        }
+
+        // 3) Move the two checkbox labels (keep the same checkbox elements/IDs)
+        // We wrap them into labels if needed, but prefer to MOVE existing labels.
+        if (controls) {
+          const edgeCb = document.getElementById("toggleEdgeLabels");
+          const nodeCb = document.getElementById("toggleNodeLabels");
+
+          // Try to move their parent labels if they exist (best: preserves text)
+          const edgeLabel = edgeCb?.closest("label");
+          const nodeLabel = nodeCb?.closest("label");
+
+          // Ensure controls container is visible only if we have at least one checkbox
+          controls.style.display = (edgeCb || nodeCb) ? "flex" : "none";
+
+          if (edgeLabel && edgeLabel.parentElement !== controls) controls.appendChild(edgeLabel);
+          if (nodeLabel && nodeLabel.parentElement !== controls) controls.appendChild(nodeLabel);
+
+          // Fallback: if labels don’t exist (unlikely), create minimal labels and move inputs
+          if (!edgeLabel && edgeCb && edgeCb.parentElement !== controls) {
+            const l = document.createElement("label");
+            l.appendChild(edgeCb);
+            l.appendChild(document.createTextNode(" Show edge labels"));
+            controls.appendChild(l);
+          }
+          if (!nodeLabel && nodeCb && nodeCb.parentElement !== controls) {
+            const l = document.createElement("label");
+            l.appendChild(nodeCb);
+            l.appendChild(document.createTextNode(" Show node labels"));
+            controls.appendChild(l);
+          }
         }
       }
 
@@ -1414,7 +1397,6 @@
       }, 120);
     })();
   </script>
-
 </body>
 
 </html>
