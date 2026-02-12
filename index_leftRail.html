@@ -282,7 +282,7 @@
         border: 1px solid var(--stroke);
       }
     }
-  
+
     /* ---- Left Icon Rail + Drawer (overlay; does NOT affect layout grid) ---- */
     #leftRail {
       position: absolute;
@@ -320,7 +320,8 @@
     #leftDrawer {
       position: absolute;
       top: 12px;
-      left: 66px; /* rail width + gap */
+      left: 66px;
+      /* rail width + gap */
       width: 360px;
       max-width: min(360px, calc(100vw - 120px));
       bottom: 12px;
@@ -330,7 +331,8 @@
       box-shadow: var(--shadow-md);
       overflow: hidden;
       z-index: 29;
-      display: none; /* closed by default */
+      display: none;
+      /* closed by default */
     }
 
     #leftDrawer.open {
@@ -345,7 +347,7 @@
       gap: 10px;
       padding: 10px 12px;
       border-bottom: 1px solid var(--stroke);
-      background: rgba(255,255,255,0.55);
+      background: rgba(255, 255, 255, 0.55);
       backdrop-filter: blur(6px);
     }
 
@@ -365,37 +367,64 @@
       background: #fff;
       cursor: pointer;
     }
-    .drawer-close:hover { background: var(--btn-bg-hover); }
+
+    .drawer-close:hover {
+      background: var(--btn-bg-hover);
+    }
 
     #drawerBody {
       padding: 12px 14px;
       overflow: auto;
     }
 
-    .drawer-panel { display: none; }
-    .drawer-panel.show { display: block; }
-
-    /* Keep minimap visible above canvas elements */
-    #minimap { z-index: 10; }
-
-    @media (max-width: 1100px) {
-      #leftDrawer { width: 320px; left: 60px; }
-      #leftRail { top: 10px; left: 10px; }
+    .drawer-panel {
+      display: none;
     }
 
-  
+    .drawer-panel.show {
+      display: block;
+    }
+
+    /* Keep minimap visible above canvas elements */
+    #minimap {
+      z-index: 10;
+    }
+
+    @media (max-width: 1100px) {
+      #leftDrawer {
+        width: 320px;
+        left: 60px;
+      }
+
+      #leftRail {
+        top: 10px;
+        left: 10px;
+      }
+    }
+
+
+
     /* ---- Inspector (right panel) glass + conditional sections ---- */
     #sidebar {
       background: rgba(255, 255, 255, 0.78);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
+
+    /* Slide-in micro animations */
     .inspector-section {
-      transition: opacity .12s ease, transform .12s ease;
-    }
-    .inspector-section.hidden {
+      transition: opacity .16s ease, transform .16s ease;
+      transform: translateX(10px);
       opacity: 0;
-      transform: translateY(-6px);
+      will-change: transform, opacity;
+    }
+
+    .inspector-section.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .inspector-section.hidden {
       pointer-events: none;
       height: 0 !important;
       margin: 0 !important;
@@ -403,12 +432,147 @@
       overflow: hidden !important;
       border: 0 !important;
     }
+
     /* Make empty-state details feel nicer */
     #details.empty {
       color: var(--text-muted);
       font-style: italic;
     }
 
+    /* ==========================================================
+   ONEXUS: Corner overlays (Legend/Metrics) + Floating Details
+   (index_leftRail.html only; no core changes)
+   ========================================================== */
+
+    /* overlays live inside #canvas-wrap */
+    #canvas-wrap {
+      position: relative;
+    }
+
+    /* Generic corner overlay container */
+    .onx-corner {
+      position: absolute;
+      z-index: 22;
+      /* above minimap (10), below leftRail (30) */
+      pointer-events: none;
+      /* allow pan/zoom through empty space */
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* enable interactions inside overlay */
+    .onx-corner>* {
+      pointer-events: auto;
+    }
+
+    /* top-right legend */
+    #legendOverlay {
+      top: 12px;
+      right: 12px;
+      align-items: flex-end;
+    }
+
+    /* bottom-right metrics */
+    #metricsOverlay {
+      right: 12px;
+      bottom: 12px;
+      align-items: flex-end;
+    }
+
+    /* Make legend/metrics “no panel”: transparent, compact, readable */
+    #legendOverlay #legend,
+    #metricsOverlay #metrics {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    /* Legend item tweaks: chip-like hover without persistent background */
+    #legendOverlay .legend-item {
+      background: transparent;
+      padding: 2px 4px;
+      border-radius: 999px;
+    }
+
+    #legendOverlay .legend-item:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    :root.theme-dark #legendOverlay .legend-item:hover {
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    /* Metrics as subtle text block */
+    #metricsOverlay #metrics>div {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.35;
+    }
+
+    /* Floating details card */
+    #onxFloatDetails {
+      position: absolute;
+      z-index: 23;
+      /* above legend/metrics */
+      min-width: 240px;
+      max-width: 340px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.10);
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+      color: var(--text-main);
+      display: none;
+      pointer-events: auto;
+      /* selectable/copyable */
+      user-select: text;
+    }
+
+    :root.theme-dark #onxFloatDetails {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(15, 17, 21, 0.64);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+    }
+
+    /* small close button */
+    #onxFloatDetails .onx-fd-top {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 6px;
+    }
+
+    #onxFloatDetails .onx-fd-close {
+      width: 26px;
+      height: 26px;
+      border-radius: 10px;
+      border: 1px solid var(--stroke);
+      background: var(--btn-bg);
+      cursor: pointer;
+      line-height: 0;
+      display: grid;
+      place-items: center;
+      color: var(--text-main);
+    }
+
+    #onxFloatDetails .onx-fd-close:hover {
+      background: var(--btn-bg-hover);
+    }
+
+    #onxFloatDetails .onx-fd-body {
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    /* prevent overlays from colliding with left drawer */
+    #leftDrawer.open~#onxFloatDetails {
+      /* no-op: just keeps selector documented */
+    }
   </style>
 
   <!-- Tiny inline SVG sprite for icons -->
@@ -612,9 +776,21 @@
     <div id="cy"></div>
     <div id="minimap"></div>
 
+    <!-- Corner overlays (Legend + Metrics) -->
+    <div id="legendOverlay" class="onx-corner" aria-label="Legend overlay"></div>
+    <div id="metricsOverlay" class="onx-corner" aria-label="Metrics overlay"></div>
+
+    <!-- Floating Details (anchored near selection) -->
+    <div id="onxFloatDetails" aria-label="Floating details">
+      <div class="onx-fd-top">
+        <button class="onx-fd-close" type="button" title="Close" aria-label="Close">✕</button>
+      </div>
+      <div class="onx-fd-body" id="onxFloatDetailsBody"></div>
+    </div>
+
     <!-- Left icon rail (tools) -->
     <div id="leftRail" aria-label="Tools">
-      <div class="rail-btn" data-panel="panelFilter" title="Filter / Lens">🧪</div>
+      <div class="rail-btn" data-panel="panelFilter" title="Filter / Lens">🧪 </div>
       <div class="rail-btn" data-panel="panelStyle" title="Style">🎨</div>
       <div class="rail-btn" data-panel="panelAnim" title="Animation">🌀</div>
     </div>
@@ -759,8 +935,8 @@
   </div>
 
   <!-- Sidebar (inspector) -->
-  
-  
+
+
   <!-- Sidebar (Inspector) -->
   <aside id="sidebar">
     <section id="legendSection" class="inspector-section hidden">
@@ -788,10 +964,6 @@
       <h3>Details</h3>
       <div id="details" class="empty">Click a node or relationship.</div>
     </section>
-
-    <button id="btnShortcuts" class="flat inspector-section" style="margin-top:14px;"
-      onclick="document.getElementById('help').style.display='flex'">Shortcuts</button>
-
     <div id="help" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
             align-items:center;justify-content:center;">
       <div style="background:#fff;padding:16px 20px;border-radius:10px;width:520px;">
@@ -894,8 +1066,9 @@
       const drawer = document.getElementById("leftDrawer");
       const title = document.getElementById("drawerTitle");
       const closeBtn = document.getElementById("drawerClose");
+      const btnShortcutsRail = document.getElementById("btnShortcutsRail");
 
-      const panels = ["panelFilter","panelStyle","panelAnim"];
+      const panels = ["panelFilter", "panelStyle", "panelAnim"];
       const TITLES = {
         panelFilter: "Filter / Lens",
         panelStyle: "Style",
@@ -920,6 +1093,11 @@
         });
         rail.querySelectorAll(".rail-btn").forEach(b => b.classList.remove("active"));
       }
+
+      btnShortcutsRail?.addEventListener("click", () => {
+        const help = document.getElementById("help");
+        if (help) help.style.display = "flex";
+      });
 
       rail?.addEventListener("click", (e) => {
         const btn = e.target.closest(".rail-btn");
@@ -959,6 +1137,7 @@
       function setHidden(el, hidden) {
         if (!el) return;
         el.classList.toggle("hidden", !!hidden);
+        el.classList.toggle("show", !hidden);
       }
 
       function legendHasContent() {
@@ -1002,6 +1181,237 @@
       }, 120);
 
       refresh();
+    })();
+  </script>
+
+  <script>
+    /* ==========================================================
+       ONEXUS: Floating Details + Overlay relocation (Legend/Metrics)
+       index_leftRail.html only
+       ========================================================== */
+    (function () {
+      const cy = window.cy;
+      if (!cy) return;
+
+      const EMPTY_PHRASE = "Click a node or relationship.";
+
+      // ---------- DOM helpers ----------
+      const $ = (id) => document.getElementById(id);
+
+      function ensureOverlayContainers() {
+        const wrap = $("canvas-wrap") || cy.container()?.parentElement || cy.container();
+        if (!wrap) return null;
+
+        // If user didn't add HTML, create containers on the fly
+        let legendOverlay = $("legendOverlay");
+        if (!legendOverlay) {
+          legendOverlay = document.createElement("div");
+          legendOverlay.id = "legendOverlay";
+          legendOverlay.className = "onx-corner";
+          legendOverlay.setAttribute("aria-label", "Legend overlay");
+          Object.assign(legendOverlay.style, { top: "12px", right: "12px", alignItems: "flex-end" });
+          wrap.appendChild(legendOverlay);
+        }
+
+        let metricsOverlay = $("metricsOverlay");
+        if (!metricsOverlay) {
+          metricsOverlay = document.createElement("div");
+          metricsOverlay.id = "metricsOverlay";
+          metricsOverlay.className = "onx-corner";
+          metricsOverlay.setAttribute("aria-label", "Metrics overlay");
+          Object.assign(metricsOverlay.style, { right: "12px", bottom: "12px", alignItems: "flex-end" });
+          wrap.appendChild(metricsOverlay);
+        }
+
+        let float = $("onxFloatDetails");
+        if (!float) {
+          float = document.createElement("div");
+          float.id = "onxFloatDetails";
+          float.setAttribute("aria-label", "Floating details");
+          float.innerHTML = `
+        <div class="onx-fd-top">
+          <button class="onx-fd-close" type="button" title="Close" aria-label="Close">✕</button>
+        </div>
+        <div class="onx-fd-body" id="onxFloatDetailsBody"></div>
+      `;
+          wrap.appendChild(float);
+        }
+
+        // Close button
+        float.querySelector(".onx-fd-close")?.addEventListener("click", () => hideFloat());
+
+        return { wrap, legendOverlay, metricsOverlay, float };
+      }
+
+      const dom = ensureOverlayContainers();
+      if (!dom) return;
+
+      // ---------- Move #legend / #metrics into overlays (preserve IDs for core) ----------
+      function relocateLegendAndMetrics() {
+        const legend = $("legend");
+        const metrics = $("metrics");
+        if (legend && legend.parentElement !== dom.legendOverlay) {
+          dom.legendOverlay.appendChild(legend);
+        }
+        if (metrics && metrics.parentElement !== dom.metricsOverlay) {
+          dom.metricsOverlay.appendChild(metrics);
+        }
+      }
+
+      // run once + after loads
+      relocateLegendAndMetrics();
+      cy.on("layoutstop", relocateLegendAndMetrics);
+      cy.on("add remove", relocateLegendAndMetrics);
+
+      // ---------- Floating details anchored to selection ----------
+      const float = $("onxFloatDetails");
+      const floatBody = $("onxFloatDetailsBody");
+
+      let anchor = null; // node or edge
+      let lastHtml = "";
+
+      function isEmptyDetails(html) {
+        const tmp = document.createElement("div");
+        tmp.innerHTML = String(html ?? "");
+        const t = (tmp.textContent ?? "").trim();
+        return !t || t === EMPTY_PHRASE;
+      }
+
+      function showFloat(html) {
+        if (!float || !floatBody) return;
+        if (isEmptyDetails(html)) {
+          hideFloat();
+          return;
+        }
+        lastHtml = String(html ?? "");
+        floatBody.innerHTML = lastHtml;
+        float.style.display = "block";
+        positionFloat();
+      }
+
+      function hideFloat() {
+        if (!float || !floatBody) return;
+        float.style.display = "none";
+        floatBody.innerHTML = "";
+        lastHtml = "";
+        anchor = null;
+      }
+
+      function anchorRenderedPoint() {
+        if (!anchor || !anchor.nonempty?.() || !anchor.nonempty()) return null;
+
+        // node
+        if (typeof anchor.isNode === "function" && anchor.isNode()) {
+          return anchor.renderedPosition();
+        }
+
+        // edge midpoint (source/target midpoint)
+        if (typeof anchor.isEdge === "function" && anchor.isEdge()) {
+          const s = anchor.source()?.renderedPosition?.();
+          const t = anchor.target()?.renderedPosition?.();
+          if (!s || !t) return null;
+          return { x: (s.x + t.x) / 2, y: (s.y + t.y) / 2 };
+        }
+
+        return null;
+      }
+
+      function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+      function positionFloat() {
+        if (!float || float.style.display === "none") return;
+        const pt = anchorRenderedPoint();
+        if (!pt) return;
+
+        const host = cy.container();
+        if (!host) return;
+        const hostRect = host.getBoundingClientRect();
+
+        // Measure float
+        // Ensure it's measurable
+        float.style.left = "0px";
+        float.style.top = "0px";
+        const w = float.offsetWidth || 280;
+        const h = float.offsetHeight || 140;
+
+        const pad = 12;
+        const dx = 16;
+        const dy = -10;
+
+        // Prefer to the right of node; flip if overflow
+        let left = pt.x + dx;
+        let top = pt.y + dy;
+
+        if (left + w > hostRect.width - pad) left = pt.x - w - dx;
+        if (left < pad) left = pad;
+
+        // Clamp vertically (prefer above a bit)
+        top = clamp(top, pad, hostRect.height - h - pad);
+
+        float.style.left = `${Math.round(left)}px`;
+        float.style.top = `${Math.round(top)}px`;
+      }
+
+      // Debounce to keep pan/zoom smooth
+      function debounce(fn, ms) {
+        let t = 0;
+        return function () {
+          clearTimeout(t);
+          t = setTimeout(() => fn(), ms);
+        };
+      }
+      const positionFloatDebounced = debounce(positionFloat, 20);
+
+      cy.on("pan zoom", positionFloatDebounced);
+      cy.on("resize", positionFloatDebounced); // harmless if unsupported
+      window.addEventListener("resize", positionFloatDebounced);
+
+      // Hide float on background tap
+      cy.on("tap", (evt) => {
+        if (evt.target === cy) hideFloat();
+      });
+
+      // ---------- Wrap existing core detail functions (no core edits) ----------
+      // Core writes to #details via setDetailsMessage(); we mirror to float. [3]
+      const origSetDetailsMessage = window.setDetailsMessage?.bind(window);
+      if (origSetDetailsMessage) {
+        window.setDetailsMessage = function (html) {
+          // keep existing behavior (updates #details if present)
+          origSetDetailsMessage(html);
+          // float mirror
+          showFloat(html);
+        };
+      }
+
+      const origUpdateNode = window.updateDetailsForNode?.bind(window);
+      if (origUpdateNode) {
+        window.updateDetailsForNode = function (node) {
+          anchor = node;
+          origUpdateNode(node);
+          // If core updated details, float already mirrored via setDetailsMessage wrapper
+          positionFloat();
+        };
+      }
+
+      const origUpdateEdge = window.updateDetailsForEdge?.bind(window);
+      if (origUpdateEdge) {
+        window.updateDetailsForEdge = function (edge) {
+          anchor = edge;
+          origUpdateEdge(edge);
+          positionFloat();
+        };
+      }
+
+      // If details already has content at boot, mirror it
+      const bootDetails = $("details")?.innerHTML;
+      if (bootDetails && !isEmptyDetails(bootDetails)) showFloat(bootDetails);
+
+      // Ensure legend/metrics overlays stay updated on initial load cycles
+      setTimeout(() => {
+        relocateLegendAndMetrics();
+        window.buildRelationshipLegend?.(); // uses #legend 
+        window.updateMetrics?.();           // uses #metrics
+      }, 120);
     })();
   </script>
 
