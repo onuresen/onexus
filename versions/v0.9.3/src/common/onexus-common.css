@@ -1,0 +1,242 @@
+/* =========================================
+   ONEXUS Common CSS (shared by both layouts)
+   Extracted from index.html and index_leftRail.html
+   Safe: does not rename ids/classes; just moves rules.
+========================================= */
+
+:root {
+    --bg-main: #ffffff;
+    --bg-panel: #f8f9fb;
+    --bg-soft: #f3f4f6;
+    --bg-canvas: #f5f7fa;
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --stroke: #e5e7eb;
+    --icon-color: #111827;
+    --btn-bg: #ffffff;
+    --btn-bg-hover: #eef2ff;
+    --radius: 10px;
+    --gap: 12px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Layout-specific body grid is NOT here (kept in layout css) */
+body {
+    margin: 0;
+    height: 100vh;
+    gap: var(--gap);
+    padding: var(--gap);
+    background: var(--bg-main);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Noto Sans JP", sans-serif;
+    color: var(--text-main);
+}
+
+/* ---- Toolbar (single surface) ---- */
+#toolbar {
+    grid-area: toolbar;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg-panel);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-main);
+}
+
+.tool-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tool-group label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+select,
+input[type="file"] {
+    font-size: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+}
+
+.badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #111827;
+    color: #ffffff;
+}
+
+/* Toolbar icon buttons */
+.iconbar {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    background: var(--btn-bg);
+    border: 1px solid var(--stroke);
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    background: var(--btn-bg-hover);
+}
+
+.icon-btn svg {
+    width: 18px;
+    height: 18px;
+    color: var(--icon-color);
+}
+
+.divider {
+    width: 1px;
+    height: 22px;
+    background: #e5e7eb;
+    margin: 0 6px;
+}
+
+/* ---- Canvas ---- */
+#canvas-wrap {
+    grid-area: canvas;
+    position: relative;
+    background: var(--bg-canvas);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+#cy {
+    position: absolute;
+    inset: 0;
+}
+
+/* Minimap overlay */
+#minimap {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    width: 240px;
+    height: 150px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--stroke);
+    overflow: hidden;
+    z-index: 10;
+}
+
+/* ---- Shared UI bits ---- */
+h3 {
+    margin: 14px 0 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+select {
+    width: 100%;
+}
+
+/* Flat buttons (kept for lens) */
+button.flat {
+    width: 100%;
+    padding: 6px 10px;
+    margin: 4px 0;
+    font-size: 12px;
+    background: var(--bg-soft);
+    color: var(--text-main);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button.flat:hover {
+    background: #e5e7eb;
+}
+
+/* Legend */
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.legend-line {
+    width: 18px;
+    height: 3px;
+    border-radius: 2px;
+}
+
+.legend-item.active {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.legend-item:hover {
+    cursor: pointer;
+    background: var(--bg-soft);
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+/* Details panel (shared styles) */
+#details {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 12px;
+    min-height: 120px;
+    color: var(--text-main);
+    border: 1px solid var(--stroke);
+}
+
+/* Drop hint (shared) */
+#drop-hint {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .04);
+    color: #111827;
+    font-weight: 600;
+}
+
+/* Responsive common bits */
+@media (max-width: 1100px) {
+    #minimap {
+        width: 180px;
+        height: 120px;
+        background: var(--bg-panel);
+        border: 1px solid var(--stroke);
+    }
+}
