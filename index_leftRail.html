@@ -971,10 +971,6 @@
       <div id="metrics">–</div>
     </section>
 
-    <section id="detailsSection" class="inspector-section hidden" style="margin-top:14px;">
-      <h3>Details</h3>
-      <div id="details" class="empty">Click a node or relationship.</div>
-    </section>
     <div id="help" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
             align-items:center;justify-content:center;">
       <div style="background:#fff;padding:16px 20px;border-radius:10px;width:520px;">
@@ -1353,6 +1349,61 @@
       cy.on("tap", (evt) => {
         if (evt.target === cy) hideFloat();
       });
+
+      // ---------- HARD HOOK (robust): drive float from cy taps ----------
+      // This guarantees details show even if #details is removed or setDetailsMessage isn't called.
+      (function hookCyTapForFloat() {
+        if (cy.__onxFloatTapHooked) return;
+        cy.__onxFloatTapHooked = true;
+
+        // Keep references to the current functions (may be core or wrapped)
+        const _updateNode = window.updateDetailsForNode?.bind(window);
+        const _updateEdge = window.updateDetailsForEdge?.bind(window);
+
+        cy.on("tap", "node", (evt) => {
+          try {
+            anchor = evt.target;
+            // Let core compute the HTML (it calls setDetailsMessage internally)
+            if (_updateNode) _updateNode(evt.target);
+
+            // Fallback: if for some reason no HTML was produced, build minimal HTML here
+            if (!lastHtml || isEmptyDetails(lastHtml)) {
+              const d = evt.target.data();
+              showFloat(
+                `<b>${d.displayLabel ?? d.id}</b><br>` +
+                `Type: ${d.nodeType ?? "-"}<br>` +
+                `Category: ${d.category ?? d.revitCategory ?? "-"}<br>` +
+                `Level: ${d.level ?? "-"}`
+              );
+            }
+            positionFloat();
+          } catch (e) {
+            console.error("onx float node tap failed", e);
+          }
+        });
+
+        cy.on("tap", "edge", (evt) => {
+          try {
+            anchor = evt.target;
+            if (_updateEdge) _updateEdge(evt.target);
+
+            if (!lastHtml || isEmptyDetails(lastHtml)) {
+              const d = evt.target.data();
+              showFloat(
+                `<b>${d.displayType ?? d.type ?? "Relation"}</b><br>` +
+                `Dimension: ${d.dimension ?? "-"}<br>` +
+                `Phase: ${(d.phase ?? []).join(", ")}<br>` +
+                `Owner: ${d.owner ?? "-"}<br>` +
+                `Confidence: ${d.confidence ?? "-"}<br>` +
+                `Risk: ${d.risk ?? "-"}`
+              );
+            }
+            positionFloat();
+          } catch (e) {
+            console.error("onx float edge tap failed", e);
+          }
+        });
+      })();
 
       // ---------- Wrap existing core detail functions (no core edits) ----------
       // Core writes to #details via setDetailsMessage(); we mirror to float. [3]
