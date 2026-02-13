@@ -35,21 +35,7 @@
   };
   const DIMENSION_DEFAULTS = ["System", "Spatial", "Responsibility", "Vendor"];
   const debounce = (fn, ms = 120) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
-  // ---- layer mode (persisted) ----
-  const LAYER_PREF_KEY = "onexus.layerMode";
-  const safeRead = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
-  const safeWrite = (k, v) => { try { localStorage.setItem(k, String(v)); } catch { } };
-
-  const state = {
-    language: "en",
-    focusDepth: 1,
-    focusedNode: null,
-    showEdgeLabels: true,
-    showNodeLabels: true,
-    lodLevel: "high",
-    // NEW: layer mode (controls interpretation + defaults)
-    layerMode: safeRead(LAYER_PREF_KEY, "relationship"),
-  };
+  const state = { language: "en", focusDepth: 1, focusedNode: null, showEdgeLabels: true, showNodeLabels: true, lodLevel: "high" };
   const editState = { linkSource: null };
 
   // ---- cytoscape boot
@@ -222,100 +208,6 @@
   cy.on("zoom", debounce(applyLOD, 50));
   // initialize once
   applyLOD();
-
-  // =========================================================
-  // ONEXUS LayerMode: registry + state management (core)
-  // - Keeps this module as the single source of truth for state.layerMode
-  // - Emits: onexus:layerModeChanged via ONEXUS.bus (if present)
-  // - Persists in localStorage under "onexus.layerMode"
-  // =========================================================
-  const LAYERS = (window.ONEXUS_LAYERS = window.ONEXUS_LAYERS || {});
-
-  // Minimal built-ins (extend freely with registerLayerMode)
-  LAYERS.relationship ??= {
-    key: "relationship",
-    title: { en: "Relationship", jp: "関係" },
-    // optional hooks:
-    // onEnter({ cy, state, prev, next }) {}
-    // onExit({ cy, state, prev, next }) {}
-  };
-
-  LAYERS.lifecycle ??= {
-    key: "lifecycle",
-    title: { en: "Lifecycle", jp: "ライフサイクル" },
-  };
-
-  LAYERS.risk ??= {
-    key: "risk",
-    title: { en: "Risk", jp: "リスク" },
-  };
-
-  LAYERS.option ??= {
-    key: "option",
-    title: { en: "Option", jp: "オプション" },
-  };
-
-  function normalizeLayerKey(key) {
-    const k = String(key ?? "").trim();
-    if (!k) return "relationship";
-    return LAYERS[k] ? k : "relationship";
-  }
-
-  function getLayerMode() {
-    return state.layerMode;
-  }
-
-  /**
-   * Apply layer mode.
-   * @param {string} mode
-   * @param {{persist?:boolean, silent?:boolean}} opts
-   */
-  function setLayerMode(mode, opts = {}) {
-    const { persist = true, silent = false } = opts;
-    const next = normalizeLayerKey(mode);
-    const prev = normalizeLayerKey(state.layerMode);
-
-    if (prev === next) return prev;
-
-    const cy = window.cy;
-    const prevCfg = LAYERS[prev];
-    const nextCfg = LAYERS[next];
-
-    // exit hook (best-effort)
-    try { prevCfg?.onExit?.({ cy, state, prev, next }); } catch (e) { console.warn("Layer onExit failed:", e); }
-
-    state.layerMode = next;
-    if (persist) safeWrite(LAYER_PREF_KEY, next);
-
-    // enter hook (best-effort)
-    try { nextCfg?.onEnter?.({ cy, state, prev, next }); } catch (e) { console.warn("Layer onEnter failed:", e); }
-
-    // emit event (non-breaking)
-    try {
-      window.ONEXUS?.bus?.emit?.("layerModeChanged", { prev, next, state: window.__onexus_state });
-    } catch { }
-
-    // optional UI sync (if select exists)
-    if (!silent) {
-      const sel = document.getElementById("layerModeSelect");
-      if (sel && sel.value !== next) sel.value = next;
-      window.showTransientMessage?.(`Layer: ${nextCfg?.title?.[state.language] ?? next}`);
-    }
-
-    return next;
-  }
-
-  function registerLayerMode(key, config = {}) {
-    const k = String(key ?? "").trim();
-    if (!k) throw new Error("registerLayerMode: key is required");
-    LAYERS[k] = { key: k, ...config };
-    return LAYERS[k];
-  }
-
-  // expose
-  window.getLayerMode = getLayerMode;
-  window.setLayerMode = setLayerMode;
-  window.registerLayerMode = registerLayerMode;
 
   // ---- expose
   window.setLanguage = setLanguage;
