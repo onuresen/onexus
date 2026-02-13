@@ -13,7 +13,7 @@
 (function () {
   // --- Small utilities ---
   const norm = s => String(s ?? "").trim();
-  const lc   = s => norm(s).toLowerCase();
+  const lc = s => norm(s).toLowerCase();
   const idSafe = s => norm(s).replace(/[^\w\-:.]+/g, "_");
 
   function detectDelimiter(firstLine) {
@@ -74,10 +74,10 @@
   function buildOnexusFromCobie(sheets) {
     // Sheets come as arrays of objects with lowercase, spaceless headers
     const Components = sheets.Component || [];
-    const Types      = sheets.Type || [];
-    const Systems    = sheets.System || [];
-    const Assembly   = sheets.Assembly || [];
-    const Spaces     = sheets.Space || [];
+    const Types = sheets.Type || [];
+    const Systems = sheets.System || [];
+    const Assembly = sheets.Assembly || [];
+    const Spaces = sheets.Space || [];
 
     // Helpful lookups
     const typeByName = indexBy(Types, "name");
@@ -90,23 +90,41 @@
     function upsertNode(id, data) {
       if (!id) return null;
       const key = idSafe(id);
+
+      // Normalize category so schema validation always passes.
+      // ONEXUS validator requires: category OR revitCategory. Empty string fails.
+      const normalizeCategory = (v) => {
+        const s = norm(v);
+        return s ? s : "Uncategorized";
+      };
+
       if (!nodesMap.has(key)) {
         nodesMap.set(key, {
           data: {
             id: key,
             label: { en: String(id), jp: String(id) },
             displayLabel: String(id),
-            nodeType: data.nodeType || "Component",
-            category: data.category || "",
-            level: data.level || "",
-          }
+            nodeType: data.nodeType ?? "Component",
+            category: normalizeCategory(data.category),
+            level: data.level ?? "",
+          },
         });
       }
-      // Shallow-merge data fields
+
+      // Shallow-merge data fields (but keep category non-empty)
       const d = nodesMap.get(key).data;
-      Object.keys(data).forEach(k => {
+      Object.keys(data).forEach((k) => {
         if (data[k] !== undefined && data[k] !== "") d[k] = data[k];
       });
+
+      // Ensure category stays valid even after merges
+      d.category = normalizeCategory(d.category ?? d.revitCategory);
+
+      // If label was updated, keep displayLabel aligned
+      if (d.label && typeof d.label === "object") {
+        d.displayLabel = d.label.en ?? d.displayLabel ?? d.id;
+      }
+
       return nodesMap.get(key);
     }
 
@@ -130,7 +148,7 @@
     // --- Systems ---
     Systems.forEach(sys => {
       const name = norm(sys.name);
-      const cat  = norm(sys.category ?? sys["category-system"]);
+      const cat = norm(sys.category ?? sys["category-system"]);
       upsertNode(name, { nodeType: "System", category: cat || "BuildingSystem" });
     });
 
@@ -193,13 +211,15 @@
         });
       }
 
-      // Component -> Type (optional view)
+      // Component -> Type (semantic alignment with IFC: OfType)
       if (typeName) {
-        upsertNode(typeName, { nodeType: "ComponentType", category: explicitCat || "Type" });
+        upsertNode(typeName, { nodeType: "ComponentType", category: explicitCat ?? "Type" });
         pushEdge({
-          type: "PartOfSystem", // treat "belongs-to-type" as weak system membership
-          source: name, target: typeName,
-          dimension: "System", directional: false,
+          type: "OfType",
+          source: name,
+          target: typeName,
+          dimension: "System",
+          directional: false,
           extra: { confidence: "Inferred" }
         });
       }
@@ -216,11 +236,11 @@
     // --- Assembly (Parent/Child) ---
     Assembly.forEach(a => {
       const parent = norm(a.parentname ?? a.parent);
-      const child  = norm(a.childname ?? a.child);
+      const child = norm(a.childname ?? a.child);
       if (!parent || !child) return;
       // Ensure nodes exist
       upsertNode(parent, { nodeType: "Component" });
-      upsertNode(child,  { nodeType: "Component" });
+      upsertNode(child, { nodeType: "Component" });
       // Parent -> Child
       pushEdge({
         type: "PartOfSystem", source: parent, target: child, dimension: "System", directional: true
@@ -263,7 +283,8 @@
     const map = {};
     for (const { name, text } of txts) {
       const base = name.replace(/\.[cC][sS][vV]$/, "");
-      const key = (base.match(/(component|type|system|assembly|space)/i)?.[1] || base).toLowerCase();
+      const m = base.match(/(component|type|system|assembly|space)/i);
+      const key = (m ? m[1] : base).toLowerCase();
       map[key.charAt(0).toUpperCase() + key.slice(1)] = parseCSV(text);
     }
 

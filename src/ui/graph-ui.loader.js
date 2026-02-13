@@ -264,8 +264,9 @@ async function handleUnifiedLoad(event) {
     return;
   }
 
-  // Likely COBie: forward all CSVs
-  if (/\b(component|type|system|assembly|space)\.csv$/i.test(first.name)) {
+  // Likely COBie: if any selected CSV matches a COBie sheet name, forward ALL CSVs
+  const cobieFileRe = /(^|[\/._-])(cobie[_-]?)?(component|type|system|assembly|space)\.csv$/i;
+  if (csvFiles.some(f => cobieFileRe.test(String(f.name ?? '')))) {
     window.loadCOBieCSVs?.({ target: { files: csvFiles } });
     return;
   }

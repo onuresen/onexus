@@ -12,6 +12,7 @@
   <script src="https://unpkg.com/cytoscape-svg@latest"></script>
   <script src=./src/importers/cobie-importer.js></script>
   <script src=./src/importers/ifc-importer.js></script>
+  <script src=./src/importers/gd-importer.js></script>
 
   <link rel="stylesheet" href="./src/common/onexus-common.css">
   <link rel="stylesheet" href="./src/common/onexus-bootcheck.css">
@@ -208,6 +209,17 @@
 
       <!-- Hidden file input dedicated to A/B compare -->
       <input id="fileCompareAB" type="file" accept=".json" multiple style="display:none">
+      <!-- GD Import -->
+      <button class="icon-btn" id="btnGD" title="Import GD (JSON)" aria-label="Import GD">
+        <!-- simple "GD" badge icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 7h6v10H5z"></path>
+          <path d="M13 7h6v10h-6z"></path>
+          <path d="M7 10h2M15 10h2"></path>
+        </svg>
+      </button>
+      <input id="fileImportGD" type="file" accept=".json" style="display:none">
     </div>
 
     <span class="badge">ONEXUS</span>
@@ -402,6 +414,7 @@
   <script src=./src/ui/graph-ui.tour.js></script>
   <!-- Shared inline JS extracted -->
   <script src="./src/common/onexus-common.js"></script>
+  <script src="./src/common/onexus-bootcheck.js"></script>
 
 </body>
 

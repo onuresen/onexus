@@ -1,0 +1,888 @@
+{
+  "type": "onexus/generative-design",
+  "problem": {
+    "id": "DOOR_ASSEMBLY_OPT_050",
+    "name": "Door assembly rationalization (sample)",
+    "description": "Sample GD payload generated to match onexus_doors.json node/edge ids. Metrics are synthetic."
+  },
+  "options": [
+    {
+      "id": "opt-050A",
+      "rank": 1,
+      "pareto": true,
+      "createdAt": "2026-02-13T04:00:00Z",
+      "scores": {
+        "assemblyComplexityScore": 0.76,
+        "estimatedCostDelta_JPY": -150000,
+        "leadTimeDelta_days": -4,
+        "complianceRisk": 0.11
+      },
+      "parameters": {
+        "standardizeFrameTypes": true,
+        "maxUniquePanelTypes": 6,
+        "targetPartCountReductionPct": 15
+      },
+      "constraintsEval": {
+        "fireDoorSpecOk": true,
+        "acousticSpecOk": true,
+        "egressSpecOk": true
+      },
+      "affected": {
+        "nodes": [
+          {
+            "id": "COMP-15105958",
+            "metrics": {
+              "complexity": 0.531,
+              "partCountDelta": -2,
+              "procurementRisk": 0.217,
+              "reworkRisk": 0.106
+            }
+          },
+          {
+            "id": "COMP-15287611",
+            "metrics": {
+              "complexity": 0.402,
+              "partCountDelta": -1,
+              "procurementRisk": 0.264,
+              "reworkRisk": 0.069
+            }
+          },
+          {
+            "id": "COMP-15287615",
+            "metrics": {
+              "complexity": 0.606,
+              "partCountDelta": -2,
+              "procurementRisk": 0.191,
+              "reworkRisk": 0.127
+            }
+          },
+          {
+            "id": "COMP-15287627",
+            "metrics": {
+              "complexity": 0.644,
+              "partCountDelta": -2,
+              "procurementRisk": 0.177,
+              "reworkRisk": 0.138
+            }
+          },
+          {
+            "id": "COMP-15333983",
+            "metrics": {
+              "complexity": 0.361,
+              "partCountDelta": -1,
+              "procurementRisk": 0.278,
+              "reworkRisk": 0.057
+            }
+          },
+          {
+            "id": "COMP-19042522",
+            "metrics": {
+              "complexity": 0.822,
+              "partCountDelta": -3,
+              "procurementRisk": 0.114,
+              "reworkRisk": 0.189
+            }
+          },
+          {
+            "id": "COMP-33666365",
+            "metrics": {
+              "complexity": 0.455,
+              "partCountDelta": -2,
+              "procurementRisk": 0.244,
+              "reworkRisk": 0.084
+            }
+          },
+          {
+            "id": "COMP-33784291",
+            "metrics": {
+              "complexity": 0.888,
+              "partCountDelta": -4,
+              "procurementRisk": 0.09,
+              "reworkRisk": 0.208
+            }
+          },
+          {
+            "id": "COMP-39488550",
+            "metrics": {
+              "complexity": 0.546,
+              "partCountDelta": -2,
+              "procurementRisk": 0.212,
+              "reworkRisk": 0.11
+            }
+          },
+          {
+            "id": "COMP-39488594",
+            "metrics": {
+              "complexity": 0.308,
+              "partCountDelta": -1,
+              "procurementRisk": 0.297,
+              "reworkRisk": 0.042
+            }
+          },
+          {
+            "id": "COMP-39799867",
+            "metrics": {
+              "complexity": 0.67,
+              "partCountDelta": -3,
+              "procurementRisk": 0.168,
+              "reworkRisk": 0.146
+            }
+          },
+          {
+            "id": "COMP-39886551",
+            "metrics": {
+              "complexity": 0.608,
+              "partCountDelta": -2,
+              "procurementRisk": 0.19,
+              "reworkRisk": 0.128
+            }
+          },
+          {
+            "id": "COMP-39913303",
+            "metrics": {
+              "complexity": 0.68,
+              "partCountDelta": -3,
+              "procurementRisk": 0.164,
+              "reworkRisk": 0.149
+            }
+          },
+          {
+            "id": "COMP-39914896",
+            "metrics": {
+              "complexity": 0.787,
+              "partCountDelta": -3,
+              "procurementRisk": 0.126,
+              "reworkRisk": 0.179
+            }
+          },
+          {
+            "id": "COMP-42056736",
+            "metrics": {
+              "complexity": 0.366,
+              "partCountDelta": -1,
+              "procurementRisk": 0.277,
+              "reworkRisk": 0.059
+            }
+          },
+          {
+            "id": "COMP-42060885",
+            "metrics": {
+              "complexity": 0.388,
+              "partCountDelta": -1,
+              "procurementRisk": 0.269,
+              "reworkRisk": 0.065
+            }
+          },
+          {
+            "id": "COMP-42061052",
+            "metrics": {
+              "complexity": 0.819,
+              "partCountDelta": -3,
+              "procurementRisk": 0.115,
+              "reworkRisk": 0.188
+            }
+          },
+          {
+            "id": "COMP-42489903",
+            "metrics": {
+              "complexity": 0.624,
+              "partCountDelta": -2,
+              "procurementRisk": 0.184,
+              "reworkRisk": 0.133
+            }
+          },
+          {
+            "id": "COMP-44298524",
+            "metrics": {
+              "complexity": 0.377,
+              "partCountDelta": -1,
+              "procurementRisk": 0.273,
+              "reworkRisk": 0.062
+            }
+          },
+          {
+            "id": "COMP-44325833",
+            "metrics": {
+              "complexity": 0.652,
+              "partCountDelta": -3,
+              "procurementRisk": 0.174,
+              "reworkRisk": 0.141
+            }
+          },
+          {
+            "id": "COMP-44554579",
+            "metrics": {
+              "complexity": 0.646,
+              "partCountDelta": -2,
+              "procurementRisk": 0.176,
+              "reworkRisk": 0.139
+            }
+          },
+          {
+            "id": "COMP-44554581",
+            "metrics": {
+              "complexity": 0.387,
+              "partCountDelta": -1,
+              "procurementRisk": 0.269,
+              "reworkRisk": 0.065
+            }
+          },
+          {
+            "id": "COMP-46924428",
+            "metrics": {
+              "complexity": 0.474,
+              "partCountDelta": -2,
+              "procurementRisk": 0.238,
+              "reworkRisk": 0.09
+            }
+          },
+          {
+            "id": "COMP-7819905",
+            "metrics": {
+              "complexity": 0.944,
+              "partCountDelta": -4,
+              "procurementRisk": 0.07,
+              "reworkRisk": 0.224
+            }
+          },
+          {
+            "id": "COMP-8733871",
+            "metrics": {
+              "complexity": 0.978,
+              "partCountDelta": -4,
+              "procurementRisk": 0.058,
+              "reworkRisk": 0.234
+            }
+          },
+          {
+            "id": "COMP-8741238",
+            "metrics": {
+              "complexity": 0.833,
+              "partCountDelta": -3,
+              "procurementRisk": 0.11,
+              "reworkRisk": 0.192
+            }
+          },
+          {
+            "id": "COMP-9380825",
+            "metrics": {
+              "complexity": 0.886,
+              "partCountDelta": -4,
+              "procurementRisk": 0.091,
+              "reworkRisk": 0.207
+            }
+          },
+          {
+            "id": "DOOR-16470662",
+            "metrics": {
+              "complexity": 0.395,
+              "partCountDelta": -1,
+              "procurementRisk": 0.266,
+              "reworkRisk": 0.067
+            }
+          },
+          {
+            "id": "DOOR-16473050",
+            "metrics": {
+              "complexity": 0.546,
+              "partCountDelta": -2,
+              "procurementRisk": 0.212,
+              "reworkRisk": 0.11
+            }
+          },
+          {
+            "id": "DOOR-28592805",
+            "metrics": {
+              "complexity": 0.42,
+              "partCountDelta": -2,
+              "procurementRisk": 0.257,
+              "reworkRisk": 0.074
+            }
+          },
+          {
+            "id": "DOOR-37540518",
+            "metrics": {
+              "complexity": 0.824,
+              "partCountDelta": -3,
+              "procurementRisk": 0.113,
+              "reworkRisk": 0.19
+            }
+          },
+          {
+            "id": "DOOR-38271486",
+            "metrics": {
+              "complexity": 0.566,
+              "partCountDelta": -2,
+              "procurementRisk": 0.205,
+              "reworkRisk": 0.116
+            }
+          },
+          {
+            "id": "DOOR-38281167",
+            "metrics": {
+              "complexity": 0.682,
+              "partCountDelta": -3,
+              "procurementRisk": 0.163,
+              "reworkRisk": 0.149
+            }
+          },
+          {
+            "id": "DOOR-38327217",
+            "metrics": {
+              "complexity": 0.306,
+              "partCountDelta": -1,
+              "procurementRisk": 0.298,
+              "reworkRisk": 0.042
+            }
+          },
+          {
+            "id": "DOOR-39912444",
+            "metrics": {
+              "complexity": 0.597,
+              "partCountDelta": -2,
+              "procurementRisk": 0.194,
+              "reworkRisk": 0.125
+            }
+          },
+          {
+            "id": "DOOR-40045653",
+            "metrics": {
+              "complexity": 0.938,
+              "partCountDelta": -4,
+              "procurementRisk": 0.072,
+              "reworkRisk": 0.222
+            }
+          },
+          {
+            "id": "DOOR-40557085",
+            "metrics": {
+              "complexity": 0.997,
+              "partCountDelta": -4,
+              "procurementRisk": 0.051,
+              "reworkRisk": 0.239
+            }
+          },
+          {
+            "id": "DOOR-42040604",
+            "metrics": {
+              "complexity": 0.444,
+              "partCountDelta": -2,
+              "procurementRisk": 0.249,
+              "reworkRisk": 0.081
+            }
+          },
+          {
+            "id": "DOOR-42905383",
+            "metrics": {
+              "complexity": 0.667,
+              "partCountDelta": -3,
+              "procurementRisk": 0.169,
+              "reworkRisk": 0.145
+            }
+          },
+          {
+            "id": "DOOR-44325829",
+            "metrics": {
+              "complexity": 0.889,
+              "partCountDelta": -4,
+              "procurementRisk": 0.09,
+              "reworkRisk": 0.208
+            }
+          },
+          {
+            "id": "DOOR-44606440",
+            "metrics": {
+              "complexity": 0.907,
+              "partCountDelta": -4,
+              "procurementRisk": 0.083,
+              "reworkRisk": 0.213
+            }
+          },
+          {
+            "id": "DOOR-44637305",
+            "metrics": {
+              "complexity": 0.952,
+              "partCountDelta": -4,
+              "procurementRisk": 0.067,
+              "reworkRisk": 0.226
+            }
+          },
+          {
+            "id": "DOOR-50756692",
+            "metrics": {
+              "complexity": 0.441,
+              "partCountDelta": -2,
+              "procurementRisk": 0.249,
+              "reworkRisk": 0.08
+            }
+          },
+          {
+            "id": "DOOR-50756695",
+            "metrics": {
+              "complexity": 0.728,
+              "partCountDelta": -3,
+              "procurementRisk": 0.147,
+              "reworkRisk": 0.162
+            }
+          },
+          {
+            "id": "DOOR-50756699",
+            "metrics": {
+              "complexity": 0.668,
+              "partCountDelta": -3,
+              "procurementRisk": 0.168,
+              "reworkRisk": 0.145
+            }
+          },
+          {
+            "id": "DOOR-50756703",
+            "metrics": {
+              "complexity": 0.463,
+              "partCountDelta": -2,
+              "procurementRisk": 0.242,
+              "reworkRisk": 0.087
+            }
+          },
+          {
+            "id": "DOOR-50756970",
+            "metrics": {
+              "complexity": 0.999,
+              "partCountDelta": -4,
+              "procurementRisk": 0.05,
+              "reworkRisk": 0.24
+            }
+          },
+          {
+            "id": "DOOR-50756973",
+            "metrics": {
+              "complexity": 0.511,
+              "partCountDelta": -2,
+              "procurementRisk": 0.224,
+              "reworkRisk": 0.1
+            }
+          },
+          {
+            "id": "DOOR-50756985",
+            "metrics": {
+              "complexity": 0.728,
+              "partCountDelta": -3,
+              "procurementRisk": 0.147,
+              "reworkRisk": 0.162
+            }
+          },
+          {
+            "id": "DOOR-50756989",
+            "metrics": {
+              "complexity": 0.401,
+              "partCountDelta": -1,
+              "procurementRisk": 0.264,
+              "reworkRisk": 0.069
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "R-SYS-0001",
+            "source": "COMP-39914896",
+            "target": "DOOR-38281167",
+            "metrics": {
+              "assemblyCoupling": 0.448,
+              "qcAttention": 0.265,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0002",
+            "source": "COMP-15287627",
+            "target": "COMP-39914896",
+            "metrics": {
+              "assemblyCoupling": 0.604,
+              "qcAttention": 0.447,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0003",
+            "source": "COMP-15105958",
+            "target": "COMP-15287627",
+            "metrics": {
+              "assemblyCoupling": 0.506,
+              "qcAttention": 0.332,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0004",
+            "source": "COMP-39913303",
+            "target": "COMP-39914896",
+            "metrics": {
+              "assemblyCoupling": 0.9,
+              "qcAttention": 0.791,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0005",
+            "source": "COMP-39799867",
+            "target": "COMP-39913303",
+            "metrics": {
+              "assemblyCoupling": 0.746,
+              "qcAttention": 0.612,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0006",
+            "source": "COMP-46924428",
+            "target": "COMP-39799867",
+            "metrics": {
+              "assemblyCoupling": 0.706,
+              "qcAttention": 0.565,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0007",
+            "source": "COMP-33666365",
+            "target": "COMP-46924428",
+            "metrics": {
+              "assemblyCoupling": 0.484,
+              "qcAttention": 0.306,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0008",
+            "source": "COMP-39488550",
+            "target": "DOOR-28592805",
+            "metrics": {
+              "assemblyCoupling": 0.7,
+              "qcAttention": 0.558,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0009",
+            "source": "COMP-15287627",
+            "target": "COMP-39488550",
+            "metrics": {
+              "assemblyCoupling": 0.84,
+              "qcAttention": 0.721,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0010",
+            "source": "COMP-39488594",
+            "target": "COMP-39488550",
+            "metrics": {
+              "assemblyCoupling": 0.682,
+              "qcAttention": 0.537,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0011",
+            "source": "COMP-39799867",
+            "target": "COMP-39488594",
+            "metrics": {
+              "assemblyCoupling": 0.595,
+              "qcAttention": 0.436,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0012",
+            "source": "COMP-39886551",
+            "target": "COMP-39488594",
+            "metrics": {
+              "assemblyCoupling": 0.934,
+              "qcAttention": 0.832,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0013",
+            "source": "COMP-33666365",
+            "target": "COMP-39886551",
+            "metrics": {
+              "assemblyCoupling": 0.947,
+              "qcAttention": 0.847,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0014",
+            "source": "COMP-39488550",
+            "target": "DOOR-38327217",
+            "metrics": {
+              "assemblyCoupling": 0.376,
+              "qcAttention": 0.18,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0015",
+            "source": "COMP-33784291",
+            "target": "DOOR-37540518",
+            "metrics": {
+              "assemblyCoupling": 0.394,
+              "qcAttention": 0.202,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0016",
+            "source": "COMP-15287627",
+            "target": "COMP-33784291",
+            "metrics": {
+              "assemblyCoupling": 0.478,
+              "qcAttention": 0.299,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0017",
+            "source": "COMP-15287615",
+            "target": "COMP-33784291",
+            "metrics": {
+              "assemblyCoupling": 0.405,
+              "qcAttention": 0.214,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0018",
+            "source": "COMP-15287611",
+            "target": "COMP-15287615",
+            "metrics": {
+              "assemblyCoupling": 0.924,
+              "qcAttention": 0.819,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0019",
+            "source": "COMP-42056736",
+            "target": "DOOR-42040604",
+            "metrics": {
+              "assemblyCoupling": 0.921,
+              "qcAttention": 0.816,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0020",
+            "source": "COMP-42060885",
+            "target": "COMP-42056736",
+            "metrics": {
+              "assemblyCoupling": 0.581,
+              "qcAttention": 0.419,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0021",
+            "source": "COMP-42061052",
+            "target": "COMP-42060885",
+            "metrics": {
+              "assemblyCoupling": 0.486,
+              "qcAttention": 0.309,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0022",
+            "source": "COMP-42489903",
+            "target": "COMP-42061052",
+            "metrics": {
+              "assemblyCoupling": 0.94,
+              "qcAttention": 0.838,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0023",
+            "source": "COMP-8733871",
+            "target": "COMP-42060885",
+            "metrics": {
+              "assemblyCoupling": 0.423,
+              "qcAttention": 0.235,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0024",
+            "source": "COMP-15287611",
+            "target": "COMP-42056736",
+            "metrics": {
+              "assemblyCoupling": 0.867,
+              "qcAttention": 0.753,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0025",
+            "source": "COMP-44325833",
+            "target": "DOOR-50756699",
+            "metrics": {
+              "assemblyCoupling": 0.7,
+              "qcAttention": 0.558,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0026",
+            "source": "COMP-9380825",
+            "target": "DOOR-16473050",
+            "metrics": {
+              "assemblyCoupling": 0.593,
+              "qcAttention": 0.433,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0027",
+            "source": "COMP-8741238",
+            "target": "COMP-9380825",
+            "metrics": {
+              "assemblyCoupling": 0.721,
+              "qcAttention": 0.583,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0028",
+            "source": "COMP-9380825",
+            "target": "DOOR-42905383",
+            "metrics": {
+              "assemblyCoupling": 0.579,
+              "qcAttention": 0.417,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0029",
+            "source": "COMP-44325833",
+            "target": "DOOR-50756970",
+            "metrics": {
+              "assemblyCoupling": 0.538,
+              "qcAttention": 0.369,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0030",
+            "source": "COMP-44554579",
+            "target": "DOOR-50756703",
+            "metrics": {
+              "assemblyCoupling": 0.361,
+              "qcAttention": 0.163,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0031",
+            "source": "COMP-44554581",
+            "target": "COMP-44554579",
+            "metrics": {
+              "assemblyCoupling": 0.565,
+              "qcAttention": 0.401,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0032",
+            "source": "COMP-44325833",
+            "target": "DOOR-50756973",
+            "metrics": {
+              "assemblyCoupling": 0.452,
+              "qcAttention": 0.269,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0033",
+            "source": "COMP-44298524",
+            "target": "DOOR-50756692",
+            "metrics": {
+              "assemblyCoupling": 0.893,
+              "qcAttention": 0.783,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0034",
+            "source": "COMP-15333983",
+            "target": "DOOR-40045653",
+            "metrics": {
+              "assemblyCoupling": 0.712,
+              "qcAttention": 0.572,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0035",
+            "source": "COMP-19042522",
+            "target": "COMP-15333983",
+            "metrics": {
+              "assemblyCoupling": 0.813,
+              "qcAttention": 0.69,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0036",
+            "source": "COMP-8733871",
+            "target": "COMP-19042522",
+            "metrics": {
+              "assemblyCoupling": 0.612,
+              "qcAttention": 0.456,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0037",
+            "source": "COMP-7819905",
+            "target": "COMP-19042522",
+            "metrics": {
+              "assemblyCoupling": 0.495,
+              "qcAttention": 0.319,
+              "changeImpact": "low"
+            }
+          },
+          {
+            "id": "R-SYS-0038",
+            "source": "COMP-8741238",
+            "target": "COMP-7819905",
+            "metrics": {
+              "assemblyCoupling": 0.661,
+              "qcAttention": 0.513,
+              "changeImpact": "medium"
+            }
+          },
+          {
+            "id": "R-SYS-0039",
+            "source": "COMP-39886551",
+            "target": "COMP-15333983",
+            "metrics": {
+              "assemblyCoupling": 0.773,
+              "qcAttention": 0.643,
+              "changeImpact": "high"
+            }
+          },
+          {
+            "id": "R-SYS-0040",
+            "source": "COMP-39914896",
+            "target": "DOOR-39912444",
+            "metrics": {
+              "assemblyCoupling": 0.595,
+              "qcAttention": 0.436,
+              "changeImpact": "medium"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
