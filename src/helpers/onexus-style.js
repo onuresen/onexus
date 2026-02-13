@@ -357,9 +357,33 @@ function buildStyle(themeKey) {
 /* Global style instance */
 let NEXUS_STYLE = buildStyle(currentTheme);
 
+/* --- NEW: apply size scale without relayout --- */
+function applyScale(scale) {
+  currentScale = Math.max(0.5, Math.min(2.0, Number(scale) || 1.0));
+  window.__onexus_scale = currentScale;
+  const cy = window.cy;
+  NEXUS_STYLE = buildStyle(currentTheme);
+  if (cy?.style) {
+    cy.style(NEXUS_STYLE); // positions preserved; only visuals updated
+  }
+  window.buildRelationshipLegend?.();
+}
+
+function applyColorMode(mode) {
+  currentColorMode = mode || "json_category";
+  const cy = window.cy;
+  NEXUS_STYLE = buildStyle(currentTheme);
+  if (cy?.style) cy.style(NEXUS_STYLE);
+  window.buildRelationshipLegend?.();
+}
+
+
 /* Apply theme and update canvas/cy */
 function applyTheme(themeKey) {
   currentTheme = themeKey;
+  // ✅ keep a live global value for legacy consumers
+  window.currentTheme = currentTheme;
+
   const root = document.documentElement;
   root.classList.remove("theme-light", "theme-dark");
   root.classList.add(themeKey === "dark" ? "theme-dark" : "theme-light");
@@ -382,7 +406,6 @@ function applyTheme(themeKey) {
     Object.entries(cssProps).forEach(([k, v]) => root.style.setProperty(k, v));
   }
 
-  // Update Cytoscape instance if available
   const cy = window.cy;
   NEXUS_STYLE = buildStyle(currentTheme);
   if (cy?.container) {
@@ -392,32 +415,26 @@ function applyTheme(themeKey) {
   window.buildRelationshipLegend?.();
 }
 
-/* --- NEW: apply size scale without relayout --- */
-function applyScale(scale) {
-  currentScale = Math.max(0.5, Math.min(2.0, Number(scale) || 1.0));
-  window.__onexus_scale = currentScale;
-  const cy = window.cy;
-  NEXUS_STYLE = buildStyle(currentTheme);
-  if (cy?.style) {
-    cy.style(NEXUS_STYLE); // positions preserved; only visuals updated
-  }
-  window.buildRelationshipLegend?.();
+/* --- NEW: read-only getters used by exporters/others --- */
+function getCurrentThemeKey() {
+  return currentTheme;
+}
+function getCurrentScale() {
+  return currentScale;
 }
 
-function applyColorMode(mode) {
-  currentColorMode = mode || "json_category";
-  const cy = window.cy;
-  NEXUS_STYLE = buildStyle(currentTheme);
-  if (cy?.style) cy.style(NEXUS_STYLE);
-  window.buildRelationshipLegend?.();
-}
+/* Expose */
 window.applyColorMode = applyColorMode;
 window.currentColorMode = () => currentColorMode;
 
-// Expose
 window.THEMES = THEMES;
 window.NEXUS_STYLE = NEXUS_STYLE;
 window.applyTheme = applyTheme;
 window.applyScale = applyScale;
+
+/* ✅ consistent global accessors */
+window.getCurrentThemeKey = getCurrentThemeKey;
+window.getCurrentScale = getCurrentScale;
+
+/* ✅ legacy global value (string) still supported */
 window.currentTheme = currentTheme;
-window.currentScale = () => currentScale;
