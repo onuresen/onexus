@@ -101,13 +101,23 @@ const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn)
 })();
 
 // ---- CSV quick classifier (filename/header peek) ----
-// NOTE: kept lightweight here so we can quickly route to CSV choice without parsing full file.
+// Routes: 'cobie' | 'onexus-edges' | 'cobie-maybe' | 'unknown'
 function classifyCsvText(name, text) {
-  const lower = (name ?? '').toLowerCase();
-  if (/\b(component|type|system|assembly|space)\.csv$/.test(lower)) return 'cobie';
+  const lower = String(name ?? '').toLowerCase();
+
+  // COBie sheet filenames (common variants)
+  // - Component.csv / Type.csv / System.csv / Assembly.csv / Space.csv
+  // - COBie_Component.csv, cobie-component.csv, etc.
+  const cobieFileRe = /(^|[\/._-])(cobie[_-]?)?(component|type|system|assembly|space)\.csv$/i;
+  if (cobieFileRe.test(lower)) return 'cobie';
+
+  // ONEXUS edges CSV exported from app
   const head = String(text ?? '').split(/\r?\n/, 1)[0].toLowerCase();
   if (head.includes('id,type,dimension,directional,source,target')) return 'onexus-edges';
-  if (/(name|typename|space|floor|createdby)/.test(head)) return 'cobie-maybe';
+
+  // COBie-like header hint (loose)
+  if (/(^|,)\s*(name|typename|space|floor|createdby)\s*(,|$)/i.test(head)) return 'cobie-maybe';
+
   return 'unknown';
 }
 
@@ -321,4 +331,145 @@ function classifyCsvText(name, text) {
       window.handleUnifiedLoad?.({ target: { files } });
     });
   })();
+})();
+
+// ===============================
+// ONEXUS – GD Import UI (toolbar)
+// Depends on: window.IMPORT_GD, #btnGD, #fileImportGD
+// ===============================
+(function () {
+  // attach helper exists in this file: const on = (id, ev, fn) => ...
+  // If you ever remove it, replace calls below with document.getElementById(...).addEventListener(...)
+
+  function openGdImportDialog() {
+    return new Promise((resolve, reject) => {
+      const overlay = document.createElement("div");
+      Object.assign(overlay.style, {
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,.45)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10070
+      });
+
+      const panel = document.createElement("div");
+      Object.assign(panel.style, {
+        background: "#fff",
+        minWidth: "420px",
+        maxWidth: "520px",
+        borderRadius: "10px",
+        padding: "14px",
+        boxShadow: "0 12px 28px rgba(0,0,0,.22)",
+        fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,sans-serif",
+        fontSize: "13px",
+        color: "#111"
+      });
+
+      panel.innerHTML = `
+        <div style="font-weight:700;margin-bottom:8px;">Import Generative Design (GD)</div>
+        <div style="color:#374151;line-height:1.45;margin-bottom:10px;">
+          Choose how to apply the GD payload to the current graph.
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <label style="display:flex;gap:8px;align-items:flex-start;">
+            <input type="radio" name="gdMode" value="overlay" checked>
+            <div>
+              <div style="font-weight:600;">Overlay</div>
+              <div style="font-size:12px;color:#6b7280;">Attach GD metrics onto existing nodes/edges (no new edges).</div>
+            </div>
+          </label>
+          <label style="display:flex;gap:8px;align-items:flex-start;">
+            <input type="radio" name="gdMode" value="materialize-edges">
+            <div>
+              <div style="font-weight:600;">Materialize</div>
+              <div style="font-size:12px;color:#6b7280;">Create an Option node + edges (Optimizes / domain edges).</div>
+            </div>
+          </label>
+        </div>
+
+        <label style="display:block;margin-bottom:10px;">
+          <div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Option Id (optional)</div>
+          <input id="gdOptionId" type="text" placeholder="e.g., opt-123 (blank = auto pick)"
+                 style="width:100%;padding:8px;border:1px solid #e5e7eb;border-radius:8px;">
+        </label>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button id="gdCancel"
+            style="padding:6px 10px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;">
+            Cancel
+          </button>
+          <button id="gdApply"
+            style="padding:6px 10px;border:0;border-radius:8px;background:#111827;color:#fff;cursor:pointer;">
+            Import
+          </button>
+        </div>
+      `;
+
+      overlay.appendChild(panel);
+      document.body.appendChild(overlay);
+
+      const cleanup = () => overlay.remove();
+
+      panel.querySelector("#gdCancel").addEventListener("click", () => {
+        cleanup();
+        reject(new Error("cancel"));
+      });
+
+      panel.querySelector("#gdApply").addEventListener("click", () => {
+        const mode = panel.querySelector("input[name='gdMode']:checked")?.value || "overlay";
+        const optionId = (panel.querySelector("#gdOptionId").value || "").trim() || null;
+        cleanup();
+        resolve({ mode, optionId });
+      });
+
+      // ESC to cancel
+      const onEsc = (e) => {
+        if (e.key === "Escape") {
+          cleanup();
+          document.removeEventListener("keydown", onEsc);
+          reject(new Error("cancel"));
+        }
+      };
+      document.addEventListener("keydown", onEsc);
+    });
+  }
+
+  // Button -> open file input
+  on("btnGD", "click", () => {
+    const inp = document.getElementById("fileImportGD");
+    if (!inp) return;
+    inp.value = "";
+    inp.click();
+  });
+
+  // File chosen -> parse -> choose mode -> import
+  on("fileImportGD", "change", async (e) => {
+    try {
+      const file = e?.target?.files?.[0];
+      if (!file) return;
+
+      if (!window.IMPORT_GD?.importFromPayload) {
+        alert("GD importer is not available (window.IMPORT_GD missing). Did you include gd-importer.js?");
+        return;
+      }
+
+      const text = await file.text();
+      let payload;
+      try {
+        payload = JSON.parse(text);
+      } catch (err) {
+        alert("Invalid JSON: " + (err?.message || err));
+        return;
+      }
+
+      const { mode, optionId } = await openGdImportDialog();
+      window.IMPORT_GD.importFromPayload(payload, { mode, optionId });
+    } catch (err) {
+      if (String(err?.message || err).toLowerCase().includes("cancel")) return;
+      alert("GD import failed: " + (err?.message || err));
+    }
+  });
 })();

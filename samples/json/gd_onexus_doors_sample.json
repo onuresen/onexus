@@ -1,0 +1,245 @@
+{
+    "type": "onexus/generative-design",
+    "problem": {
+        "id": "DOOR_ASSEMBLY_OPT_001",
+        "name": "Door assembly rationalization",
+        "description": "Optimize door assemblies to reduce part count and improve manufacturability while keeping compliance risk low."
+    },
+    "options": [
+        {
+            "id": "opt-A",
+            "rank": 1,
+            "pareto": true,
+            "createdAt": "2026-02-13T03:30:00Z",
+            "scores": {
+                "assemblyComplexityScore": 0.78,
+                "estimatedCostDelta_JPY": -120000,
+                "leadTimeDelta_days": -3,
+                "complianceRisk": 0.09
+            },
+            "parameters": {
+                "standardizeFrameTypes": true,
+                "maxUniquePanelTypes": 6,
+                "targetPartCountReductionPct": 12
+            },
+            "constraintsEval": {
+                "fireDoorSpecOk": true,
+                "acousticSpecOk": true,
+                "egressSpecOk": true
+            },
+            "affected": {
+                "nodes": [
+                    {
+                        "id": "DOOR-16473050",
+                        "metrics": {
+                            "localPartCount": 9,
+                            "partCountDelta": -1,
+                            "localComplexity": 0.42,
+                            "reworkRisk": 0.07
+                        }
+                    },
+                    {
+                        "id": "DOOR-28369363",
+                        "metrics": {
+                            "localPartCount": 11,
+                            "partCountDelta": -2,
+                            "localComplexity": 0.55,
+                            "reworkRisk": 0.10
+                        }
+                    },
+                    {
+                        "id": "DOOR-38281167",
+                        "metrics": {
+                            "localPartCount": 8,
+                            "partCountDelta": -1,
+                            "localComplexity": 0.38,
+                            "reworkRisk": 0.06
+                        }
+                    },
+                    {
+                        "id": "COMP-15105958",
+                        "metrics": {
+                            "standardizationGain": 0.66,
+                            "variantCountBefore": 5,
+                            "variantCountAfter": 3,
+                            "procurementRisk": 0.08
+                        }
+                    },
+                    {
+                        "id": "COMP-15287611",
+                        "metrics": {
+                            "standardizationGain": 0.51,
+                            "variantCountBefore": 4,
+                            "variantCountAfter": 3,
+                            "procurementRisk": 0.06
+                        }
+                    },
+                    {
+                        "id": "COMP-12588412",
+                        "metrics": {
+                            "standardizationGain": 0.44,
+                            "variantCountBefore": 3,
+                            "variantCountAfter": 3,
+                            "procurementRisk": 0.04
+                        }
+                    }
+                ],
+                "edges": [
+                    {
+                        "id": "R-SYS-0001",
+                        "source": "COMP-39914896",
+                        "target": "DOOR-38281167",
+                        "metrics": {
+                            "assemblyCoupling": 0.62,
+                            "changeImpact": "medium",
+                            "qcAttention": 0.41
+                        }
+                    },
+                    {
+                        "id": "R-SYS-0002",
+                        "source": "COMP-15287627",
+                        "target": "COMP-39914896",
+                        "metrics": {
+                            "assemblyCoupling": 0.70,
+                            "changeImpact": "high",
+                            "qcAttention": 0.55
+                        }
+                    },
+                    {
+                        "id": "R-SYS-0003",
+                        "source": "COMP-15105958",
+                        "target": "COMP-15287627",
+                        "metrics": {
+                            "assemblyCoupling": 0.58,
+                            "changeImpact": "medium",
+                            "qcAttention": 0.36
+                        }
+                    },
+                    {
+                        "id": "R-SYS-0007",
+                        "source": "COMP-33666365",
+                        "target": "COMP-46924428",
+                        "metrics": {
+                            "assemblyCoupling": 0.49,
+                            "changeImpact": "low",
+                            "qcAttention": 0.22
+                        }
+                    },
+                    {
+                        "id": "R-SYS-0008",
+                        "source": "COMP-39488550",
+                        "target": "DOOR-28592805",
+                        "metrics": {
+                            "assemblyCoupling": 0.63,
+                            "changeImpact": "medium",
+                            "qcAttention": 0.40
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "opt-B",
+            "rank": 2,
+            "pareto": true,
+            "createdAt": "2026-02-13T03:30:00Z",
+            "scores": {
+                "assemblyComplexityScore": 0.74,
+                "estimatedCostDelta_JPY": -170000,
+                "leadTimeDelta_days": -5,
+                "complianceRisk": 0.14
+            },
+            "parameters": {
+                "standardizeFrameTypes": true,
+                "maxUniquePanelTypes": 5,
+                "targetPartCountReductionPct": 18
+            },
+            "constraintsEval": {
+                "fireDoorSpecOk": true,
+                "acousticSpecOk": true,
+                "egressSpecOk": true
+            },
+            "affected": {
+                "nodes": [
+                    {
+                        "id": "DOOR-16473050",
+                        "metrics": {
+                            "localPartCount": 9,
+                            "partCountDelta": -2,
+                            "localComplexity": 0.40,
+                            "reworkRisk": 0.09
+                        }
+                    },
+                    {
+                        "id": "DOOR-28332670",
+                        "metrics": {
+                            "localPartCount": 12,
+                            "partCountDelta": -3,
+                            "localComplexity": 0.60,
+                            "reworkRisk": 0.16
+                        }
+                    },
+                    {
+                        "id": "DOOR-19372670",
+                        "metrics": {
+                            "localPartCount": 10,
+                            "partCountDelta": -2,
+                            "localComplexity": 0.52,
+                            "reworkRisk": 0.13
+                        }
+                    },
+                    {
+                        "id": "COMP-15105970",
+                        "metrics": {
+                            "standardizationGain": 0.72,
+                            "variantCountBefore": 6,
+                            "variantCountAfter": 3,
+                            "procurementRisk": 0.12
+                        }
+                    },
+                    {
+                        "id": "COMP-15105956",
+                        "metrics": {
+                            "standardizationGain": 0.61,
+                            "variantCountBefore": 5,
+                            "variantCountAfter": 3,
+                            "procurementRisk": 0.10
+                        }
+                    }
+                ],
+                "edges": [
+                    {
+                        "id": "R-SYS-0004",
+                        "source": "COMP-39913303",
+                        "target": "COMP-39914896",
+                        "metrics": {
+                            "assemblyCoupling": 0.76,
+                            "changeImpact": "high",
+                            "qcAttention": 0.61
+                        }
+                    },
+                    {
+                        "id": "R-SYS-0005",
+                        "source": "COMP-39799867",
+                        "target": "COMP-39913303",
+                        "metrics": {
+                            "assemblyCoupling": 0.68,
+                            "changeImpact": "medium",
+                            "qcAttention": 0.47
+                        }
+                    },
+                    {
+                        "id": "R-SYS-0006",
+                        "source": "COMP-46924428",
+                        "target": "COMP-39799867",
+                        "metrics": {
+                            "assemblyCoupling": 0.57,
+                            "changeImpact": "medium",
+                            "qcAttention": 0.38
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
