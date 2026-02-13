@@ -7,11 +7,6 @@
         ['buildRelationshipLegend', () => typeof window.buildRelationshipLegend === 'function'],
         ['updateMetrics', () => typeof window.updateMetrics === 'function'],
         ['handleUnifiedLoad', () => typeof window.handleUnifiedLoad === 'function'],
-        ['setLayerMode', () => typeof window.setLayerMode === 'function'],
-        ['__onexus_state.layerMode', () => !!window.__onexus_state?.layerMode],
-        ['getLayerMode', () => typeof window.getLayerMode === 'function'],
-        ['setLayerMode', () => typeof window.setLayerMode === 'function'],
-        ['registerLayerMode', () => typeof window.registerLayerMode === 'function'],
     ];
 
     const missing = required.filter(([, ok]) => !ok()).map(([name]) => name);

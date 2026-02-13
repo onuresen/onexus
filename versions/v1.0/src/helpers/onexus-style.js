@@ -38,42 +38,6 @@ const THEMES = {
 // current theme state (used by exporters too)
 let currentTheme = "light";
 
-// =====================================================
-// Layer Style Hooks (foundation)
-// Layers can override label/color functions without forking buildStyle.
-// =====================================================
-window.__onexus_styleHooks = window.__onexus_styleHooks || {
-  nodeLabelFn: null, // (ele, ctx) => string
-  edgeLabelFn: null, // (ele, ctx) => string
-  nodeColorFn: null, // (ele, ctx) => color string
-  edgeColorFn: null, // (ele, ctx) => color string
-};
-
-function setStyleHooks(partial = {}) {
-  window.__onexus_styleHooks = window.__onexus_styleHooks || {};
-  Object.assign(window.__onexus_styleHooks, partial);
-  // reapply current style without relayout
-  const cy = window.cy;
-  NEXUS_STYLE = buildStyle(currentTheme);
-  if (cy?.style) cy.style(NEXUS_STYLE);
-  window.buildRelationshipLegend?.();
-}
-
-function clearStyleHooks() {
-  window.__onexus_styleHooks = window.__onexus_styleHooks || {};
-  window.__onexus_styleHooks.nodeLabelFn = null;
-  window.__onexus_styleHooks.edgeLabelFn = null;
-  window.__onexus_styleHooks.nodeColorFn = null;
-  window.__onexus_styleHooks.edgeColorFn = null;
-  const cy = window.cy;
-  NEXUS_STYLE = buildStyle(currentTheme);
-  if (cy?.style) cy.style(NEXUS_STYLE);
-  window.buildRelationshipLegend?.();
-}
-
-window.setStyleHooks = setStyleHooks;
-window.clearStyleHooks = clearStyleHooks;
-
 /* --- NEW: global size scale (no relayout) --- */
 let currentScale = 1.0;              // persisted via UI, 0.6 ~ 1.6 recommended
 window.__onexus_scale = currentScale; // also readable from style closures
@@ -199,29 +163,13 @@ function buildStyle(themeKey) {
   const edgeWThin = clamp(2 * Math.pow(S, 0.9), 1, 5);
   const arrowScale = clamp(1 * Math.pow(S, 0.9), 0.7, 1.6);
 
-  const hooks = window.__onexus_styleHooks || {};
-  const ctx = { theme: T, scale: S };
-
   return [
     // Base node
     {
       selector: "node",
       style: {
-        label: (ele) => {
-          try {
-            return hooks.nodeLabelFn ? hooks.nodeLabelFn(ele, ctx) : (ele.data('displayLabel') ?? '');
-          } catch {
-            return ele.data('displayLabel') ?? '';
-          }
-        },
-        "background-color": (ele) => {
-          const base = nodeColorByMode(ele);
-          try {
-            return hooks.nodeColorFn ? hooks.nodeColorFn(ele, { ...ctx, base }) : base;
-          } catch {
-            return base;
-          }
-        },
+        label: "data(displayLabel)",
+        "background-color": (ele) => nodeColorByMode(ele),
         color: T.text,
         "text-wrap": "wrap",
         "text-max-width": `${clamp(90 * S, 60, 160)}px`,
@@ -313,29 +261,8 @@ function buildStyle(themeKey) {
     {
       selector: "edge",
       style: {
-        label: (ele) => {
-          try {
-            return hooks.edgeLabelFn ? hooks.edgeLabelFn(ele, ctx) : (ele.data('displayType') ?? ele.data('type') ?? '');
-          } catch {
-            return ele.data('displayType') ?? ele.data('type') ?? '';
-          }
-        },
-        "line-color": (ele) => {
-          const base = edgeColor(ele.data("type"));
-          try {
-            return hooks.edgeColorFn ? hooks.edgeColorFn(ele, { ...ctx, base }) : base;
-          } catch {
-            return base;
-          }
-        },
-        "target-arrow-color": (ele) => {
-          const base = edgeColor(ele.data("type"));
-          try {
-            return hooks.edgeColorFn ? hooks.edgeColorFn(ele, { ...ctx, base }) : base;
-          } catch {
-            return base;
-          }
-        },
+        label: "data(displayType)",
+        "line-color": (ele) => edgeColor(ele.data("type")),
         "target-arrow-color": (ele) => edgeColor(ele.data("type")),
         "target-arrow-shape": (ele) => ele.data("directional") ? "triangle" : "none",
         "arrow-scale": arrowScale,
@@ -424,14 +351,6 @@ function buildStyle(themeKey) {
     { selector: "edge.diff-added", style: { 'line-color': '#10b981', 'target-arrow-color': '#10b981', 'width': clamp(5 * Math.pow(S, 0.9), 3, 8) } },
     { selector: "edge.diff-removed", style: { 'line-color': '#ef4444', 'target-arrow-color': '#ef4444', 'line-style': 'dashed', 'width': clamp(4 * Math.pow(S, 0.9), 2, 7), 'opacity': 0.7 } },
     { selector: "edge.diff-changed", style: { 'line-color': '#f59e0b', 'target-arrow-color': '#f59e0b', 'width': clamp(5 * Math.pow(S, 0.9), 3, 8) } },
-
-    // --- Risk layer styling helpers ---
-    { selector: "edge.conf-inferred", style: { "line-style": "dashed", opacity: 0.65 } },
-    { selector: "edge.layer-risk", style: { "text-opacity": 1 } }, // ensure labels visible if needed
-
-    // --- Option layer emphasis ---
-    { selector: 'node[layer-option][nodeType = "Option"]', style: { "border-width": 4, "border-color": "#6366f1" } },
-    { selector: 'edge[layer-option][type = "Optimizes"]', style: { "width": clamp(5 * Math.pow(S, 0.9), 3, 8) } },
   ];
 }
 

@@ -135,10 +135,6 @@ function classifyCsvText(name, text) {
     writePref('onexus.theme', e.target.value);
     window.applyTheme?.(e.target.value);
   });
-  on('layerModeSelect', 'change', e => {
-    writePref('onexus.layerMode', e.target.value);
-    window.setLayerMode?.(e.target.value);
-  });
 
   // Restore preferences on startup
   window.addEventListener('DOMContentLoaded', () => {
@@ -148,10 +144,6 @@ function classifyCsvText(name, text) {
     const $lang = document.getElementById('languageSelect'); if ($lang) $lang.value = lang;
     const $theme = document.getElementById('themeSelect'); if ($theme) $theme.value = theme;
     const $layout = document.getElementById('layoutSelect'); if ($layout) $layout.value = layout;
-    const layerMode = readPref('onexus.layerMode', 'relationship');
-    const $layer = document.getElementById('layerModeSelect');
-    if ($layer) $layer.value = layerMode;
-    window.setLayerMode?.(layerMode, { persist: false, silent: true });
     window.setLanguage?.(lang);
     window.applyTheme?.(theme);
     window.applyLayout?.(layout);
