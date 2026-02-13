@@ -240,3 +240,188 @@ button.flat:hover {
         border: 1px solid var(--stroke);
     }
 }
+
+/* =========================================
+ ONEXUS – Floating left stack + Layer widget
+========================================= */
+#onx-float-left-stack {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    pointer-events: none;
+}
+
+#onx-float-left-stack>* {
+    pointer-events: auto;
+}
+
+/* Ensure minimap still looks like a card when moved into the stack */
+#onx-float-left-stack #minimap {
+    margin: 0;
+}
+
+/* Layer FAB */
+#onx-layer-fab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    user-select: none;
+}
+
+:root.theme-dark #onx-layer-fab {
+    background: rgba(15, 17, 21, 0.55);
+}
+
+#onx-layer-fab:hover {
+    background: var(--btn-bg-hover);
+}
+
+:root.theme-dark #onx-layer-fab:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+#onx-layer-fab .onx-layer-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--onx-layer-accent, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+#onx-layer-fab .onx-layer-fab-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Popover */
+#onx-layer-pop {
+    width: 280px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    padding: 10px 10px 12px;
+}
+
+:root.theme-dark #onx-layer-pop {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(15, 17, 21, 0.72);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.onx-layer-pop-h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.onx-layer-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.onx-layer-x {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    border: 1px solid var(--stroke);
+    background: var(--btn-bg);
+    cursor: pointer;
+}
+
+.onx-layer-x:hover {
+    background: var(--btn-bg-hover);
+}
+
+.onx-layer-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.onx-layer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.onx-layer-k {
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 70px;
+}
+
+.onx-layer-v {
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.onx-layer-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.onx-layer-btn {
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+    background: var(--btn-bg);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.onx-layer-btn:hover {
+    background: var(--btn-bg-hover);
+}
+
+.onx-layer-select {
+    width: 100%;
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--stroke);
+    background: transparent;
+    color: var(--text-main);
+}
+
+.onx-layer-swatch {
+    display: inline-block;
+    width: 64px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+}
+
+:root.theme-dark .onx-layer-swatch {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.onx-layer-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.35;
+    margin-top: 2px;
+}

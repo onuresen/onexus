@@ -13,6 +13,28 @@
     const debounce = U.debounce || ((fn, ms = 80) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; });
     const idSafe = U.idSafe || ((s) => String(s ?? "").replace(/[^\w\-:.]+/g, "_"));
 
+    function currentThemeKey() {
+        return window.getCurrentThemeKey?.() || window.currentTheme || "light";
+    }
+
+    function applyLayerTint({ accent, canvasLight, canvasDark }) {
+        const root = document.documentElement;
+        const theme = currentThemeKey();
+        const canvas = (theme === "dark") ? (canvasDark || canvasLight) : canvasLight;
+
+        // Accent used by widget dot and any future UI
+        if (accent) root.style.setProperty("--onx-layer-accent", accent);
+
+        // Canvas tint (minimal)
+        if (canvas) root.style.setProperty("--bg-canvas", canvas);
+
+        // Also update the Cytoscape container background (style.js does this on applyTheme)
+        try {
+            const c = window.cy?.container?.();
+            if (c && canvas) c.style.backgroundColor = canvas;
+        } catch { /* noop */ }
+    }
+
     // ---------- helpers ----------
     const exists = (col) => !!col && !!col.nonempty && col.nonempty();
     const state = window.__onexus_state;
@@ -77,6 +99,11 @@
 
     // ---------- layer behaviors ----------
     function enterRelationship() {
+        applyLayerTint({
+            accent: "#2563eb",
+            canvasLight: "#F5F7FA",
+            canvasDark: "#1E1E1E"
+        });
         clearLayerClasses();
         window.clearStyleHooks?.();
         safeShowAllEdges();
@@ -84,6 +111,11 @@
     }
 
     function enterLifecycle() {
+        applyLayerTint({
+            accent: "#0ea5e9",
+            canvasLight: "#F3FAFF",   // very light blue tint
+            canvasDark: "#0F1A22"
+        });
         clearLayerClasses();
         cy.nodes().addClass("layer-lifecycle");
         cy.edges().addClass("layer-lifecycle");
@@ -109,6 +141,11 @@
     }
 
     function enterRisk() {
+        applyLayerTint({
+            accent: "#f59e0b",
+            canvasLight: "#FFF8EF",   // warm tint
+            canvasDark: "#221A10"
+        });
         clearLayerClasses();
         cy.nodes().addClass("layer-risk");
         cy.edges().addClass("layer-risk");
@@ -160,6 +197,11 @@
     }
 
     function enterOption() {
+        applyLayerTint({
+            accent: "#6366f1",
+            canvasLight: "#F5F3FF",   // subtle indigo tint
+            canvasDark: "#16152A"
+        });
         clearLayerClasses();
         cy.nodes().addClass("layer-option");
         cy.edges().addClass("layer-option");
