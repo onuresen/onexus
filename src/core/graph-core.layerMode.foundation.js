@@ -35,6 +35,105 @@
         } catch { /* noop */ }
     }
 
+    // ---------- additive hiding via class (safe with existing filters) ----------
+    function clearLayerHides() {
+        cy.nodes().removeClass("layer-hide");
+        cy.edges().removeClass("layer-hide");
+    }
+
+    // Show nodes connected to currently NOT-hidden visible edges (keeps graph coherent)
+    function hideIsolatedNodes() {
+        const keep = new Set();
+        cy.edges(":visible").not(".layer-hide").forEach((e) => {
+            keep.add(e.data("source"));
+            keep.add(e.data("target"));
+        });
+        cy.nodes(":visible").forEach((n) => {
+            if (keep.has(n.id())) n.removeClass("layer-hide");
+            else n.addClass("layer-hide");
+        });
+    }
+
+    // Risk: filter modes using classes you already add (risk-high/med/low + conf-inferred)
+    const __layerRuntime = (window.__onexus_layerRuntime = window.__onexus_layerRuntime || {
+        riskFilter: "all",   // all | inferred | high
+        optionFilter: "all", // all | optionsOnly
+    });
+
+    function setRiskFilter(mode) {
+        __layerRuntime.riskFilter = mode;
+
+        cy.edges().removeClass("layer-hide");
+        cy.nodes().removeClass("layer-hide");
+
+        if (mode === "inferred") {
+            cy.edges(":visible").forEach((e) => {
+                if (e.hasClass("conf-inferred")) e.removeClass("layer-hide");
+                else e.addClass("layer-hide");
+            });
+            hideIsolatedNodes();
+            window.showTransientMessage?.("Risk: inferred edges only");
+            return;
+        }
+
+        if (mode === "high") {
+            cy.edges(":visible").forEach((e) => {
+                if (e.hasClass("risk-high")) e.removeClass("layer-hide");
+                else e.addClass("layer-hide");
+            });
+            hideIsolatedNodes();
+            window.showTransientMessage?.("Risk: high-risk only");
+            return;
+        }
+
+        // all
+        clearLayerHides();
+        window.showTransientMessage?.("Risk: filter cleared");
+    }
+
+    // Option: show only option nodes + their neighborhood
+    function setOptionFilter(mode) {
+        __layerRuntime.optionFilter = mode;
+
+        cy.edges().removeClass("layer-hide");
+        cy.nodes().removeClass("layer-hide");
+
+        if (mode === "optionsOnly") {
+            const optNodes = cy.nodes(":visible").filter((n) =>
+                String(n.data("nodeType") ?? "").toLowerCase() === "option" ||
+                String(n.data("category") ?? "").toLowerCase() === "designoption"
+            );
+
+            if (!optNodes.length) {
+                window.showTransientMessage?.("Option: no Option nodes found");
+                return;
+            }
+
+            const hood = optNodes.closedNeighborhood(":visible");
+            cy.elements(":visible").forEach((el) => {
+                if (hood.contains(el)) el.removeClass("layer-hide");
+                else el.addClass("layer-hide");
+            });
+
+            window.showTransientMessage?.("Option: options + neighborhood only");
+            return;
+        }
+
+        clearLayerHides();
+        window.showTransientMessage?.("Option: filter cleared");
+    }
+
+    // Lifecycle: focus phase UI (leftRail filter panel if exists)
+    function focusPhaseFilterUi() {
+        const railBtn = document.querySelector('#leftRail .rail-btn[data-panel="panelFilter"]');
+        if (railBtn) railBtn.click();
+        const el = document.getElementById("phaseFilter");
+        if (el) {
+            try { el.focus({ preventScroll: false }); } catch { }
+            try { el.scrollIntoView({ behavior: "smooth", block: "center" }); } catch { }
+        }
+    }
+
     // ---------- helpers ----------
     const exists = (col) => !!col && !!col.nonempty && col.nonempty();
     const state = window.__onexus_state;
@@ -253,24 +352,124 @@
             title: { en: "Relationship", jp: "関係" },
             onEnter: () => enterRelationship(),
             onExit: () => exitAny(),
+            actions: [
+                {
+                    id: "showAllEdges",
+                    label: "Show all edges",
+                    hint: "Clears dimension/type/phase filters",
+                    run: () => window.showAllEdges?.(),
+                },
+                {
+                    id: "clearRelFilter",
+                    label: "Clear relationship filter",
+                    run: () => window.clearRelationshipFilter?.(),
+                },
+                {
+                    id: "layoutFree",
+                    label: "Layout: Free",
+                    run: () => window.applyLayout?.("default"),
+                },
+                {
+                    id: "fit",
+                    label: "Fit view",
+                    run: () => window.fitView?.(),
+                },
+            ],
         });
 
         window.registerLayerMode("lifecycle", {
             title: { en: "Lifecycle", jp: "ライフサイクル" },
             onEnter: () => enterLifecycle(),
             onExit: () => exitAny(),
+            actions: [
+                {
+                    id: "lifecyclePanel",
+                    label: () => (window.ONEXUS_LIFECYCLE?.isOpen?.() ? "Lifecycle panel ✓" : "Lifecycle panel"),
+                    hint: "Open/close Lifecycle controls panel",
+                    run: () => window.ONEXUS_LIFECYCLE?.togglePanel?.(),
+                },
+                {
+                    id: "phasePlay",
+                    label: "Play phase reveal",
+                    hint: "Reveals edges by phase (animation module)",
+                    run: () => window.playPhaseReveal?.({ perPhaseMs: 700 }),
+                },
+                {
+                    id: "phaseStop",
+                    label: "Stop phase reveal",
+                    run: () => window.stopPhaseReveal?.(),
+                },
+                {
+                    id: "phaseFocus",
+                    label: "Open phase filter",
+                    run: () => focusPhaseFilterUi(),
+                },
+                {
+                    id: "phaseBuild",
+                    label: "Rebuild phase list",
+                    run: () => window.buildPhaseFilter?.(),
+                },
+            ],
         });
 
         window.registerLayerMode("risk", {
             title: { en: "Risk", jp: "リスク" },
             onEnter: () => enterRisk(),
             onExit: () => exitAny(),
+            actions: [
+                {
+                    id: "inferredOnly",
+                    label: () => (__layerRuntime.riskFilter === "inferred" ? "Inferred only ✓" : "Inferred only"),
+                    hint: "Shows only edges with confidence=Inferred",
+                    run: () => setRiskFilter(__layerRuntime.riskFilter === "inferred" ? "all" : "inferred"),
+                },
+                {
+                    id: "highRiskOnly",
+                    label: () => (__layerRuntime.riskFilter === "high" ? "High risk ✓" : "High risk"),
+                    hint: "Shows only edges with high risk",
+                    run: () => setRiskFilter(__layerRuntime.riskFilter === "high" ? "all" : "high"),
+                },
+                {
+                    id: "riskClear",
+                    label: "Clear risk filter",
+                    run: () => setRiskFilter("all"),
+                },
+                {
+                    id: "fit",
+                    label: "Fit view",
+                    run: () => window.fitView?.(),
+                },
+            ],
         });
 
         window.registerLayerMode("option", {
             title: { en: "Option", jp: "オプション" },
             onEnter: () => enterOption(),
             onExit: () => exitAny(),
+            actions: [
+                {
+                    id: "layoutOption",
+                    label: "Layout: Option roots",
+                    hint: "Breadthfirst rooted at Option nodes (if any)",
+                    run: () => enterOption(), // re-run layout logic
+                },
+                {
+                    id: "optionsOnly",
+                    label: () => (__layerRuntime.optionFilter === "optionsOnly" ? "Options only ✓" : "Options only"),
+                    hint: "Show Option nodes + neighborhood only",
+                    run: () => setOptionFilter(__layerRuntime.optionFilter === "optionsOnly" ? "all" : "optionsOnly"),
+                },
+                {
+                    id: "optClear",
+                    label: "Clear option filter",
+                    run: () => setOptionFilter("all"),
+                },
+                {
+                    id: "fit",
+                    label: "Fit view",
+                    run: () => window.fitView?.(),
+                },
+            ],
         });
     }
 
@@ -308,4 +507,16 @@
         window.setLayerMode?.(m, { persist: false, silent: true });
         reapply();
     }, 30);
+
+    // =========================================================
+    // Expose layer filter controls for layer-specific legends/UI
+    // =========================================================
+    window.ONEXUS_LAYER = window.ONEXUS_LAYER || {};
+    window.ONEXUS_LAYER.runtime = window.__onexus_layerRuntime || {};
+    window.ONEXUS_LAYER.setRiskFilter = function (mode) {
+        try { setRiskFilter(mode); } catch (e) { console.warn("setRiskFilter failed", e); }
+    };
+    window.ONEXUS_LAYER.setOptionFilter = function (mode) {
+        try { setOptionFilter(mode); } catch (e) { console.warn("setOptionFilter failed", e); }
+    };
 })();

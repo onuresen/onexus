@@ -336,7 +336,6 @@ function buildStyle(themeKey) {
             return base;
           }
         },
-        "target-arrow-color": (ele) => edgeColor(ele.data("type")),
         "target-arrow-shape": (ele) => ele.data("directional") ? "triangle" : "none",
         "arrow-scale": arrowScale,
         "curve-style": "bezier",
@@ -432,6 +431,15 @@ function buildStyle(themeKey) {
     // --- Option layer emphasis ---
     { selector: 'node[layer-option][nodeType = "Option"]', style: { "border-width": 4, "border-color": "#6366f1" } },
     { selector: 'edge[layer-option][type = "Optimizes"]', style: { "width": clamp(5 * Math.pow(S, 0.9), 3, 8) } },
+
+    // Layer additive hide
+    { selector: ".layer-hide", style: { display: "none" } },
+
+    // App-level hide flags (class-based; avoids bypass display conflicts)
+    { selector: ".onx-hide-filter", style: { display: "none" } },
+    { selector: ".onx-hide-end", style: { display: "none" } },
+    { selector: ".onx-hide-compare", style: { display: "none" } },
+    { selector: ".onx-hide-reveal", style: { display: "none" } },
   ];
 }
 

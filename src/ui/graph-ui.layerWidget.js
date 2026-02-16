@@ -1,7 +1,7 @@
 /* =========================================================
  ONEXUS – Layer Widget (floating icon + popover)
  - Bottom-left, stacked under minimap
- - Shows current layer, quick actions, and background tint indicator
+ - Shows current layer + layer-specific quick actions
  - Depends on: window.getLayerMode, window.setLayerMode, window.ONEXUS_LAYERS, window.__onexus_state
 ========================================================= */
 (function () {
@@ -30,10 +30,9 @@
     function moveMinimapIntoStack(stack) {
         const mm = $("minimap");
         if (!mm) return;
-
         if (mm.parentElement === stack) return;
 
-        // Minimap is positioned absolute in CSS. Move into stack and make it flow.
+        // Minimap was absolute in CSS. Move into stack and make it flow.
         stack.insertBefore(mm, stack.firstChild);
         mm.style.position = "relative";
         mm.style.left = "auto";
@@ -71,18 +70,11 @@
           <div class="onx-layer-title" id="onx-layer-title">Layer</div>
           <button class="onx-layer-x" id="onx-layer-x" type="button" aria-label="Close">✕</button>
         </div>
+
         <div class="onx-layer-body">
           <div class="onx-layer-row">
             <div class="onx-layer-k">Current</div>
             <div class="onx-layer-v" id="onx-layer-current">relationship</div>
-          </div>
-
-          <div class="onx-layer-row">
-            <div class="onx-layer-k">Quick</div>
-            <div class="onx-layer-actions">
-              <button class="onx-layer-btn" id="onx-layer-next" type="button">Next</button>
-              <button class="onx-layer-btn" id="onx-layer-reset" type="button">Reset view</button>
-            </div>
           </div>
 
           <div class="onx-layer-row">
@@ -93,6 +85,19 @@
           <div class="onx-layer-row">
             <div class="onx-layer-k">Tint</div>
             <div class="onx-layer-v"><span class="onx-layer-swatch" id="onx-layer-swatch"></span></div>
+          </div>
+
+          <div class="onx-layer-section">
+            <div class="onx-layer-sec-title">Quick actions</div>
+            <div class="onx-layer-actions" id="onx-layer-actions"></div>
+          </div>
+
+          <div class="onx-layer-section">
+            <div class="onx-layer-sec-title">Utilities</div>
+            <div class="onx-layer-actions">
+              <button class="onx-layer-btn" id="onx-layer-next" type="button">Next layer</button>
+              <button class="onx-layer-btn" id="onx-layer-reset" type="button">Reset view</button>
+            </div>
           </div>
 
           <div class="onx-layer-note" id="onx-layer-note"></div>
@@ -108,28 +113,86 @@
         const layers = window.ONEXUS_LAYERS || {};
         const keys = Object.keys(layers);
         if (!keys.length) return ["relationship"];
-        // stable default order if present
         const preferred = ["relationship", "lifecycle", "risk", "option"];
-        const ordered = [
+        return [
             ...preferred.filter((k) => keys.includes(k)),
             ...keys.filter((k) => !preferred.includes(k)).sort(),
         ];
-        return ordered;
+    }
+
+    function getLayerCfg(key) {
+        const layers = window.ONEXUS_LAYERS || {};
+        return layers[key] || layers.relationship || { key: "relationship", title: { en: "Relationship", jp: "関係" }, actions: [] };
     }
 
     function getLayerTitle(key) {
-        const layers = window.ONEXUS_LAYERS || {};
-        const cfg = layers[key];
+        const cfg = getLayerCfg(key);
         const lang = window.__onexus_state?.language || "en";
         return cfg?.title?.[lang] || cfg?.title?.en || key;
     }
 
     function readCssVar(name) {
-        try {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        } catch {
-            return "";
+        try { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+        catch { return ""; }
+    }
+
+    function focusPhaseControls() {
+        // If left rail exists, open filter panel by clicking its button
+        const railBtn = document.querySelector('#leftRail .rail-btn[data-panel="panelFilter"]');
+        if (railBtn) railBtn.click();
+
+        const el = $("phaseFilter");
+        if (el) {
+            try { el.focus({ preventScroll: false }); } catch { }
+            try { el.scrollIntoView({ behavior: "smooth", block: "center" }); } catch { }
+            window.showTransientMessage?.("Phase filter focused");
         }
+    }
+
+    function renderActions() {
+        const host = $("onx-layer-actions");
+        if (!host) return;
+
+        const cur = window.getLayerMode?.() || window.__onexus_state?.layerMode || "relationship";
+        const cfg = getLayerCfg(cur);
+        const actions = Array.isArray(cfg.actions) ? cfg.actions : [];
+
+        host.innerHTML = "";
+
+        if (!actions.length) {
+            const empty = document.createElement("div");
+            empty.className = "onx-layer-muted";
+            empty.textContent = "No quick actions for this layer.";
+            host.appendChild(empty);
+            return;
+        }
+
+        actions.forEach((a) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "onx-layer-btn";
+            btn.textContent = typeof a.label === "function" ? a.label() : (a.label || a.id || "Action");
+            btn.title = a.hint || "";
+
+            btn.addEventListener("click", () => {
+                try {
+                    // allow action to request focus helpers via ctx
+                    a.run?.({
+                        cy,
+                        state: window.__onexus_state,
+                        layer: cur,
+                        ui: { focusPhaseControls },
+                    });
+                } catch (e) {
+                    console.error("Layer action failed:", e);
+                    window.showTransientMessage?.("Action failed (see console)");
+                }
+                // rerender labels (some actions toggle state)
+                setTimeout(() => render(), 0);
+            });
+
+            host.appendChild(btn);
+        });
     }
 
     function render() {
@@ -144,12 +207,11 @@
         if (titleEl) titleEl.textContent = title;
         if (curEl) curEl.textContent = cur;
 
-        // Minimal description (extend per layer later)
         const noteMap = {
             relationship: "Semantic relationships (System/Spatial/Responsibility/Vendor).",
-            lifecycle: "Lifecycle view (phase-aware labels/tint).",
-            risk: "Risk & confidence emphasis (tint + highlights).",
-            option: "Design options (GD/decision-centric view).",
+            lifecycle: "Lifecycle view (phase-aware, timeline semantics).",
+            risk: "Risk & confidence emphasis (visual + filtering).",
+            option: "Design options (GD/decision-centric).",
         };
         if (noteEl) noteEl.textContent = noteMap[cur] || "";
 
@@ -158,12 +220,14 @@
             swatch.style.background = tint || "#ffffff";
         }
 
-        // Update FAB accent dot color from CSS var
+        // FAB accent dot
         const dot = document.querySelector("#onx-layer-fab .onx-layer-dot");
         if (dot) {
             const accent = readCssVar("--onx-layer-accent");
             dot.style.background = accent || "#2563eb";
         }
+
+        renderActions();
     }
 
     function populateSelect() {
@@ -188,8 +252,7 @@
         const cur = window.getLayerMode?.() || window.__onexus_state?.layerMode || "relationship";
         const list = layerList();
         const idx = Math.max(0, list.indexOf(cur));
-        const next = list[(idx + 1) % list.length];
-        window.setLayerMode?.(next);
+        window.setLayerMode?.(list[(idx + 1) % list.length]);
     }
 
     function togglePopover(show) {
@@ -205,7 +268,6 @@
 
     function hookUi() {
         const fab = $("onx-layer-fab");
-        const pop = $("onx-layer-pop");
         const close = $("onx-layer-x");
         const btnNext = $("onx-layer-next");
         const btnReset = $("onx-layer-reset");
@@ -214,17 +276,14 @@
             fab.__hooked = true;
             fab.addEventListener("click", () => togglePopover());
         }
-
         if (close && !close.__hooked) {
             close.__hooked = true;
             close.addEventListener("click", () => togglePopover(false));
         }
-
         if (btnNext && !btnNext.__hooked) {
             btnNext.__hooked = true;
             btnNext.addEventListener("click", () => nextLayer());
         }
-
         if (btnReset && !btnReset.__hooked) {
             btnReset.__hooked = true;
             btnReset.addEventListener("click", () => window.resetView?.());
@@ -258,10 +317,9 @@
                 populateSelect();
                 render();
             });
-        } catch { /* noop */ }
+        } catch { }
 
-        // When language changes, update titles (your app doesn’t emit language event today)
-        // So we also refresh on layoutstop/add/remove as cheap sync points.
+        // cheap sync points
         if (cy && !cy.__onxLayerWidgetHooked) {
             cy.__onxLayerWidgetHooked = true;
             cy.on("layoutstop add remove", () => render());
@@ -282,10 +340,6 @@
         render();
     }
 
-    // boot once DOM is ready
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", boot);
-    } else {
-        setTimeout(boot, 0);
-    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+    else setTimeout(boot, 0);
 })();

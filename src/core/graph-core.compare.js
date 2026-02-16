@@ -1,8 +1,11 @@
-/* ONEXUS – Scenario Compare (A/B) */
+/* ONEXUS – Scenario Compare (A/B)
+   HARDENING: class-based hide for modes (no bypass display).
+*/
 (function () {
   const cy = window.cy;
-  const LABELS = window.__onexus_labels;
   const state = window.__onexus_state;
+
+  const HIDE_COMPARE = "onx-hide-compare";
 
   // ---------------- UI: chip ----------------
   function ensureCompareChip() {
@@ -30,6 +33,7 @@
     toolbar.appendChild(chip);
     return chip;
   }
+
   function mkBtn(text, onClick) {
     const b = document.createElement('button');
     b.textContent = text;
@@ -41,12 +45,16 @@
     b.addEventListener('click', onClick);
     return b;
   }
+
   function showChip(stats) {
     const chip = ensureCompareChip(); if (!chip) return;
     chip.style.display = 'flex';
     const t = document.getElementById('onexus-compare-chip-text');
-    t.textContent = `Compare A/B — Nodes: +${stats.nodes.added} –${stats.nodes.removed} ~${stats.nodes.changed} | Edges: +${stats.edges.added} –${stats.edges.removed} ~${stats.edges.changed}`;
+    t.textContent =
+      `Compare A/B — Nodes: +${stats.nodes.added} –${stats.nodes.removed} ~${stats.nodes.changed} ` +
+      `Edges: +${stats.edges.added} –${stats.edges.removed} ~${stats.edges.changed}`;
   }
+
   function hideChip() {
     const chip = document.getElementById('onexus-compare-chip');
     if (chip) chip.style.display = 'none';
@@ -69,7 +77,7 @@
   function nodeKey(n) { return n?.data?.id; }
   function edgeKey(e) {
     const d = e?.data || {};
-    return `${d.type}|${d.dimension}|${d.source}|${d.target}|${d.directional ? 1 : 0}`;
+    return `${d.type}\n${d.dimension}\n${d.source}\n${d.target}\n${d.directional ? 1 : 0}`;
   }
 
   function diffGraphs(A, B) {
@@ -80,8 +88,10 @@
 
     const nodes = [];
     const edges = [];
-
-    const stats = { nodes: { added: 0, removed: 0, changed: 0 }, edges: { added: 0, removed: 0, changed: 0 } };
+    const stats = {
+      nodes: { added: 0, removed: 0, changed: 0 },
+      edges: { added: 0, removed: 0, changed: 0 }
+    };
 
     // Nodes
     const nodeIds = new Set([...aNodes.keys(), ...bNodes.keys()]);
@@ -108,18 +118,18 @@
       const ae = aEdges.get(k), be = bEdges.get(k);
       if (ae && !be) {
         const d = { ...ae.data, __inA: true, __inB: false, __diff: 'removed' };
-        d.id = d.id || `A-${k}`; // ensure id
+        d.id = d.id ?? `A-${k}`;
         edges.push({ data: d, classes: 'diff-removed' }); stats.edges.removed++;
       } else if (!ae && be) {
         const d = { ...be.data, __inA: false, __inB: true, __diff: 'added' };
-        d.id = d.id || `B-${k}`;
+        d.id = d.id ?? `B-${k}`;
         edges.push({ data: d, classes: 'diff-added' }); stats.edges.added++;
       } else if (ae && be) {
         const fields = ['phase', 'owner', 'risk', 'confidence', 'notes'];
         const changed = fields.filter(f => !eq(ae.data?.[f], be.data?.[f]));
         const base = { ...(be.data || {}), __inA: true, __inB: true, __diff: changed.length ? 'changed' : 'same' };
         if (changed.length) { base.__changes = changed; stats.edges.changed++; }
-        base.id = base.id || `AB-${k}`;
+        base.id = base.id ?? `AB-${k}`;
         edges.push({ data: base, classes: changed.length ? 'diff-changed' : '' });
       }
     });
@@ -133,88 +143,62 @@
 
     const { elements, stats } = diffGraphs(graphA, graphB);
 
-    // Load the merged compare graph using the public loader
-    if (typeof window.onexusLoadGraph === 'function') {
-      window.onexusLoadGraph({ elements });
-    } else {
-      cy.elements().remove(); cy.add(elements.nodes); cy.add(elements.edges);
-    }
+    if (typeof window.onexusLoadGraph === 'function') window.onexusLoadGraph({ elements });
+    else { cy.elements().remove(); cy.add(elements.nodes); cy.add(elements.edges); }
 
-    // Language mapping for edge display labels
     window.setLanguage?.(state?.language ?? 'en');
-
-    // Build filters/legend/metrics on new content
     window.buildCategoryFilter?.();
     window.buildPhaseFilter?.();
     window.buildRelationshipLegend?.();
     window.updateMetrics?.();
 
     showChip(stats);
-    setMode('merged'); // default view
+    setMode('merged');
     window.showTransientMessage?.('Compare A/B loaded');
   }
 
   function compareFromFilePair(fileA, fileB) {
     Promise.all([fileA.text(), fileB.text()])
-      .then(([ta, tb]) => {
-        const A = JSON.parse(ta), B = JSON.parse(tb);
-        compareAB(A, B);
-      })
+      .then(([ta, tb]) => compareAB(JSON.parse(ta), JSON.parse(tb)))
       .catch(err => alert('Failed to load A/B: ' + err.message));
   }
 
   // Modes: merged | only_diff | only_a | only_b
   function setMode(mode) {
     last.mode = mode;
-    const show = (ele) => ele.style('display', 'element');
-    const hide = (ele) => ele.style('display', 'none');
 
-    // Nodes
-    cy.nodes().forEach(n => {
-      const d = n.data();
+    // Clear compare hides first (do not touch layer/filter hides)
+    cy.elements().removeClass(HIDE_COMPARE);
+
+    const wantVisible = (d) => {
       const diff = d.__diff, inA = !!d.__inA, inB = !!d.__inB;
-      let vis = true;
       switch (mode) {
-        case 'only_diff': vis = (diff === 'added' || diff === 'removed' || diff === 'changed'); break;
-        case 'only_a': vis = inA; break;
-        case 'only_b': vis = inB; break;
-        default: vis = true;
+        case 'only_diff': return (diff === 'added' || diff === 'removed' || diff === 'changed');
+        case 'only_a': return inA;
+        case 'only_b': return inB;
+        default: return true;
       }
-      (vis ? show : hide)(n);
-    });
+    };
 
-    // Edges
-    cy.edges().forEach(e => {
-      const d = e.data();
-      const diff = d.__diff, inA = !!d.__inA, inB = !!d.__inB;
-      let vis = true;
-      switch (mode) {
-        case 'only_diff': vis = (diff === 'added' || diff === 'removed' || diff === 'changed'); break;
-        case 'only_a': vis = inA; break;
-        case 'only_b': vis = inB; break;
-        default: vis = true;
-      }
-      (vis ? show : hide)(e);
-    });
+    cy.nodes().forEach(n => { if (!wantVisible(n.data())) n.addClass(HIDE_COMPARE); });
+    cy.edges().forEach(e => { if (!wantVisible(e.data())) e.addClass(HIDE_COMPARE); });
 
-    // Keep edges synced with hidden endpoints (reuse your sync in filters if present)
-    if (typeof window.buildRelationshipLegend === 'function') window.buildRelationshipLegend();
+    window.buildRelationshipLegend?.();
     window.updateMetrics?.();
     cy.fit(cy.elements(':visible'), 60);
   }
 
   function exitCompare() {
     hideChip();
+    cy.elements().removeClass(HIDE_COMPARE);
+
     if (last.B) {
-      // Load B as the final scenario (common pattern)
       window.onexusLoadGraph?.(last.B);
       window.showTransientMessage?.('Exited compare (showing B)');
     } else {
-      // Fallback: clear
       cy.elements().remove();
     }
   }
 
-  // Expose
   window.ONEXUS_COMPARE = { compareAB, compareFromFilePair, setMode, exitCompare };
 })();

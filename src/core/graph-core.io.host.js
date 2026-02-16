@@ -159,6 +159,8 @@
 
       const data = normalizeGraph(raw);
 
+      window.__onexus_meta = data.meta ?? {};
+
       cy.elements().remove();
       cy.add(data.elements.nodes);
       cy.add(data.elements.edges);
@@ -196,6 +198,8 @@
       }
 
       const data = normalizeGraph(graph);
+
+      window.__onexus_meta = data.meta ?? {};
 
       c.elements().remove();
       c.add(data.elements?.nodes ?? []);
