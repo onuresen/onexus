@@ -1,0 +1,1087 @@
+{
+    "meta": {
+        "schema": "onexus-1.1",
+        "project": "Office Tower A — Access Control + Identity Integration",
+        "languageDefault": "en",
+        "phases": [
+            "Concept",
+            "BasicDesign",
+            "DetailedDesign",
+            "Procurement",
+            "Installation",
+            "Commissioning",
+            "Operation",
+            "Maintenance",
+            "Renovation"
+        ],
+        "site": "Tokyo",
+        "modelSource": "Revit + IT/OT registers (sample)",
+        "exportedAt": "2026-02-16T06:20:00Z"
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "SYS-ACS",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Access Control System (ACS)",
+                        "jp": "入退室管理システム(ACS)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SYS-IDP",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Identity Provider (IdP)",
+                        "jp": "認証基盤(IdP)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SYS-VMS",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Video Management System (VMS)",
+                        "jp": "映像管理システム(VMS)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "BLD-A",
+                    "nodeType": "Space",
+                    "category": "Building",
+                    "label": {
+                        "en": "Office Tower A",
+                        "jp": "オフィスタワーA"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STR-L01",
+                    "nodeType": "Space",
+                    "category": "Storey",
+                    "label": {
+                        "en": "Level 01",
+                        "jp": "1階"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STR-L10",
+                    "nodeType": "Space",
+                    "category": "Storey",
+                    "label": {
+                        "en": "Level 10",
+                        "jp": "10階"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-SECROOM-L01",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Security Control Room (L01)",
+                        "jp": "防災・警備室(1階)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-MDF-L01",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Main Distribution Frame Room (MDF)",
+                        "jp": "MDF室"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-RECEP-L01",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Reception Lobby (L01)",
+                        "jp": "エントランスホール(1階)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "ZONE-HIGHSEC",
+                    "nodeType": "Space",
+                    "category": "Zone",
+                    "label": {
+                        "en": "High Security Zone",
+                        "jp": "高セキュリティゾーン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-ARCH",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "Architectural Design Team",
+                        "jp": "建築設計チーム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-MEP",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "MEP Design Team",
+                        "jp": "設備設計チーム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-SEC",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "Security Engineering Team",
+                        "jp": "セキュリティ設計チーム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-GC",
+                    "nodeType": "Organization",
+                    "category": "Subcontractor",
+                    "label": {
+                        "en": "General Contractor (GC)",
+                        "jp": "ゼネコン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-ELEC-SUB",
+                    "nodeType": "Organization",
+                    "category": "Subcontractor",
+                    "label": {
+                        "en": "Electrical Subcontractor",
+                        "jp": "電気サブコン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-IT",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "Corporate IT Operations",
+                        "jp": "社内IT運用"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VENDOR-ACME",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "ACME Security Devices",
+                        "jp": "ACMEセキュリティ機器"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VENDOR-NETWORKCO",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "NetworkCo (Switching)",
+                        "jp": "NetworkCo(ネットワーク)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VENDOR-CLOUDID",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "CloudID (Identity Platform)",
+                        "jp": "CloudID(認証基盤)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TYPE-READER-CARD-V1",
+                    "nodeType": "ComponentType",
+                    "category": "Type",
+                    "label": {
+                        "en": "Card Reader (MIFARE) — Model CR-100",
+                        "jp": "カードリーダ(MIFARE) CR-100"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TYPE-READER-FACE-V1",
+                    "nodeType": "ComponentType",
+                    "category": "Type",
+                    "label": {
+                        "en": "Face Reader — Model FR-200",
+                        "jp": "顔認証リーダ FR-200"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PSET-DOOR-ACCESS",
+                    "nodeType": "PropertySet",
+                    "category": "PropertySet",
+                    "label": {
+                        "en": "PSet_AccessControlDoor (ACL, schedule)",
+                        "jp": "PSet_入退室ドア(ACL/スケジュール)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PSET-DEVICE-NET",
+                    "nodeType": "PropertySet",
+                    "category": "PropertySet",
+                    "label": {
+                        "en": "PSet_DeviceNetwork (IP, VLAN, PoE)",
+                        "jp": "PSet_機器ネットワーク(IP/VLAN/PoE)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOOR-L01-ENT-A",
+                    "nodeType": "Component",
+                    "category": "Door",
+                    "label": {
+                        "en": "Entrance Door A (Lobby)",
+                        "jp": "エントランスドアA(ロビー)"
+                    },
+                    "revitCategory": "Doors",
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "LOCK-L01-ENT-A",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Electric Strike Lock (Door A)",
+                        "jp": "電気錠(ドアA)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "READER-L01-ENT-A",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Card Reader (Door A)",
+                        "jp": "カードリーダ(ドアA)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "CAM-L01-LOBBY-01",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Lobby Camera 01",
+                        "jp": "ロビーカメラ01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "CTRLPNL-L01-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "ACS Controller Panel #01",
+                        "jp": "ACS制御盤#01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "UPS-L01-01",
+                    "nodeType": "Component",
+                    "category": "PowerSupply",
+                    "label": {
+                        "en": "UPS #01 (Security Rack)",
+                        "jp": "UPS#01(警備ラック)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SW-MDF-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "Network Switch (MDF) — SW-01",
+                        "jp": "ネットワークスイッチ(MDF) SW-01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SRV-ACS-APP",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "ACS Application Server (VM)",
+                        "jp": "ACSアプリサーバ(VM)"
+                    },
+                    "level": "DC"
+                }
+            },
+            {
+                "data": {
+                    "id": "SRV-IDP",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "IdP Service (Cloud)",
+                        "jp": "IdP(クラウド)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PORT-READER-A-ETH",
+                    "nodeType": "Port",
+                    "category": "Port",
+                    "label": {
+                        "en": "Reader A — Ethernet",
+                        "jp": "リーダA — Ethernet"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PORT-SW-01-POE12",
+                    "nodeType": "Port",
+                    "category": "Port",
+                    "label": {
+                        "en": "SW-01 — PoE Port 12",
+                        "jp": "SW-01 — PoEポート12"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-01-CARD-ONLY",
+                    "nodeType": "Option",
+                    "category": "DesignOption",
+                    "label": {
+                        "en": "Option 01 — Card-only at Lobby",
+                        "jp": "案01 — ロビーはカードのみ"
+                    },
+                    "gd": {
+                        "meta": {
+                            "problemId": "ACS_ENTRY_AUTH_STRATEGY",
+                            "optionId": "opt-01",
+                            "createdAt": "2026-02-10T00:00:00Z",
+                            "scores": {
+                                "capexDeltaJPY": -1200000,
+                                "opexDeltaJPYPerYear": -150000,
+                                "userThroughputScore": 0.78,
+                                "complianceRisk": 0.18,
+                                "integrationComplexity": 0.42
+                            },
+                            "parameters": {
+                                "useFaceAtLobby": false,
+                                "requireMFAForHighSec": true,
+                                "poeRedundancy": false
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-02-FACE-AT-LOBBY",
+                    "nodeType": "Option",
+                    "category": "DesignOption",
+                    "label": {
+                        "en": "Option 02 — Face + Card at Lobby",
+                        "jp": "案02 — ロビーは顔+カード"
+                    },
+                    "gd": {
+                        "meta": {
+                            "problemId": "ACS_ENTRY_AUTH_STRATEGY",
+                            "optionId": "opt-02",
+                            "createdAt": "2026-02-10T00:00:00Z",
+                            "scores": {
+                                "capexDeltaJPY": 1850000,
+                                "opexDeltaJPYPerYear": 220000,
+                                "userThroughputScore": 0.91,
+                                "complianceRisk": 0.12,
+                                "integrationComplexity": 0.71
+                            },
+                            "parameters": {
+                                "useFaceAtLobby": true,
+                                "requireMFAForHighSec": true,
+                                "poeRedundancy": true
+                            }
+                        }
+                    }
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "E-SYS-ACS-DOOR-A",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "DOOR-L01-ENT-A",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low",
+                    "owner": "Security"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-ACS-READER-A",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "READER-L01-ENT-A",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low",
+                    "owner": "Security"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-ACS-LOCK-A",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "LOCK-L01-ENT-A",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low",
+                    "owner": "Security"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-ACS-PNL-01",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low",
+                    "owner": "Electrical"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-IDP",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SRV-IDP",
+                    "target": "SYS-IDP",
+                    "directional": false,
+                    "phase": [
+                        "Concept"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low",
+                    "owner": "IT"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-VMS-CAM",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "CAM-L01-LOBBY-01",
+                    "target": "SYS-VMS",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low",
+                    "owner": "Security"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-BLD-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "STR-L01",
+                    "target": "BLD-A",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-BLD-L10",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "STR-L10",
+                    "target": "BLD-A",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-ROOM-SEC-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-SECROOM-L01",
+                    "target": "STR-L01",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-ROOM-MDF-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-MDF-L01",
+                    "target": "STR-L01",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-ROOM-RECEP-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-RECEP-L01",
+                    "target": "STR-L01",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-DOOR-A",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "DOOR-L01-ENT-A",
+                    "target": "SPACE-RECEP-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-PNL-01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "SPACE-SECROOM-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-UPS-01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "UPS-L01-01",
+                    "target": "SPACE-SECROOM-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-SW-01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SW-MDF-01",
+                    "target": "SPACE-MDF-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ZONE-DOOR-A",
+                    "type": "InZone",
+                    "dimension": "Spatial",
+                    "source": "DOOR-L01-ENT-A",
+                    "target": "ZONE-HIGHSEC",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Lobby entrance is a controlled boundary for high-security areas."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-READER-LOCK",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "READER-L01-ENT-A",
+                    "target": "LOCK-L01-ENT-A",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Security",
+                    "notes": "Unlock timing and fail-secure behavior verified during commissioning."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-PNL-LOCK",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "LOCK-L01-ENT-A",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Electrical"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PWR-UPS-PNL",
+                    "type": "Supplies",
+                    "dimension": "System",
+                    "source": "UPS-L01-01",
+                    "target": "CTRLPNL-L01-01",
+                    "directional": true,
+                    "phase": [
+                        "Procurement",
+                        "Installation"
+                    ],
+                    "confidence": "Inferred",
+                    "risk": "Low",
+                    "owner": "Electrical",
+                    "notes": "UPS capacity confirmed after panel BOM is fixed."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CONN-PNL-SW",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "SW-MDF-01",
+                    "directional": false,
+                    "phase": [
+                        "Installation",
+                        "Commissioning"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "owner": "IT",
+                    "notes": "Controller VLAN + firewall rules required."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CONN-SRV-ACS-SW",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "SRV-ACS-APP",
+                    "target": "SW-MDF-01",
+                    "directional": false,
+                    "phase": [
+                        "Installation",
+                        "Commissioning"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "owner": "IT"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DEP-ACS-IDP",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "SYS-IDP",
+                    "target": "SYS-ACS",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "IT",
+                    "notes": "ACS relies on IdP token validation for privileged roles."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DEP-ACS-VMS",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "SYS-ACS",
+                    "target": "SYS-VMS",
+                    "directional": false,
+                    "confidence": "Inferred",
+                    "risk": "Medium",
+                    "notes": "Unphased edge: integration may be postponed; tests 'Show unphased'."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OFType-READER",
+                    "type": "OfType",
+                    "dimension": "System",
+                    "source": "READER-L01-ENT-A",
+                    "target": "TYPE-READER-CARD-V1",
+                    "directional": false,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ProvidedBy-READER",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "READER-L01-ENT-A",
+                    "target": "VENDOR-ACME",
+                    "directional": false,
+                    "phase": [
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Lead time and firmware support contract."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ProvidedBy-SW",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "SW-MDF-01",
+                    "target": "VENDOR-NETWORKCO",
+                    "directional": false,
+                    "phase": [
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ProvidedBy-IDP",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "SRV-IDP",
+                    "target": "VENDOR-CLOUDID",
+                    "directional": false,
+                    "phase": [
+                        "Concept",
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-Des-ACS-SEC",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "SYS-ACS",
+                    "target": "ORG-SEC",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign",
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-Des-DOOR-ARCH",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "DOOR-L01-ENT-A",
+                    "target": "ORG-ARCH",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-Des-NET-IT",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "SW-MDF-01",
+                    "target": "ORG-IT",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "VLAN/IP plan requires IT sign-off."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-BuiltBy-GC",
+                    "type": "BuiltBy",
+                    "dimension": "Responsibility",
+                    "source": "SYS-ACS",
+                    "target": "ORG-GC",
+                    "directional": false,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-BuiltBy-ELEC",
+                    "type": "BuiltBy",
+                    "dimension": "Responsibility",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "ORG-ELEC-SUB",
+                    "directional": false,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PSET-DOOR",
+                    "type": "HasProperties",
+                    "dimension": "System",
+                    "source": "DOOR-L01-ENT-A",
+                    "target": "PSET-DOOR-ACCESS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PSET-READER-NET",
+                    "type": "HasProperties",
+                    "dimension": "System",
+                    "source": "READER-L01-ENT-A",
+                    "target": "PSET-DEVICE-NET",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "IP/VLAN/PoE budget required; affects commissioning."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PORTOF-READER",
+                    "type": "PortOf",
+                    "dimension": "System",
+                    "source": "PORT-READER-A-ETH",
+                    "target": "READER-L01-ENT-A",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PORTOF-SW",
+                    "type": "PortOf",
+                    "dimension": "System",
+                    "source": "PORT-SW-01-POE12",
+                    "target": "SW-MDF-01",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CONN-PORTS-READER-SW",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "PORT-READER-A-ETH",
+                    "target": "PORT-SW-01-POE12",
+                    "directional": false,
+                    "phase": [
+                        "Installation",
+                        "Commissioning"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "PoE switch port must be provisioned (VLAN, PoE class)."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-01-OPTIMIZES-READER",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-01-CARD-ONLY",
+                    "target": "READER-L01-ENT-A",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low",
+                    "notes": "Keeps card reader; avoids biometric integration."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-01-OPTIMIZES-IDP",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-01-CARD-ONLY",
+                    "target": "SYS-IDP",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low",
+                    "notes": "Uses existing IdP roles only; no biometric attributes required."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-02-OPTIMIZES-READER",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-02-FACE-AT-LOBBY",
+                    "target": "READER-L01-ENT-A",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Upgrades lobby reader to face-capable; requires privacy review."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-02-OPTIMIZES-TYPE-FACE",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-02-FACE-AT-LOBBY",
+                    "target": "TYPE-READER-FACE-V1",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-02-OPTIMIZES-NET",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-02-FACE-AT-LOBBY",
+                    "target": "SW-MDF-01",
+                    "directional": true,
+                    "confidence": "Inferred",
+                    "risk": "Medium",
+                    "notes": "Suggests PoE redundancy + VLAN segmentation."
+                }
+            }
+        ]
+    }
+}

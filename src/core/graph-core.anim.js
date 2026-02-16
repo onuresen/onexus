@@ -547,19 +547,29 @@
   window.setEdgeFlowDimension = (dimOrNull) => { anim.edgeFlow.dimension = dimOrNull || null; };
   window.setEdgeFlowPattern = (a = 10, b = 6) => { anim.edgeFlow.pattern = [a, b]; };
 
-  // Phase reveal playback (kept)
+  // Phase reveal playback (HARDENED: class-based; no bypass display)
   window.playPhaseReveal = async function playPhaseReveal({ order = [], perPhaseMs = 700, includeNodes = true } = {}) {
     const cy = window.cy; if (!cy) return;
-    cy.edges().style("display", "none");
-    if (includeNodes) cy.nodes().style("display", "none");
+
+    // Do not clobber layer/filter visibility: use reveal-only hide class
+    cy.edges().addClass("onx-hide-reveal");
+    if (includeNodes) cy.nodes().addClass("onx-hide-reveal");
 
     const uniq = (arr) => [...new Set(arr)];
-    const phases = order.length ? order : uniq(cy.edges().map(e => (e.data("phase") ?? [])).flat());
+    const phases = order.length ? order : uniq(
+      cy.edges().map(e => (e.data("phase") ?? [])).flat().map(String).filter(Boolean)
+    );
 
     for (const ph of phases) {
-      const batch = cy.edges().filter(e => (e.data("phase") ?? []).some(x => String(x) === String(ph)));
-      batch.style("display", "element");
-      if (includeNodes) batch.connectedNodes().style("display", "element");
+      const batch = cy.edges().filter(e => {
+        const p = e.data("phase") ?? [];
+        const list = Array.isArray(p) ? p : [p];
+        return list.some(x => String(x) === String(ph));
+      });
+
+      batch.removeClass("onx-hide-reveal");
+      if (includeNodes) batch.connectedNodes().removeClass("onx-hide-reveal");
+
       window.buildRelationshipLegend?.();
       window.updateMetrics?.();
       await new Promise(r => setTimeout(r, Math.max(100, perPhaseMs)));
@@ -568,8 +578,8 @@
 
   window.stopPhaseReveal = function stopPhaseReveal() {
     const cy = window.cy; if (!cy) return;
-    cy.edges().style("display", "element");
-    cy.nodes().style("display", "element");
+    cy.edges().removeClass("onx-hide-reveal");
+    cy.nodes().removeClass("onx-hide-reveal");
     window.buildRelationshipLegend?.();
     window.updateMetrics?.();
   };

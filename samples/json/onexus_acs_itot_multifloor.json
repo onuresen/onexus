@@ -1,0 +1,2152 @@
+{
+    "meta": {
+        "schema": "onexus-1.1",
+        "project": "Office Tower A — ACS + IT/OT (Multi-floor) Realistic Sample",
+        "languageDefault": "en",
+        "phases": [
+            "Concept",
+            "BasicDesign",
+            "DetailedDesign",
+            "Procurement",
+            "Installation",
+            "Commissioning",
+            "Operation",
+            "Maintenance",
+            "Renovation"
+        ],
+        "site": "Tokyo",
+        "discipline": [
+            "Security",
+            "IT",
+            "Electrical",
+            "Architecture"
+        ],
+        "exportedAt": "2026-02-16T06:40:00Z"
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "BLD-A",
+                    "nodeType": "Space",
+                    "category": "Building",
+                    "label": {
+                        "en": "Office Tower A",
+                        "jp": "オフィスタワーA"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STR-L01",
+                    "nodeType": "Space",
+                    "category": "Storey",
+                    "label": {
+                        "en": "Level 01",
+                        "jp": "1階"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "STR-L05",
+                    "nodeType": "Space",
+                    "category": "Storey",
+                    "label": {
+                        "en": "Level 05",
+                        "jp": "5階"
+                    },
+                    "level": "L05"
+                }
+            },
+            {
+                "data": {
+                    "id": "STR-L10",
+                    "nodeType": "Space",
+                    "category": "Storey",
+                    "label": {
+                        "en": "Level 10",
+                        "jp": "10階"
+                    },
+                    "level": "L10"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-LOBBY-L01",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Main Lobby",
+                        "jp": "メインロビー"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-SEC-L01",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Security Control Room",
+                        "jp": "防災・警備室"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-MDF-L01",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "MDF Room",
+                        "jp": "MDF室"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-DOCK-L01",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Loading Dock",
+                        "jp": "荷捌き場"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-TENANT-L10",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Tenant Floor (L10) Lobby",
+                        "jp": "テナントフロア(10階)ロビー"
+                    },
+                    "level": "L10"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-IT-L05",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "IT / Network Room (L05)",
+                        "jp": "IT・ネットワーク室(5階)"
+                    },
+                    "level": "L05"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-SERVER-L05",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Server Room (L05)",
+                        "jp": "サーバ室(5階)"
+                    },
+                    "level": "L05"
+                }
+            },
+            {
+                "data": {
+                    "id": "ZONE-PUBLIC",
+                    "nodeType": "Space",
+                    "category": "Zone",
+                    "label": {
+                        "en": "Public Zone",
+                        "jp": "一般エリア"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ZONE-TENANT",
+                    "nodeType": "Space",
+                    "category": "Zone",
+                    "label": {
+                        "en": "Tenant Zone",
+                        "jp": "テナントエリア"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ZONE-HIGHSEC",
+                    "nodeType": "Space",
+                    "category": "Zone",
+                    "label": {
+                        "en": "High Security Zone",
+                        "jp": "高セキュリティゾーン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SYS-ACS",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Access Control System (ACS)",
+                        "jp": "入退室管理システム(ACS)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SYS-IDP",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Identity Provider (IdP)",
+                        "jp": "認証基盤(IdP)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SYS-VMS",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Video Management System (VMS)",
+                        "jp": "映像管理システム(VMS)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SYS-SIEM",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "SIEM / Security Monitoring",
+                        "jp": "SIEM/監視"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SYS-NET",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Building Network (IT/OT)",
+                        "jp": "建物ネットワーク(IT/OT)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-ARCH",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "Architectural Design Team",
+                        "jp": "建築設計チーム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-MEP",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "MEP Design Team",
+                        "jp": "設備設計チーム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-SECENG",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "Security Engineering Team",
+                        "jp": "セキュリティ設計チーム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-ITOPS",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "IT Operations",
+                        "jp": "IT運用"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-GC",
+                    "nodeType": "Organization",
+                    "category": "Subcontractor",
+                    "label": {
+                        "en": "General Contractor (GC)",
+                        "jp": "ゼネコン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-ELEC",
+                    "nodeType": "Organization",
+                    "category": "Subcontractor",
+                    "label": {
+                        "en": "Electrical Subcontractor",
+                        "jp": "電気サブコン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-SECOPS",
+                    "nodeType": "Organization",
+                    "category": "Organization",
+                    "label": {
+                        "en": "Security Operations (Guard)",
+                        "jp": "警備運用"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VENDOR-ACME",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "ACME Security Devices",
+                        "jp": "ACMEセキュリティ機器"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VENDOR-NETWORKCO",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "NetworkCo (Switching)",
+                        "jp": "NetworkCo(ネットワーク)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VENDOR-CLOUDID",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "CloudID (Identity Platform)",
+                        "jp": "CloudID(認証基盤)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VENDOR-SIEMCO",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "SIEMCo (SOC Platform)",
+                        "jp": "SIEMCo(SOC基盤)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TYPE-READER-CARD",
+                    "nodeType": "ComponentType",
+                    "category": "Type",
+                    "label": {
+                        "en": "Card Reader (MIFARE) CR-100",
+                        "jp": "カードリーダ(MIFARE) CR-100"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TYPE-READER-FACE",
+                    "nodeType": "ComponentType",
+                    "category": "Type",
+                    "label": {
+                        "en": "Face Reader FR-200",
+                        "jp": "顔認証リーダ FR-200"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TYPE-LOCK-STRIKE",
+                    "nodeType": "ComponentType",
+                    "category": "Type",
+                    "label": {
+                        "en": "Electric Strike Lock ES-10",
+                        "jp": "電気錠 ES-10"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PSET-DOOR-ACL",
+                    "nodeType": "PropertySet",
+                    "category": "PropertySet",
+                    "label": {
+                        "en": "PSet_AccessControlDoor (ACL, schedule)",
+                        "jp": "PSet_入退室ドア(ACL/スケジュール)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PSET-DEVICE-NET",
+                    "nodeType": "PropertySet",
+                    "category": "PropertySet",
+                    "label": {
+                        "en": "PSet_DeviceNetwork (IP, VLAN, PoE)",
+                        "jp": "PSet_機器ネットワーク(IP/VLAN/PoE)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PSET-CYBER",
+                    "nodeType": "PropertySet",
+                    "category": "PropertySet",
+                    "label": {
+                        "en": "PSet_CyberSecurity (patching, logging)",
+                        "jp": "PSet_サイバー(パッチ/ログ)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOOR-L01-ENT-A",
+                    "nodeType": "Component",
+                    "category": "Door",
+                    "label": {
+                        "en": "Main Entrance Door A",
+                        "jp": "正面入口ドアA"
+                    },
+                    "revitCategory": "Doors",
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "DOOR-L01-ENT-B",
+                    "nodeType": "Component",
+                    "category": "Door",
+                    "label": {
+                        "en": "Main Entrance Door B",
+                        "jp": "正面入口ドアB"
+                    },
+                    "revitCategory": "Doors",
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "DOOR-L01-DOCK",
+                    "nodeType": "Component",
+                    "category": "Door",
+                    "label": {
+                        "en": "Loading Dock Door",
+                        "jp": "荷捌きドア"
+                    },
+                    "revitCategory": "Doors",
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "DOOR-L05-SERVER",
+                    "nodeType": "Component",
+                    "category": "Door",
+                    "label": {
+                        "en": "Server Room Door",
+                        "jp": "サーバ室ドア"
+                    },
+                    "revitCategory": "Doors",
+                    "level": "L05"
+                }
+            },
+            {
+                "data": {
+                    "id": "DOOR-L10-TENANT",
+                    "nodeType": "Component",
+                    "category": "Door",
+                    "label": {
+                        "en": "Tenant Entry Door (L10)",
+                        "jp": "テナント入口ドア(10階)"
+                    },
+                    "revitCategory": "Doors",
+                    "level": "L10"
+                }
+            },
+            {
+                "data": {
+                    "id": "LOCK-L01-A",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Electric Strike Lock (Door A)",
+                        "jp": "電気錠(ドアA)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "LOCK-L01-B",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Electric Strike Lock (Door B)",
+                        "jp": "電気錠(ドアB)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "LOCK-L01-DOCK",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Mag Lock (Dock)",
+                        "jp": "電磁錠(荷捌き)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "LOCK-L05-SERVER",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Electric Lock (Server Room)",
+                        "jp": "電気錠(サーバ室)"
+                    },
+                    "level": "L05"
+                }
+            },
+            {
+                "data": {
+                    "id": "LOCK-L10-TENANT",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Electric Strike Lock (Tenant Door)",
+                        "jp": "電気錠(テナント)"
+                    },
+                    "level": "L10"
+                }
+            },
+            {
+                "data": {
+                    "id": "READER-L01-A",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Card Reader (Door A)",
+                        "jp": "カードリーダ(ドアA)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "READER-L01-B",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Card Reader (Door B)",
+                        "jp": "カードリーダ(ドアB)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "READER-L01-DOCK",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Card Reader (Dock)",
+                        "jp": "カードリーダ(荷捌き)"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "READER-L05-SERVER",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Card Reader (Server Room)",
+                        "jp": "カードリーダ(サーバ室)"
+                    },
+                    "level": "L05"
+                }
+            },
+            {
+                "data": {
+                    "id": "READER-L10-TENANT",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Card Reader (Tenant Door)",
+                        "jp": "カードリーダ(テナント)"
+                    },
+                    "level": "L10"
+                }
+            },
+            {
+                "data": {
+                    "id": "CAM-L01-LOBBY-01",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Lobby Camera 01",
+                        "jp": "ロビーカメラ01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "CAM-L01-DOCK-01",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Dock Camera 01",
+                        "jp": "荷捌きカメラ01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "CTRLPNL-L01-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "ACS Controller Panel (L01) #01",
+                        "jp": "ACS制御盤(1階)#01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "CTRLPNL-L05-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "ACS Controller Panel (L05) #01",
+                        "jp": "ACS制御盤(5階)#01"
+                    },
+                    "level": "L05"
+                }
+            },
+            {
+                "data": {
+                    "id": "CTRLPNL-L10-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "ACS Controller Panel (L10) #01",
+                        "jp": "ACS制御盤(10階)#01"
+                    },
+                    "level": "L10"
+                }
+            },
+            {
+                "data": {
+                    "id": "UPS-L01-01",
+                    "nodeType": "Component",
+                    "category": "PowerSupply",
+                    "label": {
+                        "en": "UPS (Security Rack) #01",
+                        "jp": "UPS(警備ラック)#01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "UPS-L05-01",
+                    "nodeType": "Component",
+                    "category": "PowerSupply",
+                    "label": {
+                        "en": "UPS (IT Room) #01",
+                        "jp": "UPS(IT室)#01"
+                    },
+                    "level": "L05"
+                }
+            },
+            {
+                "data": {
+                    "id": "SW-MDF-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "Core Switch (MDF) SW-01",
+                        "jp": "コアスイッチ(MDF) SW-01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SW-IDF-L10-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "Floor Switch (L10) IDF SW-10",
+                        "jp": "フロアスイッチ(10階) SW-10"
+                    },
+                    "level": "L10"
+                }
+            },
+            {
+                "data": {
+                    "id": "FW-EDGE-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "Firewall / OT Gateway FW-01",
+                        "jp": "ファイアウォール/OTゲートウェイ FW-01"
+                    },
+                    "level": "L01"
+                }
+            },
+            {
+                "data": {
+                    "id": "SRV-ACS-APP",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "ACS Application Server (VM)",
+                        "jp": "ACSアプリサーバ(VM)"
+                    },
+                    "level": "DC"
+                }
+            },
+            {
+                "data": {
+                    "id": "SRV-ACS-DB",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "ACS Database Server (VM)",
+                        "jp": "ACS DBサーバ(VM)"
+                    },
+                    "level": "DC"
+                }
+            },
+            {
+                "data": {
+                    "id": "SRV-VMS",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "VMS Server (VM)",
+                        "jp": "VMSサーバ(VM)"
+                    },
+                    "level": "DC"
+                }
+            },
+            {
+                "data": {
+                    "id": "SRV-IDP",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "IdP (Cloud Service)",
+                        "jp": "IdP(クラウド)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "SRV-SIEM",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "SIEM Collector (VM)",
+                        "jp": "SIEMコレクタ(VM)"
+                    },
+                    "level": "DC"
+                }
+            },
+            {
+                "data": {
+                    "id": "PORT-READER-L01-A-ETH",
+                    "nodeType": "Port",
+                    "category": "Port",
+                    "label": {
+                        "en": "Reader L01-A — Ethernet",
+                        "jp": "リーダL01-A — Ethernet"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PORT-SW-MDF-01-P12",
+                    "nodeType": "Port",
+                    "category": "Port",
+                    "label": {
+                        "en": "SW-MDF-01 — PoE Port 12",
+                        "jp": "SW-MDF-01 — PoEポート12"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PORT-SW-IDF-L10-01-P08",
+                    "nodeType": "Port",
+                    "category": "Port",
+                    "label": {
+                        "en": "SW-IDF-L10 — PoE Port 08",
+                        "jp": "SW-IDF-L10 — PoEポート08"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-01-CARD-ONLY",
+                    "nodeType": "Option",
+                    "category": "DesignOption",
+                    "label": {
+                        "en": "Option 01 — Card-only (L01/L10)",
+                        "jp": "案01 — カードのみ(1階/10階)"
+                    },
+                    "gd": {
+                        "meta": {
+                            "problemId": "ACS_ENTRY_AUTH_STRATEGY",
+                            "optionId": "opt-01",
+                            "createdAt": "2026-02-10T00:00:00Z",
+                            "scores": {
+                                "capexDeltaJPY": -1400000,
+                                "opexDeltaJPYPerYear": -180000,
+                                "userThroughputScore": 0.76,
+                                "complianceRisk": 0.20,
+                                "integrationComplexity": 0.40
+                            },
+                            "parameters": {
+                                "useFaceAtLobby": false,
+                                "useFaceAtTenant": false,
+                                "requireMFAForServerRoom": true,
+                                "poeRedundancy": false
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-02-FACE-LOBBY-TENANT",
+                    "nodeType": "Option",
+                    "category": "DesignOption",
+                    "label": {
+                        "en": "Option 02 — Face at Lobby + Tenant",
+                        "jp": "案02 — ロビー+テナントを顔認証"
+                    },
+                    "gd": {
+                        "meta": {
+                            "problemId": "ACS_ENTRY_AUTH_STRATEGY",
+                            "optionId": "opt-02",
+                            "createdAt": "2026-02-10T00:00:00Z",
+                            "scores": {
+                                "capexDeltaJPY": 2100000,
+                                "opexDeltaJPYPerYear": 260000,
+                                "userThroughputScore": 0.92,
+                                "complianceRisk": 0.12,
+                                "integrationComplexity": 0.74
+                            },
+                            "parameters": {
+                                "useFaceAtLobby": true,
+                                "useFaceAtTenant": true,
+                                "requireMFAForServerRoom": true,
+                                "poeRedundancy": true
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-03-DISTRIBUTED-CONTROLLERS",
+                    "nodeType": "Option",
+                    "category": "DesignOption",
+                    "label": {
+                        "en": "Option 03 — Distributed Controllers (per floor)",
+                        "jp": "案03 — フロア毎に制御盤分散"
+                    },
+                    "gd": {
+                        "meta": {
+                            "problemId": "ACS_CONTROLLER_TOPOLOGY",
+                            "optionId": "opt-03",
+                            "createdAt": "2026-02-11T00:00:00Z",
+                            "scores": {
+                                "capexDeltaJPY": 900000,
+                                "availabilityScore": 0.88,
+                                "maintenanceEffortScore": 0.62,
+                                "blastRadiusReduction": 0.80
+                            },
+                            "parameters": {
+                                "controllerPerFloor": true,
+                                "otNetworkSegmentation": true
+                            }
+                        }
+                    }
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "E-SP-L01-IN-BLD",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "STR-L01",
+                    "target": "BLD-A",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-L05-IN-BLD",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "STR-L05",
+                    "target": "BLD-A",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-L10-IN-BLD",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "STR-L10",
+                    "target": "BLD-A",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-LOBBY-IN-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-LOBBY-L01",
+                    "target": "STR-L01",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-SEC-IN-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-SEC-L01",
+                    "target": "STR-L01",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-MDF-IN-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-MDF-L01",
+                    "target": "STR-L01",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-DOCK-IN-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-DOCK-L01",
+                    "target": "STR-L01",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-TENANT-IN-L10",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-TENANT-L10",
+                    "target": "STR-L10",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-IT-IN-L05",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-IT-L05",
+                    "target": "STR-L05",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SP-SERVER-IN-L05",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SPACE-SERVER-L05",
+                    "target": "STR-L05",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-DOOR-A",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "DOOR-L01-ENT-A",
+                    "target": "SPACE-LOBBY-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-DOOR-B",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "DOOR-L01-ENT-B",
+                    "target": "SPACE-LOBBY-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-DOOR-DOCK",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "DOOR-L01-DOCK",
+                    "target": "SPACE-DOCK-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-DOOR-SERVER",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "DOOR-L05-SERVER",
+                    "target": "SPACE-SERVER-L05",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-DOOR-TENANT",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "DOOR-L10-TENANT",
+                    "target": "SPACE-TENANT-L10",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ZONE-LOBBY",
+                    "type": "InZone",
+                    "dimension": "Spatial",
+                    "source": "SPACE-LOBBY-L01",
+                    "target": "ZONE-PUBLIC",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ZONE-TENANT",
+                    "type": "InZone",
+                    "dimension": "Spatial",
+                    "source": "SPACE-TENANT-L10",
+                    "target": "ZONE-TENANT",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ZONE-SERVER",
+                    "type": "InZone",
+                    "dimension": "Spatial",
+                    "source": "SPACE-SERVER-L05",
+                    "target": "ZONE-HIGHSEC",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-ACS",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SYS-ACS",
+                    "target": "SYS-NET",
+                    "directional": false,
+                    "phase": [
+                        "Concept"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "ACS rides on IT/OT network services."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-IDP",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SYS-IDP",
+                    "target": "SYS-NET",
+                    "directional": false,
+                    "phase": [
+                        "Concept"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-VMS",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SYS-VMS",
+                    "target": "SYS-NET",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-SIEM",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SYS-SIEM",
+                    "target": "SYS-NET",
+                    "directional": false,
+                    "phase": [
+                        "Concept"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ACS-APP-IN",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SRV-ACS-APP",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ACS-DB-IN",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SRV-ACS-DB",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-IDP-SRV-IN",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SRV-IDP",
+                    "target": "SYS-IDP",
+                    "directional": false,
+                    "phase": [
+                        "Concept"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VMS-SRV-IN",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SRV-VMS",
+                    "target": "SYS-VMS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SIEM-SRV-IN",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "SRV-SIEM",
+                    "target": "SYS-SIEM",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ACS-CTRLPNL-L01",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ACS-CTRLPNL-L05",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L05-01",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ACS-CTRLPNL-L10",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L10-01",
+                    "target": "SYS-ACS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-CTRLPNL-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "SPACE-SEC-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-CTRLPNL-L05",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "CTRLPNL-L05-01",
+                    "target": "SPACE-IT-L05",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-CTRLPNL-L10",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "CTRLPNL-L10-01",
+                    "target": "SPACE-TENANT-L10",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-UPS-L01",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "UPS-L01-01",
+                    "target": "SPACE-SEC-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-UPS-L05",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "UPS-L05-01",
+                    "target": "SPACE-IT-L05",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-SW-MDF",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SW-MDF-01",
+                    "target": "SPACE-MDF-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-SW-IDF-L10",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "SW-IDF-L10-01",
+                    "target": "SPACE-TENANT-L10",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-FW",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "FW-EDGE-01",
+                    "target": "SPACE-MDF-L01",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PWR-UPS-L01-TO-PNL",
+                    "type": "Supplies",
+                    "dimension": "System",
+                    "source": "UPS-L01-01",
+                    "target": "CTRLPNL-L01-01",
+                    "directional": true,
+                    "phase": [
+                        "Procurement",
+                        "Installation"
+                    ],
+                    "confidence": "Inferred",
+                    "risk": "Low",
+                    "owner": "Electrical"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PWR-UPS-L05-TO-SW",
+                    "type": "Supplies",
+                    "dimension": "System",
+                    "source": "UPS-L05-01",
+                    "target": "SW-IDF-L10-01",
+                    "directional": true,
+                    "phase": [
+                        "Procurement",
+                        "Installation"
+                    ],
+                    "confidence": "Inferred",
+                    "risk": "Low",
+                    "owner": "IT"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-READER-A-LOCK-A",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "READER-L01-A",
+                    "target": "LOCK-L01-A",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Security",
+                    "notes": "Unlock timing & forced-open alarms tested."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-READER-B-LOCK-B",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "READER-L01-B",
+                    "target": "LOCK-L01-B",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Security"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-READER-DOCK-LOCK",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "READER-L01-DOCK",
+                    "target": "LOCK-L01-DOCK",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Security",
+                    "notes": "Dock door must fail-secure per policy."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-READER-SERVER-LOCK",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "READER-L05-SERVER",
+                    "target": "LOCK-L05-SERVER",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Security",
+                    "notes": "Server room requires MFA + escort; higher risk."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-READER-TENANT-LOCK",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "READER-L10-TENANT",
+                    "target": "LOCK-L10-TENANT",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Security"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-PNL-L01-LOCK-A",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "LOCK-L01-A",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Electrical"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-PNL-L05-LOCK-SERVER",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L05-01",
+                    "target": "LOCK-L05-SERVER",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Electrical"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-PNL-L10-LOCK-TENANT",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L10-01",
+                    "target": "LOCK-L10-TENANT",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "Electrical"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-NET-CONN-PNL-L01-SW",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "SW-MDF-01",
+                    "directional": false,
+                    "phase": [
+                        "Installation",
+                        "Commissioning"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "owner": "IT",
+                    "notes": "Controller VLAN + ACLs."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-NET-CONN-PNL-L10-SW10",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "CTRLPNL-L10-01",
+                    "target": "SW-IDF-L10-01",
+                    "directional": false,
+                    "phase": [
+                        "Installation",
+                        "Commissioning"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "owner": "IT"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-NET-CONN-SW10-UPLINK",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "SW-IDF-L10-01",
+                    "target": "SW-MDF-01",
+                    "directional": false,
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Unphased: uplink can exist before ACS commissioning."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-NET-CONN-SW-MDF-FW",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "SW-MDF-01",
+                    "target": "FW-EDGE-01",
+                    "directional": false,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "notes": "Firewall policy errors can block ACS/IdP."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-NET-CONN-ACSAPP-FW",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "SRV-ACS-APP",
+                    "target": "FW-EDGE-01",
+                    "directional": false,
+                    "phase": [
+                        "Commissioning"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-NET-CONN-ACSDB-ACSAPP",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "SRV-ACS-DB",
+                    "target": "SRV-ACS-APP",
+                    "directional": false,
+                    "phase": [
+                        "Commissioning"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DEP-IDP-TO-ACS",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "SYS-IDP",
+                    "target": "SYS-ACS",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "owner": "IT",
+                    "notes": "Privileged access + MFA policy from IdP."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DEP-ACS-TO-SIEM",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "SYS-ACS",
+                    "target": "SYS-SIEM",
+                    "directional": false,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Inferred",
+                    "risk": "Medium",
+                    "notes": "Security events forwarded to SIEM."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DEP-ACS-TO-VMS",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "SYS-ACS",
+                    "target": "SYS-VMS",
+                    "directional": false,
+                    "confidence": "Inferred",
+                    "risk": "Medium",
+                    "notes": "Unphased: video linkage may be activated after go-live."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OFType-READER-A",
+                    "type": "OfType",
+                    "dimension": "System",
+                    "source": "READER-L01-A",
+                    "target": "TYPE-READER-CARD",
+                    "directional": false,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OFType-READER-B",
+                    "type": "OfType",
+                    "dimension": "System",
+                    "source": "READER-L01-B",
+                    "target": "TYPE-READER-CARD",
+                    "directional": false,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OFType-READER-SERVER",
+                    "type": "OfType",
+                    "dimension": "System",
+                    "source": "READER-L05-SERVER",
+                    "target": "TYPE-READER-CARD",
+                    "directional": false,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OFType-LOCK-A",
+                    "type": "OfType",
+                    "dimension": "System",
+                    "source": "LOCK-L01-A",
+                    "target": "TYPE-LOCK-STRIKE",
+                    "directional": false,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PSET-DOOR-A",
+                    "type": "HasProperties",
+                    "dimension": "System",
+                    "source": "DOOR-L01-ENT-A",
+                    "target": "PSET-DOOR-ACL",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PSET-DOOR-SERVER",
+                    "type": "HasProperties",
+                    "dimension": "System",
+                    "source": "DOOR-L05-SERVER",
+                    "target": "PSET-DOOR-ACL",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "MFA + escort rules in schedule."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PSET-NET-READER-A",
+                    "type": "HasProperties",
+                    "dimension": "System",
+                    "source": "READER-L01-A",
+                    "target": "PSET-DEVICE-NET",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PSET-CYBER-ACSAPP",
+                    "type": "HasProperties",
+                    "dimension": "System",
+                    "source": "SRV-ACS-APP",
+                    "target": "PSET-CYBER",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "notes": "Patch SLA + log retention for audit."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RESP-ACS-DES-SECENG",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "SYS-ACS",
+                    "target": "ORG-SECENG",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign",
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RESP-NET-DES-ITOPS",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "SYS-NET",
+                    "target": "ORG-ITOPS",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Segmentation + firewall policy approval."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RESP-DOOR-DES-ARCH",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "DOOR-L01-ENT-A",
+                    "target": "ORG-ARCH",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RESP-PNL-BLD-ELEC",
+                    "type": "BuiltBy",
+                    "dimension": "Responsibility",
+                    "source": "CTRLPNL-L01-01",
+                    "target": "ORG-ELEC",
+                    "directional": false,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RESP-ACS-BLD-GC",
+                    "type": "BuiltBy",
+                    "dimension": "Responsibility",
+                    "source": "SYS-ACS",
+                    "target": "ORG-GC",
+                    "directional": false,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RESP-OPS-SECOPS",
+                    "type": "Controls",
+                    "dimension": "Responsibility",
+                    "source": "ORG-SECOPS",
+                    "target": "SYS-ACS",
+                    "directional": true,
+                    "phase": [
+                        "Operation",
+                        "Maintenance"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Guard operations manage enrollment & incident response."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VEND-READER-ACME",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "READER-L01-A",
+                    "target": "VENDOR-ACME",
+                    "directional": false,
+                    "phase": [
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Lead time + firmware support contract."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VEND-SW-NETWORKCO",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "SW-MDF-01",
+                    "target": "VENDOR-NETWORKCO",
+                    "directional": false,
+                    "phase": [
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VEND-IDP-CLOUDID",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "SRV-IDP",
+                    "target": "VENDOR-CLOUDID",
+                    "directional": false,
+                    "phase": [
+                        "Concept",
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VEND-SIEM-SIEMCO",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "SRV-SIEM",
+                    "target": "VENDOR-SIEMCO",
+                    "directional": false,
+                    "phase": [
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PORTOF-READERA",
+                    "type": "PortOf",
+                    "dimension": "System",
+                    "source": "PORT-READER-L01-A-ETH",
+                    "target": "READER-L01-A",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PORTOF-SW-P12",
+                    "type": "PortOf",
+                    "dimension": "System",
+                    "source": "PORT-SW-MDF-01-P12",
+                    "target": "SW-MDF-01",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CONN-PORTS-READERA-SW",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "PORT-READER-L01-A-ETH",
+                    "target": "PORT-SW-MDF-01-P12",
+                    "directional": false,
+                    "phase": [
+                        "Installation",
+                        "Commissioning"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "PoE/VLAN provisioning required."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PORTOF-SW10-P08",
+                    "type": "PortOf",
+                    "dimension": "System",
+                    "source": "PORT-SW-IDF-L10-01-P08",
+                    "target": "SW-IDF-L10-01",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT1-OPTIMIZES-READER-A",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-01-CARD-ONLY",
+                    "target": "READER-L01-A",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT1-OPTIMIZES-READER-TENANT",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-01-CARD-ONLY",
+                    "target": "READER-L10-TENANT",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT2-OPTIMIZES-FACE-TYPE",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-02-FACE-LOBBY-TENANT",
+                    "target": "TYPE-READER-FACE",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Biometric capability required; privacy review."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT2-OPTIMIZES-NET",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-02-FACE-LOBBY-TENANT",
+                    "target": "SYS-NET",
+                    "directional": true,
+                    "confidence": "Inferred",
+                    "risk": "Medium",
+                    "notes": "Suggests segmentation + PoE redundancy."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT3-OPTIMIZES-PNL-L10",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-03-DISTRIBUTED-CONTROLLERS",
+                    "target": "CTRLPNL-L10-01",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT3-OPTIMIZES-PNL-L05",
+                    "type": "Optimizes",
+                    "dimension": "System",
+                    "source": "OPT-03-DISTRIBUTED-CONTROLLERS",
+                    "target": "CTRLPNL-L05-01",
+                    "directional": true,
+                    "confidence": "Explicit",
+                    "risk": "Low"
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,359 @@
+{
+    "meta": {
+        "schema": "onexus-1.1",
+        "project": "Lifecycle Demo – Access Control Delivery",
+        "languageDefault": "en",
+        "phases": [
+            "Concept",
+            "BasicDesign",
+            "DetailedDesign",
+            "Procurement",
+            "Installation",
+            "Commissioning",
+            "Operation"
+        ]
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "SYS-ACCESS",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Access Control System",
+                        "jp": "入退室管理システム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOOR-A1",
+                    "nodeType": "Component",
+                    "category": "Door",
+                    "label": {
+                        "en": "Entrance Door A1",
+                        "jp": "出入口ドアA1"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "READER-A1",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Card Reader A1",
+                        "jp": "カードリーダA1"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "LOCK-A1",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Electric Lock A1",
+                        "jp": "電気錠A1"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "PANEL-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "Access Panel #01",
+                        "jp": "入退室管理盤#01"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "UPS-01",
+                    "nodeType": "Component",
+                    "category": "PowerSupply",
+                    "label": {
+                        "en": "UPS #01",
+                        "jp": "UPS#01"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "SPACE-SEC",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Security Room",
+                        "jp": "防災・警備室"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-ARCH",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "Architect",
+                        "jp": "建築設計"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-MEP",
+                    "nodeType": "Organization",
+                    "category": "Subcontractor",
+                    "label": {
+                        "en": "MEP Subcontractor",
+                        "jp": "設備サブコン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-GC",
+                    "nodeType": "Organization",
+                    "category": "Subcontractor",
+                    "label": {
+                        "en": "General Contractor",
+                        "jp": "ゼネコン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VENDOR-ACME",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "ACME Security",
+                        "jp": "ACMEセキュリティ"
+                    }
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "E-SYS-1",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "DOOR-A1",
+                    "target": "SYS-ACCESS",
+                    "directional": false,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-2",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "READER-A1",
+                    "target": "SYS-ACCESS",
+                    "directional": false,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-3",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "LOCK-A1",
+                    "target": "SYS-ACCESS",
+                    "directional": false,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SYS-4",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "PANEL-01",
+                    "target": "SYS-ACCESS",
+                    "directional": false,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-1",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "PANEL-01",
+                    "target": "SPACE-SEC",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOC-2",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "source": "UPS-01",
+                    "target": "SPACE-SEC",
+                    "directional": true,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DES-1",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "SYS-ACCESS",
+                    "target": "ORG-ARCH",
+                    "directional": false,
+                    "phase": [
+                        "BasicDesign",
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit",
+                    "notes": "Architecture coordinates access policy and door schedule"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DES-2",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "PANEL-01",
+                    "target": "ORG-MEP",
+                    "directional": false,
+                    "phase": [
+                        "DetailedDesign"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VND-1",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "READER-A1",
+                    "target": "VENDOR-ACME",
+                    "directional": false,
+                    "phase": [
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium",
+                    "notes": "Vendor lead time and compatibility review"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VND-2",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "source": "LOCK-A1",
+                    "target": "VENDOR-ACME",
+                    "directional": false,
+                    "phase": [
+                        "Procurement"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "Medium"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PWR-1",
+                    "type": "Supplies",
+                    "dimension": "System",
+                    "source": "UPS-01",
+                    "target": "PANEL-01",
+                    "directional": true,
+                    "phase": [
+                        "Procurement",
+                        "Installation"
+                    ],
+                    "confidence": "Inferred",
+                    "risk": "Low",
+                    "notes": "UPS sizing and wiring finalized during procurement/installation"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-1",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "READER-A1",
+                    "target": "LOCK-A1",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High",
+                    "notes": "Commissioning verifies unlock timing and access rules"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CTRL-2",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "source": "PANEL-01",
+                    "target": "LOCK-A1",
+                    "directional": true,
+                    "phase": [
+                        "Commissioning",
+                        "Operation"
+                    ],
+                    "confidence": "Explicit",
+                    "risk": "High"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-BUILD-1",
+                    "type": "BuiltBy",
+                    "dimension": "Responsibility",
+                    "source": "SYS-ACCESS",
+                    "target": "ORG-GC",
+                    "directional": false,
+                    "phase": [
+                        "Installation"
+                    ],
+                    "confidence": "Explicit",
+                    "notes": "Installation coordination and QA"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-UNPH-1",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "READER-A1",
+                    "target": "PANEL-01",
+                    "directional": false,
+                    "confidence": "Inferred",
+                    "notes": "No phase tag (tests Show unphased toggle)"
+                }
+            }
+        ]
+    }
+}

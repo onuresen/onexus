@@ -425,3 +425,173 @@ button.flat:hover {
     line-height: 1.35;
     margin-top: 2px;
 }
+
+/* Layer widget sections */
+.onx-layer-section {
+    margin-top: 6px;
+}
+
+.onx-layer-sec-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    margin: 8px 0 6px;
+}
+
+.onx-layer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.onx-layer-muted {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 6px 0;
+}
+
+/* =========================================
+ ONEXUS – Lifecycle floating panel (dark theme + shared styling)
+ Target: #onx-lifecycle-panel created by graph-core.layerMode.lifecycle.js
+========================================= */
+#onx-lifecycle-panel {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+#onx-lifecycle-panel button:hover {
+    background: var(--btn-bg-hover);
+}
+
+#onx-lifecycle-panel select:focus,
+#onx-lifecycle-panel button:focus {
+    outline: 2px solid rgba(37, 99, 235, 0.22);
+    outline-offset: 2px;
+}
+
+/* Dark theme override (consistent with other floating widgets) */
+:root.theme-dark #onx-lifecycle-panel {
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    background: rgba(15, 17, 21, 0.72) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
+}
+
+:root.theme-dark #onx-lifecycle-panel button {
+    background: var(--btn-bg) !important;
+    border-color: var(--stroke) !important;
+    color: var(--text-main) !important;
+}
+
+:root.theme-dark #onx-lifecycle-panel button:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+:root.theme-dark #onx-lifecycle-panel select {
+    border-color: var(--stroke) !important;
+    color: var(--text-main) !important;
+}
+
+/* =========================================
+   Layer-specific Legend helpers
+========================================= */
+#legend .legend-count {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--stroke);
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+:root.theme-dark #legend .legend-count {
+    background: rgba(15, 17, 21, 0.55);
+}
+
+#legend .legend-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    line-height: 1.35;
+}
+
+/* =========================================
+   Layer-specific Metrics blocks
+========================================= */
+#metrics .onx-metrics-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#metrics .onx-metrics-sec {
+    border-top: 1px solid var(--stroke);
+    padding-top: 8px;
+}
+
+#metrics .onx-metrics-sec:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+#metrics .onx-metrics-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+#metrics .onx-metrics-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.35;
+    margin: 2px 0;
+}
+
+#metrics .onx-metrics-row .k {
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+#metrics .onx-metrics-row .v {
+    color: var(--text-main);
+    font-weight: 650;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#metrics .onx-meter {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin: 4px 0 8px;
+}
+
+:root.theme-dark #metrics .onx-meter {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+#metrics .onx-meter>span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    width: 0%;
+}
+
+#metrics .onx-metrics-muted {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.35;
+}

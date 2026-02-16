@@ -5,6 +5,69 @@
 // prefs
 const readPref = (k, d) => localStorage.getItem(k) ?? d;
 const writePref = (k, v) => localStorage.setItem(k, v);
+
+// ===============================
+// ONEXUS – Panic Reset (escape from bad cached state)
+// - URL: add ?reset=1 to clear ONEXUS prefs
+// - Hotkey: Ctrl+Shift+R (no page reload) clears prefs + resets to Relationship
+// ===============================
+(function () {
+  function clearOnexusPrefs() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+    keys
+      .filter(k =>
+        k && (
+          k.startsWith("onexus.") ||
+          k === "onexus.layerMode" ||
+          k === "onexus.lifecycle.phase" ||
+          k === "onexus.lifecycle.mode" ||
+          k === "onexus.lifecycle.hideIsolated" ||
+          k === "onexus.lifecycle.showUnphased" ||
+          k === "onexus.lifecycle.playMs" ||
+          k === "onexus.anim.mode" ||
+          k.startsWith("onexus.anim.")
+        )
+      )
+      .forEach(k => { try { localStorage.removeItem(k); } catch { } });
+  }
+
+  function resetToSafeDefaults() {
+    try { clearOnexusPrefs(); } catch { }
+    try { window.setLayerMode?.("relationship", { persist: true, silent: true }); } catch { }
+    try { window.setLanguage?.("en"); } catch { }
+    try { window.applyTheme?.("light"); } catch { }
+    try { window.applyLayout?.("default"); } catch { }
+    try { window.showAllEdges?.(); } catch { }
+    try { window.showTransientMessage?.("ONEXUS reset: cleared cached prefs"); } catch { }
+  }
+
+  // URL trigger: ?reset=1
+  try {
+    const u = new URL(location.href);
+    if (u.searchParams.get("reset") === "1") {
+      resetToSafeDefaults();
+      u.searchParams.delete("reset");
+      history.replaceState({}, "", u.toString());
+    }
+  } catch { }
+
+  // Hotkey: Ctrl+Shift+R (no reload)
+  document.addEventListener("keydown", (e) => {
+    const tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+    const isMac = navigator.platform?.toUpperCase().includes("MAC");
+    const mod = isMac ? e.metaKey : e.ctrlKey;
+    if (mod && e.shiftKey && (e.key || "").toLowerCase() === "r") {
+      e.preventDefault();
+      resetToSafeDefaults();
+    }
+  });
+
+  // Expose for console/debug
+  window.ONEXUS_RESET = resetToSafeDefaults;
+})();
+
 // attach helper
 const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn);
 
