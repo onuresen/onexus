@@ -440,6 +440,10 @@ function buildStyle(themeKey) {
     { selector: ".onx-hide-end", style: { display: "none" } },
     { selector: ".onx-hide-compare", style: { display: "none" } },
     { selector: ".onx-hide-reveal", style: { display: "none" } },
+    // Node visibility (category/type toggles)
+    { selector: ".onx-hide-node-vis", style: { display: "none" } },
+    // Auto-hide nodes not connected to visible edges while edge-filtering
+    { selector: ".onx-hide-isolated", style: { display: "none" } },
   ];
 }
 
