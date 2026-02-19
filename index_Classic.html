@@ -16,7 +16,7 @@
 
   <link rel="stylesheet" href="./src/common/onexus-common.css">
   <link rel="stylesheet" href="./src/common/onexus-bootcheck.css">
-  <link rel="stylesheet" href="./src/layouts/layout-leftRail.css">
+  <link rel="stylesheet" href="./src/layouts/layout-rightSidebar.css">
 
   <!-- Tiny inline SVG sprite for icons -->
   <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
@@ -238,162 +238,6 @@
   <div id="canvas-wrap" aria-label="Graph canvas (supports drag & drop)">
     <div id="cy"></div>
     <div id="minimap"></div>
-
-    <!-- Corner overlays (Legend + Metrics) -->
-    <div id="legendOverlay" class="onx-corner" aria-label="Legend overlay">
-      <div id="legendControls" aria-label="Legend controls"></div>
-      <!-- #legend will be moved here by JS (keeps the same id) -->
-    </div>
-
-    <div id="metricsOverlay" class="onx-corner" aria-label="Metrics overlay"></div>
-
-    <!-- Floating Details (anchored near selection) -->
-    <div id="onxFloatDetails" aria-label="Floating details">
-      <div class="onx-fd-top">
-        <button class="onx-fd-close" type="button" title="Close" aria-label="Close">✕</button>
-      </div>
-      <div class="onx-fd-body" id="onxFloatDetailsBody"></div>
-    </div>
-
-    <!-- Left icon rail (tools) -->
-    <div id="leftRail" aria-label="Tools">
-      <div class="rail-btn" data-panel="panelFilter" title="Filter / Lens">🧪 </div>
-      <div class="rail-btn" data-panel="panelStyle" title="Style">🎨</div>
-      <div class="rail-btn" data-panel="panelAnim" title="Animation">🌀</div>
-    </div>
-
-    <!-- Left drawer (panels) -->
-    <aside id="leftDrawer" aria-label="Tool drawer">
-      <div class="drawer-header">
-        <div id="drawerTitle" class="drawer-title">Panel</div>
-        <button id="drawerClose" class="drawer-close" title="Close" aria-label="Close">✕</button>
-      </div>
-      <div id="drawerBody">
-        <!-- Filter panel -->
-        <section id="panelFilter" class="drawer-panel">
-          <h3>Filter</h3>
-          <select id="categoryFilter" onchange="filterByCategory(this.value)">
-            <option value="ALL">All Categories</option>
-          </select>
-
-          <h3>Focus</h3>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <input type="range" min="1" max="3" value="1" oninput="setFocusDepth(this.value)" style="flex:1;">
-            <span id="depthLabel">1-hop</span>
-          </div>
-
-          <h3>Lens</h3>
-          <button class="flat" onclick="showAllEdges()">All</button>
-          <button class="flat" onclick="filterByDimension('System')">System</button>
-          <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
-          <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
-          <button class="flat" id="lensVendor" onclick="filterByDimension('Vendor')">Vendor</button>
-
-          <h3>Phase</h3>
-          <select id="phaseFilter" multiple size="4" style="width:100%"></select>
-        </section>
-
-        <!-- Style panel -->
-        <section id="panelStyle" class="drawer-panel">
-          <h3>Size</h3>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <input id="sizeScale" type="range" min="0.6" max="1.6" step="0.05" value="1.00" style="flex:1;">
-            <span id="sizeScaleLabel">1.00×</span>
-          </div>
-
-          <h3>Colorize</h3>
-          <select id="colorModeSelect">
-            <option value="json_category">JSON / Category</option>
-            <option value="nodeType">Node Type</option>
-            <option value="level">Level (JLPT)</option>
-            <option value="degree">Degree (Hubs)</option>
-            <option value="stableRandom">Stable Random</option>
-          </select>
-        </section>
-
-        <!-- Animation panel -->
-        <section id="panelAnim" class="drawer-panel">
-          <h3>Animation Lab</h3>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <select id="animMode" style="flex:1;" onchange="setAnimMode(this.value)">
-              <option value="off">Off</option>
-              <option value="bounce">Bounce</option>
-              <option value="orbit">Orbit</option>
-              <option value="blackhole">Black Hole</option>
-              <option value="breath">Breath</option>
-              <option value="edgeflow">Edge Flow</option>
-            </select>
-            <button class="flat" style="min-width:86px;" onclick="toggleAnimRunning()">
-              <span id="animStatus">Stopped</span>
-            </button>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Intensity</span>
-            <input id="animIntensity" type="range" min="0" max="30" step="1" value="10" style="flex:1;"
-              oninput="setAnimIntensity(this.value)">
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
-            <input id="animSpeed" type="range" min="0.2" max="3.0" step="0.1" value="1.0" style="flex:1;"
-              oninput="setAnimSpeed(this.value)">
-          </div>
-
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Scope</span>
-            <select id="animScope" style="flex:1;" onchange="setAnimScope(this.value)">
-              <option value="all">All nodes</option>
-              <option value="selection">Selection + neighborhood</option>
-            </select>
-          </div>
-
-          <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
-            <input type="checkbox" id="animRespectLayout" checked onchange="setAnimRespectLayout(this.checked)">
-            Follow new layouts
-          </label>
-
-          <div style="font-size:11px;color:var(--text-muted);line-height:1.35;margin-bottom:10px;">
-            Tip: select a node to make it the “center” for orbit/black hole.
-          </div>
-
-          <h3>Edge Flow</h3>
-          <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
-            <button class="flat" id="animEdgeFlowOn">Flow On</button>
-            <button class="flat" id="animEdgeFlowOff">Flow Off</button>
-          </div>
-          <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
-            <select id="animEdgeFlowDim">
-              <option value="">All dimensions</option>
-              <option value="System">System</option>
-              <option value="Spatial">Spatial</option>
-              <option value="Responsibility">Responsibility</option>
-              <option value="Vendor">Vendor</option>
-            </select>
-            <input id="animEdgeFlowDash" type="text" value="10,6" placeholder="dash, gap"
-              title="line dash pattern: e.g., 10,6" />
-          </div>
-
-          <h3>Orbit Depth</h3>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <input id="orbitDepthScale" type="range" min="0.00" max="0.50" step="0.02" value="0.20" style="flex:1;">
-            <span id="orbitDepthScaleLabel">+20%</span>
-          </div>
-
-          <h3>Phase Reveal</h3>
-          <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
-            <button class="flat" id="btnPhasePlay">Play</button>
-            <button class="flat" id="btnPhaseStop">Stop</button>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
-            <input id="phaseSpeedMs" type="number" min="100" step="100" value="700" style="flex:1;"
-              title="milliseconds per phase (default 700)" />
-          </div>
-        </section>
-      </div>
-    </aside>
-
     <div id="drop-hint" style="position:absolute;inset:0;display:none;
         align-items:center;justify-content:center;background:rgba(0,0,0,.04);
         color:#111827;font-weight:600;">
@@ -401,27 +245,44 @@
     </div>
   </div>
 
+  <!-- Sidebar (inspector) -->
   <aside id="sidebar">
-    <section id="legendSection" class="inspector-section hidden">
-      <h3>Legend</h3>
-      <div id="legend"></div>
+    <h3>Filter</h3>
+    <select id="categoryFilter" onchange="filterByCategory(this.value)">
+      <option value="ALL">All Categories</option>
+    </select>
 
-      <div style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;">
-        <label>
-          <input type="checkbox" id="toggleEdgeLabels" checked />
-          Show edge labels
-        </label>
-        <label>
-          <input type="checkbox" id="toggleNodeLabels" checked />
-          Show node labels
-        </label>
-      </div>
-    </section>
+    <h3>Size</h3>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <input id="sizeScale" type="range" min="0.6" max="1.6" step="0.05" value="1.00" style="flex:1;">
+      <span id="sizeScaleLabel">1.00×</span>
+    </div>
 
-    <section id="metricsSection" class="inspector-section hidden" style="margin-top:14px;">
-      <h3>Metrics</h3>
-      <div id="metrics">–</div>
-    </section>
+    <h3>Focus</h3>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <input type="range" min="1" max="3" value="1" oninput="setFocusDepth(this.value)" style="flex:1;">
+      <span id="depthLabel">1-hop</span>
+    </div>
+
+    <h3>Legend</h3>
+    <div id="legend"></div>
+
+    <div style="margin-top:6px;font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;">
+      <label>
+        <input type="checkbox" id="toggleEdgeLabels" checked />
+        Show edge labels
+      </label>
+      <label>
+        <input type="checkbox" id="toggleNodeLabels" checked />
+        Show node labels
+      </label>
+    </div>
+
+    <h3>Metrics</h3>
+    <div id="metrics">–</div>
+
+    <h3>Details</h3>
+    <div id="details">Click a node or relationship.</div>
 
     <div id="help" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
             align-items:center;justify-content:center;">
@@ -436,6 +297,108 @@
         <button class="flat" onclick="this.closest('#help').style.display='none'">Close</button>
       </div>
     </div>
+
+    <h3>Lens</h3>
+    <button class="flat" onclick="showAllEdges()">All</button>
+    <button class="flat" onclick="filterByDimension('System')">System</button>
+    <button class="flat" onclick="filterByDimension('Spatial')">Spatial</button>
+    <button class="flat" onclick="filterByDimension('Responsibility')">Responsibility</button>
+    <button class="flat" id="lensVendor" onclick="filterByDimension('Vendor')">Vendor</button>
+
+    <h3>Phase</h3>
+    <select id="phaseFilter" multiple size="4" style="width:100%"></select>
+
+    <h3>Colorize</h3>
+    <select id="colorModeSelect">
+      <option value="json_category">JSON / Category</option>
+      <option value="nodeType">Node Type</option>
+      <option value="level">Level (JLPT)</option>
+      <option value="degree">Degree (Hubs)</option>
+      <option value="stableRandom">Stable Random</option>
+    </select>
+
+    <h3>Animation Lab</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <select id="animMode" style="flex:1;" onchange="setAnimMode(this.value)">
+        <option value="off">Off</option>
+        <option value="bounce">Bounce</option>
+        <option value="orbit">Orbit</option>
+        <option value="blackhole">Black Hole</option>
+        <option value="breath">Breath</option>
+        <option value="edgeflow">Edge Flow</option>
+      </select>
+      <button class="flat" style="min-width:86px;" onclick="toggleAnimRunning()">
+        <span id="animStatus">Stopped</span>
+      </button>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Intensity</span>
+      <input id="animIntensity" type="range" min="0" max="30" step="1" value="10" style="flex:1;"
+        oninput="setAnimIntensity(this.value)">
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
+      <input id="animSpeed" type="range" min="0.2" max="3.0" step="0.1" value="1.0" style="flex:1;"
+        oninput="setAnimSpeed(this.value)">
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Scope</span>
+      <select id="animScope" style="flex:1;" onchange="setAnimScope(this.value)">
+        <option value="all">All nodes</option>
+        <option value="selection">Selection + neighborhood</option>
+      </select>
+    </div>
+
+    <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px;">
+      <input type="checkbox" id="animRespectLayout" checked onchange="setAnimRespectLayout(this.checked)">
+      Follow new layouts
+    </label>
+
+    <div style="font-size:11px;color:var(--text-muted);line-height:1.35;">
+      Tip: select a node to make it the “center” for orbit/black hole.
+    </div>
+    </div>
+
+    <!-- === Edge Flow controls === -->
+    <h3>Edge Flow</h3>
+    <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+      <button class="flat" id="animEdgeFlowOn">Flow On</button>
+      <button class="flat" id="animEdgeFlowOff">Flow Off</button>
+    </div>
+    <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+      <select id="animEdgeFlowDim">
+        <option value="">All dimensions</option>
+        <option value="System">System</option>
+        <option value="Spatial">Spatial</option>
+        <option value="Responsibility">Responsibility</option>
+        <option value="Vendor">Vendor</option>
+      </select>
+      <input id="animEdgeFlowDash" type="text" value="10,6" placeholder="dash, gap"
+        title="line dash pattern: e.g., 10,6" />
+    </div>
+
+    <!-- === Orbit depth scale === -->
+    <h3>Orbit Depth</h3>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <input id="orbitDepthScale" type="range" min="0.00" max="0.50" step="0.02" value="0.20" style="flex:1;">
+      <span id="orbitDepthScaleLabel">+20%</span>
+    </div>
+
+    <!-- === Phase Reveal player === -->
+    <h3>Phase Reveal</h3>
+    <div style="display:grid;grid-template-columns: 1fr 1fr;gap:8px;">
+      <button class="flat" id="btnPhasePlay">Play</button>
+      <button class="flat" id="btnPhaseStop">Stop</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--text-muted);min-width:66px;">Speed</span>
+      <input id="phaseSpeedMs" type="number" min="100" step="100" value="700" style="flex:1;"
+        title="milliseconds per phase (default 700)" />
+    </div>
+
   </aside>
 
   <!-- App scripts -->
@@ -463,7 +426,6 @@
   <script src=./src/ui/graph-ui.tour.js></script>
   <!-- Shared inline JS extracted -->
   <script src="./src/common/onexus-common.js"></script>
-  <script src="./src/layouts/layout-leftRail.js"></script>
   <script src="./src/common/onexus-bootcheck.js"></script>
 
 </body>
