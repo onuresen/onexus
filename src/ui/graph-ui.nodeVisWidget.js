@@ -203,22 +203,40 @@
             pop = document.createElement("div");
             pop.id = "onx-nodevis-pop";
             pop.innerHTML = `
-<div class="onx-nv-head">
-  <div class="onx-nv-title">Node Visibility</div>
-  <button id="onx-nodevis-x" class="onx-nv-x" type="button" aria-label="Close">✕</button>
-</div>
-<div class="onx-nv-row">
-  <label>
-    <input id="onx-nodevis-hideIso" type="checkbox" />
-    Hide orphan nodes when edge filters active
-  </label>
-</div>
-<input id="onx-nodevis-search" class="onx-nv-search" type="text" placeholder="Search categories…" />
-<div id="onx-nodevis-list" class="onx-nv-list"></div>
-`;
+                <div class="onx-nv-head">
+                <div class="onx-nv-title">Node Visibility</div>
+                <button id="onx-nodevis-x" class="onx-nv-x" type="button" aria-label="Close">✕</button>
+                </div>
+                <div class="onx-nv-row">
+                <label>
+                    <input id="onx-nodevis-hideIso" type="checkbox" />
+                    Hide orphan nodes when edge filters active
+                </label>
+                </div>
+                <input id="onx-nodevis-search" class="onx-nv-search" type="text" placeholder="Search categories…" />
+                <div id="onx-nodevis-list" class="onx-nv-list"></div>
+                `;
             stack.appendChild(pop);
         }
         return { fab, pop };
+    }
+
+    function positionNodeVisPopoverRight() {
+        const stack = document.getElementById("onx-float-left-stack");
+        const pop = document.getElementById("onx-nodevis-pop");
+        if (!stack || !pop) return;
+
+        if (getComputedStyle(stack).position === "static") stack.style.position = "relative";
+
+        pop.style.position = "absolute";
+        pop.style.left = "calc(100% + 10px)";
+        pop.style.bottom = "0px";
+        pop.style.top = "auto";
+        pop.style.right = "auto";
+        pop.style.transform = "none";
+        pop.style.zIndex = "100";
+        pop.style.maxHeight = "calc(100vh - 24px)";
+        pop.style.overflow = "auto";
     }
 
     function listCategoriesWithCounts() {
@@ -278,7 +296,10 @@
         if (!pop) return;
         const want = show === undefined ? pop.style.display === "none" : !!show;
         pop.style.display = want ? "block" : "none";
-        if (want) render(); // always rebuild on open
+        if (want) {
+            positionNodeVisPopoverRight();
+            render(); // ALWAYS rebuild on open
+        }
     }
 
     function hook() {
@@ -336,6 +357,14 @@
         window.___onxNodeVisSkipUi = true;
         applyCategoryVisibility();
         window.___onxNodeVisSkipUi = false;
+    }
+
+    function closeOtherPops(exceptId) {
+        ["onx-layer-pop", "onx-nodevis-pop"].forEach(id => {
+            if (id === exceptId) return;
+            const el = document.getElementById(id);
+            if (el) el.style.display = "none";
+        });
     }
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hook);
