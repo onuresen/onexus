@@ -138,7 +138,8 @@ input[type="file"] {
 #minimap {
     position: absolute;
     bottom: 12px;
-    left: 12px;
+    right: 12px;
+    left: auto;
     width: 240px;
     height: 150px;
     border-radius: 8px;

@@ -261,6 +261,10 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
   async function parseIFCToOnexusGraph(arrayBuffer, options = {}) {
     const opt = {
       includeProperties: true,
+      // When false (default) attach property sets and properties onto the element
+      // node under `data.ifcProperties`. When true, preserve legacy behavior
+      // of creating PropertySet nodes + HasProperties edges.
+      includePropertiesAsNodes: false,
       includePorts: true,
       includeElementConnectivity: true,
       limitPropsPerPset: 8,
@@ -434,6 +438,19 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         const eid = r.value;
         const eNode = upsertIfcNode(eid, "Component", "BuiltElement");
         pushEdge(edges, { type: "LocatedIn", source: eNode, target: sNode, dimension: "Spatial", directional: true });
+        try {
+          // Populate `level` on the element node using the spatial container's displayLabel
+          const elemEntry = nodesMap.get(idSafe(eNode));
+          const storeyEntry = nodesMap.get(idSafe(sNode));
+          if (elemEntry && storeyEntry && storeyEntry.data && storeyEntry.data.displayLabel) {
+            elemEntry.data.level = storeyEntry.data.displayLabel;
+            // convenient nesting summary
+            elemEntry.data.nesting = elemEntry.data.nesting || {};
+            elemEntry.data.nesting.level = storeyEntry.data.displayLabel;
+            elemEntry.data.nesting.category = elemEntry.data.category;
+            elemEntry.data.nesting.type = elemEntry.data.nodeType;
+          }
+        } catch (e) { }
       }
     }
 
@@ -493,6 +510,9 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
     }
 
     // ---------- DefinesByProperties -> HasProperties ----------
+    // Two modes supported:
+    // - includePropertiesAsNodes === true -> legacy: create PropertySet nodes + HasProperties edges
+    // - includePropertiesAsNodes === false -> attach properties directly onto the element node under `data.ifcProperties`
     if (opt.includeProperties) {
       for (const rid of iterIds(api.GetLineIDsWithType(modelID, IFCRELDEFINESBYPROPERTIES))) {
         const rel = getLineSafe(api, modelID, rid);
@@ -504,26 +524,47 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         const pset = getLineSafe(api, modelID, psetId);
         const psetName = asLabel(pset?.Name?.value ?? `PSet_${psetId}`);
 
-        let summary = psetName;
+        // Build properties map for this property set (capped)
+        const props = {};
         try {
-          const props = pset?.HasProperties ?? [];
-          const pairs = [];
-          for (let i = 0; i < Math.min(props.length, opt.limitPropsPerPset); i++) {
-            const pid = props[i]?.value;
+          const pItems = pset?.HasProperties ?? [];
+          for (let i = 0; i < Math.min(pItems.length, opt.limitPropsPerPset); i++) {
+            const pid = pItems[i]?.value;
             const prop = pid ? getLineSafe(api, modelID, pid) : null;
             const pname = asLabel(prop?.Name?.value);
             const pval = prop?.NominalValue?.value ?? prop?.NominalValue?._text ?? "";
-            if (pname) pairs.push(`${pname}${pval ? `=${pval}` : ""}`);
+            if (pname) props[pname] = pval;
           }
-          if (pairs.length) summary = `${psetName}: ${pairs.join(", ")}`;
-        } catch { }
+        } catch (e) { }
 
-        const pNode = upsertIfcNode(psetId, "PropertySet", "PropertySet", summary);
-
-        for (const o of objs) {
-          const eid = o.value;
-          const eNode = upsertIfcNode(eid, "Component", "BuiltElement");
-          pushEdge(edges, { type: "HasProperties", source: eNode, target: pNode, dimension: "System", directional: false });
+        if (opt.includePropertiesAsNodes) {
+          // Legacy behavior: create a PropertySet node and HasProperties edges
+          let summary = psetName;
+          try {
+            const pairs = Object.keys(props).slice(0, opt.limitPropsPerPset).map((k) => `${k}${props[k] ? `=${props[k]}` : ""}`);
+            if (pairs.length) summary = `${psetName}: ${pairs.join(", ")}`;
+          } catch { }
+          const pNode = upsertIfcNode(psetId, "PropertySet", "PropertySet", summary);
+          for (const o of objs) {
+            const eid = o.value;
+            const eNode = upsertIfcNode(eid, "Component", "BuiltElement");
+            pushEdge(edges, { type: "HasProperties", source: eNode, target: pNode, dimension: "System", directional: false });
+          }
+        } else {
+          // Attach properties onto each related element node under `data.ifcProperties`.
+          for (const o of objs) {
+            const eid = o.value;
+            const eNode = upsertIfcNode(eid, "Component", "BuiltElement");
+            try {
+              const entry = nodesMap.get(idSafe(eNode));
+              if (entry && entry.data) {
+                entry.data.ifcProperties = entry.data.ifcProperties || {};
+                // Merge pset properties (existing values preserved unless overwritten here)
+                const existing = entry.data.ifcProperties[psetName] || {};
+                entry.data.ifcProperties[psetName] = Object.assign({}, existing, props);
+              }
+            } catch (e) { }
+          }
         }
       }
     }

@@ -14,23 +14,25 @@
         return wrap;
     }
 
-    function ensureTopLeft(host) {
-        let top = $("onx-float-left-top");
-        if (top) return top;
-        top = document.createElement("div");
-        top.id = "onx-float-left-top";
-        Object.assign(top.style, {
+    // Ensure a host container exists for bottom-right overlays (minimap)
+    function ensureBottomRight(host) {
+        let br = $("onx-float-bottom-right");
+        if (br) return br;
+        br = document.createElement("div");
+        br.id = "onx-float-bottom-right";
+        Object.assign(br.style, {
             position: "absolute",
-            left: "12px",
-            top: "12px",
+            right: "12px",
+            bottom: "12px",
             zIndex: 31,
             display: "flex",
             flexDirection: "column",
-            gap: "10px",
+            gap: "8px",
             pointerEvents: "none",
+            alignItems: "flex-end",
         });
-        host.appendChild(top);
-        return top;
+        host.appendChild(br);
+        return br;
     }
 
     function ensureBottomLeft(host) {
@@ -68,24 +70,26 @@
         el.style.pointerEvents = "auto";
     }
 
-    function moveMinimapToTopLeft(top) {
+    function moveMinimapToBottomRight(bottomRightHost) {
         const mm = $("minimap");
         if (!mm) return;
-        // place into top-left container
-        if (mm.parentElement !== top) top.appendChild(mm);
+        // ensure minimap is a direct child of the canvas-wrap for absolute positioning
+        const container = document.getElementById('canvas-wrap') || bottomRightHost?.parentElement || document.body;
+        if (mm.parentElement !== container) container.appendChild(mm);
 
-        // override styles (mm is absolute by default in common css)
+        // override styles to keep minimap anchored to bottom-right
         Object.assign(mm.style, {
-            position: "relative",
+            position: "absolute",
+            right: "12px",
+            bottom: "12px",
             left: "auto",
             top: "auto",
-            right: "auto",
-            bottom: "auto",
             margin: "0",
         });
 
         allowPointer(mm);
-        top.style.pointerEvents = "none";
+        // bottomRightHost stays as a layout anchor but we keep pointer events on minimap
+        if (bottomRightHost) bottomRightHost.style.pointerEvents = "none";
         mm.style.pointerEvents = "auto";
     }
 
@@ -162,11 +166,11 @@
         const host = ensureHost();
         if (!host) return;
 
-        const top = ensureTopLeft(host);
+        const bottomRight = ensureBottomRight(host);
         const bottom = ensureBottomLeft(host);
 
-        // Move minimap to top-left (even if other scripts moved it)
-        moveMinimapToTopLeft(top);
+        // Move minimap to bottom-right (respecting CSS override)
+        moveMinimapToBottomRight(bottomRight);
 
         // Put tool buttons (Filter/Style/Anim) into bottom-left as pills
         pillifyLeftRail(bottom);

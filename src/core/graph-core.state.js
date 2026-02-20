@@ -40,6 +40,10 @@
   const safeRead = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
   const safeWrite = (k, v) => { try { localStorage.setItem(k, String(v)); } catch { } };
 
+  // whether to show a message when clicking empty canvas (default: false)
+  function getShowEmptyClickMessage() { return safeRead('onexus.showEmptyClickMessage', 'false') === 'true'; }
+  window.setShowEmptyClickMessage = (enabled) => { safeWrite('onexus.showEmptyClickMessage', enabled ? 'true' : 'false'); };
+
   const state = {
     language: "en",
     focusDepth: 1,
@@ -144,7 +148,13 @@
     }
   });
   cy.on("tap", "edge", (evt) => updateDetailsForEdge(evt.target));
-  cy.on("tap", (evt) => { if (evt.target === cy) { clearFocus(); setDetailsMessage("Click a node or relationship."); } });
+  cy.on("tap", (evt) => {
+    if (evt.target === cy) {
+      clearFocus();
+      // Only show the guidance message if explicitly enabled (defaults to off)
+      if (getShowEmptyClickMessage()) setDetailsMessage("Click a node or relationship.");
+    }
+  });
 
   // ---- i18n
   function setLanguage(lang) {
@@ -189,10 +199,49 @@
   function clearFocus() { state.focusedNode = null; cy.elements().removeClass("faded"); }
 
   // ---- details
-  function setDetailsMessage(html) { const el = document.getElementById("details"); if (el) el.innerHTML = html; }
+  function setDetailsMessage(html) {
+    // Prefer #details (older layout) but fall back to floating details body
+    const el = document.getElementById("details") || document.getElementById("onxFloatDetailsBody");
+    if (el) el.innerHTML = html;
+    // ensure floating details visible when using the float body
+    const float = document.getElementById("onxFloatDetails");
+    if (float && el && el.id === "onxFloatDetailsBody") {
+      float.style.display = "block";
+    }
+  }
+
+  function renderPropertiesSection(ifcProps) {
+    if (!ifcProps || typeof ifcProps !== "object") return "";
+    let out = `<div style='margin-top:8px;font-size:13px;font-weight:700;'>Properties</div>`;
+    out += `<div style='font-size:12px;color:var(--text-muted);max-height:280px;overflow:auto;border:1px solid var(--stroke);padding:6px;border-radius:8px;margin-top:6px;'>`;
+    for (const [pset, props] of Object.entries(ifcProps)) {
+      out += `<div style='margin-bottom:8px;'><div style='font-weight:600;margin-bottom:4px;'>${pset}</div>`;
+      out += `<div style='font-size:12px;color:var(--text-main);margin-left:6px;'>`;
+      for (const [k, v] of Object.entries(props)) {
+        const safeV = (v === null || v === undefined || v === "") ? "—" : String(v);
+        out += `<div style='display:flex;justify-content:space-between;gap:8px;padding:2px 0;border-bottom:1px dashed rgba(0,0,0,0.03)'><div style='flex:1;color:var(--text-muted)'>${k}</div><div style='flex:1;text-align:right'>${safeV}</div></div>`;
+      }
+      out += `</div></div>`;
+    }
+    out += `</div>`;
+    return out;
+  }
+
   function updateDetailsForNode(node) {
     const d = node.data();
-    setDetailsMessage(`<b>${d.displayLabel}</b><br>Type: ${d.nodeType ?? "-"}<br>Category: ${d.category ?? d.revitCategory ?? "-"}<br>Level: ${d.level ?? "-"}`);
+    let html = `<div style='font-size:14px;font-weight:800;margin-bottom:6px;'>${d.displayLabel ?? d.id}</div>`;
+    html += `<div style='font-size:13px;margin-bottom:6px;'>Type: ${d.nodeType ?? "-"}</div>`;
+    html += `<div style='font-size:13px;margin-bottom:6px;'>Category: ${d.category ?? d.revitCategory ?? "-"}</div>`;
+    html += `<div style='font-size:13px;margin-bottom:6px;'>Level: ${d.level ?? "-"}</div>`;
+
+    // IFC properties (if present)
+    if (d.ifcProperties) {
+      try {
+        html += renderPropertiesSection(d.ifcProperties);
+      } catch (e) { /* swallow render errors */ }
+    }
+
+    setDetailsMessage(html);
   }
   function updateDetailsForEdge(edge) {
     const d = edge.data();
@@ -222,6 +271,19 @@
   cy.on("zoom", debounce(applyLOD, 50));
   // initialize once
   applyLOD();
+
+  // ---- Floating details close hook
+  function hookFloatDetailsClose() {
+    const btn = document.querySelector("#onxFloatDetails .onx-fd-close") || document.querySelector(".onx-fd-close");
+    if (!btn || btn.__hooked) return;
+    btn.__hooked = true;
+    btn.addEventListener("click", () => {
+      const float = document.getElementById("onxFloatDetails");
+      if (float) float.style.display = "none";
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hookFloatDetailsClose);
+  else setTimeout(hookFloatDetailsClose, 0);
 
   // =========================================================
   // ONEXUS LayerMode: registry + state management (core)
