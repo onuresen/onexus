@@ -231,6 +231,16 @@
       <input id="fileImportGD" type="file" accept=".json" style="display:none">
     </div>
 
+    <button class="icon-btn" id="btnDepGraph" title="Dependency Graph (Shift+G)" aria-label="Dependency Graph">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <circle cx="6" cy="7" r="2.2"></circle>
+        <circle cx="18" cy="7" r="2.2"></circle>
+        <circle cx="12" cy="17" r="2.2"></circle>
+        <path d="M7.8 8.3L11 15M16.2 8.3L13 15"></path>
+      </svg>
+    </button>
+
     <span class="badge">ONEXUS</span>
   </div>
 
@@ -464,6 +474,7 @@
   <!-- UI bindings -->
   <script src=./src/ui/graph-ui.loader.js></script>
   <script src=./src/ui/graph-ui.bindings.js></script>
+  <script src="./src/ui/graph-ui.legendControls.js"></script>
   <script src="./src/ui/graph-ui.popoverPositioner.js"></script>
   <script src=./src/ui/graph-ui.layerWidget.js></script>
   <script src="./src/ui/graph-ui.nodeVisWidget.js"></script>
@@ -473,6 +484,15 @@
   <!-- Shared inline JS extracted -->
   <script src="./src/common/onexus-common.js"></script>
   <script src="./src/common/onexus-bootcheck.js"></script>
+
+  <!-- Dev -->
+  <script src="./src/dev/onexus-devgraph.common.js"></script>
+  <script src="./src/dev/onexus-audit.runtime.js"></script>
+  <script src="./src/dev/onexus-depgraph.js"></script>
+  <script src="./src/dev/onexus-audit.hooks.js"></script>
+  <script src="./src/dev/onexus-devgraph.combine.js"></script>
+  <script src="./src/dev/onexus-dev.exportSnapshot.js"></script>
+  <script src="./src/dev/onexus-devtools.bindDepGraphButton.js"></script>
 
 </body>
 
