@@ -354,6 +354,28 @@ Optional:
       )
     );
 
+    items.appendChild(menuDivider("Snapshot (./src/**)"));
+    items.appendChild(
+      menuBtn(
+        "Export ./src bundle (1 file)",
+        "Pick project root → exports ONE merged text bundle of ./src/**",
+        async () => {
+          m.style.display = "none";
+          await window.ONEXUS_DEV_SRCTREE?.exportBundle?.({ subdir: "src" });
+        }
+      )
+    );
+    items.appendChild(
+      menuBtn(
+        "Export ./src manifest (JSON)",
+        "Pick project root → exports manifest JSON",
+        async () => {
+          m.style.display = "none";
+          await window.ONEXUS_DEV_SRCTREE?.exportManifest?.({ subdir: "src" });
+        }
+      )
+    );
+
     // show + position
     m.style.display = "block";
     positionMenuNearButton(m, btn);
