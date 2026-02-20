@@ -292,14 +292,45 @@
     }
 
     function togglePopover(show) {
-        const pop = $("onx-nodevis-pop");
-        if (!pop) return;
-        const want = show === undefined ? pop.style.display === "none" : !!show;
+        const pop = document.getElementById("onx-nodevis-pop");
+        const fab = document.getElementById("onx-nodevis-fab");
+        if (!pop || !fab) return;
+
+        const want = (show === undefined) ? (pop.style.display === "none") : !!show;
+
         pop.style.display = want ? "block" : "none";
-        if (want) {
-            positionNodeVisPopoverRight();
-            render(); // ALWAYS rebuild on open
+
+        if (!want) return;
+
+        // Always rebuild UI on open (fix empty lists after load)
+        try { render(); } catch { }
+
+        // Position: open RIGHT, bottom-aligned to the pill stack, avoid minimap overlap
+        const stack = document.getElementById("onx-float-left-stack") || fab.parentElement;
+        const pos = window.ONEXUS?.ui?.positionPopover;
+        if (typeof pos === "function") {
+            pos(pop, {
+                anchorEl: fab,
+                stackEl: stack,
+                mode: "stackBottom",
+                preferRight: true,
+                avoidMinimap: true
+            });
         }
+
+        // Reposition once after layout settles (fonts/scrollbars can change height)
+        setTimeout(() => {
+            const pos2 = window.ONEXUS?.ui?.positionPopover;
+            if (typeof pos2 === "function") {
+                pos2(pop, {
+                    anchorEl: fab,
+                    stackEl: stack,
+                    mode: "stackBottom",
+                    preferRight: true,
+                    avoidMinimap: true
+                });
+            }
+        }, 60);
     }
 
     function hook() {

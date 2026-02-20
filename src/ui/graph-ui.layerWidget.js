@@ -283,17 +283,46 @@
     }
 
     function togglePopover(show) {
-        const pop = $("onx-layer-pop");
-        if (!pop) return;
+        const pop = document.getElementById("onx-layer-pop");
+        const fab = document.getElementById("onx-layer-fab");
+        if (!pop || !fab) return;
 
-        const want = show === undefined ? pop.style.display === "none" : !!show;
+        const want = (show === undefined) ? (pop.style.display === "none") : !!show;
+
         pop.style.display = want ? "block" : "none";
 
-        if (want) {
-            positionPopoverRight();
-            populateSelect();
-            render();
+        if (!want) return;
+
+        // Sync content first (so height is correct before positioning)
+        try { populateSelect(); } catch { }
+        try { render(); } catch { }
+
+        // Position: open RIGHT, bottom-aligned to the pill stack, avoid minimap overlap
+        const stack = document.getElementById("onx-float-left-stack") || fab.parentElement;
+        const pos = window.ONEXUS?.ui?.positionPopover;
+        if (typeof pos === "function") {
+            pos(pop, {
+                anchorEl: fab,
+                stackEl: stack,
+                mode: "stackBottom",
+                preferRight: true,
+                avoidMinimap: true
+            });
         }
+
+        // Reposition once after layout settles (content/actions may change height)
+        setTimeout(() => {
+            const pos2 = window.ONEXUS?.ui?.positionPopover;
+            if (typeof pos2 === "function") {
+                pos2(pop, {
+                    anchorEl: fab,
+                    stackEl: stack,
+                    mode: "stackBottom",
+                    preferRight: true,
+                    avoidMinimap: true
+                });
+            }
+        }, 60);
     }
 
     function hookUi() {
