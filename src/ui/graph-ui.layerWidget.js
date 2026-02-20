@@ -1,8 +1,9 @@
 /* =========================================================
- ONEXUS – Layer Widget (floating pill + popover)
- FIX (Option 1): Popover opens to the RIGHT of the bottom-left stack
- - avoids overlap with minimap/top-left UI
- Depends on: getLayerMode, setLayerMode, ONEXUS_LAYERS, __onexus_state
+ONEXUS – Layer Widget (floating pill + popover)
+CLEANUP:
+- Do NOT move minimap (leftDock owns minimap placement)
+- Use ONEXUS.ui.positionPopover() for stable placement
+Depends on: getLayerMode, setLayerMode, ONEXUS_LAYERS, __onexus_state, graph-ui.popoverPositioner.js
 ========================================================= */
 (function () {
     const $ = (id) => document.getElementById(id);
@@ -25,26 +26,7 @@
         return stack;
     }
 
-    function moveMinimapIntoStack(stack) {
-        // legacy behavior; your other scripts may move minimap elsewhere.
-        const mm = $("minimap");
-        if (!mm) return;
-        if (mm.parentElement === stack) return;
-        stack.insertBefore(mm, stack.firstChild);
-        Object.assign(mm.style, {
-            position: "relative",
-            left: "auto",
-            bottom: "auto",
-            top: "auto",
-            right: "auto",
-            marginBottom: "10px",
-        });
-    }
-
     function ensureWidget(stack) {
-        // Make stack a positioning context for right-opening popover
-        if (getComputedStyle(stack).position === "static") stack.style.position = "relative";
-
         let fab = $("onx-layer-fab");
         let pop = $("onx-layer-pop");
 
@@ -54,8 +36,12 @@
             fab.type = "button";
             fab.title = "Layer";
             fab.setAttribute("aria-label", "Layer");
-            // Keep markup minimal; CSS from onexus-common.css styles this pill. [5](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-core.io.export.js)
-            fab.innerHTML = `<span class="onx-layer-dot"></span><span class="onx-layer-fab-text">Layer</span>`;
+
+            // Keep CSS-driven structure (common.css expects dot + text; if absent, it still renders)
+            fab.innerHTML = `
+        <span class="onx-layer-dot"></span>
+        <span class="onx-layer-fab-text">Layer</span>
+      `;
             stack.appendChild(fab);
         }
 
@@ -86,7 +72,6 @@
           <div class="onx-layer-section">
             <div class="onx-layer-sec-title">Tint</div>
             <span class="onx-layer-swatch" id="onx-layer-swatch"></span>
-            <div class="onx-layer-note" id="onx-layer-note"></div>
           </div>
 
           <div class="onx-layer-section">
@@ -101,6 +86,8 @@
               <button class="onx-layer-btn" id="onx-layer-reset" type="button">Reset view</button>
             </div>
           </div>
+
+          <div class="onx-layer-note" id="onx-layer-note"></div>
         </div>
       `;
             stack.appendChild(pop);
@@ -150,10 +137,7 @@
         const host = $("onx-layer-actions");
         if (!host) return;
 
-        const cur =
-            window.getLayerMode?.() ??
-            window.__onexus_state?.layerMode ??
-            "relationship";
+        const cur = window.getLayerMode?.() ?? window.__onexus_state?.layerMode ?? "relationship";
         const cfg = getLayerCfg(cur);
         const actions = Array.isArray(cfg.actions) ? cfg.actions : [];
 
@@ -170,16 +154,11 @@
             const btn = document.createElement("button");
             btn.type = "button";
             btn.className = "onx-layer-btn";
-            btn.textContent =
-                typeof a.label === "function" ? a.label() : (a.label ?? a.id ?? "Action");
+            btn.textContent = typeof a.label === "function" ? a.label() : (a.label ?? a.id ?? "Action");
             btn.title = a.hint ?? "";
             btn.addEventListener("click", () => {
                 try {
-                    a.run?.({
-                        cy,
-                        state: window.__onexus_state,
-                        layer: cur,
-                    });
+                    a.run?.({ cy, state: window.__onexus_state, layer: cur });
                 } catch (e) {
                     console.error("Layer action failed:", e);
                     window.showTransientMessage?.("Action failed (see console)");
@@ -191,10 +170,7 @@
     }
 
     function render() {
-        const cur =
-            window.getLayerMode?.() ??
-            window.__onexus_state?.layerMode ??
-            "relationship";
+        const cur = window.getLayerMode?.() ?? window.__onexus_state?.layerMode ?? "relationship";
         const title = getLayerTitle(cur);
 
         const titleEl = $("onx-layer-title");
@@ -231,10 +207,7 @@
         const sel = $("onx-layer-select");
         if (!sel) return;
 
-        const cur =
-            window.getLayerMode?.() ??
-            window.__onexus_state?.layerMode ??
-            "relationship";
+        const cur = window.getLayerMode?.() ?? window.__onexus_state?.layerMode ?? "relationship";
         const list = layerList();
 
         sel.innerHTML = "";
@@ -250,79 +223,49 @@
     }
 
     function nextLayer() {
-        const cur =
-            window.getLayerMode?.() ??
-            window.__onexus_state?.layerMode ??
-            "relationship";
+        const cur = window.getLayerMode?.() ?? window.__onexus_state?.layerMode ?? "relationship";
         const list = layerList();
         const idx = Math.max(0, list.indexOf(cur));
         window.setLayerMode?.(list[(idx + 1) % list.length]);
     }
 
-    // --------------------------
-    // FIX: position popover to the RIGHT of the stack/pill
-    // --------------------------
-    function positionPopoverRight() {
-        const stack = $("onx-float-left-stack");
-        const pop = $("onx-layer-pop");
-        const fab = $("onx-layer-fab");
-        if (!stack || !pop || !fab) return;
-
-        // Popover is appended inside stack, so absolute positioning is relative to stack
-        pop.style.position = "absolute";
-        pop.style.left = "calc(100% + 10px)"; // open to the right of pill column
-        pop.style.bottom = "0px";             // align to bottom of stack
-        pop.style.top = "auto";
-        pop.style.right = "auto";
-        pop.style.transform = "none";
-        pop.style.zIndex = "100";             // above minimap/cards if they overlap
-
-        // Optional: keep within viewport height
-        pop.style.maxHeight = "calc(100vh - 24px)";
-        pop.style.overflow = "auto";
-    }
-
-    function togglePopover(show) {
-        const pop = document.getElementById("onx-layer-pop");
-        const fab = document.getElementById("onx-layer-fab");
-        if (!pop || !fab) return;
-
-        const want = (show === undefined) ? (pop.style.display === "none") : !!show;
-
-        pop.style.display = want ? "block" : "none";
-
-        if (!want) return;
-
-        // Sync content first (so height is correct before positioning)
-        try { populateSelect(); } catch { }
-        try { render(); } catch { }
-
-        // Position: open RIGHT, bottom-aligned to the pill stack, avoid minimap overlap
-        const stack = document.getElementById("onx-float-left-stack") || fab.parentElement;
+    function positionPopover(pop, anchorEl) {
+        const stack = $("onx-float-left-stack") ?? anchorEl?.parentElement;
         const pos = window.ONEXUS?.ui?.positionPopover;
         if (typeof pos === "function") {
             pos(pop, {
-                anchorEl: fab,
+                anchorEl,
                 stackEl: stack,
                 mode: "stackBottom",
                 preferRight: true,
-                avoidMinimap: true
+                avoidMinimap: true,
             });
+        } else {
+            // Fallback: right of stack, bottom aligned
+            if (stack && getComputedStyle(stack).position === "static") stack.style.position = "relative";
+            pop.style.position = "absolute";
+            pop.style.left = "calc(100% + 10px)";
+            pop.style.bottom = "0px";
+            pop.style.top = "auto";
         }
+    }
 
-        // Reposition once after layout settles (content/actions may change height)
-        setTimeout(() => {
-            const pos2 = window.ONEXUS?.ui?.positionPopover;
-            if (typeof pos2 === "function") {
-                pos2(pop, {
-                    anchorEl: fab,
-                    stackEl: stack,
-                    mode: "stackBottom",
-                    preferRight: true,
-                    avoidMinimap: true
-                });
-            }
-        }, 60);
+    function togglePopover(show) {
+        const pop = $("onx-layer-pop");
+        const fab = $("onx-layer-fab");
+        if (!pop || !fab) return;
+
+        const want = show === undefined ? pop.style.display === "none" : !!show;
+        pop.style.display = want ? "block" : "none";
+        if (!want) return;
+
+        // sync content before positioning
+        populateSelect();
+        render();
+        positionPopover(pop, fab);
+
+        // settle pass
+        setTimeout(() => positionPopover(pop, fab), 60);
     }
 
     function hookUi() {
@@ -331,26 +274,26 @@
         const btnNext = $("onx-layer-next");
         const btnReset = $("onx-layer-reset");
 
-        if (fab && !fab.___hooked) {
-            fab.___hooked = true;
+        if (fab && !fab.__hooked) {
+            fab.__hooked = true;
             fab.addEventListener("click", () => togglePopover());
         }
-        if (close && !close.___hooked) {
-            close.___hooked = true;
+        if (close && !close.__hooked) {
+            close.__hooked = true;
             close.addEventListener("click", () => togglePopover(false));
         }
-        if (btnNext && !btnNext.___hooked) {
-            btnNext.___hooked = true;
+        if (btnNext && !btnNext.__hooked) {
+            btnNext.__hooked = true;
             btnNext.addEventListener("click", () => nextLayer());
         }
-        if (btnReset && !btnReset.___hooked) {
-            btnReset.___hooked = true;
+        if (btnReset && !btnReset.__hooked) {
+            btnReset.__hooked = true;
             btnReset.addEventListener("click", () => window.resetView?.());
         }
 
-        // click outside closes
-        if (!document.___onxLayerOutsideHooked) {
-            document.___onxLayerOutsideHooked = true;
+        // outside click closes
+        if (!document.__onxLayerOutsideHooked) {
+            document.__onxLayerOutsideHooked = true;
             document.addEventListener("click", (e) => {
                 const popEl = $("onx-layer-pop");
                 const fabEl = $("onx-layer-fab");
@@ -360,13 +303,21 @@
             });
         }
 
-        // ESC closes popover
-        if (!document.___onxLayerEscHooked) {
-            document.___onxLayerEscHooked = true;
+        // ESC closes
+        if (!document.__onxLayerEscHooked) {
+            document.__onxLayerEscHooked = true;
             document.addEventListener("keydown", (e) => {
                 if (e.key === "Escape") togglePopover(false);
             });
         }
+
+        // reposition on resize if open
+        window.addEventListener("resize", () => {
+            const pop = $("onx-layer-pop");
+            const fabEl = $("onx-layer-fab");
+            if (!pop || pop.style.display === "none") return;
+            positionPopover(pop, fabEl);
+        });
     }
 
     function hookLayerEvents() {
@@ -377,8 +328,8 @@
             });
         } catch { }
 
-        if (cy && !cy.___onxLayerWidgetHooked) {
-            cy.___onxLayerWidgetHooked = true;
+        if (cy && !cy.__onxLayerWidgetHooked) {
+            cy.__onxLayerWidgetHooked = true;
             cy.on("layoutstop add remove", () => render());
         }
     }
@@ -388,17 +339,13 @@
         if (!host) return;
 
         const stack = ensureStackContainer(host);
-
-        // NOTE: You likely move minimap to top-left via other modules (floatZones/leftDock). [4](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/layout-leftRail.js)[3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.nodeVisWidget.js)
-        // Leaving this call harmless if minimap already moved elsewhere.
-        moveMinimapIntoStack(stack);
-
         ensureWidget(stack);
+
         hookUi();
         hookLayerEvents();
+
         populateSelect();
         render();
-        positionPopoverRight();
     }
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
