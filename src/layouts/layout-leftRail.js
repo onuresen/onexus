@@ -1,342 +1,212 @@
 /* =========================================
-   Layout: Left Rail behaviors (index_leftRail.html only)
-   - Rail + drawer toggle
-   - Legend/Metrics overlay relocation
-   - Floating details
-   Safe: no core edits; wraps existing functions only.
+ ONEXUS – Left Rail -> Compact Popover (Filter/Style/Anim)
+ FIXES:
+  - NEVER destroy panels (no innerHTML="") -> Style/Anim keep working
+  - Popover positioned to the RIGHT and bottom-aligned to the pill stack
+  - Avoid minimap overlap via ONEXUS.ui.positionPopover()
+ Requires: graph-ui.popoverPositioner.js
 ========================================= */
-
 (function () {
-    // Left rail + drawer toggle (overlay)
     const rail = document.getElementById("leftRail");
-    const drawer = document.getElementById("leftDrawer");
-    const title = document.getElementById("drawerTitle");
-    const closeBtn = document.getElementById("drawerClose");
-    const btnShortcutsRail = document.getElementById("btnShortcutsRail");
+    if (!rail) return;
 
-    const panels = ["panelFilter", "panelStyle", "panelAnim"];
+    const PANELS = ["panelFilter", "panelStyle", "panelAnim"];
     const TITLES = {
         panelFilter: "Filter / Lens",
         panelStyle: "Style",
         panelAnim: "Animation",
     };
 
-    function showPanel(id) {
-        panels.forEach((pid) => {
-            const el = document.getElementById(pid);
-            if (el) el.classList.toggle("show", pid === id);
+    function ensurePopoverCss() {
+        if (document.getElementById("onx-tool-pop-css")) return;
+        const st = document.createElement("style");
+        st.id = "onx-tool-pop-css";
+        st.textContent = `
+#onx-tool-pop{
+  width: 360px;
+  max-width: min(360px, calc(100vw - 40px));
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+  padding: 10px 10px 12px;
+  z-index: 10080;
+}
+:root.theme-dark #onx-tool-pop{
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(15,17,21,0.72);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+}
+#onx-tool-pop .onx-pop-head{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  margin-bottom:8px;
+}
+#onx-tool-pop .onx-pop-title{
+  font-size:12px; font-weight:900; letter-spacing:.02em;
+  color: var(--text-main);
+}
+#onx-tool-pop .onx-pop-x{
+  width:28px; height:28px; border-radius:10px;
+  border:1px solid var(--stroke);
+  background: var(--btn-bg);
+  cursor:pointer;
+  color: var(--text-main);
+}
+#onx-tool-pop .onx-pop-x:hover{ background: var(--btn-bg-hover); }
+#onx-tool-pop .onx-pop-body{
+  max-height: calc(100vh - 120px);
+  overflow:auto;
+  padding-right: 2px;
+}
+
+/* tighten existing panel visuals a bit */
+#onx-tool-pop h3{ margin: 10px 0 6px; }
+#onx-tool-pop button.flat{ margin: 4px 0; }
+`;
+        document.head.appendChild(st);
+    }
+
+    function ensureStash() {
+        let stash = document.getElementById("onx-tool-panel-stash");
+        if (stash) return stash;
+        stash = document.createElement("div");
+        stash.id = "onx-tool-panel-stash";
+        stash.style.display = "none";
+        document.body.appendChild(stash);
+        return stash;
+    }
+
+    function ensurePanelPopover() {
+        let pop = document.getElementById("onx-tool-pop");
+        if (pop) return pop;
+
+        pop = document.createElement("div");
+        pop.id = "onx-tool-pop";
+        pop.style.display = "none";
+        pop.style.position = "fixed"; // positioned by positioner
+
+        pop.innerHTML = `
+  <div class="onx-pop-head">
+    <div class="onx-pop-title" id="onx-tool-pop-title">Panel</div>
+    <button class="onx-pop-x" id="onx-tool-pop-x" type="button" aria-label="Close">✕</button>
+  </div>
+  <div class="onx-pop-body" id="onx-tool-pop-body"></div>
+`;
+        document.body.appendChild(pop);
+
+        pop.querySelector("#onx-tool-pop-x").addEventListener("click", () => closePopover());
+
+        // outside click closes
+        document.addEventListener("click", (e) => {
+            if (pop.style.display === "none") return;
+            const railHit = e.target.closest?.("#leftRail .rail-btn");
+            if (pop.contains(e.target) || railHit) return;
+            closePopover();
         });
-        if (title) title.textContent = TITLES[id] ?? "Panel";
-        if (drawer) drawer.classList.add("open");
-        rail?.querySelectorAll(".rail-btn").forEach((b) =>
-            b.classList.toggle("active", b.dataset.panel === id)
+
+        // ESC closes
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closePopover();
+        });
+
+        return pop;
+    }
+
+    function closePopover() {
+        const pop = document.getElementById("onx-tool-pop");
+        if (!pop) return;
+
+        // Move current panel back to stash (DO NOT delete)
+        const body = document.getElementById("onx-tool-pop-body");
+        const stash = ensureStash();
+        if (body && body.firstElementChild) {
+            stash.appendChild(body.firstElementChild);
+        }
+
+        pop.style.display = "none";
+        pop.___panelId = null;
+
+        // clear active state
+        rail.querySelectorAll(".rail-btn").forEach((b) => b.classList.remove("active"));
+    }
+
+    function openPopover(panelId, anchorEl) {
+        ensurePopoverCss();
+        const pop = ensurePanelPopover();
+        const stash = ensureStash();
+
+        const title = document.getElementById("onx-tool-pop-title");
+        const body = document.getElementById("onx-tool-pop-body");
+
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+
+        // If another panel is currently inside body, stash it
+        if (body.firstElementChild && body.firstElementChild !== panel) {
+            stash.appendChild(body.firstElementChild);
+        }
+
+        // Move requested panel into body (no destruction)
+        body.replaceChildren(panel);
+        panel.style.display = "block";
+
+        title.textContent = TITLES[panelId] ?? "Panel";
+        pop.style.display = "block";
+        pop.___panelId = panelId;
+
+        // Align with bottom of stack for consistent look with Layer/Nodes
+        const stack = document.getElementById("onx-float-left-stack") || rail.parentElement;
+        window.ONEXUS?.ui?.positionPopover?.(pop, {
+            anchorEl,
+            stackEl: stack,
+            mode: "stackBottom",
+            preferRight: true,
+            avoidMinimap: true,
+        });
+    }
+
+    function toggle(panelId, btn) {
+        const pop = document.getElementById("onx-tool-pop");
+        const isOpen = pop && pop.style.display !== "none";
+        const same = pop && pop.___panelId === panelId;
+
+        if (isOpen && same) {
+            closePopover();
+            return;
+        }
+
+        openPopover(panelId, btn);
+
+        // active state
+        rail.querySelectorAll(".rail-btn").forEach((b) =>
+            b.classList.toggle("active", b === btn)
         );
     }
 
-    function closeDrawer() {
-        drawer?.classList.remove("open");
-        panels.forEach((pid) => document.getElementById(pid)?.classList.remove("show"));
-        rail?.querySelectorAll(".rail-btn").forEach((b) => b.classList.remove("active"));
-    }
-
-    btnShortcutsRail?.addEventListener("click", () => {
-        const help = document.getElementById("help");
-        if (help) help.style.display = "flex";
+    // Reposition on resize if open
+    window.addEventListener("resize", () => {
+        const pop = document.getElementById("onx-tool-pop");
+        if (!pop || pop.style.display === "none") return;
+        const btn = rail.querySelector(".rail-btn.active");
+        if (!btn) return;
+        const stack = document.getElementById("onx-float-left-stack") || rail.parentElement;
+        window.ONEXUS?.ui?.positionPopover?.(pop, {
+            anchorEl: btn,
+            stackEl: stack,
+            mode: "stackBottom",
+            preferRight: true,
+            avoidMinimap: true,
+        });
     });
 
-    rail?.addEventListener("click", (e) => {
+    // Wire clicks
+    rail.addEventListener("click", (e) => {
         const btn = e.target.closest(".rail-btn");
         if (!btn) return;
         const panelId = btn.dataset.panel;
-        if (!panelId) return;
-
-        const isOpen = drawer?.classList.contains("open");
-        const currentActive = rail.querySelector(".rail-btn.active")?.dataset?.panel;
-
-        if (isOpen && currentActive === panelId) closeDrawer();
-        else showPanel(panelId);
+        if (!panelId || !PANELS.includes(panelId)) return;
+        toggle(panelId, btn);
     });
-
-    closeBtn?.addEventListener("click", closeDrawer);
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && drawer?.classList.contains("open")) closeDrawer();
-    });
-
-    // start closed
-    closeDrawer();
-})();
-
-(function () {
-    /* ==========================================================
-       Floating Details + Overlay relocation (Legend/Metrics)
-       index_leftRail.html only
-    ========================================================== */
-    const cy = window.cy;
-    if (!cy) return;
-
-    const EMPTY_PHRASE = "Click a node or relationship.";
-    const $ = (id) => document.getElementById(id);
-
-    function ensureOverlayContainers() {
-        const wrap = $("canvas-wrap") || cy.container()?.parentElement || cy.container();
-        if (!wrap) return null;
-
-        let legendOverlay = $("legendOverlay");
-        if (!legendOverlay) {
-            legendOverlay = document.createElement("div");
-            legendOverlay.id = "legendOverlay";
-            legendOverlay.className = "onx-corner";
-            legendOverlay.setAttribute("aria-label", "Legend overlay");
-            Object.assign(legendOverlay.style, { top: "12px", right: "12px", alignItems: "flex-end" });
-            wrap.appendChild(legendOverlay);
-        }
-
-        let metricsOverlay = $("metricsOverlay");
-        if (!metricsOverlay) {
-            metricsOverlay = document.createElement("div");
-            metricsOverlay.id = "metricsOverlay";
-            metricsOverlay.className = "onx-corner";
-            metricsOverlay.setAttribute("aria-label", "Metrics overlay");
-            Object.assign(metricsOverlay.style, { right: "12px", bottom: "12px", alignItems: "flex-end" });
-            wrap.appendChild(metricsOverlay);
-        }
-
-        let float = $("onxFloatDetails");
-        if (!float) {
-            float = document.createElement("div");
-            float.id = "onxFloatDetails";
-            float.setAttribute("aria-label", "Floating details");
-            float.innerHTML = `
-        <div class="onx-fd-top">
-          <button class="onx-fd-close" type="button" title="Close" aria-label="Close">✕</button>
-        </div>
-        <div class="onx-fd-body" id="onxFloatDetailsBody"></div>
-      `;
-            wrap.appendChild(float);
-        }
-
-        float.querySelector(".onx-fd-close")?.addEventListener("click", () => hideFloat());
-        return { wrap, legendOverlay, metricsOverlay, float };
-    }
-
-    const dom = ensureOverlayContainers();
-    if (!dom) return;
-
-    function relocateLegendAndMetrics() {
-        const legend = $("legend");
-        const metrics = $("metrics");
-        const controls = $("legendControls");
-
-        if (legend && legend.parentElement !== dom.legendOverlay) dom.legendOverlay.appendChild(legend);
-        if (metrics && metrics.parentElement !== dom.metricsOverlay) dom.metricsOverlay.appendChild(metrics);
-
-        if (controls) {
-            const edgeCb = $("toggleEdgeLabels");
-            const nodeCb = $("toggleNodeLabels");
-
-            const edgeLabel = edgeCb?.closest("label");
-            const nodeLabel = nodeCb?.closest("label");
-
-            controls.style.display = (edgeCb || nodeCb) ? "flex" : "none";
-
-            if (edgeLabel && edgeLabel.parentElement !== controls) controls.appendChild(edgeLabel);
-            if (nodeLabel && nodeLabel.parentElement !== controls) controls.appendChild(nodeLabel);
-
-            if (!edgeLabel && edgeCb && edgeCb.parentElement !== controls) {
-                const l = document.createElement("label");
-                l.appendChild(edgeCb);
-                l.appendChild(document.createTextNode(" Show edge labels"));
-                controls.appendChild(l);
-            }
-            if (!nodeLabel && nodeCb && nodeCb.parentElement !== controls) {
-                const l = document.createElement("label");
-                l.appendChild(nodeCb);
-                l.appendChild(document.createTextNode(" Show node labels"));
-                controls.appendChild(l);
-            }
-        }
-    }
-
-    relocateLegendAndMetrics();
-    cy.on("layoutstop", relocateLegendAndMetrics);
-    cy.on("add remove", relocateLegendAndMetrics);
-
-    // Floating details anchored to selection
-    const float = $("onxFloatDetails");
-    const floatBody = $("onxFloatDetailsBody");
-    let anchor = null;
-    let lastHtml = "";
-
-    function isEmptyDetails(html) {
-        const tmp = document.createElement("div");
-        tmp.innerHTML = String(html ?? "");
-        const t = (tmp.textContent ?? "").trim();
-        return !t || t === EMPTY_PHRASE;
-    }
-
-    function showFloat(html) {
-        if (!float || !floatBody) return;
-        if (isEmptyDetails(html)) { hideFloat(); return; }
-        lastHtml = String(html ?? "");
-        floatBody.innerHTML = lastHtml;
-        float.style.display = "block";
-        positionFloat();
-    }
-
-    function hideFloat() {
-        if (!float || !floatBody) return;
-        float.style.display = "none";
-        floatBody.innerHTML = "";
-        lastHtml = "";
-        anchor = null;
-    }
-
-    function anchorRenderedPoint() {
-        if (!anchor || !anchor.nonempty?.() || !anchor.nonempty()) return null;
-        if (typeof anchor.isNode === "function" && anchor.isNode()) return anchor.renderedPosition();
-        if (typeof anchor.isEdge === "function" && anchor.isEdge()) {
-            const s = anchor.source()?.renderedPosition?.();
-            const t = anchor.target()?.renderedPosition?.();
-            if (!s || !t) return null;
-            return { x: (s.x + t.x) / 2, y: (s.y + t.y) / 2 };
-        }
-        return null;
-    }
-
-    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-
-    function positionFloat() {
-        if (!float || float.style.display === "none") return;
-        const pt = anchorRenderedPoint();
-        if (!pt) return;
-
-        const host = cy.container();
-        if (!host) return;
-        const hostRect = host.getBoundingClientRect();
-
-        float.style.left = "0px";
-        float.style.top = "0px";
-
-        const w = float.offsetWidth || 280;
-        const h = float.offsetHeight || 140;
-        const pad = 12;
-        const dx = 16;
-        const dy = -10;
-
-        let left = pt.x + dx;
-        let top = pt.y + dy;
-
-        if (left + w > hostRect.width - pad) left = pt.x - w - dx;
-        if (left < pad) left = pad;
-
-        top = clamp(top, pad, hostRect.height - h - pad);
-
-        float.style.left = `${Math.round(left)}px`;
-        float.style.top = `${Math.round(top)}px`;
-    }
-
-    function debounce(fn, ms) {
-        let t = 0;
-        return function () {
-            clearTimeout(t);
-            t = setTimeout(() => fn(), ms);
-        };
-    }
-
-    const positionFloatDebounced = debounce(positionFloat, 20);
-    cy.on("pan zoom", positionFloatDebounced);
-    window.addEventListener("resize", positionFloatDebounced);
-
-    cy.on("tap", (evt) => {
-        if (evt.target === cy) hideFloat();
-    });
-
-    // HARD HOOK: drive float from cy taps (robust)
-    (function hookCyTapForFloat() {
-        if (cy.__onxFloatTapHooked) return;
-        cy.__onxFloatTapHooked = true;
-
-        const _updateNode = window.updateDetailsForNode?.bind(window);
-        const _updateEdge = window.updateDetailsForEdge?.bind(window);
-
-        cy.on("tap", "node", (evt) => {
-            try {
-                anchor = evt.target;
-                if (_updateNode) _updateNode(evt.target);
-
-                if (!lastHtml || isEmptyDetails(lastHtml)) {
-                    const d = evt.target.data();
-                    showFloat(
-                        `<b>${d.displayLabel ?? d.id}</b><br>` +
-                        `Type: ${d.nodeType ?? "-"}<br>` +
-                        `Category: ${d.category ?? d.revitCategory ?? "-"}<br>` +
-                        `Level: ${d.level ?? "-"}`
-                    );
-                }
-                positionFloat();
-            } catch (e) {
-                console.error("onx float node tap failed", e);
-            }
-        });
-
-        cy.on("tap", "edge", (evt) => {
-            try {
-                anchor = evt.target;
-                if (_updateEdge) _updateEdge(evt.target);
-
-                if (!lastHtml || isEmptyDetails(lastHtml)) {
-                    const d = evt.target.data();
-                    showFloat(
-                        `<b>${d.displayType ?? d.type ?? "Relation"}</b><br>` +
-                        `Dimension: ${d.dimension ?? "-"}<br>` +
-                        `Phase: ${(d.phase ?? []).join(", ")}<br>` +
-                        `Owner: ${d.owner ?? "-"}<br>` +
-                        `Confidence: ${d.confidence ?? "-"}<br>` +
-                        `Risk: ${d.risk ?? "-"}`
-                    );
-                }
-                positionFloat();
-            } catch (e) {
-                console.error("onx float edge tap failed", e);
-            }
-        });
-    })();
-
-    // Wrap existing core detail functions (no core edits)
-    const origSetDetailsMessage = window.setDetailsMessage?.bind(window);
-    if (origSetDetailsMessage) {
-        window.setDetailsMessage = function (html) {
-            origSetDetailsMessage(html);
-            showFloat(html);
-        };
-    }
-
-    const origUpdateNode = window.updateDetailsForNode?.bind(window);
-    if (origUpdateNode) {
-        window.updateDetailsForNode = function (node) {
-            anchor = node;
-            origUpdateNode(node);
-            positionFloat();
-        };
-    }
-
-    const origUpdateEdge = window.updateDetailsForEdge?.bind(window);
-    if (origUpdateEdge) {
-        window.updateDetailsForEdge = function (edge) {
-            anchor = edge;
-            origUpdateEdge(edge);
-            positionFloat();
-        };
-    }
-
-    // boot mirror
-    const bootDetails = $("details")?.innerHTML;
-    if (bootDetails && !isEmptyDetails(bootDetails)) showFloat(bootDetails);
-
-    setTimeout(() => {
-        relocateLegendAndMetrics();
-        window.buildRelationshipLegend?.();
-        window.updateMetrics?.();
-    }, 120);
 })();
