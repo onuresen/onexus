@@ -195,8 +195,10 @@ body {
 
 #metricsOverlay {
     right: 12px;
-    bottom: 12px;
+    /* position metrics above the minimap: minimap height (150px) + 8px gap */
+    bottom: calc(12px + 150px + 8px);
     align-items: flex-end;
+    z-index: 12;
 }
 
 #legendOverlay #legend,
