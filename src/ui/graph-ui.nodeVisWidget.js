@@ -221,24 +221,6 @@
         return { fab, pop };
     }
 
-    function positionNodeVisPopoverRight() {
-        const stack = document.getElementById("onx-float-left-stack");
-        const pop = document.getElementById("onx-nodevis-pop");
-        if (!stack || !pop) return;
-
-        if (getComputedStyle(stack).position === "static") stack.style.position = "relative";
-
-        pop.style.position = "absolute";
-        pop.style.left = "calc(100% + 10px)";
-        pop.style.bottom = "0px";
-        pop.style.top = "auto";
-        pop.style.right = "auto";
-        pop.style.transform = "none";
-        pop.style.zIndex = "100";
-        pop.style.maxHeight = "calc(100vh - 24px)";
-        pop.style.overflow = "auto";
-    }
-
     function listCategoriesWithCounts() {
         const map = new Map();
         cy.nodes().forEach((n) => {
