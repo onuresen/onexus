@@ -3,10 +3,19 @@
     const ONX = window.ONEXUS;
     if (!ONX || typeof ONX.registerPlugin !== "function") return;
 
+    function escapeHtml(s) {
+        return String(s ?? "").replace(/[&<>"']/g, (m) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[m]));
+    }
+
     ONX.registerPlugin({
         id: "explain-controls",
         register(api) {
-
             // Edge type == key => auto-match edges with data.type === "Controls"
             api.registerExplanationTemplate("Controls", {
                 label: "Why this is a Controls relation",
@@ -25,13 +34,6 @@
           `;
                 }
             });
-
-            // Helper local
-            function escapeHtml(s) {
-                return String(s ?? "").replace(/[&<>"']/g, m => ({
-                    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-                }[m]));
-            }
         }
     });
 })();

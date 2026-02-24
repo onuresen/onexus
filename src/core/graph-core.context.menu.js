@@ -12,7 +12,6 @@
     menu = document.createElement("div");
     menu.id = "cy-context-menu";
     document.body.appendChild(menu);
-
     Object.assign(menu.style, {
       position: "fixed",
       display: "none",
@@ -61,7 +60,6 @@
     });
 
     m.style.display = "block";
-
     const rect = m.getBoundingClientRect();
     const ww = innerWidth, wh = innerHeight;
     let left = x, top = y;
@@ -93,16 +91,14 @@
     // Prefer the official clearer if present
     try { window.onexusPath?.clearHighlight?.(); } catch { }
     // Also defensively remove classes (in case a plugin applied them directly)
-    try {
-      cy.elements().removeClass("path upstream downstream");
-    } catch { }
+    try { cy.elements().removeClass("path upstream downstream highlight"); } catch { }
   }
 
   function applyTraceHighlight(col, mode) {
     clearTraceHighlight();
     if (!col) return;
     try {
-      const c = (col.collection && col.collection()) ? col : cy.collection(col);
+      const c = (col && col.nonempty && col.nonempty()) ? col : cy.collection(col);
       if (!exists(c)) return;
       c.addClass("path");
       if (mode === "upstream") c.addClass("upstream");
@@ -131,6 +127,23 @@
       };
     }
     return null;
+  }
+
+  function handleTraceResult(res, entry) {
+    if (!res) return;
+
+    let mode = entry.mode || "path";
+    let col = res;
+
+    // Accept: Cytoscape collection OR { collection/elements, mode, message }
+    if (res && typeof res === "object" && (res.collection || res.elements)) {
+      mode = res.mode || mode;
+      col = res.collection || res.elements;
+      if (res.message) window.showTransientMessage?.(String(res.message));
+    }
+
+    applyTraceHighlight(col, mode);
+    window.showTransientMessage?.(entry.label);
   }
 
   function getPluginTraceItems(node) {
@@ -165,65 +178,37 @@
       clear: clearTraceHighlight,
     };
 
-    // filter with when()
     entries = entries.filter(e => {
       try { return e.when ? !!e.when(ctx) : true; } catch { return false; }
     });
 
     entries.sort((a, b) => (a.order - b.order) || a.label.localeCompare(b.label));
 
-    // convert to menu items
     return entries.map(e => ({
       label: e.label,
       action: () => {
-        const ctx2 = { ...ctx };
         let res;
-        try { res = e.run(ctx2); } catch (err) {
+        try { res = e.run(ctx); } catch (err) {
           console.error("Trace run failed:", e.id, err);
           alert("Trace failed: " + (err?.message ?? err));
           return;
         }
 
-        // Accept:
-        // - Cytoscape collection
-        // - { collection, mode, message }
-        // - { elements, mode, message } where elements is array/collection
+        // async support
         if (res && typeof res.then === "function") {
-          // async
-          res.then(r => handleTraceResult(r, e, ctx2)).catch(err => {
+          res.then(r => handleTraceResult(r, e)).catch(err => {
             console.error("Trace async failed:", e.id, err);
             alert("Trace failed: " + (err?.message ?? err));
           });
         } else {
-          handleTraceResult(res, e, ctx2);
+          handleTraceResult(res, e);
         }
       }
     }));
   }
 
-  function handleTraceResult(res, entry, ctx) {
-    if (!res) return;
-
-    let mode = entry.mode || "path";
-    let col = res;
-
-    if (res && typeof res === "object" && (res.collection || res.elements)) {
-      mode = res.mode || mode;
-      col = res.collection || res.elements;
-      if (res.message) window.showTransientMessage?.(String(res.message));
-    }
-
-    // allow plugin to call ctx.highlight itself, but also handle returns
-    try {
-      applyTraceHighlight(col, mode);
-      window.showTransientMessage?.(entry.label);
-    } catch (e) {
-      console.warn("Trace highlight failed", e);
-    }
-  }
-
   // ===============================
-  // Existing menu groups
+  // Menu item groups
   // ===============================
   function itemsForNode(node) {
     // ---- Group 1: Edit
@@ -311,7 +296,6 @@
       { label: "Export node JSON", action: () => exportNodeJson(node) }
     ];
 
-    // ---- Assemble with dividers only between non-empty groups
     const out = [];
     const addGroup = (g) => {
       if (!g || !g.length) return;

@@ -8,18 +8,22 @@
         register(api) {
             api.registerTraceBehavior("bfsNhops", {
                 label: "Trace: Neighborhood (N-hop BFS)",
-                mode: "path",      // or 'upstream' / 'downstream'
+                mode: "path",
                 order: 10,
                 when: ({ cy, node }) => !!cy && !!node,
-                run: ({ cy, node, state }) => {
+                run: ({ node, state }) => {
+                    const cy = window.cy;
                     const d = state?.focusDepth ?? 2;
+
                     let frontier = node.collection();
                     let seen = frontier;
+
                     for (let hop = 1; hop <= d; hop++) {
                         const neigh = frontier.closedNeighborhood(":visible");
                         seen = seen.union(neigh);
                         frontier = neigh.nodes();
                     }
+
                     return { collection: seen, mode: "path", message: `BFS ${d}-hop` };
                 }
             });
