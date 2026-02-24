@@ -1,0 +1,192 @@
+{
+    "meta": {
+        "exportedAt": "2026-02-24T07:00:00.000Z",
+        "languageDefault": "en",
+        "phases": [
+            "Design",
+            "Procurement",
+            "Construction",
+            "Commissioning"
+        ]
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "SYS-SEC",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "Security System",
+                        "jp": "セキュリティシステム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ROOM-ENT",
+                    "nodeType": "Space",
+                    "category": "Room",
+                    "label": {
+                        "en": "Entrance Lobby",
+                        "jp": "エントランスホール"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "DEV-CAM-01",
+                    "nodeType": "Component",
+                    "category": "SecurityDevice",
+                    "label": {
+                        "en": "Camera 01",
+                        "jp": "カメラ01"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "DEV-ACP-01",
+                    "nodeType": "Component",
+                    "category": "ControlPanel",
+                    "label": {
+                        "en": "Access Panel 01",
+                        "jp": "入退室パネル01"
+                    },
+                    "level": "L1"
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-DESIGN",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "Design Team",
+                        "jp": "設計チーム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VND-SEC",
+                    "nodeType": "Vendor",
+                    "category": "SecurityVendor",
+                    "label": {
+                        "en": "SecureTech",
+                        "jp": "セキュアテック"
+                    }
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "e_DEV-CAM-01_LocatedIn_ROOM-ENT",
+                    "type": "LocatedIn",
+                    "dimension": "Spatial",
+                    "directional": true,
+                    "source": "DEV-CAM-01",
+                    "target": "ROOM-ENT",
+                    "phase": [
+                        "Construction"
+                    ],
+                    "owner": "MEP",
+                    "risk": "Low",
+                    "confidence": "Explicit",
+                    "notes": "Installed at lobby ceiling."
+                }
+            },
+            {
+                "data": {
+                    "id": "e_DEV-CAM-01_PartOfSystem_SYS-SEC",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "directional": false,
+                    "source": "DEV-CAM-01",
+                    "target": "SYS-SEC",
+                    "phase": [
+                        "Design",
+                        "Procurement"
+                    ],
+                    "owner": "Security",
+                    "risk": "Medium",
+                    "confidence": "Explicit",
+                    "notes": "Camera belongs to Security System."
+                }
+            },
+            {
+                "data": {
+                    "id": "e_DEV-ACP-01_PartOfSystem_SYS-SEC",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "directional": false,
+                    "source": "DEV-ACP-01",
+                    "target": "SYS-SEC",
+                    "phase": [
+                        "Design",
+                        "Procurement",
+                        "Construction"
+                    ],
+                    "owner": "Security",
+                    "risk": "Medium",
+                    "confidence": "Explicit",
+                    "notes": "Panel is part of Security System."
+                }
+            },
+            {
+                "data": {
+                    "id": "e_DEV-ACP-01_Controls_DEV-CAM-01",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "directional": true,
+                    "source": "DEV-ACP-01",
+                    "target": "DEV-CAM-01",
+                    "phase": [
+                        "Commissioning"
+                    ],
+                    "owner": "Security",
+                    "risk": "High",
+                    "confidence": "Inferred",
+                    "notes": "Control integration assumed; verify wiring & config."
+                }
+            },
+            {
+                "data": {
+                    "id": "e_SYS-SEC_DesignedBy_ORG-DESIGN",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "directional": true,
+                    "source": "SYS-SEC",
+                    "target": "ORG-DESIGN",
+                    "phase": [
+                        "Design"
+                    ],
+                    "owner": "PMO",
+                    "risk": "Low",
+                    "confidence": "Explicit",
+                    "notes": ""
+                }
+            },
+            {
+                "data": {
+                    "id": "e_SYS-SEC_ProvidedBy_VND-SEC",
+                    "type": "ProvidedBy",
+                    "dimension": "Vendor",
+                    "directional": true,
+                    "source": "SYS-SEC",
+                    "target": "VND-SEC",
+                    "phase": [
+                        "Procurement"
+                    ],
+                    "owner": "Procurement",
+                    "risk": "Medium",
+                    "confidence": "Explicit",
+                    "notes": "Vendor contract TBD."
+                }
+            }
+        ]
+    }
+}

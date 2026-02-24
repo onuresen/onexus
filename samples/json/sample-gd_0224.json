@@ -1,0 +1,58 @@
+{
+    "type": "onexus/generative-design",
+    "problem": {
+        "id": "SEC_OPT_001",
+        "name": "Security Optimization"
+    },
+    "options": [
+        {
+            "id": "opt-1",
+            "rank": 1,
+            "pareto": true,
+            "createdAt": "2026-02-24T07:00:00.000Z",
+            "scores": {
+                "cost": 0.72,
+                "coverage": 0.88,
+                "risk": 0.35
+            },
+            "parameters": {
+                "cameraCount": 12,
+                "panelCount": 2
+            },
+            "constraintsEval": {
+                "powerBudgetOk": true,
+                "networkOk": true
+            },
+            "affected": {
+                "nodes": [
+                    {
+                        "id": "DEV-CAM-01",
+                        "metrics": {
+                            "coverageGain": 0.14,
+                            "costDelta": 0.08
+                        }
+                    },
+                    {
+                        "id": "DEV-ACP-01",
+                        "metrics": {
+                            "riskDelta": -0.05,
+                            "installEffort": 0.12
+                        }
+                    }
+                ],
+                "edges": [
+                    {
+                        "source": "DEV-ACP-01",
+                        "target": "DEV-CAM-01",
+                        "type": "Controls",
+                        "dimension": "System",
+                        "directional": true,
+                        "metrics": {
+                            "integrationComplexity": 0.6
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

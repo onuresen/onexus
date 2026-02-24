@@ -1,5 +1,5 @@
 /* ONEXUS – Context: Menu (invokes Link API, Pathfinder, View actions)
- PATCH: adds Plugin Trace behaviors section.
+   PATCH: reorganized item ordering & grouping
 */
 (function () {
   const cy = window.cy;
@@ -61,7 +61,6 @@
     });
 
     m.style.display = "block";
-
     const rect = m.getBoundingClientRect();
     const ww = innerWidth, wh = innerHeight;
     let left = x, top = y;
@@ -84,147 +83,6 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
 
-  // ===============================
-  // Plugin Trace Support
-  // ===============================
-  function exists(col) { return !!col && !!col.nonempty && col.nonempty(); }
-
-  function clearTraceHighlight() {
-    // Prefer the official clearer if present
-    try { window.onexusPath?.clearHighlight?.(); } catch { }
-    // Also defensively remove classes (in case a plugin applied them directly)
-    try {
-      cy.elements().removeClass("path upstream downstream");
-    } catch { }
-  }
-
-  function applyTraceHighlight(col, mode) {
-    clearTraceHighlight();
-    if (!col) return;
-    try {
-      const c = (col.collection && col.collection()) ? col : cy.collection(col);
-      if (!exists(c)) return;
-      c.addClass("path");
-      if (mode === "upstream") c.addClass("upstream");
-      else if (mode === "downstream") c.addClass("downstream");
-      cy.fit(c, 60);
-    } catch (e) {
-      console.warn("applyTraceHighlight failed", e);
-    }
-  }
-
-  // Normalize trace behavior entry:
-  // - function(ctx) -> res
-  // - { label, run(ctx), mode, when(ctx), order }
-  function normalizeTraceEntry(key, val) {
-    if (typeof val === "function") {
-      return { id: key, label: `Trace: ${key}`, run: val, mode: "path", order: 100 };
-    }
-    if (val && typeof val === "object") {
-      return {
-        id: String(key),
-        label: val.label || `Trace: ${key}`,
-        run: typeof val.run === "function" ? val.run : null,
-        mode: val.mode || "path",
-        when: typeof val.when === "function" ? val.when : null,
-        order: Number.isFinite(val.order) ? val.order : 100,
-      };
-    }
-    return null;
-  }
-
-  function getPluginTraceItems(node) {
-    const map = window.ONEXUS?.plugins?.traceBehaviors;
-    if (!map) return [];
-
-    let entries = [];
-    try {
-      if (map instanceof Map) {
-        for (const [k, v] of map.entries()) {
-          const e = normalizeTraceEntry(k, v);
-          if (e && e.run) entries.push(e);
-        }
-      } else if (typeof map === "object") {
-        for (const k of Object.keys(map)) {
-          const e = normalizeTraceEntry(k, map[k]);
-          if (e && e.run) entries.push(e);
-        }
-      }
-    } catch (e) {
-      console.warn("Trace behaviors read failed", e);
-      return [];
-    }
-
-    const ctx = {
-      cy,
-      node,
-      state: window.__onexus_state,
-      meta: window.__onexus_meta,
-      util: window.ONEXUS?.util || {},
-      highlight: applyTraceHighlight,
-      clear: clearTraceHighlight,
-    };
-
-    // filter with when()
-    entries = entries.filter(e => {
-      try { return e.when ? !!e.when(ctx) : true; } catch { return false; }
-    });
-
-    entries.sort((a, b) => (a.order - b.order) || a.label.localeCompare(b.label));
-
-    // convert to menu items
-    return entries.map(e => ({
-      label: e.label,
-      action: () => {
-        const ctx2 = { ...ctx };
-        let res;
-        try { res = e.run(ctx2); } catch (err) {
-          console.error("Trace run failed:", e.id, err);
-          alert("Trace failed: " + (err?.message ?? err));
-          return;
-        }
-
-        // Accept:
-        // - Cytoscape collection
-        // - { collection, mode, message }
-        // - { elements, mode, message } where elements is array/collection
-        if (res && typeof res.then === "function") {
-          // async
-          res.then(r => handleTraceResult(r, e, ctx2)).catch(err => {
-            console.error("Trace async failed:", e.id, err);
-            alert("Trace failed: " + (err?.message ?? err));
-          });
-        } else {
-          handleTraceResult(res, e, ctx2);
-        }
-      }
-    }));
-  }
-
-  function handleTraceResult(res, entry, ctx) {
-    if (!res) return;
-
-    let mode = entry.mode || "path";
-    let col = res;
-
-    if (res && typeof res === "object" && (res.collection || res.elements)) {
-      mode = res.mode || mode;
-      col = res.collection || res.elements;
-      if (res.message) window.showTransientMessage?.(String(res.message));
-    }
-
-    // allow plugin to call ctx.highlight itself, but also handle returns
-    try {
-      applyTraceHighlight(col, mode);
-      window.showTransientMessage?.(entry.label);
-    } catch (e) {
-      console.warn("Trace highlight failed", e);
-    }
-  }
-
-  // ===============================
-  // Existing menu groups
-  // ===============================
   function itemsForNode(node) {
     // ---- Group 1: Edit
     const edit = [
@@ -271,6 +129,7 @@
     const connect = [];
     const linkApi = window.__onexusLink;
     const src = window.__onexus_edit?.linkSource;
+
     if (linkApi?.beginManualLink) {
       if (!src) {
         connect.push({ label: "Start relation from here…", action: () => linkApi.beginManualLink(node) });
@@ -291,6 +150,7 @@
         { label: "Upstream (N-hop)", action: () => window.onexusPath.upstreamFrom(node) },
         { label: "Downstream (N-hop)", action: () => window.onexusPath.downstreamFrom(node) }
       );
+
       const chip = document.getElementById("onexus-path-chip");
       if (!chip || chip.style.display === "none") {
         analysis.push({ label: "Start path from here…", action: () => window.onexusPath.beginFrom(node) });
@@ -300,11 +160,7 @@
           { label: "Cancel path selection", action: () => window.onexusPath.cancel() }
         );
       }
-      analysis.push({ label: "Clear path highlight", action: () => window.onexusPath?.clearHighlight?.() });
     }
-
-    // ---- Group 4.5: Trace (Plugins)
-    const pluginTrace = getPluginTraceItems(node);
 
     // ---- Group 5: Export
     const exportGroup = [
@@ -314,7 +170,7 @@
     // ---- Assemble with dividers only between non-empty groups
     const out = [];
     const addGroup = (g) => {
-      if (!g || !g.length) return;
+      if (!g.length) return;
       if (out.length) out.push({ type: "divider" });
       out.push(...g);
     };
@@ -323,7 +179,6 @@
     addGroup(view);
     addGroup(connect);
     addGroup(analysis);
-    addGroup(pluginTrace);
     addGroup(exportGroup);
 
     return out;
@@ -381,7 +236,6 @@
   });
 
   document.addEventListener("click", hide);
-
   document.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") {
       hide();

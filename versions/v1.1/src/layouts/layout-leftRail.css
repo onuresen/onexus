@@ -1,0 +1,296 @@
+/* =========================================
+   Layout: Left Rail + Drawer (index_leftRail.html)
+========================================= */
+
+body {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "toolbar"
+        "canvas";
+}
+
+/* ---- Left Icon Rail + Drawer (overlay; does NOT affect layout grid) ---- */
+#leftRail {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 30;
+}
+
+#leftRail .rail-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: #ffffff;
+    border: 1px solid var(--stroke);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    user-select: none;
+    font-size: 18px;
+}
+
+#leftRail .rail-btn:hover {
+    background: var(--btn-bg-hover);
+}
+
+#leftRail .rail-btn.active {
+    outline: 2px solid rgba(17, 24, 39, 0.18);
+    background: #ffffff;
+}
+
+#leftDrawer {
+    position: absolute;
+    top: 12px;
+    left: 66px;
+    width: 360px;
+    max-width: min(360px, calc(100vw - 120px));
+    bottom: 12px;
+    background: var(--bg-panel);
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    z-index: 29;
+    display: none;
+}
+
+#leftDrawer.open {
+    display: flex;
+    flex-direction: column;
+}
+
+.drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--stroke);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(6px);
+}
+
+.drawer-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.drawer-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid var(--stroke);
+    background: #fff;
+    cursor: pointer;
+}
+
+.drawer-close:hover {
+    background: var(--btn-bg-hover);
+}
+
+#drawerBody {
+    padding: 12px 14px;
+    overflow: auto;
+}
+
+.drawer-panel {
+    display: none;
+}
+
+.drawer-panel.show {
+    display: block;
+}
+
+/* Slide-in micro animations */
+.inspector-section {
+    transition: opacity .16s ease, transform .16s ease;
+    transform: translateX(10px);
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+.inspector-section.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.inspector-section.hidden {
+    pointer-events: none;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 0 !important;
+}
+
+/* Details empty state */
+#details.empty {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Corner overlays + floating details */
+.onx-corner {
+    position: absolute;
+    z-index: 22;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.onx-corner>* {
+    pointer-events: auto;
+}
+
+#legendControls {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+    margin-bottom: 6px;
+    padding: 6px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+:root.theme-dark #legendControls {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(15, 17, 21, 0.40);
+}
+
+#legendControls label {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+}
+
+#legendControls input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #2563eb;
+}
+
+#legendOverlay {
+    top: 12px;
+    right: 12px;
+    align-items: flex-end;
+}
+
+#metricsOverlay {
+    right: 12px;
+    /* position metrics above the minimap: minimap height (150px) + 8px gap */
+    bottom: calc(12px + 150px + 8px);
+    align-items: flex-end;
+    z-index: 12;
+}
+
+#legendOverlay #legend,
+#metricsOverlay #metrics {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+#legendOverlay .legend-item {
+    background: transparent;
+    padding: 2px 4px;
+    border-radius: 999px;
+}
+
+#legendOverlay .legend-item:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+:root.theme-dark #legendOverlay .legend-item:hover {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+#metricsOverlay #metrics>div {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+    line-height: 1.35;
+}
+
+#onxFloatDetails {
+    position: absolute;
+    z-index: 23;
+    min-width: 240px;
+    max-width: 340px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+    color: var(--text-main);
+    display: none;
+    pointer-events: auto;
+    user-select: text;
+}
+
+:root.theme-dark #onxFloatDetails {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(15, 17, 21, 0.64);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+}
+
+#onxFloatDetails .onx-fd-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 6px;
+}
+
+#onxFloatDetails .onx-fd-close {
+    width: 26px;
+    height: 26px;
+    border-radius: 10px;
+    border: 1px solid var(--stroke);
+    background: var(--btn-bg);
+    cursor: pointer;
+    line-height: 0;
+    display: grid;
+    place-items: center;
+    color: var(--text-main);
+}
+
+#onxFloatDetails .onx-fd-close:hover {
+    background: var(--btn-bg-hover);
+}
+
+#onxFloatDetails .onx-fd-body {
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+@media (max-width: 1100px) {
+    #leftDrawer {
+        width: 320px;
+        left: 60px;
+    }
+
+    #leftRail {
+        top: 10px;
+        left: 10px;
+    }
+}
