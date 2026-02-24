@@ -1,0 +1,5 @@
+"id","type","dimension","directional","source","target","phase","owner","risk","confidence","notes"
+"e1","LocatedIn","Spatial","1","DEV-CAM-01","ROOM-ENT","Construction","MEP","Low","Explicit","Installed at lobby ceiling."
+"e2","PartOfSystem","System","0","DEV-CAM-01","SYS-SEC","Design\nProcurement","Security","Medium","Explicit","Belongs to Security System."
+"e3","PartOfSystem","System","0","DEV-ACP-01","SYS-SEC","Design\nProcurement\nConstruction","Security","Medium","Explicit","Panel included in scope."
+"e4","Controls","System","1","DEV-ACP-01","DEV-CAM-01","Commissioning","Security","High","Inferred","Verify integration."

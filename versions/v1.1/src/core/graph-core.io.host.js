@@ -184,30 +184,27 @@
   // ---- Host integration: load graph object (used by unified loader & compare)
   function loadGraphObject(graph) {
     try {
-      // NEW: plugin lifecycle event (willLoad)
-      try { window.ONEXUS?.bus?.emit?.("graphWillLoad", { graph }); } catch { }
-
       const res = validateOnexusJson(graph);
       if (res && res.valid === false) {
         console.error("ONEXUS schema errors:", res.errors);
         alert("Invalid ONEXUS JSON:\n" + res.errors.join("\n"));
-        // NEW: plugin lifecycle event (failed)
-        try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph, errors: res.errors }); } catch { }
         return;
       }
 
       const c = window.cy;
       if (!c) {
         console.error("Cytoscape not ready");
-        try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph, errors: ["Cytoscape not ready"] }); } catch { }
         return;
       }
 
       const data = normalizeGraph(graph);
+
       window.__onexus_meta = data.meta ?? {};
+
       c.elements().remove();
       c.add(data.elements?.nodes ?? []);
       c.add(data.elements?.edges ?? []);
+
       const lang = window.__onexus_state?.language ?? (graph?.meta?.languageDefault ?? "en");
       window.setLanguage?.(lang);
       window.buildCategoryFilter?.();
@@ -219,20 +216,9 @@
       window.setNodeLabelVisibility?.(true);
       window.buildRelationshipLegend?.();
       window.updateMetrics?.();
-
-      // NEW: plugin lifecycle event (loaded)
-      try {
-        window.ONEXUS?.bus?.emit?.("graphLoaded", {
-          graph: data,
-          meta: window.__onexus_meta,
-          counts: { nodes: c.nodes().length, edges: c.edges().length }
-        });
-      } catch { }
-
     } catch (e) {
       console.error("Failed to load graph object:", e);
       alert("Failed to load graph: " + e.message);
-      try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph, error: e }); } catch { }
     }
   }
 
