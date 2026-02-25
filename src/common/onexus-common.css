@@ -596,3 +596,131 @@ button.flat:hover {
     color: var(--text-muted);
     line-height: 1.35;
 }
+
+/* =========================================================
+ ONEXUS – Toolbar v2 (Two-row, general)
+ - Row 1: Language/Layer/View/Theme/Load
+ - Row 2: Icon actions + Samples
+========================================================= */
+
+/* Wrap toolbar content into two logical rows */
+#toolbar {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    row-gap: 10px;
+    align-items: center;
+}
+
+/* Create row containers (injected by JS or fallback by CSS if not present) */
+#toolbar .onx-tb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Row 1: selectors + load */
+#toolbar .onx-tb-row.onx-tb-controls {
+    justify-content: flex-start;
+}
+
+/* Row 2: icon buttons + samples (keep tidy) */
+#toolbar .onx-tb-row.onx-tb-actions {
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+/* Iconbar stays compact and wraps nicely */
+#toolbar .onx-tb-row.onx-tb-actions .iconbar {
+    margin-left: 0 !important;
+    width: auto !important;
+    flex-wrap: wrap;
+}
+
+/* Samples wrapper aligns with iconbar */
+#onx-samples-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+}
+
+/* Compact sample select + button in toolbar */
+#toolbar #onx-samples-wrap .onx-samples-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+#toolbar #onx-samples-wrap .onx-samples-select {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1px solid var(--stroke);
+    background: transparent;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 220px;
+    max-width: 420px;
+}
+
+#toolbar #onx-samples-wrap .onx-samples-btn {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1px solid var(--stroke);
+    background: var(--btn-bg);
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+/* Remove any description label in toolbar by default (we will toast it instead) */
+#toolbar #onx-samples-wrap .onx-samples-desc {
+    display: none !important;
+}
+
+/* Mobile tuning: still two rows, but tighter */
+@media (pointer: coarse),
+(max-width: 820px) {
+    #toolbar {
+        row-gap: 8px;
+    }
+
+    #toolbar .onx-tb-row {
+        gap: 8px;
+    }
+
+    #toolbar #onx-samples-wrap .onx-samples-select {
+        min-width: 160px;
+        max-width: 60vw;
+    }
+}
+
+/* =========================================================
+ ONEXUS badge: pin to top-right of toolbar (all sizes)
+========================================================= */
+#toolbar {
+    position: relative;
+}
+
+#toolbar .badge {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    margin-left: 0 !important;
+    z-index: 5;
+}
+
+/* On very small screens, keep it from overlapping controls */
+@media (max-width: 520px) {
+    #toolbar .badge {
+        display: none;
+    }
+}

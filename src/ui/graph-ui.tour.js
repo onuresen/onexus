@@ -715,36 +715,45 @@
         }
     ]);
 
-    // ---------- Toolbar button injection + hotkey ----------
     function ensureTourButton() {
-        const bar = $(".iconbar") || $("#toolbar");
-        if (!bar) return;
+        // Prefer iconbar (action row) so it never becomes a stray toolbar child
+        const iconbar = document.querySelector("#toolbar .iconbar");
+        const toolbar = document.getElementById("toolbar");
+        if (!toolbar) return;
 
-        if ($("#btnTour")) return;
+        if (document.getElementById("btnTour")) return;
 
         const btn = document.createElement("button");
         btn.className = "icon-btn";
         btn.id = "btnTour";
         btn.title = "Tutorial (T)";
         btn.setAttribute("aria-label", "Tutorial");
-
         // simple "play" icon
         btn.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M10 8l6 4-6 4V8z"></path>
-        <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
-      </svg>
-    `;
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M10 8l6 4-6 4V8z"></path>
+      <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
+    </svg>
+  `;
+
         btn.addEventListener("click", () => start("basic"));
 
-        // place near badge if possible; otherwise append
-        const badge = $(".badge", bar) || $(".badge");
-        if (badge && badge.parentElement) {
-            badge.parentElement.insertBefore(btn, badge);
-        } else {
-            bar.appendChild(btn);
+        // ✅ Put it inside iconbar if present (best)
+        if (iconbar) {
+            iconbar.appendChild(btn);
+            return;
         }
+
+        // Fallback: if our two-row layout exists, use the actions row container
+        const actionRow = toolbar.querySelector(".onx-tb-row.onx-tb-actions");
+        if (actionRow) {
+            actionRow.appendChild(btn);
+            return;
+        }
+
+        // Last resort: append to toolbar end (still better than "before badge")
+        toolbar.appendChild(btn);
     }
 
     function bindHotkeys() {
