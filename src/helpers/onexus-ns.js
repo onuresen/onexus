@@ -1,14 +1,8 @@
-/* ONEXUS - Namespace & Shared Helpers (no deps)
-   Purpose:
-   - Create a stable global surface: window.ONEXUS
-   - Provide small shared utilities used across modules
-   - NO behavior change to existing code (safe to add first)
-*/
+/* ONEXUS - Namespace & Shared Helpers (no deps) */
 (function () {
   const root = (window.ONEXUS = window.ONEXUS || {});
   root.version = root.version || "0.1";
 
-  // ---- shared helpers (keep tiny & stable)
   root.util = root.util || {};
   const U = root.util;
 
@@ -31,13 +25,22 @@
     return String(s ?? "").replace(/[^\w\-:.]+/g, "_");
   };
 
-  // Optional event bus for future refactors (unused today)
+  // ✅ Correct HTML escape (used by loaders, dialogs, details renderers)
+  U.escapeHtml = U.escapeHtml || function escapeHtml(s) {
+    return String(s ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
+
   root.bus = root.bus || {
     on(type, fn) {
       document.addEventListener("onexus:" + type, (e) => fn(e.detail));
     },
     emit(type, detail) {
       document.dispatchEvent(new CustomEvent("onexus:" + type, { detail }));
-    }
+    },
   };
 })();
