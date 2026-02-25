@@ -1,81 +1,90 @@
 /* =========================================================
- ONEXUS – Mobile Compatibility Layer (CSS)
- Targets:
- - narrow viewports, coarse pointers (phones/tablets)
- - safe areas (notch), dynamic viewport height
- - toolbar wrapping, bigger hit targets, overlay clamping
+ ONEXUS – Mobile Patch (Android Chrome focus)
+ - Compress toolbar
+ - Turn icon bar into a compact grid
+ - Keep canvas large (avoid vertical waste)
 ========================================================= */
 
-/* Mobile heuristics: coarse pointer OR narrow screen */
 @media (pointer: coarse),
 (max-width: 820px) {
 
-    /* --- Dynamic viewport + prevent page scroll/pull-to-refresh --- */
+    /* Prevent page scroll stealing gestures; keep canvas full */
     html,
     body {
         height: 100dvh;
         overflow: hidden;
         overscroll-behavior: none;
         -webkit-text-size-adjust: 100%;
-        touch-action: manipulation;
     }
 
     body {
-        /* safe-area padding */
-        padding:
-            calc(env(safe-area-inset-top, 0px) + 8px) calc(env(safe-area-inset-right, 0px) + 8px) calc(env(safe-area-inset-bottom, 0px) + 8px) calc(env(safe-area-inset-left, 0px) + 8px);
+        padding: 8px;
         gap: 8px;
     }
 
-    /* --- Toolbar: wrap + compact --- */
+    /* Toolbar becomes a compact "two-line" header */
     #toolbar {
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 10px 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: auto;
+        gap: 8px;
+        padding: 8px;
         align-items: center;
     }
 
-    .tool-group {
-        gap: 6px;
-        min-width: 0;
-    }
-
-    /* Hide group labels on phones to reduce width */
+    /* Hide small labels to save vertical space */
     .tool-group label {
         display: none;
     }
 
-    /* Make selects more tappable */
-    #toolbar select,
-    #toolbar input[type="file"] {
-        font-size: 14px;
-        padding: 8px 8px;
+    /* Keep selects compact but tappable */
+    #toolbar select {
+        width: 100%;
+        font-size: 13px;
+        padding: 8px 10px;
         border-radius: 10px;
         border: 1px solid var(--stroke);
-        background: rgba(255, 255, 255, 0.65);
+        background: rgba(255, 255, 255, 0.70);
     }
 
-    :root.theme-dark #toolbar select,
-    :root.theme-dark #toolbar input[type="file"] {
-        background: rgba(15, 17, 21, 0.45);
+    :root.theme-dark #toolbar select {
+        background: rgba(15, 17, 21, 0.55);
     }
 
-    /* Icon bar wraps to second line on small screens */
-    .iconbar {
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-left: 0;
-        /* allow wrap instead of pushing off screen */
+    /* File input should not stretch the toolbar */
+    #fileInput {
         width: 100%;
-        justify-content: flex-start;
+        font-size: 13px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.70);
+    }
+
+    :root.theme-dark #fileInput {
+        background: rgba(15, 17, 21, 0.55);
+    }
+
+    /* Icon bar => compact grid (prevents tall wrapping rows) */
+    .iconbar {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(6, 40px);
+        gap: 8px;
+        justify-content: start;
+        margin-left: 0;
+    }
+
+    /* Hide divider + badge on mobile */
+    .iconbar .divider {
+        display: none;
     }
 
     .badge {
         display: none;
-        /* free space */
     }
 
-    /* Bigger hit targets */
+    /* Bigger tap targets but fixed size to avoid wrap chaos */
     .icon-btn {
         width: 40px;
         height: 40px;
@@ -87,120 +96,19 @@
         height: 20px;
     }
 
-    /* Divider consumes space: hide on mobile */
-    .iconbar .divider {
-        display: none;
+    /* Canvas must dominate */
+    #canvas-wrap {
+        min-height: 0;
     }
 
-    /* --- Canvas: protect gestures from page scrolling --- */
-    #canvas-wrap,
-    #cy {
-        touch-action: none;
-        /* allow Cytoscape pan/zoom without page scroll */
-    }
-
-    /* --- Minimap: shrink & lift above bottom UI --- */
+    /* Minimap smaller */
     #minimap {
-        width: min(160px, calc(100vw - 24px));
+        width: 160px;
         height: 110px;
-        right: 10px;
-        bottom: 10px;
-        border-radius: 10px;
     }
 
-    /* --- Corner overlays: keep only legend; hide metrics by default --- */
+    /* Metrics overlay off by default on mobile */
     #metricsOverlay {
         display: none;
-    }
-
-    #legendOverlay {
-        right: 10px;
-        top: 10px;
-        max-width: calc(100vw - 20px);
-    }
-
-    /* Legend items: easier tap */
-    #legendOverlay .legend-item {
-        padding: 6px 10px;
-        border-radius: 999px;
-    }
-
-    #legendOverlay .legend-item:hover {
-        background: rgba(0, 0, 0, 0.06);
-    }
-
-    :root.theme-dark #legendOverlay .legend-item:hover {
-        background: rgba(255, 255, 255, 0.10);
-    }
-
-    /* --- Floating tool stack: avoid covering content --- */
-    #onx-float-left-stack {
-        left: 10px;
-        bottom: 10px;
-        gap: 8px;
-    }
-
-    /* Tool pills: slightly larger */
-    #onx-layer-fab,
-    #onx-nodevis-fab {
-        height: 40px;
-        padding: 0 12px;
-        font-size: 13px;
-    }
-
-    /* Popovers: clamp to viewport */
-    #onx-layer-pop,
-    #onx-nodevis-pop,
-    #onx-tool-pop {
-        max-width: calc(100vw - 24px) !important;
-    }
-
-    /* Context menu: clamp width for phones */
-    #cy-context-menu {
-        min-width: min(220px, calc(100vw - 24px)) !important;
-        max-width: calc(100vw - 24px) !important;
-    }
-
-    /* --- Floating details -> bottom sheet style --- */
-    #onxFloatDetails {
-        left: 10px !important;
-        right: 10px !important;
-        bottom: 10px !important;
-        top: auto !important;
-        width: auto !important;
-        max-width: none !important;
-        min-width: 0 !important;
-        border-radius: 14px !important;
-        padding: 10px 12px !important;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22) !important;
-    }
-
-    #onxFloatDetails .onx-fd-body {
-        max-height: 34dvh;
-        overflow: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* Make close button larger */
-    #onxFloatDetails .onx-fd-close {
-        width: 34px;
-        height: 34px;
-        border-radius: 12px;
-    }
-
-    /* Left drawer (leftRail layout): narrow screens => use full-width overlay */
-    #leftDrawer {
-        left: 10px !important;
-        right: 10px !important;
-        width: auto !important;
-        max-width: none !important;
-        bottom: 10px !important;
-        top: 10px !important;
-        border-radius: 14px !important;
-    }
-
-    /* Tool popover body: avoid being too tall */
-    #onx-tool-pop .onx-pop-body {
-        max-height: calc(100dvh - 160px) !important;
     }
 }
