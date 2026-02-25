@@ -1,0 +1,16 @@
+{
+    "samples": [
+        {
+            "id": "door-basic",
+            "label": "Door (basic)",
+            "path": "./samples/json/onexus_doors.json",
+            "description": "Small demo graph"
+        },
+        {
+            "id": "security-system",
+            "label": "Security System (demo)",
+            "path": "./samples/json/onexus_sample.json",
+            "description": "System + spatial + vendor"
+        }
+    ]
+}
