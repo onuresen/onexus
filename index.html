@@ -123,7 +123,7 @@
     </div>
     <div class="tool-group">
       <label>Load</label>
-      <input id="fileInput" type="file" accept=".json,.csv,.ifc" multiple>
+      <input id="fileInput" type="file" multiple data-onx-accept=".json,.csv,.ifc,.ifczip">
     </div>
 
     <!-- Right aligned compact icons -->
@@ -482,6 +482,7 @@
   <!-- UI bindings -->
   <script src=./src/ui/graph-ui.loader.js></script>
   <script src=./src/ui/graph-ui.bindings.js></script>
+  <script src="./src/ui/graph-ui.mobile.filepicker.js"></script>
   <script src="./src/ui/graph-ui.mobile.js"></script>
   <script src="./src/ui/graph-ui.legendControls.js"></script>
   <script src="./src/ui/graph-ui.popoverPositioner.js"></script>
