@@ -10,14 +10,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
   <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape-navigator.js"></script>
   <script src="https://unpkg.com/cytoscape-svg@latest"></script>
-
   <!-- App base -->
   <script src="./src/helpers/onexus-ns.js"></script>
+  <script src="./src/helpers/onexus-compat.js"></script>
   <script src="./src/core/onexus-plugins.js"></script>
   <script src="./src/dev/onexus-plugins.diagnostics.js"></script>
-  <script src="./src/plugins/onexus-edgescsv.plugin.js"></script>
   <!-- Plugins: autoload from manifest -->
   <script src="./src/core/onexus-plugin-autoload.js"></script>
+  <!-- Dev / Selftest -->
+  <script src="./src/dev/onexus-selftest.js"></script>
+
   <link rel="stylesheet" href="./src/common/onexus-common.css">
   <link rel="stylesheet" href="./src/common/onexus-bootcheck.css">
   <link rel="stylesheet" href="./src/layouts/layout-leftRail.css">
@@ -488,8 +490,8 @@
   <!-- Shared inline JS extracted -->
   <script src="./src/common/onexus-common.js"></script>
   <script src="./src/common/onexus-bootcheck.js"></script>
-
   <!-- Dev -->
+  <script src="./src/dev/onexus-devloader.js"></script>
   <script src="./src/dev/onexus-devgraph.common.js"></script>
   <script src="./src/dev/onexus-audit.runtime.js"></script>
   <script src="./src/dev/onexus-depgraph.js"></script>
