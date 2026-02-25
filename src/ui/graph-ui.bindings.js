@@ -160,7 +160,9 @@
     const layout = readPref("onexus.layout", "default");
     const layerMode = readPref("onexus.layerMode", "relationship");
     const scale = parseFloat(readPref("onexus.scale", "1"));
-    const colorMode = readPref("onexus.colorMode", "json_category");
+    let colorMode = readPref("onexus.colorMode", "json_category");
+    // migration: old JLPT mode "level" removed from core
+    if (colorMode === "level") colorMode = "json_category";
 
     const $lang = document.getElementById("languageSelect");
     const $theme = document.getElementById("themeSelect");

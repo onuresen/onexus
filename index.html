@@ -16,13 +16,8 @@
   <script src="./src/core/onexus-plugins.js"></script>
   <script src="./src/dev/onexus-plugins.diagnostics.js"></script>
   <script src="./src/plugins/onexus-edgescsv.plugin.js"></script>
-  <!-- Plugins (static scripts that call registerPlugin()) -->
-  <script src="./src/plugins/cobie-importer.js"></script>
-  <script src="./src/plugins/ifc-importer.js"></script>
-  <script src="./src/plugins/gd-importer.js"></script>
-  <script src="./src/plugins/explain-controls.js"></script>
-  <script src="./src/plugins/trace-depth-bfs.js"></script>
-
+  <!-- Plugins: autoload from manifest -->
+  <script src="./src/core/onexus-plugin-autoload.js"></script>
   <link rel="stylesheet" href="./src/common/onexus-common.css">
   <link rel="stylesheet" href="./src/common/onexus-bootcheck.css">
   <link rel="stylesheet" href="./src/layouts/layout-leftRail.css">
@@ -329,7 +324,6 @@
           <select id="colorModeSelect">
             <option value="json_category">JSON / Category</option>
             <option value="nodeType">Node Type</option>
-            <option value="level">Level (JLPT)</option>
             <option value="degree">Degree (Hubs)</option>
             <option value="stableRandom">Stable Random</option>
           </select>
