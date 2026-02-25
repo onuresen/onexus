@@ -1,8 +1,8 @@
 /* =========================================================
- ONEXUS – Samples Loader (manifest-based) — Compact UI
+ ONEXUS – Samples Loader (manifest-based) — Compact + Toast
  - Reads: ./samples/manifest.json
- - Renders compact row: [select][Load]
- - Optional description: small inline text
+ - Toolbar UI: [select][Load] only (no description label)
+ - Description shown via transient toast instead
  - Loads JSON and calls window.onexusLoadGraph(sampleObj)
 ========================================================= */
 (function () {
@@ -15,11 +15,10 @@
     }
 
     function ensureHost() {
-        // Preferred: mobile "More" popover slot
+        // If you have the mobile popover slot, use it; otherwise toolbar
         const slot = document.getElementById("onx-samples-slot");
         if (slot) return slot;
 
-        // Fallback: toolbar placement (desktop / if you injected it there)
         const toolbar = document.getElementById("toolbar");
         if (!toolbar) return null;
 
@@ -28,14 +27,6 @@
 
         wrap = document.createElement("div");
         wrap.id = "onx-samples-wrap";
-        // Make it behave like a compact inline group in toolbar
-        Object.assign(wrap.style, {
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            flex: "0 0 auto",
-            minWidth: "0",
-        });
         toolbar.appendChild(wrap);
         return wrap;
     }
@@ -45,16 +36,15 @@
         const st = document.createElement("style");
         st.id = "onx-samples-css";
         st.textContent = `
-      /* Compact samples UI */
       .onx-samples-row{
-        display:flex;
+        display:inline-flex;
         align-items:center;
         gap:8px;
         flex-wrap:nowrap;
         min-width:0;
       }
       .onx-samples-select{
-        height: 36px;
+        height: 32px;
         padding: 0 10px;
         border-radius: 10px;
         border: 1px solid var(--stroke);
@@ -63,17 +53,11 @@
         font-size: 13px;
         font-weight: 700;
         min-width: 220px;
-        max-width: 380px;
+        max-width: 420px;
       }
-      /* When inside toolbar, keep it from dominating */
-      #toolbar .onx-samples-select{
-        min-width: 200px;
-        max-width: 32vw;
-      }
-
       .onx-samples-btn{
-        height: 36px;
-        padding: 0 12px;
+        height: 32px;
+        padding: 0 10px;
         border-radius: 10px;
         border: 1px solid var(--stroke);
         background: var(--btn-bg);
@@ -85,45 +69,22 @@
         white-space: nowrap;
       }
       .onx-samples-btn:hover{ background: var(--btn-bg-hover); }
-
-      .onx-samples-desc{
-        font-size: 12px;
-        color: var(--text-muted);
-        line-height: 1.2;
-        margin-left: 6px;
-        max-width: 220px;
-        overflow:hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      @media (max-width: 900px){
+        .onx-samples-select{ min-width: 180px; max-width: 44vw; }
       }
-
-      /* Popover slot can be wider */
-      #onx-toolbar-more .onx-samples-select{
-        max-width: 60vw;
-      }
-
-      /* Very narrow screens: allow wrapping inside popover, but keep button aligned */
-      @media (max-width: 480px){
-        #onx-toolbar-more .onx-samples-row{
-          flex-wrap: wrap;
-        }
-        #onx-toolbar-more .onx-samples-select{
-          width: 100%;
-          max-width: none;
-        }
-        #onx-toolbar-more .onx-samples-desc{
-          width: 100%;
-          max-width: none;
-          white-space: normal;
-        }
+      @media (pointer: coarse), (max-width: 820px){
+        .onx-samples-select{ min-width: 160px; max-width: 60vw; }
       }
     `;
         document.head.appendChild(st);
     }
 
+    function toast(text, ms = 1800) {
+        try { window.showTransientMessage?.(String(text), ms); } catch { }
+    }
+
     function renderUi(host, manifest) {
         ensureCssOnce();
-
         const list = Array.isArray(manifest?.samples) ? manifest.samples : [];
         host.innerHTML = "";
 
@@ -135,12 +96,7 @@
         sel.id = "onx-samples-select";
         sel.innerHTML =
             `<option value="">Samples…</option>` +
-            list
-                .map(
-                    (s) =>
-                        `<option value="${String(s.id)}">${String(s.label ?? s.id)}</option>`
-                )
-                .join("");
+            list.map(s => `<option value="${String(s.id)}">${String(s.label ?? s.id)}</option>`).join("");
 
         const btn = document.createElement("button");
         btn.type = "button";
@@ -148,31 +104,28 @@
         btn.textContent = "Load";
         btn.disabled = true;
 
-        const desc = document.createElement("div");
-        desc.className = "onx-samples-desc";
-        desc.textContent = "";
-
-        function syncDesc() {
+        function getItem() {
             const id = sel.value;
-            const item = list.find((x) => String(x.id) === String(id));
-            desc.textContent = item?.description ? String(item.description) : "";
-            btn.disabled = !item;
+            return list.find(x => String(x.id) === String(id)) || null;
         }
 
-        sel.addEventListener("change", syncDesc);
-        syncDesc();
+        function onPick() {
+            const item = getItem();
+            btn.disabled = !item;
+            if (item?.description) toast(item.description, 1800);
+        }
+
+        sel.addEventListener("change", onPick);
 
         btn.addEventListener("click", async () => {
-            const id = sel.value;
-            if (!id) return;
-            const item = list.find((x) => String(x.id) === String(id));
+            const item = getItem();
             if (!item?.path) return;
-
             try {
-                window.showTransientMessage?.("Loading sample…", 1100);
+                toast("Loading sample…", 900);
                 const graph = await fetchJson(item.path);
                 window.onexusLoadGraph?.(graph);
-                window.showTransientMessage?.(`Loaded: ${item.label ?? item.id}`, 1500);
+                toast(`Loaded: ${item.label ?? item.id}`, 1600);
+                if (item.description) toast(item.description, 2000);
             } catch (e) {
                 console.error("[ONEXUS samples] load failed", e);
                 alert("Failed to load sample: " + (e?.message ?? e));
@@ -181,8 +134,6 @@
 
         row.appendChild(sel);
         row.appendChild(btn);
-        row.appendChild(desc);
-
         host.appendChild(row);
     }
 
@@ -196,7 +147,6 @@
             renderUi(host, manifest);
         } catch (e) {
             console.warn("[ONEXUS samples] manifest load failed", e);
-            // non-blocking
         }
     }
 
