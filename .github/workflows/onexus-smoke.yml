@@ -1,0 +1,43 @@
+name: onexus-smoke
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps
+        run: |
+          npm ci || npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Start server
+        run: |
+          npx http-server -p 4173 -c-1 . >/tmp/http-server.log 2>&1 &
+          echo "Server started"
+
+      - name: Run smoke tests
+        env:
+          BASE_URL: "http://127.0.0.1:4173"
+        run: npx playwright test
+
+      - name: Upload server log (if failed)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: http-server-log
+          path: /tmp/http-server.log
