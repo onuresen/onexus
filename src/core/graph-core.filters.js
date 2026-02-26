@@ -27,9 +27,14 @@
   // ---- helpers ----
   const normStr = (s) => String(s ?? "").trim();
   const getLayer = () => window.getLayerMode?.() ?? state?.layerMode ?? "relationship";
-  const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (m) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;"
-  }[m]));
+  const escapeHtml = (s) => (window.ONEXUS?.util?.escapeHtml
+    ? window.ONEXUS.util.escapeHtml(s)
+    : String(s ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;"));
 
   function anyEdgeFilterActive() {
     return !!relationshipFilter || !!dimensionFilter || (phaseFilterSet?.size ?? 0) > 0;

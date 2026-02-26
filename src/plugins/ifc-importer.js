@@ -735,6 +735,13 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
 
   // expose
   window.ONEXUS_IFC = { parseIFCToOnexusGraph, loadIFC };
+
+  // Tag meta so Safe Mode can auto-detect IFC loads
+  graph.meta = graph.meta || {};
+  graph.meta.schema = graph.meta.schema || "onexus";
+  graph.meta.importer = "ifc";
+  graph.meta.importedAt = new Date().toISOString();
+  graph.meta.sourceFile = file.name;
 })();
 
 // ===============================

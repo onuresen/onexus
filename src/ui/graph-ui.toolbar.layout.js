@@ -62,7 +62,6 @@
             // Keep badge as a direct child of #toolbar (so CSS can pin it top-right)
             if (badge.parentElement !== toolbar) toolbar.appendChild(badge);
         }
-
     }
 
     if (document.readyState === "loading") {
