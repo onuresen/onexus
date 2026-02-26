@@ -126,8 +126,23 @@
       <input id="fileInput" type="file" multiple data-onx-accept=".json,.csv,.ifc,.ifczip">
     </div>
 
-    <!-- Right aligned compact icons -->
     <div class="iconbar" aria-label="Actions">
+      <button class="icon-btn" id="btnSaveServer" title="Save to server" aria-label="Save to server">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 3h12l2 2v16H5z"></path>
+          <path d="M7 3v6h10V3"></path>
+          <path d="M8 21v-7h8v7"></path>
+        </svg>
+      </button>
+      <button class="icon-btn" id="btnOpenServer" title="Open from server" aria-label="Open from server">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 7h6l2 2h10v10a2 2 0 0 1-2 2H3z"></path>
+          <path d="M3 7V5a2 2 0 0 1 2-2h5l2 2h7"></path>
+        </svg>
+      </button>
+
       <!-- Navigation -->
       <button class="icon-btn" onclick="fitView()" title="Fit (F)" aria-label="Fit">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
@@ -483,6 +498,7 @@
   <script src=./src/ui/graph-ui.loader.js></script>
   <script src=./src/ui/graph-ui.bindings.js></script>
   <script src=./src/ui/graph-ui.safeMode.js></script>
+  <script src="./src/ui/graph-ui.persistence.js"></script>
   <script src="./src/ui/graph-ui.toolbar.layout.js"></script>
   <script src="./src/ui/graph-ui.mobile.filepicker.js"></script>
   <script src="./src/ui/graph-ui.mobile.toolbar.js"></script>
