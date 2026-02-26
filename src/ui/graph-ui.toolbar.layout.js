@@ -1,7 +1,7 @@
 /* =========================================================
  ONEXUS – Toolbar Layout Orchestrator (Two-row)
  Row 1: tool-group selects + file input
- Row 2: iconbar + dependency graph + samples (if present)
+ Row 2: iconbar + dependency graph + samples + server persistence buttons
  Safe: moves existing DOM nodes (keeps handlers)
 ========================================================= */
 (function () {
@@ -21,17 +21,20 @@
         if (el.parentElement !== row) row.appendChild(el);
     }
 
-    function moveDepGraphIntoIconbar(toolbar) {
-        const depBtn = $("btnDepGraph");
+    function moveIntoIconbar(btnId) {
+        const btn = $(btnId);
+        const toolbar = $("toolbar");
+        if (!toolbar || !btn) return;
+
+        // Find the iconbar (best target)
         const iconbar = toolbar.querySelector(".iconbar");
-        if (!depBtn) return;
         if (!iconbar) return;
 
-        // Ensure it looks like other icon buttons
-        depBtn.classList.add("icon-btn");
+        // Ensure consistent styling
+        btn.classList.add("icon-btn");
 
-        // Place it at the end of iconbar (or wherever you prefer)
-        if (depBtn.parentElement !== iconbar) iconbar.appendChild(depBtn);
+        // Move into iconbar
+        if (btn.parentElement !== iconbar) iconbar.appendChild(btn);
     }
 
     function boot() {
@@ -43,25 +46,24 @@
 
         // Row 1: all tool groups (Language/Layer/View/Theme/Load)
         const groups = Array.from(toolbar.querySelectorAll(".tool-group"));
-        groups.forEach(g => moveIfExists(g, row1));
+        groups.forEach((g) => moveIfExists(g, row1));
 
         // Row 2: iconbar
         const iconbar = toolbar.querySelector(".iconbar");
         moveIfExists(iconbar, row2);
 
-        // Move Dependency Graph button into iconbar so it doesn't create a 3rd row
-        moveDepGraphIntoIconbar(toolbar);
+        // Keep special buttons INSIDE iconbar so they never create a 3rd row
+        moveIntoIconbar("btnDepGraph");
+        moveIntoIconbar("btnSaveServer");
+        moveIntoIconbar("btnOpenServer");
 
         // Row 2: samples wrapper if created by graph-ui.samples.js
         const samplesWrap = $("onx-samples-wrap");
         moveIfExists(samplesWrap, row2);
 
-        // Badge: do NOT move into action row (keeps it from sitting beside Samples)
+        // Badge: keep pinned to toolbar root (top-right)
         const badge = toolbar.querySelector(".badge");
-        if (badge) {
-            // Keep badge as a direct child of #toolbar (so CSS can pin it top-right)
-            if (badge.parentElement !== toolbar) toolbar.appendChild(badge);
-        }
+        if (badge && badge.parentElement !== toolbar) toolbar.appendChild(badge);
     }
 
     if (document.readyState === "loading") {

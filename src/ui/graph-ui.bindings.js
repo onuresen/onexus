@@ -454,3 +454,82 @@
   // Keep cy responsive on resize
   window.addEventListener("resize", () => window.cy?.resize?.());
 })();
+
+// ===============================
+// Server persistence (Option A: disk files backend)
+// ===============================
+(function () {
+  const on = (id, ev, fn) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener(ev, fn);
+  };
+
+  // crude prompts for now (simple + understandable)
+  on("btnSaveServer", "click", async () => {
+    try {
+      const name = prompt("Save name?", "My ONEXUS Graph") || "Untitled";
+      const id = await window.ONEXUS_PERSIST?.saveGraph?.({ name });
+      // store last saved id so you can update later
+      if (id) localStorage.setItem("onexus.persist.lastId", id);
+    } catch (e) {
+      alert("Save failed: " + (e?.message ?? e));
+    }
+  });
+
+  on("btnOpenServer", "click", async () => {
+    try {
+      const list = await window.ONEXUS_PERSIST?.listGraphs?.();
+      if (!list || !list.length) return alert("No saved graphs.");
+      const choices = list.slice(0, 30).map(x => `${x.id}  |  ${x.name}`).join("\n");
+      const pick = prompt("Pick a graph id:\n\n" + choices, list[0].id);
+      if (!pick) return;
+      await window.ONEXUS_PERSIST?.loadGraph?.(pick.trim());
+      localStorage.setItem("onexus.persist.lastId", pick.trim());
+    } catch (e) {
+      alert("Load failed: " + (e?.message ?? e));
+    }
+  });
+})();
+
+// ===============================
+// Persistence: Auto-save toggle (simple)
+// ===============================
+(function () {
+  function ensureAutoSaveToggle() {
+    const panel = document.getElementById("panelStyle");
+    if (!panel) return;
+    if (panel.querySelector("#onxAutoSaveToggle")) return;
+
+    const wrap = document.createElement("div");
+    wrap.style.marginTop = "12px";
+    wrap.innerHTML = `
+      <h3>Persistence</h3>
+      <label style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-main);user-select:none;">
+        <input id="onxAutoSaveToggle" type="checkbox" style="width:14px;height:14px;accent-color:#2563eb;">
+        Auto-save layout on drag
+      </label>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.35;">
+        Saves node positions automatically after you move nodes (requires one manual Save first).
+      </div>
+    `;
+    panel.appendChild(wrap);
+
+    const cb = wrap.querySelector("#onxAutoSaveToggle");
+    cb.checked = window.ONEXUS_PERSIST?.getAutoSaveEnabled?.() !== false;
+    cb.addEventListener("change", () => {
+      window.ONEXUS_PERSIST?.setAutoSaveEnabled?.(cb.checked);
+      window.showTransientMessage?.(cb.checked ? "Auto-save enabled" : "Auto-save disabled", 1400);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      ensureAutoSaveToggle();
+      setTimeout(ensureAutoSaveToggle, 300);
+    });
+  } else {
+    ensureAutoSaveToggle();
+    setTimeout(ensureAutoSaveToggle, 300);
+  }
+})();
