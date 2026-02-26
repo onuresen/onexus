@@ -257,6 +257,25 @@ function buildStyle(themeKey) {
       },
     },
 
+    // =====================================================
+    // SAFE MODE (large graphs): simplified edge rendering
+    // - enabled by adding class "onx-safe" to edges
+    // - keeps node styling intact
+    // =====================================================
+    {
+      selector: "edge.onx-safe",
+      style: {
+        "curve-style": "haystack",
+        // reduce label cost / clutter
+        "text-opacity": 0,
+        label: "",
+        width: clamp(1.8 * Math.pow(S, 0.9), 1, 4),
+        opacity: 0.75,
+        "target-arrow-shape": (ele) => (ele.data("directional") ? "triangle" : "none"),
+        "arrow-scale": clamp(0.9 * Math.pow(S, 0.9), 0.6, 1.3)
+      }
+    },
+
     { selector: 'edge[type = "PartOfSystem"]', style: { "line-style": "dotted", width: edgeWThin, opacity: 0.8 } },
     { selector: 'edge[confidence = "Inferred"]', style: { "line-style": "dashed", opacity: 0.6 } },
     { selector: 'edge[type = "OfType"]', style: { "line-style": "dashed", width: edgeWThin } },

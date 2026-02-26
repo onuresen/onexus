@@ -18,7 +18,7 @@
     if (!window.___onexus_meta && window.__onexus_meta) window.___onexus_meta = window.__onexus_meta;
     if (!window.___onexus_labels && window.__onexus_labels) window.___onexus_labels = window.__onexus_labels;
 
-    // Provide a correct escapeHtml (some modules currently return raw chars)
+    // Use canonical escapeHtml from onexus-ns.js (fallback included for safety)
     ONX.util.escapeHtml = ONX.util.escapeHtml || function escapeHtml(s) {
         return String(s ?? "")
             .replace(/&/g, "&amp;")

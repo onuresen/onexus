@@ -67,6 +67,19 @@
 
         // Unified loader entrypoint
         ensure(can(window.handleUnifiedLoad), "Missing window.handleUnifiedLoad.");                   // UI binds to it [10](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.bindings.js)[3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.loader.js)
+
+        // escapeHtml must actually escape
+        try {
+            const esc = window.ONEXUS?.util?.escapeHtml;
+            ensure(typeof esc === "function", "Missing ONEXUS.util.escapeHtml()");
+            if (typeof esc === "function") {
+                ensure(esc("<&>\"'") !== "<&>\"'", "escapeHtml is not escaping correctly");
+                ensure(esc("<").includes("&lt;"), "escapeHtml('<') must include &lt;");
+                ensure(esc("&").includes("&amp;"), "escapeHtml('&') must include &amp;");
+            }
+        } catch (e) {
+            ensure(false, "escapeHtml selftest threw: " + (e?.message ?? e));
+        }
     }
 
     async function importerSmokeTests() {

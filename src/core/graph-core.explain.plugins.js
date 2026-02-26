@@ -27,9 +27,14 @@
     }
 
     function escapeHtml(s) {
-        return String(s ?? "").replace(/[&<>"']/g, m => ({
-            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-        }[m]));
+        const fn = window.ONEXUS?.util?.escapeHtml;
+        if (typeof fn === "function") return fn(s);
+        return String(s ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
     }
 
     function normalizeTplEntry(key, value) {

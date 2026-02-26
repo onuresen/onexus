@@ -1,12 +1,18 @@
 // ===============================
 // ONEXUS – Unified Loader (PLUGIN-AWARE + Import-as chooser)
 // Exposes: window.handleUnifiedLoad(event)
+//
+// PATCH:
+// - Plugin importer selection is the single source of truth.
+// - If candidates exist, NEVER fall back to legacy behavior.
+// - If user cancels chooser, stop (no fallback).
+// - If chosen importer fails, stop (no fallback).
 // ===============================
 (function () {
-  const U = window.ONEXUS?.util || {};
-  const escapeHtml = U.escapeHtml || ((s) => String(s ?? ""));
+  const U = window.ONEXUS?.util ?? {};
+  const escapeHtml = U.escapeHtml ?? ((s) => String(s ?? ""));
 
-  // ---------- Merge ONEXUS JSON graphs (nodes by id; edges by tuple) ----------
+  // ---------- Merge ONEXUS JSON graphs (legacy fallback only) ----------
   async function mergeJsonFiles(jsonFiles) {
     const texts = await Promise.all(jsonFiles.map((f) => f.text()));
     const graphs = texts.map((t) => JSON.parse(t));
@@ -65,35 +71,47 @@
     return new Promise((resolve, reject) => {
       const overlay = document.createElement("div");
       Object.assign(overlay.style, {
-        position: "fixed", inset: 0, background: "rgba(0,0,0,.45)",
-        display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10070
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,.45)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 10070,
       });
 
       const panel = document.createElement("div");
       Object.assign(panel.style, {
-        background: "#fff", minWidth: "520px", maxWidth: "720px",
-        borderRadius: "12px", padding: "14px",
+        background: "#fff",
+        minWidth: "520px",
+        maxWidth: "720px",
+        borderRadius: "12px",
+        padding: "14px",
         boxShadow: "0 12px 28px rgba(0,0,0,.22)",
         fontFamily: "system-ui,-apple-system,Segoe UI,Roboto,sans-serif",
-        fontSize: "13px", color: "#111"
+        fontSize: "13px",
+        color: "#111",
       });
 
-      const fileList = (files ?? []).map(f => f?.name).filter(Boolean).join(", ");
-      const rows = candidates.map(c => {
-        const label = typeof c.label === "string" ? c.label : (c.id || "Importer");
-        const help = c.help ? String(c.help) : "";
-        const score = (c.__score != null) ? `score:${c.__score}` : "";
-        return `
-          <div class="onx-imp-row" data-id="${escapeHtml(c.id)}"
-               style="padding:10px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;cursor:pointer;">
-            <div style="display:flex;align-items:baseline;gap:10px;">
-              <div style="font-weight:800;">${escapeHtml(label)}</div>
-              <div style="font-size:12px;color:#6b7280;">${escapeHtml(c.id)}${score ? ` · ${escapeHtml(score)}` : ""}</div>
+      const fileList = (files ?? []).map((f) => f?.name).filter(Boolean).join(", ");
+
+      const rows = candidates
+        .map((c) => {
+          const label = typeof c.label === "string" ? c.label : (c.id ?? "Importer");
+          const help = c.help ? String(c.help) : "";
+          const score = (c.__score != null) ? `score:${c.__score}` : "";
+          return `
+            <div class="onx-imp-row" data-id="${escapeHtml(c.id)}"
+              style="padding:10px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;cursor:pointer;">
+              <div style="display:flex;align-items:baseline;gap:10px;">
+                <div style="font-weight:800;">${escapeHtml(label)}</div>
+                <div style="font-size:12px;color:#6b7280;">${escapeHtml(c.id)}${score ? ` · ${escapeHtml(score)}` : ""}</div>
+              </div>
+              ${help ? `<div style="margin-top:4px;font-size:12px;color:#374151;line-height:1.35;">${escapeHtml(help)}</div>` : ""}
             </div>
-            ${help ? `<div style="margin-top:4px;font-size:12px;color:#374151;line-height:1.35;">${escapeHtml(help)}</div>` : ""}
-          </div>
-        `;
-      }).join("");
+          `;
+        })
+        .join("");
 
       panel.innerHTML = `
         <div style="font-weight:900;margin-bottom:6px;">Import as…</div>
@@ -122,7 +140,7 @@
         reject(new Error("cancel"));
       });
 
-      panel.querySelectorAll(".onx-imp-row").forEach(el => {
+      panel.querySelectorAll(".onx-imp-row").forEach((el) => {
         el.addEventListener("click", () => {
           const id = el.getAttribute("data-id");
           cleanup();
@@ -146,38 +164,72 @@
     const files = Array.from(event?.target?.files ?? []);
     if (!files.length) return;
 
-    // 1) Plugin import (preferred)
+    // 1) Plugin import (SINGLE SOURCE OF TRUTH if any candidate exists)
     const candidatesFn = window.ONEXUS?.plugins?.getImporterCandidates;
     const importAsFn = window.ONEXUS?.plugins?.importFilesAs;
-    if (typeof candidatesFn === "function" && typeof importAsFn === "function") {
-      const candidates = await candidatesFn(files);
 
-      if (candidates.length === 1) {
-        const res = await importAsFn(candidates[0].id, files, { source: "unified-loader" });
-        if (res?.ok) window.showTransientMessage?.(`Imported: ${candidates[0].label ?? candidates[0].id}`);
-        return;
+    if (typeof candidatesFn === "function" && typeof importAsFn === "function") {
+      let candidates = [];
+      try {
+        candidates = await candidatesFn(files);
+      } catch (e) {
+        console.warn("[ONEXUS] getImporterCandidates failed:", e);
+        candidates = [];
       }
 
-      if (candidates.length > 1) {
+      if (candidates.length > 0) {
+        // IMPORTANT: if we have candidates, we do NOT fall back to legacy.
         try {
-          const chosenId = await openImporterChoiceDialog(candidates, files);
-          const res = await importAsFn(chosenId, files, { source: "unified-loader", chosenImporter: chosenId });
-          if (res?.ok) {
-            const chosen = candidates.find(c => c.id === chosenId);
-            window.showTransientMessage?.(`Imported: ${chosen?.label ?? chosenId}`);
+          if (candidates.length === 1) {
+            const chosen = candidates[0];
+            const res = await importAsFn(chosen.id, files, { source: "unified-loader" });
+
+            if (!res?.ok) {
+              const msg = res?.error?.message ?? res?.error ?? "Importer failed.";
+              alert(`Import failed (${chosen.id}): ${msg}`);
+              return;
+            }
+
+            window.showTransientMessage?.(`Imported: ${chosen.label ?? chosen.id}`);
+            return;
           }
+
+          // candidates.length > 1
+          const chosenId = await openImporterChoiceDialog(candidates, files);
+          const chosen = candidates.find((c) => c.id === chosenId);
+
+          const res = await importAsFn(chosenId, files, {
+            source: "unified-loader",
+            chosenImporter: chosenId,
+          });
+
+          if (!res?.ok) {
+            const msg = res?.error?.message ?? res?.error ?? "Importer failed.";
+            alert(`Import failed (${chosenId}): ${msg}`);
+            return;
+          }
+
+          window.showTransientMessage?.(`Imported: ${chosen?.label ?? chosenId}`);
           return;
-        } catch {
-          // user cancelled -> continue to legacy fallback
+        } catch (e) {
+          // user cancelled chooser OR unexpected error
+          const msg = String(e?.message ?? e).toLowerCase();
+          if (msg.includes("cancel")) {
+            window.showTransientMessage?.("Import cancelled", 1400);
+            return; // ✅ no legacy fallback
+          }
+          console.error("[ONEXUS] Import flow error:", e);
+          alert("Import failed: " + (e?.message ?? e));
+          return; // ✅ no legacy fallback
         }
       }
-      // zero candidates -> legacy fallback
+      // candidates.length === 0 -> proceed to legacy fallback below
     }
 
-    // 2) Legacy fallback: JSON / IFC / CSV
-    const jsonFiles = files.filter(f => f.name.toLowerCase().endsWith(".json"));
-    const csvFiles = files.filter(f => f.name.toLowerCase().endsWith(".csv"));
-    const ifcFiles = files.filter(f => {
+    // 2) Legacy fallback: JSON / IFC / CSV (only if no plugin candidate exists)
+    const jsonFiles = files.filter((f) => f.name.toLowerCase().endsWith(".json"));
+    const csvFiles = files.filter((f) => f.name.toLowerCase().endsWith(".csv"));
+    const ifcFiles = files.filter((f) => {
       const n = f.name.toLowerCase();
       return n.endsWith(".ifc") || n.endsWith(".ifczip");
     });
@@ -186,6 +238,7 @@
       window.loadJSON?.({ target: { files: [jsonFiles[0]] } });
       return;
     }
+
     if (jsonFiles.length >= 2) {
       try {
         const merged = await mergeJsonFiles(jsonFiles);
@@ -202,27 +255,13 @@
       return;
     }
 
-    // If we reach here, it's CSV legacy, but we can only support if COBie/EdgesCSV functions exist.
     if (!csvFiles.length) return;
 
-    // COBie heuristic by file name (fixed, no embedded newlines)
-    const cobieSheetRe = /(cobie[_-]?)?(component|type|system|assembly|space)\.csv$/i;
-    if (csvFiles.some(f => cobieSheetRe.test(String(f.name ?? "")))) {
-      window.loadCOBieCSVs?.({ target: { files: csvFiles } });
-      return;
-    }
-
-    // If edges CSV plugin exists, attempt direct import
+    // Prefer plugin legacy helpers if present
     if (window.ONEXUS_EDGESCSV?.importFiles) {
-      try {
-        await window.ONEXUS_EDGESCSV.importFiles(csvFiles);
-        return;
-      } catch (e) {
-        // continue to COBie fallback
-      }
+      try { await window.ONEXUS_EDGESCSV.importFiles(csvFiles); return; }
+      catch { /* continue */ }
     }
-
-    // Final fallback: treat as COBie if available
     if (window.loadCOBieCSVs) {
       window.loadCOBieCSVs?.({ target: { files: csvFiles } });
       return;

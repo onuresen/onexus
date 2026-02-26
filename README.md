@@ -11,7 +11,8 @@
 
 ## 🌐 Overview
 
-**ONEXUS** is a lightweight, browser‑based visualization layer that reveals **relationships between BIM elements, systems, spaces, and organizations**. It is the companion viewer for a Revit add‑in, using **Cytoscape.js** to produce an interactive, explorable semantic graph.
+**ONEXUS** is a lightweight, browser‑based visualization layer that reveals **relationships between BIM elements, systems, spaces, and organizations**. It runs entirely in the browser (no build step) and is designed to make “what relates to what — and why?” easy to inspect and iterate.
+It was originally built as a companion viewer for a Revit add-in, but it works independently.
 
 ONEXUS answers a simple but powerful question:
 
@@ -19,33 +20,37 @@ ONEXUS answers a simple but powerful question:
 
 It does **not** replace any CDE or tool. Instead, it exposes hidden or implicit relationships in a clean, powerful visual map.
 
+The goal is simple:
+
+> **Make implicit BIM relationships visible, explorable, and explainable.**
 ---
+
+## Key Concepts
+
+- **Nodes** represent BIM entities (components, systems, spaces, organizations, vendors, options, etc.)
+- **Edges** represent relationships (system, spatial, responsibility, lifecycle, risk, dependency, etc.)
+- The **same graph** can be viewed through multiple semantic perspectives using *Layer Modes*
 
 ## ✨ Features
 
 ### 🔹 Interactive Graph Engine
-- Smooth pan/zoom
-- Level-of-detail rendering (LOD)
-- Dynamic node sizing
-- Real-time graph interaction
+- Smooth pan / zoom with minimap
+- Multiple layout presets (organic, tree, swimlanes, dependency flow, etc.)
+- Path tracing (upstream / downstream / shortest path)
+- A/B graph comparison
 
 ### 🔹 Layers (Semantic Views)
-ONEXUS supports multiple **Layer Modes**. Each layer is a “purposeful view” on the same graph data.
+- **Relationship** — default semantic relationship view
+- **Lifecycle** — phase‑aware visualization with timeline controls
+- **Risk** — highlight risk and confidence signals
+- **Option** — explore design or generative‑design alternatives
 
-- **Relationship** *(default)* — explore semantic relationship types & dimensions.
-- **Lifecycle** — phase-aware view; filter and play through phases.
-- **Risk** — emphasize risk/confidence signals and filtering.
-- **Option** — decision / generative design option exploration.
+> One graph, multiple perspectives.
 
-> **Layer Widget** (bottom-left): shows current layer and provides layer-specific **Quick Actions** (no need to crowd the top toolbar).
-
-### 🔹 Node & Edge Management
-- **Create Nodes** — dynamically add new nodes to the graph
-- **Create Edges** — establish relationships between nodes
-- **Delete Nodes** — remove nodes and auto-cleanup connected edges
-- **Delete Edges** — remove relationships while maintaining nodes
-- Undo/Redo support for graph modifications
-- Context menu (right-click) for quick actions
+### 🔹 Interactive Editing
+- Create and delete nodes and relationships
+- Context menus for quick actions
+- Full **Undo / Redo** support for graph mutations
 
 ### 🔹 Multiple Layout Modes
 - **Free / Organic** (COSE)
@@ -71,17 +76,17 @@ ONEXUS supports multiple **Layer Modes**. Each layer is a “purposeful view” 
 - Automatic recoloring of nodes/edges
 - Auto-updating legend
 
-### 🔹 Export & Data Tools
-- Export **PNG**, **SVG**, **JSON**, **CSV**, **Layout JSON**
-- Save work-in-progress states
-- Import/Export layout configurations
+### 🔹 Importers (Plugin‑based)
+- ONEXUS JSON (native graph format)
+- Edges CSV
+- COBie CSV (multi‑file)
+- IFC / IFCZIP (via web‑ifc)
+- Generative Design (GD) JSON (overlay or materialize options)
 
-### 🔹 Importers
-- ONEXUS JSON
-- COBie CSV
-- IFC / IFCZIP (web-ifc)
-- Generative Design (GD) payloads (overlay or materialize option edges)
-
+### 🔹 Export
+- PNG / SVG (visual output)
+- JSON / CSV (data)
+- Layout JSON (positions + structure)
 ---
 
 ## 🧭 Layer Modes (How to Use)
@@ -135,17 +140,14 @@ Best for: exploring design options and GD-driven variants.
 ## 📁 Directory Structure
 
 ```text
-README.md                 # Project overview and usage (this file)
-index.html                # Main demo page / UI loader (right sidebar)
-index_leftRail.html       # Alternate UI (left rail + drawer + overlays)
+index.html                # Main entry page
 src/
-  core/                   # Graph core logic (state, layouts, filters, layers, io)
-  importers/              # Data importers (COBie, IFC, CSV, GD)
-  ui/                     # UI bindings and loader scripts
-  helpers/                # Small utilities and style helpers
+  core/                   # Graph core (state, layouts, filters, layers, undo, path)
+  plugins/                # Plugin scripts + manifest
+  ui/                     # UI bindings and widgets
+  helpers/                # Utilities and styling
   common/                 # Shared css/js
-json/                     # Sample JSON datasets used by demos
-samples/                  # Example datasets and raw exports (COBie, IFC, etc.)
+samples/                  # Example datasets and raw exports (json, COBie, IFC, etc.)
 assets/                   # Images, WASM and miscellaneous media
 versions/                 # Archived snapshots / historical builds
 
@@ -238,42 +240,35 @@ Each ONEXUS data file follows this minimal structure:
 }
 ```
 
-Node basics
-- id, nodeType, category
-- label supports multi-language keys: { en, jp }
-- Any additional properties are allowed and preserved
+Notes:
+- `label` supports multi‑language keys (commonly `{ en, jp }`)
+- Extra fields are preserved and may be used by plugins
+- Lifecycle layer works best when `meta.phases` is defined
 
-Edge basics
-- id, source, target
-- type, dimension, directional
-- Optional lifecycle fields: phase (string or array)
-- Optional decision fields: risk, confidence, owner, notes
 ---
 
+## Plugin Architecture
 
-## 🧪 Lifecycle Data Tips (Recommended)
-To make the Lifecycle layer useful:
-- Set meta.phases to define the ordered timeline.
-- Add phase to edges as an array (recommended) for multi-phase validity.
-- Leave some edges unphased intentionally if you want to test “Show unphased”.
+ONEXUS is intentionally extensible.
 
-## 🚀 Quick Development Guide
+Plugins can:
+- Register importers
+- Add edge‑type labels (i18n)
+- Add explanations or trace behaviors
+- Extend UI behavior without modifying core code
 
-**Editing the application:**
-- Core graph logic: src/core/
-- UI bindings & interactions: src/ui/graph-ui.bindings.js
-- Styling: src/helpers/onexus-style.js and src/common/onexus-common.css
-- Data importers: src/importers/
+Plugins are loaded via `src/plugins/manifest.json`.
 
-**Running during development:**
-- Open [index.html](index.html) directly, or use a local server (`npx http-server .`)
-- Changes will be reflected on page refresh
+---
 
-**Adding new features:**
-1. Add logic to the appropriate module in src/core/ or src/ui/
-2. Prefer layer-specific behavior via registerLayerMode(...) and layer actions
-3. Keep UI minimal: use Layer widget actions instead of expanding the top toolbar
-4. Update README if you add major features or change workflows
+## Dev & Diagnostics (Optional)
+
+Some tooling is query‑gated:
+
+- `?dev=1` — enables dev overlays, audits, and self‑tests
+- `?ci=1` — enables checks suitable for CI‑like runs
+
+This helps keep the default UI clean while retaining deep introspection tools.
 
 ---
 
