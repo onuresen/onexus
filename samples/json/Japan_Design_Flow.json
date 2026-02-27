@@ -1,0 +1,1192 @@
+{
+    "meta": {
+        "schema": "onexus-1.1",
+        "project": "Japan Design Flow (Extended: Design Compass + RUG)",
+        "languageDefault": "en",
+        "phases": [
+            "KihonHoushin",
+            "SekkeiJutaku",
+            "KihonKeikaku",
+            "KihonSekkei",
+            "JisshiSekkei",
+            "SeisanSekkei",
+            "KoujiKanri",
+            "Shunkougo"
+        ],
+        "exportedAt": "2026-02-27T04:56:27Z"
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "JP-FLOW",
+                    "nodeType": "System",
+                    "category": "ProcessFramework",
+                    "label": {
+                        "en": "Japan Design & Delivery Flow (Extended)",
+                        "jp": "日本の設計・施工フロー（拡張）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STG-KIHON-HOUSHIN",
+                    "nodeType": "Element",
+                    "category": "Stage",
+                    "label": {
+                        "en": "Basic Policy",
+                        "jp": "基本方針"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STG-SEKKEI-JUTAKU",
+                    "nodeType": "Element",
+                    "category": "Stage",
+                    "label": {
+                        "en": "Design Contract / Acceptance",
+                        "jp": "設計受託"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STG-KIHON-KEIKAKU",
+                    "nodeType": "Element",
+                    "category": "Stage",
+                    "label": {
+                        "en": "Basic Planning",
+                        "jp": "基本計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STG-KIHON-SEKKEI",
+                    "nodeType": "Element",
+                    "category": "Stage",
+                    "label": {
+                        "en": "Basic Design (Quality-Critical)",
+                        "jp": "基本設計（品質確保の重要フェーズ）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STG-JISSHI-SEKKEI",
+                    "nodeType": "Element",
+                    "category": "Stage",
+                    "label": {
+                        "en": "Detailed Design",
+                        "jp": "実施設計"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STG-SEISAN-SEKKEI",
+                    "nodeType": "Element",
+                    "category": "Stage",
+                    "label": {
+                        "en": "Production Design (Coordination / Shop)",
+                        "jp": "生産設計（総合調整・施工図）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STG-KOUJI-KANRI",
+                    "nodeType": "Element",
+                    "category": "Stage",
+                    "label": {
+                        "en": "Construction Administration / Supervision",
+                        "jp": "工事監理"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STG-SHUNKOGO",
+                    "nodeType": "Element",
+                    "category": "Stage",
+                    "label": {
+                        "en": "Post-Completion (Archiving / Feedback)",
+                        "jp": "竣工後（保管・アーカイブ・FB）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-SR",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Strategy Review (SR)",
+                        "jp": "戦略レビュー（SR）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-SD",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Strategy Decision Review (SD)",
+                        "jp": "戦略決定レビュー（SD）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-RMR",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Risk Management Review (RMR)",
+                        "jp": "リスクマネジメントレビュー（RMR）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-DR",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Design Review (DR)",
+                        "jp": "デザインレビュー（DR）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-RR1",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Regulation Review 1 (RR1)",
+                        "jp": "法制レビュー1（RR1）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-QR",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Design Quality Review (QR)",
+                        "jp": "設計品質レビュー（QR）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-FR",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Executive Review (FR)",
+                        "jp": "副本部長レビュー（FR）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-RR2",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Regulation Review 2 (RR2)",
+                        "jp": "法制レビュー2（RR2）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-QV",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Document Quality Verification (QV)",
+                        "jp": "設計図書品質検証（QV）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RVW-CR",
+                    "nodeType": "Element",
+                    "category": "ReviewGate",
+                    "label": {
+                        "en": "Completion Review (CR)",
+                        "jp": "竣工レビュー（CR）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-SEKKEI-JOUKEN",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Design Conditions Document",
+                        "jp": "設計条件書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-KIKAKU-SEKKEI",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Planning Design Package",
+                        "jp": "企画設計図書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-KEIKAKU-SEKKEI",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Planning Design Package (Basic Planning)",
+                        "jp": "計画設計図書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-KIHON-SEKKEI-ZU",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Basic Design Drawings",
+                        "jp": "基本設計図"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-KIHON-SEKKEI-SETUMEI",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Basic Design Description",
+                        "jp": "基本設計説明書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-JISSHI-SEKKEI-ZU",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Detailed Design Drawings",
+                        "jp": "実施設計図"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-JISSHI-SEKKEI-SETUMEI",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Detailed Design Description",
+                        "jp": "実施設計説明書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-KAKUNIN-SHINSEI",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Building Confirmation Application Docs",
+                        "jp": "確認申請図書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-KYONINKA",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Public Authority Permits / Approvals",
+                        "jp": "諸官公署許認可図書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-SEKKEI-HENKOU-SHIIJI",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Design Change Instruction",
+                        "jp": "設計変更指示書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-SHUNKOU-ZUSHO",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "As-Built / Completion Documents",
+                        "jp": "竣工図書"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-ARCHIVE",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Archive (Box / Project Folder)",
+                        "jp": "アーカイブ（Box / PJフォルダ）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MGT-COST",
+                    "nodeType": "Element",
+                    "category": "Management",
+                    "label": {
+                        "en": "Cost Management (Estimates / Adjustments)",
+                        "jp": "コスト管理（概算・調整・会議）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MGT-SCHEDULE",
+                    "nodeType": "Element",
+                    "category": "Management",
+                    "label": {
+                        "en": "Schedule Management (Project Schedule)",
+                        "jp": "工程管理（PJ工程表）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MGT-DOC",
+                    "nodeType": "Element",
+                    "category": "Management",
+                    "label": {
+                        "en": "Document Control",
+                        "jp": "文書管理"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MGT-BIM",
+                    "nodeType": "Element",
+                    "category": "Management",
+                    "label": {
+                        "en": "BIM Planning / Kickoff / Checks",
+                        "jp": "BIM計画・キックオフ・チェック"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MGT-MEETINGS",
+                    "nodeType": "Element",
+                    "category": "Management",
+                    "label": {
+                        "en": "Regular Meetings (Design / Subcommittees)",
+                        "jp": "定例（設計打合・分科会）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-OWNER",
+                    "nodeType": "Organization",
+                    "category": "Owner",
+                    "label": {
+                        "en": "Owner / Client",
+                        "jp": "顧客（発注者）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-AUTH",
+                    "nodeType": "Organization",
+                    "category": "Authority",
+                    "label": {
+                        "en": "Authorities / Government Offices",
+                        "jp": "官公署"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-DESIGN",
+                    "nodeType": "Organization",
+                    "category": "DesignTeam",
+                    "label": {
+                        "en": "Design Team",
+                        "jp": "設計"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ORG-GC",
+                    "nodeType": "Organization",
+                    "category": "Subcontractor",
+                    "label": {
+                        "en": "General Contractor (GC)",
+                        "jp": "ゼネコン"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "A-ZONING",
+                    "nodeType": "Element",
+                    "category": "DisciplineDeliverable",
+                    "label": {
+                        "en": "Zoning / Circulation",
+                        "jp": "ゾーニング・動線計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "A-CODECHECK",
+                    "nodeType": "Element",
+                    "category": "DisciplineDeliverable",
+                    "label": {
+                        "en": "Code Check",
+                        "jp": "法規チェック"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "S-STRUCT-SCHEME",
+                    "nodeType": "Element",
+                    "category": "DisciplineDeliverable",
+                    "label": {
+                        "en": "Structural System Scheme",
+                        "jp": "構造形式・架構計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "M-SHAFT-SPACE",
+                    "nodeType": "Element",
+                    "category": "DisciplineDeliverable",
+                    "label": {
+                        "en": "Mechanical Room / Shaft Space Planning",
+                        "jp": "機械室・シャフトスペース検討"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "M-LOADCALC",
+                    "nodeType": "Element",
+                    "category": "DisciplineDeliverable",
+                    "label": {
+                        "en": "Load Calculation",
+                        "jp": "負荷計算"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ONE-LINE",
+                    "nodeType": "Element",
+                    "category": "DisciplineDeliverable",
+                    "label": {
+                        "en": "Single-Line Diagram / Power Planning",
+                        "jp": "単線結線図・電気方針"
+                    }
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "E-JP-PARTOF-STG1",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "STG-KIHON-HOUSHIN",
+                    "target": "JP-FLOW",
+                    "directional": false,
+                    "phase": [
+                        "KihonHoushin"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-STG-1-2",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-HOUSHIN",
+                    "target": "STG-SEKKEI-JUTAKU",
+                    "directional": true,
+                    "phase": [
+                        "KihonHoushin",
+                        "SekkeiJutaku"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-STG-2-3",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-SEKKEI-JUTAKU",
+                    "target": "STG-KIHON-KEIKAKU",
+                    "directional": true,
+                    "phase": [
+                        "SekkeiJutaku",
+                        "KihonKeikaku"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-STG-3-4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-KEIKAKU",
+                    "target": "STG-KIHON-SEKKEI",
+                    "directional": true,
+                    "phase": [
+                        "KihonKeikaku",
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-STG-4-5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "STG-JISSHI-SEKKEI",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei",
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-STG-5-6",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "STG-SEISAN-SEKKEI",
+                    "directional": true,
+                    "phase": [
+                        "JisshiSekkei",
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-STG-6-7",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-SEISAN-SEKKEI",
+                    "target": "STG-KOUJI-KANRI",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei",
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-STG-7-8",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KOUJI-KANRI",
+                    "target": "STG-SHUNKOGO",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri",
+                        "Shunkougo"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-SR-IN-STG2",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-SEKKEI-JUTAKU",
+                    "target": "RVW-SR",
+                    "directional": true,
+                    "phase": [
+                        "SekkeiJutaku"
+                    ],
+                    "confidence": "Explicit",
+                    "notes": "Strategy Review (SR) occurs in early acceptance / planning initiation."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-SD-IN-STG3",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-KEIKAKU",
+                    "target": "RVW-SD",
+                    "directional": true,
+                    "phase": [
+                        "KihonKeikaku"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-RMR-IN-STG3",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-KEIKAKU",
+                    "target": "RVW-RMR",
+                    "directional": true,
+                    "phase": [
+                        "KihonKeikaku"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DR-RR1-QR-IN-STG4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "RVW-DR",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-RR1-IN-STG4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "RVW-RR1",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-QR-IN-STG4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "RVW-QR",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-FR-RR2-QV-IN-STG5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "RVW-FR",
+                    "directional": true,
+                    "phase": [
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-RR2-IN-STG5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "RVW-RR2",
+                    "directional": true,
+                    "phase": [
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-QV-IN-STG5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "RVW-QV",
+                    "directional": true,
+                    "phase": [
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-CR-IN-STG7",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KOUJI-KANRI",
+                    "target": "RVW-CR",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-CONDITIONS-STG2",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-SEKKEI-JUTAKU",
+                    "target": "DOC-SEKKEI-JOUKEN",
+                    "directional": true,
+                    "phase": [
+                        "SekkeiJutaku"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-KIKAKU-STG2",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-SEKKEI-JUTAKU",
+                    "target": "DOC-KIKAKU-SEKKEI",
+                    "directional": true,
+                    "phase": [
+                        "SekkeiJutaku"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-KEIKAKU-STG3",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-KEIKAKU",
+                    "target": "DOC-KEIKAKU-SEKKEI",
+                    "directional": true,
+                    "phase": [
+                        "KihonKeikaku"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-KIHONZU-STG4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "DOC-KIHON-SEKKEI-ZU",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-KIHONSETUMEI-STG4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "DOC-KIHON-SEKKEI-SETUMEI",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-JISSHIZU-STG5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "DOC-JISSHI-SEKKEI-ZU",
+                    "directional": true,
+                    "phase": [
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-JISSHISETUMEI-STG5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "DOC-JISSHI-SEKKEI-SETUMEI",
+                    "directional": true,
+                    "phase": [
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-KAKUNIN-STG5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "DOC-KAKUNIN-SHINSEI",
+                    "directional": true,
+                    "phase": [
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-KYONINKA-STG5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "DOC-KYONINKA",
+                    "directional": true,
+                    "phase": [
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-CHANGE-STG7",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KOUJI-KANRI",
+                    "target": "DOC-SEKKEI-HENKOU-SHIIJI",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-ASBUILT-STG8",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-SHUNKOGO",
+                    "target": "DOC-SHUNKOU-ZUSHO",
+                    "directional": true,
+                    "phase": [
+                        "Shunkougo"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOC-ARCHIVE-STG8",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-SHUNKOGO",
+                    "target": "DOC-ARCHIVE",
+                    "directional": true,
+                    "phase": [
+                        "Shunkougo"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-OWNER-APPROVES-KEYDOCS",
+                    "type": "ConnectsTo",
+                    "dimension": "Responsibility",
+                    "source": "ORG-OWNER",
+                    "target": "DOC-KIHON-SEKKEI-ZU",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Inferred",
+                    "notes": "Owner agreement is required at major design document milestones."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-AUTH-REL-KAKUNIN",
+                    "type": "ConnectsTo",
+                    "dimension": "Responsibility",
+                    "source": "ORG-AUTH",
+                    "target": "DOC-KAKUNIN-SHINSEI",
+                    "directional": false,
+                    "phase": [
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DESIGN-RESP-STG4",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "ORG-DESIGN",
+                    "directional": false,
+                    "phase": [
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-GC-RESP-SEISAN",
+                    "type": "DesignedBy",
+                    "dimension": "Responsibility",
+                    "source": "STG-SEISAN-SEKKEI",
+                    "target": "ORG-GC",
+                    "directional": false,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-COST-ACROSS",
+                    "type": "ConnectsTo",
+                    "dimension": "Management",
+                    "source": "MGT-COST",
+                    "target": "STG-KIHON-KEIKAKU",
+                    "directional": false,
+                    "phase": [
+                        "KihonKeikaku",
+                        "KihonSekkei",
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Explicit",
+                    "notes": "Cost adjustments and estimate explanations appear repeatedly through planning/design."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-SCHEDULE-ACROSS",
+                    "type": "ConnectsTo",
+                    "dimension": "Management",
+                    "source": "MGT-SCHEDULE",
+                    "target": "STG-KIHON-SEKKEI",
+                    "directional": false,
+                    "phase": [
+                        "SekkeiJutaku",
+                        "KihonKeikaku",
+                        "KihonSekkei",
+                        "JisshiSekkei",
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-DOCCTRL-ACROSS",
+                    "type": "ConnectsTo",
+                    "dimension": "Management",
+                    "source": "MGT-DOC",
+                    "target": "STG-JISSHI-SEKKEI",
+                    "directional": false,
+                    "phase": [
+                        "SekkeiJutaku",
+                        "KihonKeikaku",
+                        "KihonSekkei",
+                        "JisshiSekkei",
+                        "KoujiKanri",
+                        "Shunkougo"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-BIM-ACROSS",
+                    "type": "ConnectsTo",
+                    "dimension": "Management",
+                    "source": "MGT-BIM",
+                    "target": "STG-KIHON-SEKKEI",
+                    "directional": false,
+                    "phase": [
+                        "KihonSekkei",
+                        "JisshiSekkei",
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-MEETINGS-ACROSS",
+                    "type": "ConnectsTo",
+                    "dimension": "Management",
+                    "source": "MGT-MEETINGS",
+                    "target": "STG-KIHON-SEKKEI",
+                    "directional": false,
+                    "phase": [
+                        "SekkeiJutaku",
+                        "KihonKeikaku",
+                        "KihonSekkei",
+                        "JisshiSekkei",
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-A-ZONING-STG3",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-KEIKAKU",
+                    "target": "A-ZONING",
+                    "directional": true,
+                    "phase": [
+                        "KihonKeikaku"
+                    ],
+                    "confidence": "Explicit",
+                    "notes": "Zoning and volume planning are early planning outputs."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-A-CODECHECK-STG3-4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "A-CODECHECK",
+                    "directional": true,
+                    "phase": [
+                        "KihonKeikaku",
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-S-STRUCT-STG4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "S-STRUCT-SCHEME",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-M-SHAFT-STG3-4",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-KIHON-SEKKEI",
+                    "target": "M-SHAFT-SPACE",
+                    "directional": true,
+                    "phase": [
+                        "KihonKeikaku",
+                        "KihonSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-M-LOAD-STG4-5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "M-LOADCALC",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei",
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-JP-E-ONELINE-STG4-5",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "STG-JISSHI-SEKKEI",
+                    "target": "E-ONE-LINE",
+                    "directional": true,
+                    "phase": [
+                        "KihonSekkei",
+                        "JisshiSekkei"
+                    ],
+                    "confidence": "Inferred"
+                }
+            }
+        ]
+    }
+}

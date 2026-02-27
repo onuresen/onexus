@@ -1,0 +1,597 @@
+{
+    "meta": {
+        "schema": "onexus-1.1",
+        "project": "Japan Design Flow (GC Layer - Edge Visible Fix)",
+        "languageDefault": "en",
+        "phases": [
+            "KihonHoushin",
+            "SekkeiJutaku",
+            "KihonKeikaku",
+            "KihonSekkei",
+            "JisshiSekkei",
+            "SeisanSekkei",
+            "KoujiKanri",
+            "Shunkougo"
+        ],
+        "exportedAt": "2026-02-27T04:56:27Z"
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "GC-LAYER",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "General Contractor Delivery Layer",
+                        "jp": "ゼネコン（GC）業務レイヤー"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GC-WP-SEISAN-BIM",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "GC: BIM Coordination / Integration",
+                        "jp": "GC：BIM総合調整"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GC-WP-SOGOZU",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "GC: Coordination Drawings (SOGOZU)",
+                        "jp": "GC：総合図（調整図）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GC-WP-SHOPDWG",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "GC: Shop Drawings Management",
+                        "jp": "GC：施工図管理"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GC-WP-CONSTRUCTION-PLAN",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "GC: Construction Planning",
+                        "jp": "GC：施工計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GC-WP-SAFETY",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "GC: Safety Management",
+                        "jp": "GC：安全管理"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GC-WP-QUALITY",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "GC: Quality Management (QA/QC)",
+                        "jp": "GC：品質管理（QA/QC）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GC-WP-CHANGE",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "GC: Change / RFI / Variation Control",
+                        "jp": "GC：変更管理（RFI・VO）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GC-WP-HANDOVER",
+                    "nodeType": "System",
+                    "category": "BuildingSystem",
+                    "label": {
+                        "en": "GC: Handover / As-built Coordination",
+                        "jp": "GC：引渡し・竣工図整備"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-SEISAN-BIM-PLAN",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Production BIM Execution Plan (GC)",
+                        "jp": "生産BIM実行計画書（GC）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-SOGOZU",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Coordination Drawings (SOGOZU)",
+                        "jp": "総合図"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-SHOPDWG-PACK",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Shop Drawing Package",
+                        "jp": "施工図一式"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-METHOD-STATEMENT",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Method Statement / Work Plan",
+                        "jp": "施工要領書・作業計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-TEMP-WORKS",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Temporary Works Plan",
+                        "jp": "仮設計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-SAFETY-PLAN",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Safety Plan / Risk Assessment",
+                        "jp": "安全計画・リスクアセスメント"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-QAQC-PLAN",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "QA/QC Plan & Inspection Test Plan (ITP)",
+                        "jp": "品質計画・検査試験計画（ITP）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-RFI-LOG",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "RFI Log",
+                        "jp": "RFI管理表"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DOC-CHANGE-LOG",
+                    "nodeType": "Element",
+                    "category": "Document",
+                    "label": {
+                        "en": "Change / Variation Log",
+                        "jp": "変更（VO）管理表"
+                    }
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "E-GC-LAYER-PARTOF-JP-FLOW",
+                    "type": "PartOfSystem",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "JP-FLOW",
+                    "directional": false,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-CONN-WP-BIM",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "GC-WP-SEISAN-BIM",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-CONN-WP-SOGOZU",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "GC-WP-SOGOZU",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-CONN-WP-SHOPDWG",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "GC-WP-SHOPDWG",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-CONN-WP-CONPLAN",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "GC-WP-CONSTRUCTION-PLAN",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-CONN-WP-SAFETY",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "GC-WP-SAFETY",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-CONN-WP-QUALITY",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "GC-WP-QUALITY",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-CONN-WP-CHANGE",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "GC-WP-CHANGE",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-CONN-WP-HANDOVER",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "GC-WP-HANDOVER",
+                    "directional": true,
+                    "phase": [
+                        "Shunkougo"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-BIM-TO-DOC-BIMPLAN",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-SEISAN-BIM",
+                    "target": "DOC-SEISAN-BIM-PLAN",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-SOGOZU-TO-DOC-SOGOZU",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-SOGOZU",
+                    "target": "DOC-SOGOZU",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-SHOPDWG-TO-DOC-SHOPDWG",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-SHOPDWG",
+                    "target": "DOC-SHOPDWG-PACK",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-CONPLAN-TO-DOC-METHOD",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-CONSTRUCTION-PLAN",
+                    "target": "DOC-METHOD-STATEMENT",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-CONPLAN-TO-DOC-TEMP",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-CONSTRUCTION-PLAN",
+                    "target": "DOC-TEMP-WORKS",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-SAFETY-TO-DOC-SAFETY",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-SAFETY",
+                    "target": "DOC-SAFETY-PLAN",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-QUALITY-TO-DOC-QAQC",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-QUALITY",
+                    "target": "DOC-QAQC-PLAN",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-CHANGE-TO-DOC-RFI",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-CHANGE",
+                    "target": "DOC-RFI-LOG",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-WP-CHANGE-TO-DOC-CHANGE",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-WP-CHANGE",
+                    "target": "DOC-CHANGE-LOG",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-BIMPLAN-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-SEISAN-BIM-PLAN",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-SOGOZU-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-SOGOZU",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-SHOPDWG-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-SHOPDWG-PACK",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-METHOD-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-METHOD-STATEMENT",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-TEMP-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-TEMP-WORKS",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-SAFETY-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-SAFETY-PLAN",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-QAQC-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-QAQC-PLAN",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-RFI-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-RFI-LOG",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GC-LAYER-TO-DOC-CHANGE-DIRECT",
+                    "type": "ConnectsTo",
+                    "dimension": "System",
+                    "source": "GC-LAYER",
+                    "target": "DOC-CHANGE-LOG",
+                    "directional": true,
+                    "phase": [
+                        "KoujiKanri"
+                    ],
+                    "confidence": "Explicit"
+                }
+            }
+        ]
+    }
+}
