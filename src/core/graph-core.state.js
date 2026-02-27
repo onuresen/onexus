@@ -61,7 +61,7 @@
     container: document.getElementById("cy"),
     elements: [],
     style: NEXUS_STYLE, // from onexus-style.js
-    minZoom: 0.2, maxZoom: 3, wheelSensitivity: 0.2,
+    minZoom: 0.2, maxZoom: 10, wheelSensitivity: 0.2,
   });
   window.cy = cy;
 

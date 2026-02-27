@@ -187,6 +187,23 @@
       // NEW: plugin lifecycle event (willLoad)
       try { window.ONEXUS?.bus?.emit?.("graphWillLoad", { graph }); } catch { }
 
+      // --- NEW: unify importer meta + normalize graph schema (if helper present)
+      try {
+        const norm = window.ONEXUS?.import?.normalizeGraph;
+        if (typeof norm === "function") {
+          // Preserve any incoming meta but ensure required import fields exist
+          const sourceFiles =
+            Array.isArray(graph?.meta?.sourceFiles) ? graph.meta.sourceFiles : [];
+          graph = norm(graph, {
+            importer: graph?.meta?.importer ?? "onexusLoadGraph",
+            sourceFiles,
+            sourceKind: graph?.meta?.sourceKind ?? "import"
+          });
+        }
+      } catch (e) {
+        console.warn("[ONEXUS] import normalization failed (continuing):", e);
+      }
+
       const res = validateOnexusJson(graph);
       if (res && res.valid === false) {
         console.error("ONEXUS schema errors:", res.errors);

@@ -718,6 +718,11 @@ button.flat:hover {
     z-index: 5;
 }
 
+/* ONEXUS bootcheck (minimal) */
+#onexus-toast {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
 /* On very small screens, keep it from overlapping controls */
 @media (max-width: 520px) {
     #toolbar .badge {
