@@ -219,6 +219,16 @@
     const P = normalizePayload(payload);
     const opt = chooseOption(P, optionId);
 
+    // NEW: stamp import session meta (GD is often in-place mutation)
+    try {
+      window.ONEXUS?.import?.stampSession?.({
+        importer: "gd",
+        sourceFiles: ["(in-memory)"],
+        mode: mode ?? "overlay",
+        importedAt: new Date().toISOString()
+      });
+    } catch { }
+
     if (mode === "materialize-edges") materializeOptionToGraph(P, opt);
     else overlayOptionOnGraph(P, opt);
   }

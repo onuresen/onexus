@@ -273,6 +273,15 @@
     const files = Array.from(event?.target?.files || []);
     if (!files.length) return;
 
+    // NEW: stamp import session meta
+    try {
+      window.ONEXUS?.import?.stampSession?.({
+        importer: "cobie",
+        sourceFiles: files.map(f => f.name),
+        importedAt: new Date().toISOString()
+      });
+    } catch { }
+
     // Read all as text
     const txts = await Promise.all(files.map(f => new Promise((res, rej) => {
       const r = new FileReader(); r.onload = e => res({ name: f.name, text: e.target.result });

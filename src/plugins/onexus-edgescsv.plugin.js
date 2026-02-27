@@ -104,6 +104,15 @@
         const csvFiles = Array.from(files || []).filter(f => (f?.name || "").toLowerCase().endsWith(".csv"));
         if (!csvFiles.length) throw new Error("No CSV files provided.");
 
+        // NEW: stamp import session meta
+        try {
+            window.ONEXUS?.import?.stampSession?.({
+                importer: "onexus-edges-csv",
+                sourceFiles: Array.from(files ?? []).map(f => f?.name).filter(Boolean),
+                importedAt: new Date().toISOString()
+            });
+        } catch { }
+
         // Combine multiple files by concatenating edge lists into one graph (nodes union)
         const graphs = [];
         for (const f of csvFiles) {

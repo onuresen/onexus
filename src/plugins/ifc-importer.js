@@ -708,13 +708,32 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
     const files = Array.from(event?.target?.files ?? []);
     if (!files.length) return;
 
-    const file = files.find(
-      (f) => f.name.toLowerCase().endsWith(".ifc") || f.name.toLowerCase().endsWith(".ifczip")
-    );
+    const file = files.find(f => {
+      const n = (f.name ?? "").toLowerCase();
+      return n.endsWith(".ifc") || n.endsWith(".ifczip");
+    });
     if (!file) return;
 
     const buf = await file.arrayBuffer();
     const graph = await parseIFCToOnexusGraph(buf);
+
+    // ✅ Stamp meta *here* (graph exists here)
+    graph.meta = graph.meta || {};
+    graph.meta.schema = graph.meta.schema || "onexus";
+    graph.meta.importer = "ifc";
+    graph.meta.importedAt = new Date().toISOString();
+    graph.meta.sourceFiles = [file.name];
+    graph.meta.sourceFile = file.name; // optional legacy
+
+    // Optional: stamp session bucket if you added normalizer earlier
+    try {
+      window.ONEXUS?.import?.stampSession?.({
+        importer: "ifc",
+        sourceFiles: [file.name],
+        importedAt: graph.meta.importedAt
+      });
+    } catch { }
+
     injectGraph(graph);
   }
 
@@ -735,13 +754,6 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
 
   // expose
   window.ONEXUS_IFC = { parseIFCToOnexusGraph, loadIFC };
-
-  // Tag meta so Safe Mode can auto-detect IFC loads
-  graph.meta = graph.meta || {};
-  graph.meta.schema = graph.meta.schema || "onexus";
-  graph.meta.importer = "ifc";
-  graph.meta.importedAt = new Date().toISOString();
-  graph.meta.sourceFile = file.name;
 })();
 
 // ===============================
@@ -777,9 +789,27 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
             await window.ONEXUS_IFC.loadIFC(fakeEvt);
             return;
           }
-          // fallback: parse+inject directly
+
           const buf = await f.arrayBuffer();
           const graph = await window.ONEXUS_IFC.parseIFCToOnexusGraph(buf);
+
+          // ✅ stamp meta here too
+          graph.meta = graph.meta || {};
+          graph.meta.schema = graph.meta.schema || "onexus";
+          graph.meta.importer = "ifc";
+          graph.meta.importedAt = new Date().toISOString();
+          graph.meta.sourceFiles = [f.name];
+          graph.meta.sourceFile = f.name;
+
+          // optional: unify import session bucket
+          try {
+            window.ONEXUS?.import?.stampSession?.({
+              importer: "ifc",
+              sourceFiles: [f.name],
+              importedAt: graph.meta.importedAt
+            });
+          } catch { }
+
           window.onexusLoadGraph?.(graph);
         },
       });

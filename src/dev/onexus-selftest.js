@@ -24,16 +24,34 @@
 
     async function withGraphSnapshot(fn) {
         const cy = window.cy;
-        if (!cy || !can(cy.json)) throw new Error("cy.json() not available");
-        const snap = cy.json();
+        if (!cy || typeof cy.json !== "function") throw new Error("cy.json() not available");
+
+        // ✅ Snapshot only what we need (avoid style JSON which cannot store functions)
+        const snap = {
+            elements: cy.json().elements,
+            zoom: cy.zoom(),
+            pan: cy.pan(),
+        };
         const meta = window.__onexus_meta ? JSON.parse(JSON.stringify(window.__onexus_meta)) : null;
 
         try {
             return await fn();
         } finally {
-            try { cy.json(snap); } catch (e) { logWarn("Failed to restore cy snapshot", e); }
+            try {
+                cy.elements().remove();
+                cy.add(snap.elements?.nodes ?? []);
+                cy.add(snap.elements?.edges ?? []);
+                cy.zoom(snap.zoom);
+                cy.pan(snap.pan);
+            } catch (e) {
+                console.warn("[ONEXUS selftest] restore failed", e);
+            }
+
             try { window.__onexus_meta = meta; } catch { }
-            // Re-run UI refresh hooks after restore
+
+            // ✅ Re-apply theme/style hooks after restore (restores function-based stylesheet)
+            try { window.applyTheme?.(localStorage.getItem("onexus.theme") ?? "light"); } catch { }
+            try { window.applyScale?.(parseFloat(localStorage.getItem("onexus.scale") ?? "1")); } catch { }
             try { window.setLanguage?.(window.__onexus_state?.language ?? "en"); } catch { }
             try { window.buildCategoryFilter?.(); } catch { }
             try { window.buildPhaseFilter?.(); } catch { }
