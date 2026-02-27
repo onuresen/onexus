@@ -173,8 +173,14 @@
       window.buildPhaseFilter?.();
       window.applyLayout?.("default");
       cy.fit(undefined, 50);
-      window.setEdgeLabelVisibility?.(true);
-      window.setNodeLabelVisibility?.(true);
+
+      // Perf: don't force labels ON while a load/layout hide cycle is active
+      const perfHide = window.ONEXUS_PERF?.isTempLabelHide?.() === true;
+      if (!perfHide) {
+        window.setEdgeLabelVisibility?.(true);
+        window.setNodeLabelVisibility?.(true);
+      }
+
       window.buildRelationshipLegend?.();
       window.updateMetrics?.();
     };
@@ -232,8 +238,14 @@
       window.applyTheme?.(localStorage.getItem("onexus.theme") ?? "light");
       window.applyLayout?.("default");
       c.fit(undefined, 50);
-      window.setEdgeLabelVisibility?.(true);
-      window.setNodeLabelVisibility?.(true);
+
+      // Perf: don't force labels ON while a load/layout hide cycle is active
+      const perfHide = window.ONEXUS_PERF?.isTempLabelHide?.() === true;
+      if (!perfHide) {
+        window.setEdgeLabelVisibility?.(true);
+        window.setNodeLabelVisibility?.(true);
+      }
+
       window.buildRelationshipLegend?.();
       window.updateMetrics?.();
 

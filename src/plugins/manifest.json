@@ -4,6 +4,7 @@
         "cobie-importer.js",
         "ifc-importer.js",
         "gd-importer.js",
-        "kanji.plugin.js"
+        "kanji.plugin.js",
+        "waterflow.plugin.js"
     ]
 }
