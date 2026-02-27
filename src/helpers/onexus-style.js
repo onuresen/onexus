@@ -323,6 +323,11 @@ function buildStyle(themeKey) {
     { selector: ".onx-hide-reveal", style: { display: "none" } },
     { selector: ".onx-hide-node-vis", style: { display: "none" } },
     { selector: ".onx-hide-isolated", style: { display: "none" } },
+
+    // TEMP: Hide labels during load/layout (perf)
+    { selector: "node.onx-hide-labels-temp", style: { "text-opacity": 0 } },
+    { selector: "edge.onx-hide-labels-temp", style: { "text-opacity": 0, label: "" } },
+
   ];
 }
 
