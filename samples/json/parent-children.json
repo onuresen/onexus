@@ -1,0 +1,90 @@
+{
+    "meta": {
+        "schema": "onexus",
+        "kind": "example/parent-children"
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "Parent",
+                    "nodeType": "Component",
+                    "category": "Controller",
+                    "label": {
+                        "en": "Parent",
+                        "jp": "Parent"
+                    },
+                    "displayLabel": "Parent"
+                }
+            },
+            {
+                "data": {
+                    "id": "Child-A",
+                    "nodeType": "Component",
+                    "category": "Subsystem",
+                    "label": {
+                        "en": "Child-A",
+                        "jp": "Child-A"
+                    },
+                    "displayLabel": "Child-A"
+                }
+            },
+            {
+                "data": {
+                    "id": "Child-B",
+                    "nodeType": "Component",
+                    "category": "Subsystem",
+                    "label": {
+                        "en": "Child-B",
+                        "jp": "Child-B"
+                    },
+                    "displayLabel": "Child-B"
+                }
+            },
+            {
+                "data": {
+                    "id": "Child-C",
+                    "nodeType": "Component",
+                    "category": "Subsystem",
+                    "label": {
+                        "en": "Child-C",
+                        "jp": "Child-C"
+                    },
+                    "displayLabel": "Child-C"
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "e_parent_child_a",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "directional": true,
+                    "source": "Parent",
+                    "target": "Child-A"
+                }
+            },
+            {
+                "data": {
+                    "id": "e_parent_child_b",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "directional": true,
+                    "source": "Parent",
+                    "target": "Child-B"
+                }
+            },
+            {
+                "data": {
+                    "id": "e_parent_child_c",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "directional": true,
+                    "source": "Parent",
+                    "target": "Child-C"
+                }
+            }
+        ]
+    }
+}

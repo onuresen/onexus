@@ -1,0 +1,90 @@
+{
+    "meta": {
+        "schema": "onexus",
+        "kind": "example/childA-grandchildren"
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "Child-A",
+                    "nodeType": "Component",
+                    "category": "Subsystem",
+                    "label": {
+                        "en": "Child-A",
+                        "jp": "Child-A"
+                    },
+                    "displayLabel": "Child-A"
+                }
+            },
+            {
+                "data": {
+                    "id": "Grandchild-A",
+                    "nodeType": "Component",
+                    "category": "Unit",
+                    "label": {
+                        "en": "Grandchild-A",
+                        "jp": "Grandchild-A"
+                    },
+                    "displayLabel": "Grandchild-A"
+                }
+            },
+            {
+                "data": {
+                    "id": "Grandchild-B",
+                    "nodeType": "Component",
+                    "category": "Unit",
+                    "label": {
+                        "en": "Grandchild-B",
+                        "jp": "Grandchild-B"
+                    },
+                    "displayLabel": "Grandchild-B"
+                }
+            },
+            {
+                "data": {
+                    "id": "Grandchild-C",
+                    "nodeType": "Component",
+                    "category": "Unit",
+                    "label": {
+                        "en": "Grandchild-C",
+                        "jp": "Grandchild-C"
+                    },
+                    "displayLabel": "Grandchild-C"
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "e_childa_grandchild_a",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "directional": true,
+                    "source": "Child-A",
+                    "target": "Grandchild-A"
+                }
+            },
+            {
+                "data": {
+                    "id": "e_childa_grandchild_b",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "directional": true,
+                    "source": "Child-A",
+                    "target": "Grandchild-B"
+                }
+            },
+            {
+                "data": {
+                    "id": "e_childa_grandchild_c",
+                    "type": "Controls",
+                    "dimension": "System",
+                    "directional": true,
+                    "source": "Child-A",
+                    "target": "Grandchild-C"
+                }
+            }
+        ]
+    }
+}

@@ -285,6 +285,25 @@ function buildStyle(themeKey) {
     { selector: 'edge[type = "PortOf"]', style: { "line-style": "solid", width: edgeWThin } },
     { selector: 'edge[type = "FillsOpeningIn"]', style: { "line-style": "solid", width: clamp(3 * Math.pow(S, 0.9), 2, 6) } },
 
+    {
+      selector: "node:selected",
+      style: {
+        "border-width": clamp(5 * Math.pow(S, 0.85), 3, 8),
+        "border-color": "#22c55e",
+        "border-opacity": 0.95,
+        "background-opacity": 1
+      }
+    },
+    {
+      selector: "edge:selected",
+      style: {
+        "line-color": "#22c55e",
+        "target-arrow-color": "#22c55e",
+        width: clamp(6 * Math.pow(S, 0.9), 3, 10),
+        opacity: 0.95
+      }
+    },
+
     { selector: ".faded", style: { opacity: 0.15, "text-opacity": 0.1 } },
     { selector: ".highlight", style: { "border-width": 4, "border-color": "#2563eb", "background-opacity": 0.95 } },
 
