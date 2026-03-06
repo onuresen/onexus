@@ -6,6 +6,7 @@
 ![Cytoscape.js](https://img.shields.io/badge/Cytoscape.js-3.23-blue)
 ![Revit Add‑in](https://img.shields.io/badge/Revit-Add--in-orange)
 ![Made for BIM](https://img.shields.io/badge/BIM-NEXUS-blueviolet)
+[![CI](https://github.com/onuresen/onexus/actions/workflows/onexus-smoke.yml/badge.svg)](https://github.com/onuresen/onexus/actions/workflows/onexus-smoke.yml)
 
 ---
 
