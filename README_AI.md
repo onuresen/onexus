@@ -166,8 +166,11 @@ Minimal expected JSON shape:
 Node basics: `id`, `nodeType`, `category`, `label` (multi-language). Edge basics: `id`, `source`, `target`, `type`.
 
 **Development**
-- Edit UI/logic in `src/graph-core.js` and `src/graph-ui.js`.
-- Open `index.html` or use a local server while developing.
+- Edit UI/logic in `src/` — see the directory layout in `CLAUDE.md`.
+- Open `index.html` or run `npm run serve` to develop with a local server.
+- Run `npm run lint` to check for issues; `npm run format` to format code.
+- Run `npm run test:smoke` after installing Playwright (`npx playwright install --with-deps chromium`) to verify the app boots correctly.
+- For AI-assisted development, see `CLAUDE.md` for project conventions and key APIs.
 
 **Versions & history**
 - Historical snapshots are preserved under `versions/`. Use these to compare UI/feature changes or to run older demos.

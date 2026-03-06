@@ -41,6 +41,13 @@ function newId() {
     return `g_${t}_${r}`;
 }
 
+// Only allow safe graph IDs: alphanumeric, hyphens, underscores, max 128 chars
+const SAFE_ID_RE = /^[a-zA-Z0-9_-]{1,128}$/;
+
+function isValidId(id) {
+    return typeof id === "string" && SAFE_ID_RE.test(id);
+}
+
 function filePathFor(id) {
     return path.join(STORAGE_DIR, `${id}.json`);
 }
@@ -131,7 +138,7 @@ app.post("/graphs", (req, res) => {
 // Get graph
 app.get("/graphs/:id", (req, res) => {
     const id = String(req.params.id ?? "").trim();
-    if (!id) return res.status(400).json({ ok: false, error: "missing id" });
+    if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
     const p = filePathFor(id);
     if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });
@@ -143,7 +150,7 @@ app.get("/graphs/:id", (req, res) => {
 // Update graph (overwrite)
 app.put("/graphs/:id", (req, res) => {
     const id = String(req.params.id ?? "").trim();
-    if (!id) return res.status(400).json({ ok: false, error: "missing id" });
+    if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
     const p = filePathFor(id);
     if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });
@@ -170,7 +177,7 @@ app.put("/graphs/:id", (req, res) => {
 // Delete graph
 app.delete("/graphs/:id", (req, res) => {
     const id = String(req.params.id ?? "").trim();
-    if (!id) return res.status(400).json({ ok: false, error: "missing id" });
+    if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
     const p = filePathFor(id);
     if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });
