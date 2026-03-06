@@ -15,12 +15,15 @@ const PORT = process.env.PORT || 8787;
 const STORAGE_DIR = process.env.ONEXUS_STORAGE_DIR
     ? path.resolve(process.env.ONEXUS_STORAGE_DIR)
     : path.join(__dirname, "storage");
+// ONEXUS_ALLOWED_ORIGIN: set to your frontend URL in non-local deployments.
+// Defaults to localhost:4173 (the dev server). Use "*" to allow any origin (not recommended).
+const ALLOWED_ORIGIN = process.env.ONEXUS_ALLOWED_ORIGIN || "http://localhost:4173";
 
 // Ensure storage folder exists
 fs.mkdirSync(STORAGE_DIR, { recursive: true });
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: ALLOWED_ORIGIN }));
 app.use(express.json({ limit: "25mb" })); // graphs can be big; adjust as needed
 
 // ===============================
