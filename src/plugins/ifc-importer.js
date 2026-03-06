@@ -369,7 +369,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         return 0;
       }
     };
-    console.table({
+    (window.ONEXUS_LOG || console).table({
       Building: COUNT(IFCBUILDING),
       Storey: COUNT(IFCBUILDINGSTOREY),
       Space: COUNT(IFCSPACE),
