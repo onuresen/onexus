@@ -84,6 +84,11 @@ The goal is simple:
 - IFC / IFCZIP (via web‑ifc)
 - Generative Design (GD) JSON (overlay or materialize options)
 
+### 🔹 Animation Lab
+- Node animation modes: **Bounce**, **Orbit**, **Black Hole**, **Breath**
+- Edge animation: **Edge Flow** with dimension filtering and pattern controls
+- Per-mode controls: intensity, speed, scope, and follow-layout toggle
+
 ### 🔹 Export
 - PNG / SVG (visual output)
 - JSON / CSV (data)
@@ -150,7 +155,8 @@ src/
   common/                 # Shared css/js
 samples/                  # Example datasets and raw exports (json, COBie, IFC, etc.)
 assets/                   # Images, WASM and miscellaneous media
-versions/                 # Archived snapshots / historical builds
+Versions/                 # Archived snapshots / historical builds
+```
 
 ---
 
@@ -164,20 +170,20 @@ Option A — Open directly (quickest)
 Option B — Run a local static server (recommended)
 - With Node (no install required if you have Node):
 ```bash
-npx http-server .
+npx http-server -p 4173 .
 ```
 - Or with Python 3:
 ```bash
-python -m http.server 8080
+python -m http.server 4173
 ```
 - Then open:
 ```text
-http://localhost:8080
+http://localhost:4173
 ```
 
 Loading data (beginner steps)
 - Use the `Load` file selector in the toolbar or drag-and-drop files onto the page.
-- Start with the included sample JSON: `json/onexus_sample.json` to see a working graph.
+- Start with the included sample JSON: `samples/json/onexus_sample.json` to see a working graph.
 - Supported file types: `.json` (ONEXUS graph), `.csv` (tabular imports), `.ifc` (IFC model imports). Multiple files are allowed.
 
 Basic controls
@@ -192,8 +198,12 @@ Keyboard shortcuts
 - C = Center
 - R = Reset layout
 - Delete = Remove selected node(s)
+- Alt+D = Duplicate selected node(s)
 - Ctrl/Cmd+Z = Undo
 - Shift+Ctrl/Cmd+Z or Ctrl/Cmd+Y = Redo
+- Ctrl+Shift+R = Reset ONEXUS preferences (clears cached settings, no page reload)
+- Shift+Drag on canvas = Box-select nodes and edges
+- Shift+Ctrl/Cmd+Drag = Additive box-select (keeps existing selection)
 
 Exporting
 - Use the export buttons in the toolbar to save the current view or data as PNG, SVG, JSON (layout + metadata) or CSV.
