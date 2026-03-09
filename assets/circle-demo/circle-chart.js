@@ -1,15 +1,14 @@
 /* =====================================================
-   Circular edge-bundling — visual parity pass
-   - Loads data from data.json
-   - Continuous ring (never gaps) + separators
-   - Tangential tight labels with auto-fit scaling
-   - Ring text bug fix (href + xlink:href)
-   - Dense deterministic connections for empty-link nodes
+ Circular edge-bundling — visual parity pass
+ - Loads data from data.json
+ - Continuous ring (never gaps) + separators
+ - Tangential tight labels with auto-fit scaling
+ - Ring text: FIXED arc direction + NO glyph stretching (Modulmatik-like)
+ - Dense deterministic connections for empty-link nodes
 ===================================================== */
 
 const WIDTH = 1000;
 const HEIGHT = 1000;
-
 const DATA_URL = "data.json";
 
 /* ---- visual tuning knobs (safe to tweak) ---- */
@@ -19,11 +18,11 @@ const LINK_BUNDLE_BETA = 0.97;
 const LABEL_FONT = '11px Montserrat, Arial, sans-serif';
 const CAT_FONT = '600 13px Montserrat, Arial, sans-serif';
 
-const FIT_PADDING = 26;     // keep everything inside viewBox
+const FIT_PADDING = 22;     // slightly tighter, still safe
 const FIT_MAX_SCALE = 1.0;  // never enlarge beyond 1
 
 /* =====================================================
-   Load + Init
+ Load + Init
 ===================================================== */
 d3.json(DATA_URL).then(raw => {
     const data = normalizeData(raw);
@@ -34,7 +33,7 @@ d3.json(DATA_URL).then(raw => {
 });
 
 /* =====================================================
-   Data helpers
+ Data helpers
 ===================================================== */
 function normalizeData(raw) {
     // Accept either:
@@ -51,7 +50,6 @@ function normalizeData(raw) {
 function buildHierarchy(items) {
     const root = { name: "root", children: [] };
     const map = new Map();
-
     items.forEach(d => {
         if (!map.has(d.category)) {
             const node = { name: d.category, children: [] };
@@ -60,17 +58,15 @@ function buildHierarchy(items) {
         }
         map.get(d.category).children.push({ name: d.id, data: d });
     });
-
     return root;
 }
 
 /* =====================================================
-   Deterministic dense links (visual parity)
-   - For nodes with 0 links, create 1–3 links stably
-   - Uses a hash-based pseudo-random so the same id => same targets always
+ Deterministic dense links (visual parity)
+ - For nodes with 0 links, create 1–3 links stably
+ - Uses a hash-based pseudo-random so the same id => same targets always
 ===================================================== */
 function hashString(str) {
-    // simple deterministic hash
     let h = 2166136261;
     for (let i = 0; i < str.length; i++) {
         h ^= str.charCodeAt(i);
@@ -82,12 +78,11 @@ function hashString(str) {
 function pickFromArray(arr, seed, count) {
     const out = [];
     if (!arr.length) return out;
-    let s = seed;
+    let s = seed >>> 0;
     for (let i = 0; i < count; i++) {
         s = (s * 1664525 + 1013904223) >>> 0;
         out.push(arr[s % arr.length]);
     }
-    // unique while preserving order
     return Array.from(new Set(out));
 }
 
@@ -95,11 +90,9 @@ function addDeterministicLinks(items) {
     const byCategory = d3.group(items, d => d.category);
     const allIds = items.map(d => d.id);
 
-    // helper: choose targets from other categories (mostly), plus one local
     function makeTargets(node) {
         const seed = hashString(node.id);
-
-        const local = (byCategory.get(node.category) || [])
+        const local = (byCategory.get(node.category) ?? [])
             .map(d => d.id)
             .filter(id => id !== node.id);
 
@@ -108,27 +101,23 @@ function addDeterministicLinks(items) {
         // 1 local + 2 cross-category feels close to Modulmatik density
         const localPick = pickFromArray(local, seed ^ 0xA5A5A5A5, 1);
         const otherPick = pickFromArray(others, seed ^ 0x5A5A5A5A, 2);
-
         return [...localPick, ...otherPick].filter(Boolean);
     }
 
     const out = items.map(d => ({ ...d, links: d.links.slice() }));
-
-    // Build a fast set for duplicates
     const idSet = new Set(allIds);
 
     out.forEach(d => {
         d.links = d.links.filter(t => idSet.has(t) && t !== d.id);
+
         if (d.links.length === 0) {
             d.links = makeTargets(d);
         } else if (d.links.length === 1) {
-            // slightly densify: add 1 more stable target
             const add = makeTargets(d).filter(t => !d.links.includes(t));
             if (add.length) d.links.push(add[0]);
         }
     });
 
-    // expose for quick export in devtools
     window.__EXPORT_DATA__ = () => {
         const json = JSON.stringify(out, null, 2);
         console.log(json);
@@ -139,7 +128,7 @@ function addDeterministicLinks(items) {
 }
 
 /* =====================================================
-   Text measurement for auto radius
+ Text measurement for auto radius
 ===================================================== */
 function measureTextPx(text, font) {
     const canvas = measureTextPx._canvas || (measureTextPx._canvas = document.createElement("canvas"));
@@ -149,28 +138,25 @@ function measureTextPx(text, font) {
 }
 
 /* =====================================================
-   Auto radius to prevent label clipping
+ Auto radius to prevent label clipping
 ===================================================== */
 function computeAutoRadius(items) {
     const leafNames = items.map(d => (d.id.split(".")[1] ?? d.id));
-    const maxLeaf = d3.max(leafNames, t => measureTextPx(t, LABEL_FONT)) || 120;
+    const maxLeaf = d3.max(leafNames, t => measureTextPx(t, LABEL_FONT)) ?? 120;
 
     const cats = Array.from(new Set(items.map(d => d.category)));
-    const maxCat = d3.max(cats, t => measureTextPx(t, CAT_FONT)) || 80;
+    const maxCat = d3.max(cats, t => measureTextPx(t, CAT_FONT)) ?? 80;
 
-    // margin needed beyond ring to fit leaf labels
     const labelMargin = maxLeaf + 34;
     const catMargin = maxCat * 0.25 + 20;
     const margin = Math.max(labelMargin, catMargin) + 14;
 
     const r = Math.min(WIDTH, HEIGHT) / 2 - margin;
-
-    // clamp for stable feel
     return Math.max(260, Math.min(410, r));
 }
 
 /* =====================================================
-   Geometry helpers
+ Geometry helpers
 ===================================================== */
 function normalizeAngle(a) {
     const twoPi = 2 * Math.PI;
@@ -178,7 +164,6 @@ function normalizeAngle(a) {
 }
 
 function midAngle(a, b) {
-    // midpoint from a -> b moving forward, wrap-safe
     const twoPi = 2 * Math.PI;
     a = normalizeAngle(a);
     b = normalizeAngle(b);
@@ -187,18 +172,32 @@ function midAngle(a, b) {
 }
 
 function polarPoint(r, a) {
+    // matches d3 arc angle convention: 0 at 12 o'clock, positive clockwise
     return [Math.cos(a - Math.PI / 2) * r, Math.sin(a - Math.PI / 2) * r];
 }
 
+/**
+ * FIXED arc path generator:
+ * - Works for BOTH directions (a1 > a0 and a1 < a0)
+ * - Computes largeArc from abs(delta)
+ * - Sets sweep flag based on delta sign
+ */
 function arcPathD(r, a0, a1) {
     const [x0, y0] = polarPoint(r, a0);
     const [x1, y1] = polarPoint(r, a1);
-    const largeArc = (a1 - a0) > Math.PI ? 1 : 0;
-    return `M ${x0} ${y0} A ${r} ${r} 0 ${largeArc} 1 ${x1} ${y1}`;
+
+    const delta = a1 - a0;
+    const largeArc = Math.abs(delta) > Math.PI ? 1 : 0;
+
+    // With our angle convention, delta>0 means clockwise.
+    // SVG sweep=1 draws the arc in the "positive-angle" direction.
+    const sweep = delta >= 0 ? 1 : 0;
+
+    return `M ${x0} ${y0} A ${r} ${r} 0 ${largeArc} ${sweep} ${x1} ${y1}`;
 }
 
 /* =====================================================
-   Render
+ Render
 ===================================================== */
 function render(items) {
     const RADIUS = computeAutoRadius(items);
@@ -207,9 +206,11 @@ function render(items) {
     const INNER_ARC_RADIUS = RADIUS - RING_THICKNESS;
 
     const LINK_RADIUS = RADIUS - 10;
-    const RING_TEXT_RADIUS = (INNER_ARC_RADIUS + OUTER_ARC_RADIUS) / 2;
+    // Place the text path slightly toward the inner side of the red ring.
+    // This is more stable than using dy for radial positioning.
+    const RING_TEXT_RADIUS = INNER_ARC_RADIUS + (RING_THICKNESS * 0.5);
 
-    // tighter labels like Modulmatik
+    // slightly tighter outer label placement
     const LABEL_RADIUS = RADIUS + 2;
     const LABEL_OFFSET = 5;
 
@@ -248,6 +249,7 @@ function render(items) {
     leaves.forEach(source => {
         const src = source.data.data;
         if (!src || !Array.isArray(src.links)) return;
+
         src.links.forEach(targetId => {
             const target = leafById.get(targetId);
             if (!target) return;
@@ -277,11 +279,7 @@ function render(items) {
     const groups = d3.groups(leaves, d => d.parent.data.name)
         .map(([name, nodes]) => {
             const xs = nodes.map(n => normalizeAngle(n.x)).sort((a, b) => a - b);
-            return {
-                name,
-                leafStart: xs[0],
-                leafEnd: xs[xs.length - 1]
-            };
+            return { name, leafStart: xs[0], leafEnd: xs[xs.length - 1] };
         })
         .sort((a, b) => a.leafStart - b.leafStart);
 
@@ -314,8 +312,14 @@ function render(items) {
         .attr("x2", a => polarPoint(OUTER_ARC_RADIUS - SEPARATOR_INSET, a)[0])
         .attr("y2", a => polarPoint(OUTER_ARC_RADIUS - SEPARATOR_INSET, a)[1]);
 
-    /* ---- ring text (upright + clash-safe) ---- */
-    const labelPad = 0.022; // keeps away from separators
+    /* =====================================================
+       RING TEXT — FIXED
+       - path reversal for bottom half (upright)
+       - arcPathD now direction-correct (sweep + largeArc)
+       - NO textLength stretching (prevents awkward glyph flow)
+       - Modulmatik-like placement (dy=16 + small start offset)
+    ===================================================== */
+    const labelPad = 0.022; // keep away from separators
 
     defs.selectAll("path.arc-label-path")
         .data(categories)
@@ -328,9 +332,10 @@ function render(items) {
 
             const mid = (a0 + a1) / 2;
             const midN = normalizeAngle(mid);
-            const bottomHalf = (midN > Math.PI / 2) && (midN < 3 * Math.PI / 2);
 
-            // reverse on bottom half so text stays upright
+            const bottomHalf = (midN > Math.PI / 2) && (midN < 3 * Math.PI / 2);
+            d.bottomHalf = bottomHalf;
+            // reverse ONLY the path direction on bottom half
             return bottomHalf
                 ? arcPathD(RING_TEXT_RADIUS, a1, a0)
                 : arcPathD(RING_TEXT_RADIUS, a0, a1);
@@ -338,31 +343,31 @@ function render(items) {
 
     const catBaseFont = 13;
 
-    const catText = g.append("g")
+    g.append("g")
         .selectAll("text.arc-label")
         .data(categories)
         .join("text")
         .attr("class", "arc-label")
+        .attr("dominant-baseline", "middle")
+        .attr("dy", "0")
         .each(function (d, i) {
+            // Keep font consistent; only shrink a bit if truly needed
             const a0 = d.startAngle + labelPad;
             const a1 = d.endAngle - labelPad;
-            const span = Math.max(0.0001, a1 - a0);
+            const span = Math.max(0.0001, Math.abs(a1 - a0));
             const available = RING_TEXT_RADIUS * span * 0.92;
 
             const textWidth = measureTextPx(d.name, CAT_FONT);
             const shrink = Math.min(1, available / Math.max(1, textWidth));
             const fontSize = Math.max(10, Math.round(catBaseFont * shrink));
 
-            const tp = d3.select(this)
+            d3.select(this)
                 .attr("font-size", fontSize)
                 .append("textPath")
-                // BUG FIX: set both href and xlink:href to prevent fallback rendering
                 .attr("href", `#arc-label-${i}`)
                 .attr("xlink:href", `#arc-label-${i}`)
-                .attr("startOffset", "50%")
-                .attr("text-anchor", "middle")
-                .attr("lengthAdjust", "spacingAndGlyphs")
-                .attr("textLength", Math.max(available, 28))
+                .attr("startOffset", "6%")     // similar “x=5” feel
+                .attr("text-anchor", "start")  // do NOT center (prevents awkward flow)
                 .text(d.name);
         });
 
@@ -381,7 +386,6 @@ function render(items) {
         .attr("dy", "0.32em")
         .attr("x", d => (d.x < Math.PI ? LABEL_OFFSET : -LABEL_OFFSET))
         .attr("text-anchor", d => (d.x < Math.PI ? "start" : "end"))
-        // flip on left half so text stays upright
         .attr("transform", d => (d.x >= Math.PI ? "rotate(180)" : null))
         .text(d => (d.data.name.split(".")[1] ?? d.data.name))
         .on("mouseenter", (_, d) => highlight(d))
@@ -398,7 +402,7 @@ function render(items) {
         linkSel.classed("active", false);
     }
 
-    /* ---- FINAL: auto-fit scaling to prevent label clipping ---- */
+    /* ---- auto-fit scaling to prevent label clipping ---- */
     requestAnimationFrame(() => {
         const bbox = g.node().getBBox();
         if (!bbox || !isFinite(bbox.width) || !isFinite(bbox.height)) return;
