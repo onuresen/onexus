@@ -1,0 +1,63 @@
+body {
+    margin: 0;
+    background: #ffffff;
+    font-family: "Montserrat", Arial, sans-serif;
+}
+
+/* SVG */
+svg {
+    display: block;
+    margin: auto;
+}
+
+/* ======================
+   CATEGORY RING
+====================== */
+.arc {
+    fill: #ee0000;
+}
+
+/* Category text on the ring */
+.arc-label {
+    fill: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    pointer-events: none;
+
+    /* slightly smoother appearance */
+    dominant-baseline: middle;
+    paint-order: stroke;
+    stroke: rgba(0, 0, 0, 0.08);
+    stroke-width: 2px;
+}
+
+/* ======================
+   NODE LABELS
+====================== */
+.node-label {
+    fill: #777;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.node-label.active {
+    fill: #000;
+    font-weight: 700;
+}
+
+/* ======================
+   LINKS
+====================== */
+.link {
+    fill: none;
+    stroke: #999;
+    stroke-opacity: 0.18;
+    stroke-width: 1.4;
+}
+
+.link.active {
+    stroke-opacity: 0.85;
+    stroke-width: 2.2;
+    stroke: #555;
+}
