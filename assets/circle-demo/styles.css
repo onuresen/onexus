@@ -4,36 +4,45 @@ body {
     font-family: "Montserrat", Arial, sans-serif;
 }
 
-/* SVG */
 svg {
     display: block;
     margin: auto;
 }
 
 /* ======================
-   CATEGORY RING
+   CONTINUOUS RING
 ====================== */
-.arc {
+.ring {
     fill: #ee0000;
 }
 
-/* Category text on the ring */
+/* separators look cleaner with crisp edges */
+.separator {
+    stroke: #ffffff;
+    stroke-width: 2px;
+    shape-rendering: crispEdges;
+    opacity: 1;
+}
+
+/* ======================
+   CATEGORY TEXT (RING)
+====================== */
 .arc-label {
     fill: #ffffff;
-    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.4px;
+    font-size: 13px;
+    letter-spacing: 0.35px;
     pointer-events: none;
-
-    /* slightly smoother appearance */
     dominant-baseline: middle;
+
+    /* subtle stroke improves readability on curves */
     paint-order: stroke;
-    stroke: rgba(0, 0, 0, 0.08);
+    stroke: rgba(0, 0, 0, 0.12);
     stroke-width: 2px;
 }
 
 /* ======================
-   NODE LABELS
+   OUTER LABELS
 ====================== */
 .node-label {
     fill: #777;
@@ -53,7 +62,7 @@ svg {
     fill: none;
     stroke: #999;
     stroke-opacity: 0.18;
-    stroke-width: 1.4;
+    stroke-width: 1.35;
 }
 
 .link.active {
