@@ -6,9 +6,29 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps
+        run: |
+          npm ci || npm install
+
+      - name: Run lint
+        run: npm run lint
+
   smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: lint
 
     steps:
       - uses: actions/checkout@v4
