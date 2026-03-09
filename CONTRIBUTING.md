@@ -41,8 +41,47 @@ python -m http.server 8000
 - [ ] Code is focused and documented where necessary
 - [ ] Example JSON or demo updated (if feature affects data)
 
-## No tests yet
-There are no automated tests in this repo currently. If you add tests, include instructions in this file.
+## Running tests
+
+The project uses [Playwright](https://playwright.dev/) for end-to-end smoke tests.
+
+```bash
+# Install dependencies (first time)
+npm install
+npx playwright install --with-deps chromium
+
+# Start the dev server (in a separate terminal)
+npm run serve
+
+# Run smoke tests
+npm run test:smoke
+```
+
+Tests live in the `tests/` folder. The CI pipeline runs them automatically on every push and pull request.
+
+## Linting
+
+ESLint is configured for the `src/` directory.
+
+```bash
+# Check for issues
+npm run lint
+
+# Auto-fix where possible
+npm run lint:fix
+```
+
+## Formatting
+
+Prettier is configured for consistent code style.
+
+```bash
+# Format all source files
+npm run format
+
+# Check formatting without writing
+npm run format:check
+```
 
 ## Questions
 If you're unsure about a change, open an issue first to discuss.

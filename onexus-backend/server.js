@@ -15,12 +15,15 @@ const PORT = process.env.PORT || 8787;
 const STORAGE_DIR = process.env.ONEXUS_STORAGE_DIR
     ? path.resolve(process.env.ONEXUS_STORAGE_DIR)
     : path.join(__dirname, "storage");
+// ONEXUS_ALLOWED_ORIGIN: set to your frontend URL in non-local deployments.
+// Defaults to localhost:4173 (the dev server). Use "*" to allow any origin (not recommended).
+const ALLOWED_ORIGIN = process.env.ONEXUS_ALLOWED_ORIGIN || "http://localhost:4173";
 
 // Ensure storage folder exists
 fs.mkdirSync(STORAGE_DIR, { recursive: true });
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: ALLOWED_ORIGIN }));
 app.use(express.json({ limit: "25mb" })); // graphs can be big; adjust as needed
 
 // ===============================
@@ -39,6 +42,13 @@ function newId() {
     const t = Date.now().toString(36);
     const r = crypto.randomBytes(4).toString("hex");
     return `g_${t}_${r}`;
+}
+
+// Only allow safe graph IDs: alphanumeric, hyphens, underscores, max 128 chars
+const SAFE_ID_RE = /^[a-zA-Z0-9_-]{1,128}$/;
+
+function isValidId(id) {
+    return typeof id === "string" && SAFE_ID_RE.test(id);
 }
 
 function filePathFor(id) {
@@ -131,7 +141,7 @@ app.post("/graphs", (req, res) => {
 // Get graph
 app.get("/graphs/:id", (req, res) => {
     const id = String(req.params.id ?? "").trim();
-    if (!id) return res.status(400).json({ ok: false, error: "missing id" });
+    if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
     const p = filePathFor(id);
     if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });
@@ -143,7 +153,7 @@ app.get("/graphs/:id", (req, res) => {
 // Update graph (overwrite)
 app.put("/graphs/:id", (req, res) => {
     const id = String(req.params.id ?? "").trim();
-    if (!id) return res.status(400).json({ ok: false, error: "missing id" });
+    if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
     const p = filePathFor(id);
     if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });
@@ -170,7 +180,7 @@ app.put("/graphs/:id", (req, res) => {
 // Delete graph
 app.delete("/graphs/:id", (req, res) => {
     const id = String(req.params.id ?? "").trim();
-    if (!id) return res.status(400).json({ ok: false, error: "missing id" });
+    if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
     const p = filePathFor(id);
     if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });

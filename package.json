@@ -2,11 +2,17 @@
     "name": "onexus",
     "private": true,
     "devDependencies": {
+        "eslint": "^8.57.0",
         "http-server": "^14.1.1",
-        "playwright": "^1.42.0"
+        "playwright": "^1.42.0",
+        "prettier": "^3.3.0"
     },
     "scripts": {
         "test:smoke": "playwright test",
-        "serve": "http-server -p 4173 -c-1 ."
+        "serve": "http-server -p 4173 -c-1 .",
+        "lint": "eslint src/",
+        "lint:fix": "eslint src/ --fix",
+        "format": "prettier --write src/",
+        "format:check": "prettier --check src/"
     }
 }
