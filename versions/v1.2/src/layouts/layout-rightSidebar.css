@@ -1,0 +1,36 @@
+/* =========================================
+   Layout: Right Sidebar (index.html)
+========================================= */
+
+body {
+    display: grid;
+    /* 2 rows now: toolbar + main */
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 320px;
+    grid-template-areas:
+        "toolbar toolbar"
+        "canvas sidebar";
+}
+
+/* ---- Sidebar (Inspector style) ---- */
+#sidebar {
+    grid-area: sidebar;
+    background: var(--bg-panel);
+    border-radius: var(--radius);
+    padding: 14px;
+    overflow-y: auto;
+    box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 1100px) {
+    body {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "toolbar"
+            "canvas";
+    }
+
+    #sidebar {
+        display: none;
+    }
+}
