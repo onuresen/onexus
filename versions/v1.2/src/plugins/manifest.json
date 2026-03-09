@@ -1,0 +1,10 @@
+{
+    "plugins": [
+        "onexus-edgescsv.plugin.js",
+        "cobie-importer.js",
+        "ifc-importer.js",
+        "gd-importer.js",
+        "kanji.plugin.js",
+        "waterflow.plugin.js"
+    ]
+}
