@@ -1,14 +1,13 @@
 /* =====================================================
  ONEXUS Circle Chord View (D3) — view-oriented module
  - No auto-fetch
- - Accepts ONEXUS-style graph: { elements:{nodes,edges}, view:{arcOrder} }
+ - Accepts ONEXUS-style graph: { elements:{nodes,edges}, meta:{view:{arcOrder}}, view:{arcOrder} }
  - Preserves onexusId mapping for selection sync
  Exposes: window.ONEXUS_CIRCLE_CHART.create(svgEl, opts)
 ===================================================== */
 (function () {
     const NS = (window.ONEXUS = window.ONEXUS || {});
     const U = NS.util || {};
-    const exists = U.exists || ((x) => !!x && !!x.nonempty && x.nonempty());
 
     function ensureD3() {
         if (!window.d3) throw new Error("D3 is not loaded (window.d3 missing).");
@@ -21,49 +20,58 @@
         return String(v || n?.name || n?.displayLabel || n?.id || "").trim() || String(n?.id || "");
     }
 
+    function getArcOrder(graph) {
+        // Priority:
+        // 1) graph.view.arcOrder
+        // 2) graph.meta.view.arcOrder
+        // 3) graph.meta.arcOrder
+        if (graph?.view && Array.isArray(graph.view.arcOrder)) return graph.view.arcOrder.slice();
+        const mv = graph?.meta?.view;
+        if (mv && typeof mv === "object" && Array.isArray(mv.arcOrder)) return mv.arcOrder.slice();
+        if (Array.isArray(graph?.meta?.arcOrder)) return graph.meta.arcOrder.slice();
+        return null;
+    }
+
     function normalizeOnexusToChord(graph, opts = {}) {
-        // opts: { language, nodeTypeAllow:Set<string> }
         const lang = opts.language || "en";
         const nodeTypeAllow = opts.nodeTypeAllow || null;
 
-        const isOnexus = graph && graph.elements && Array.isArray(graph.elements.nodes) && Array.isArray(graph.elements.edges);
+        const isOnexus =
+            graph &&
+            graph.elements &&
+            Array.isArray(graph.elements.nodes) &&
+            Array.isArray(graph.elements.edges);
+
         if (!isOnexus) {
-            throw new Error("Expected ONEXUS graph shape: {elements:{nodes,edges}, view:{...}}");
+            throw new Error("Expected ONEXUS graph shape: {elements:{nodes,edges}, view/meta.view:{...}}");
         }
 
-        const arcOrder = graph.view && Array.isArray(graph.view.arcOrder) ? graph.view.arcOrder.slice() : null;
+        const arcOrder = getArcOrder(graph);
 
-        const onodes = graph.elements.nodes.map(n => n.data || n).filter(Boolean);
-        const oedges = graph.elements.edges.map(e => e.data || e).filter(Boolean);
+        const onodes = graph.elements.nodes.map((n) => n.data || n).filter(Boolean);
+        const oedges = graph.elements.edges.map((e) => e.data || e).filter(Boolean);
 
-        // Filter node subset (only a subset for chord)
+        // Filter node subset (only a subset for chord) — if allow set is empty, allow all
         const filteredNodes = nodeTypeAllow
-            ? onodes.filter(n => nodeTypeAllow.has(String(n.nodeType || "").trim()))
+            ? onodes.filter((n) => nodeTypeAllow.size === 0 || nodeTypeAllow.has(String(n.nodeType || "").trim()))
             : onodes;
 
-        // Build maps: onexusId <-> leafId
         const leafByOnx = new Map();
         const onxByLeaf = new Map();
 
-        // Build chord nodes (leaf nodes)
-        const chordNodes = filteredNodes.map(n => {
+        const chordNodes = filteredNodes.map((n) => {
             const category = String(n.category || n.nodeType || "Uncategorized");
-            const label = String(labelOfNodeData(n, lang)).replace(/\./g, "·"); // avoid breaking split(".")
+            const label = String(labelOfNodeData(n, lang)).replace(/\./g, "·");
             const leafId = `${category}.${label}`;
             leafByOnx.set(String(n.id), leafId);
             onxByLeaf.set(leafId, String(n.id));
             return { id: leafId, category, links: [], onexusId: String(n.id) };
         });
 
-        const chordById = new Map(chordNodes.map(n => [n.id, n]));
+        const chordById = new Map(chordNodes.map((n) => [n.id, n]));
 
-        // Convert edges -> undirected chord links (only if both endpoints are in subset)
-        // Also store meta per pair for future (dimension/phase/confidence/type)
-        const linkMeta = new Map(); // key "A|B" -> { edges:[...] }
-
-        function normPairKey(a, b) {
-            return a < b ? `${a}|${b}` : `${b}|${a}`;
-        }
+        const linkMeta = new Map(); // optional future use (not required by renderer)
+        function normPairKey(a, b) { return a < b ? `${a}\n${b}` : `${b}\n${a}`; }
         function pushMeta(a, b, ed) {
             const k = normPairKey(a, b);
             let m = linkMeta.get(k);
@@ -76,7 +84,7 @@
                 confidence: ed.confidence,
                 directional: !!ed.directional,
                 source: ed.source,
-                target: ed.target
+                target: ed.target,
             });
         }
 
@@ -84,16 +92,17 @@
             const a = leafByOnx.get(String(e.source));
             const b = leafByOnx.get(String(e.target));
             if (!a || !b || a === b) continue;
+
             const na = chordById.get(a);
             const nb = chordById.get(b);
             if (!na || !nb) continue;
+
             na.links.push(b);
             nb.links.push(a);
             pushMeta(a, b, e);
         }
 
-        // Dedup links
-        chordNodes.forEach(n => { n.links = Array.from(new Set(n.links)); });
+        chordNodes.forEach((n) => { n.links = Array.from(new Set(n.links)); });
 
         return { arcOrder, nodes: chordNodes, linkMeta, leafByOnx, onxByLeaf };
     }
@@ -110,18 +119,12 @@
                 fitMaxScale: 1.0,
                 fontLeaf: "11px Montserrat, Arial, sans-serif",
                 fontCat: "600 13px Montserrat, Arial, sans-serif",
-                ...opts
+                ...opts,
             },
             width: 1000,
             height: 1000,
-
-            // current chord data
-            chord: null, // {arcOrder,nodes,linkMeta,leafByOnx,onxByLeaf}
-
-            // runtime selections
+            chord: null,
             pinnedLeaf: null,
-
-            // d3 selections / caches
             svg: null,
             defs: null,
             g: null,
@@ -134,9 +137,7 @@
             underElsByLeaf: null,
             _lastActiveTop: null,
             _lastActiveUnder: null,
-
-            // expose leaf -> object
-            leafObjByLeafId: null
+            leafObjByLeafId: null,
         };
 
         function updateSizeFromDOM() {
@@ -153,10 +154,10 @@
         }
 
         function computeAutoRadius(items) {
-            const leafNames = items.map(d => (d.id.split(".")[1] ?? d.id));
-            const maxLeaf = d3.max(leafNames, t => measureTextPx(t, state.opts.fontLeaf)) ?? 120;
-            const cats = Array.from(new Set(items.map(d => d.category)));
-            const maxCat = d3.max(cats, t => measureTextPx(t, state.opts.fontCat)) ?? 80;
+            const leafNames = items.map((d) => (d.id.split(".")[1] ?? d.id));
+            const maxLeaf = d3.max(leafNames, (t) => measureTextPx(t, state.opts.fontLeaf)) ?? 120;
+            const cats = Array.from(new Set(items.map((d) => d.category)));
+            const maxCat = d3.max(cats, (t) => measureTextPx(t, state.opts.fontCat)) ?? 80;
             const labelMargin = maxLeaf + 34;
             const catMargin = maxCat * 0.25 + 20;
             const margin = Math.max(labelMargin, catMargin) + 14;
@@ -168,9 +169,11 @@
             const twoPi = 2 * Math.PI;
             return ((a % twoPi) + twoPi) % twoPi;
         }
+
         function polarPoint(r, a) {
             return [Math.cos(a - Math.PI / 2) * r, Math.sin(a - Math.PI / 2) * r];
         }
+
         function arcPathD(r, a0, a1) {
             const [x0, y0] = polarPoint(r, a0);
             const [x1, y1] = polarPoint(r, a1);
@@ -184,23 +187,23 @@
             const root = { name: "root", children: [] };
             const map = new Map();
 
-            const categoriesPresent = Array.from(new Set(items.map(d => d.category)));
+            const categoriesPresent = Array.from(new Set(items.map((d) => d.category)));
             let orderedCats = categoriesPresent;
 
             if (Array.isArray(arcOrder) && arcOrder.length) {
                 const set = new Set(categoriesPresent);
-                const inOrder = arcOrder.filter(c => set.has(c));
-                const remaining = categoriesPresent.filter(c => !arcOrder.includes(c));
+                const inOrder = arcOrder.filter((c) => set.has(c));
+                const remaining = categoriesPresent.filter((c) => !arcOrder.includes(c));
                 orderedCats = [...inOrder, ...remaining];
             }
 
-            orderedCats.forEach(cat => {
+            orderedCats.forEach((cat) => {
                 const node = { name: cat, children: [] };
                 map.set(cat, node);
                 root.children.push(node);
             });
 
-            items.forEach(d => {
+            items.forEach((d) => {
                 if (!map.has(d.category)) {
                     const node = { name: d.category, children: [] };
                     map.set(d.category, node);
@@ -213,16 +216,16 @@
         }
 
         function computeCategorySpans(leaves, arcOrder) {
-            const byCat = d3.groups(leaves, d => d.parent.data.name).map(([name, nodes]) => {
-                const xs = nodes.map(n => normalizeAngle(n.x)).sort((a, b) => a - b);
+            const byCat = d3.groups(leaves, (d) => d.parent.data.name).map(([name, nodes]) => {
+                const xs = nodes.map((n) => normalizeAngle(n.x)).sort((a, b) => a - b);
                 return { name, leafStart: xs[0], leafEnd: xs[xs.length - 1] };
             });
 
             let ordered = byCat.slice();
             if (Array.isArray(arcOrder) && arcOrder.length) {
-                const map = new Map(ordered.map(d => [d.name, d]));
-                const inOrder = arcOrder.map(n => map.get(n)).filter(Boolean);
-                const remaining = ordered.filter(d => !arcOrder.includes(d.name));
+                const map = new Map(ordered.map((d) => [d.name, d]));
+                const inOrder = arcOrder.map((n) => map.get(n)).filter(Boolean);
+                const remaining = ordered.filter((d) => !arcOrder.includes(d.name));
                 remaining.sort((a, b) => a.leafStart - b.leafStart);
                 ordered = [...inOrder, ...remaining];
             } else {
@@ -254,24 +257,24 @@
 
                 spans.push({ name: cur.name, startAngle: startN, endAngle: endN });
             }
+
             return spans;
         }
 
         function clearTouchedActive() {
-            if (state._lastActiveTop) state._lastActiveTop.forEach(el => el.classList.remove("active"));
-            if (state._lastActiveUnder) state._lastActiveUnder.forEach(el => el.classList.remove("active"));
+            if (state._lastActiveTop) state._lastActiveTop.forEach((el) => el.classList.remove("active"));
+            if (state._lastActiveUnder) state._lastActiveUnder.forEach((el) => el.classList.remove("active"));
             state._lastActiveTop = null;
             state._lastActiveUnder = null;
         }
 
         function applyHighlight(leafNode) {
             if (!leafNode) return;
-
             const neighbors = state.neighborMap.get(leafNode) || new Set();
 
             state.nodeText
-                .classed("active", d => d === leafNode)
-                .classed("connected", d => neighbors.has(d));
+                .classed("active", (d) => d === leafNode)
+                .classed("connected", (d) => neighbors.has(d));
 
             state.linkG.classed("has-focus", true);
 
@@ -279,10 +282,8 @@
 
             const topSet = state.linkElsByLeaf.get(leafNode) || new Set();
             const underSet = state.underElsByLeaf.get(leafNode) || new Set();
-
-            topSet.forEach(el => el.classList.add("active"));
-            underSet.forEach(el => el.classList.add("active"));
-
+            topSet.forEach((el) => el.classList.add("active"));
+            underSet.forEach((el) => el.classList.add("active"));
             state._lastActiveTop = topSet;
             state._lastActiveUnder = underSet;
         }
@@ -302,33 +303,26 @@
             const items = chord?.nodes || [];
             const arcOrder = chord?.arcOrder || null;
 
-            // clear
             state.svg = d3.select(state.svgEl);
             state.svg.selectAll("*").remove();
-
-            // keep viewbox centered
             state.svg.attr("viewBox", [-state.width / 2, -state.height / 2, state.width, state.height]);
 
             state.defs = state.svg.append("defs");
             state.g = state.svg.append("g");
 
-            // background click clears pin
             state.svg.on("click", () => {
                 state.pinnedLeaf = null;
                 resetHighlight();
                 try { state.opts.onPinChanged?.(null); } catch { }
             });
 
-            if (!items.length) {
-                // nothing to render
-                return;
-            }
+            if (!items.length) return;
 
             const RADIUS = computeAutoRadius(items);
             const OUTER_ARC_RADIUS = RADIUS;
             const INNER_ARC_RADIUS = RADIUS - state.opts.ringThickness;
             const LINK_RADIUS = RADIUS - 10;
-            const RING_TEXT_RADIUS = INNER_ARC_RADIUS + (state.opts.ringThickness * 0.5);
+            const RING_TEXT_RADIUS = INNER_ARC_RADIUS + state.opts.ringThickness * 0.5;
             const LABEL_RADIUS = RADIUS + 2;
             const LABEL_OFFSET = 5;
             const SEPARATOR_INSET = 0.5;
@@ -337,58 +331,55 @@
             const root = d3.hierarchy(buildHierarchy(items, arcOrder));
             cluster(root);
 
-            // compact leaf angles inside each category
-            root.children.forEach(group => {
-                group.leaves().forEach(d => { d.x = group.x + (d.x - group.x) * 0.86; });
+            root.children.forEach((group) => {
+                group.leaves().forEach((d) => { d.x = group.x + (d.x - group.x) * 0.86; });
             });
 
             state.leaves = root.leaves();
-            state.leafById = new Map(state.leaves.map(d => [d.data.name, d]));
-            state.leafObjByLeafId = new Map(items.map(x => [x.id, x]));
+            state.leafById = new Map(state.leaves.map((d) => [d.data.name, d]));
+            state.leafObjByLeafId = new Map(items.map((x) => [x.id, x]));
 
             const line = d3.lineRadial()
                 .curve(d3.curveBundle.beta(state.opts.linkBundleBeta))
-                .radius(d => d.y)
-                .angle(d => d.x);
+                .radius((d) => d.y)
+                .angle((d) => d.x);
 
             const links = [];
-            state.leaves.forEach(source => {
+            state.leaves.forEach((source) => {
                 const src = source.data.data;
                 if (!src || !Array.isArray(src.links)) return;
-                src.links.forEach(targetId => {
+                src.links.forEach((targetId) => {
                     const target = state.leafById.get(targetId);
                     if (!target) return;
                     links.push({ source, target, path: source.path(target) });
                 });
             });
 
-            // adjacency
             state.neighborMap = new Map();
             function addNeighbor(a, b) {
                 let s = state.neighborMap.get(a);
                 if (!s) { s = new Set(); state.neighborMap.set(a, s); }
                 s.add(b);
             }
-            links.forEach(l => { addNeighbor(l.source, l.target); addNeighbor(l.target, l.source); });
+            links.forEach((l) => { addNeighbor(l.source, l.target); addNeighbor(l.target, l.source); });
 
-            // links (two-pass)
             state.linkG = state.g.append("g").attr("class", "links");
 
             const linkUnderSel = state.linkG.selectAll("path.link-under")
                 .data(links)
                 .join("path")
                 .attr("class", "link-under")
-                .attr("d", d => line(d.path));
+                .attr("d", (d) => line(d.path));
 
             const linkSel = state.linkG.selectAll("path.link")
                 .data(links)
                 .join("path")
                 .attr("class", "link")
-                .attr("d", d => line(d.path));
+                .attr("d", (d) => line(d.path));
 
-            // fast highlight maps
             state.linkElsByLeaf = new Map();
             state.underElsByLeaf = new Map();
+
             function addToMap(map, node, el) {
                 let set = map.get(node);
                 if (!set) { set = new Set(); map.set(node, set); }
@@ -399,12 +390,12 @@
                 addToMap(state.linkElsByLeaf, d.source, this);
                 addToMap(state.linkElsByLeaf, d.target, this);
             });
+
             linkUnderSel.each(function (d) {
                 addToMap(state.underElsByLeaf, d.source, this);
                 addToMap(state.underElsByLeaf, d.target, this);
             });
 
-            // continuous ring
             const ringArc = d3.arc()
                 .innerRadius(INNER_ARC_RADIUS)
                 .outerRadius(OUTER_ARC_RADIUS)
@@ -413,21 +404,19 @@
 
             state.g.append("path").attr("class", "ring").attr("d", ringArc());
 
-            // category spans + separators
             const categories = computeCategorySpans(state.leaves, arcOrder);
-            const sepAngles = categories.map(d => d.startAngle);
+            const sepAngles = categories.map((d) => d.startAngle);
 
             state.g.append("g")
                 .selectAll("line.separator")
                 .data(sepAngles)
                 .join("line")
                 .attr("class", "separator")
-                .attr("x1", a => polarPoint(INNER_ARC_RADIUS + SEPARATOR_INSET, a)[0])
-                .attr("y1", a => polarPoint(INNER_ARC_RADIUS + SEPARATOR_INSET, a)[1])
-                .attr("x2", a => polarPoint(OUTER_ARC_RADIUS - SEPARATOR_INSET, a)[0])
-                .attr("y2", a => polarPoint(OUTER_ARC_RADIUS - SEPARATOR_INSET, a)[1]);
+                .attr("x1", (a) => polarPoint(INNER_ARC_RADIUS + SEPARATOR_INSET, a)[0])
+                .attr("y1", (a) => polarPoint(INNER_ARC_RADIUS + SEPARATOR_INSET, a)[1])
+                .attr("x2", (a) => polarPoint(OUTER_ARC_RADIUS - SEPARATOR_INSET, a)[0])
+                .attr("y2", (a) => polarPoint(OUTER_ARC_RADIUS - SEPARATOR_INSET, a)[1]);
 
-            // ring text paths
             const labelPad = 0.022;
             const catBaseFont = 13;
 
@@ -436,11 +425,11 @@
                 .join("path")
                 .attr("class", "arc-label-path")
                 .attr("id", (_, i) => `arc-label-${i}`)
-                .attr("d", d => {
+                .attr("d", (d) => {
                     const a0 = d.startAngle + labelPad;
                     const a1 = d.endAngle - labelPad;
                     const midN = normalizeAngle((a0 + a1) / 2);
-                    const bottomHalf = (midN > Math.PI / 2) && (midN < 3 * Math.PI / 2);
+                    const bottomHalf = midN > Math.PI / 2 && midN < 3 * Math.PI / 2;
                     d.bottomHalf = bottomHalf;
                     return bottomHalf ? arcPathD(RING_TEXT_RADIUS, a1, a0) : arcPathD(RING_TEXT_RADIUS, a0, a1);
                 });
@@ -470,12 +459,11 @@
                         .text(d.name);
                 });
 
-            // outer labels
             const nodeSel = state.g.append("g")
                 .selectAll(".node")
                 .data(state.leaves)
                 .join("g")
-                .attr("transform", d => {
+                .attr("transform", (d) => {
                     const a = (d.x * 180) / Math.PI - 90;
                     return `rotate(${a}) translate(${LABEL_RADIUS},0)`;
                 });
@@ -483,10 +471,10 @@
             state.nodeText = nodeSel.append("text")
                 .attr("class", "node-label")
                 .attr("dy", "0.32em")
-                .attr("x", d => (d.x < Math.PI ? LABEL_OFFSET : -LABEL_OFFSET))
-                .attr("text-anchor", d => (d.x < Math.PI ? "start" : "end"))
-                .attr("transform", d => (d.x >= Math.PI ? "rotate(180)" : null))
-                .text(d => (d.data.name.split(".")[1] ?? d.data.name))
+                .attr("x", (d) => (d.x < Math.PI ? LABEL_OFFSET : -LABEL_OFFSET))
+                .attr("text-anchor", (d) => (d.x < Math.PI ? "start" : "end"))
+                .attr("transform", (d) => (d.x >= Math.PI ? "rotate(180)" : null))
+                .text((d) => (d.data.name.split(".")[1] ?? d.data.name))
                 .on("mouseenter", (_, d) => { if (!state.pinnedLeaf) applyHighlight(d); })
                 .on("mouseleave", () => { if (!state.pinnedLeaf) resetHighlight(); })
                 .on("click", (event, d) => {
@@ -500,11 +488,10 @@
                         applyHighlight(d);
                         const leafId = d?.data?.name;
                         const leafObj = state.leafObjByLeafId.get(leafId);
-                        try { state.opts.onPinChanged?.(leafObj?.onexusId || null); } catch { }
+                        try { state.opts.onPinChanged?.(leafObj?.onexusId ?? null); } catch { }
                     }
                 });
 
-            // auto-fit (same approach you had)
             requestAnimationFrame(() => {
                 const bbox = state.g.node().getBBox();
                 if (!bbox || !isFinite(bbox.width) || !isFinite(bbox.height)) return;
@@ -516,28 +503,19 @@
                 state.g.attr("transform", `translate(${-cx * scale},${-cy * scale}) scale(${scale})`);
             });
 
-            // restore pin if any
             if (state.pinnedLeaf) applyHighlight(state.pinnedLeaf);
         }
 
         function setGraph(onexusGraph, setOpts = {}) {
-            // setOpts: { language, nodeTypeAllow: array|string[] }
             const lang = setOpts.language || state.opts.language || "en";
             const allow = setOpts.nodeTypeAllow || state.opts.nodeTypeAllow || null;
             const allowSet = Array.isArray(allow) ? new Set(allow.map(String)) : (allow instanceof Set ? allow : null);
 
-            state.chord = normalizeOnexusToChord(onexusGraph, {
-                language: lang,
-                nodeTypeAllow: allowSet
-            });
+            state.chord = normalizeOnexusToChord(onexusGraph, { language: lang, nodeTypeAllow: allowSet });
 
-            // if pinned exists, attempt to remap after graph change
-            if (state.pinnedLeaf && state.chord && state.chord.leafByOnx) {
-                // keep pinnedLeaf only if it still exists
+            if (state.pinnedLeaf && state.chord && state.chord.onxByLeaf) {
                 const leafId = state.pinnedLeaf?.data?.name;
-                if (leafId && !state.chord.onxByLeaf?.has(leafId)) {
-                    state.pinnedLeaf = null;
-                }
+                if (leafId && !state.chord.onxByLeaf?.has(leafId)) state.pinnedLeaf = null;
             }
 
             render();
@@ -545,15 +523,13 @@
 
         function setPinnedOnexusId(onexusId) {
             if (!state.chord || !state.leafById) return;
-            if (!onexusId) {
-                state.pinnedLeaf = null;
-                resetHighlight();
-                return;
-            }
+            if (!onexusId) { state.pinnedLeaf = null; resetHighlight(); return; }
+
             const leafId = state.chord.leafByOnx.get(String(onexusId));
             if (!leafId) return;
             const leaf = state.leafById.get(leafId);
             if (!leaf) return;
+
             state.pinnedLeaf = leaf;
             applyHighlight(leaf);
         }
@@ -564,7 +540,6 @@
                 d3.select(state.svgEl).on("click", null);
                 d3.select(state.svgEl).selectAll("*").remove();
             } catch { }
-            // clear refs
             state.svg = state.defs = state.g = state.linkG = state.nodeText = null;
             state.leaves = state.leafById = null;
             state.neighborMap = null;
@@ -574,7 +549,6 @@
             state.pinnedLeaf = null;
         }
 
-        // public API
         return { setGraph, setPinnedOnexusId, destroy };
     }
 
