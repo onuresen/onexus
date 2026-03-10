@@ -3,31 +3,42 @@
  - Loads data from data.json
  - Continuous ring (never gaps) + separators
  - Tangential tight labels with auto-fit scaling
- - Ring text: FIXED arc direction + NO glyph stretching (Modulmatik-like)
- - Dense deterministic connections for empty-link nodes
+ - Ring text: upright everywhere + stable spans (fixes overlap / empty wedge)
 ===================================================== */
 
-const WIDTH = 1000;
-const HEIGHT = 1000;
+// Responsive sizing: derived from the SVG's rendered size
+let WIDTH = 1000;
+let HEIGHT = 1000;
+
+function updateSizeFromDOM() {
+    const svgEl = document.getElementById("chart");
+    const rect = svgEl.getBoundingClientRect();
+    // fallback if invisible / not laid out yet
+    const w = Math.max(320, Math.floor(rect.width || 1000));
+    const h = Math.max(320, Math.floor(rect.height || 1000));
+    WIDTH = w;
+    HEIGHT = h;
+}
 const DATA_URL = "data.json";
 
 /* ---- visual tuning knobs (safe to tweak) ---- */
 const RING_THICKNESS = 22;
-const LINK_BUNDLE_BETA = 0.97;
-
+const LINK_BUNDLE_BETA = 0.94;
 const LABEL_FONT = '11px Montserrat, Arial, sans-serif';
 const CAT_FONT = '600 13px Montserrat, Arial, sans-serif';
-
-const FIT_PADDING = 22;     // slightly tighter, still safe
-const FIT_MAX_SCALE = 1.0;  // never enlarge beyond 1
+const FIT_PADDING = 22;
+const FIT_MAX_SCALE = 1.0;
 
 /* =====================================================
  Load + Init
 ===================================================== */
 d3.json(DATA_URL).then(raw => {
-    const data = normalizeData(raw);
-    const enriched = addDeterministicLinks(data); // make density Modulmatik-like
-    render(enriched);
+    const normalized = normalizeData(raw);
+    const enriched = addDeterministicLinks(normalized.nodes);
+    render({
+        nodes: enriched,
+        arcOrder: normalized.arcOrder
+    });
 }).catch(err => {
     console.error("Failed to load data.json. Run via a local server (Live Server).", err);
 });
@@ -38,18 +49,43 @@ d3.json(DATA_URL).then(raw => {
 function normalizeData(raw) {
     // Accept either:
     // 1) array of {id, category, links}
-    // 2) object { nodes: [...] }
-    const arr = Array.isArray(raw) ? raw : (raw && raw.nodes ? raw.nodes : []);
-    return arr.map(d => ({
-        id: d.id,
-        category: d.category,
-        links: Array.isArray(d.links) ? d.links.slice() : []
-    }));
+    // 2) object { nodes: [...], arcOrder: [...] }
+    const nodes = Array.isArray(raw) ? raw : (raw && raw.nodes ? raw.nodes : []);
+    const arcOrder = (!Array.isArray(raw) && raw && Array.isArray(raw.arcOrder)) ? raw.arcOrder.slice() : null;
+
+    return {
+        arcOrder,
+        nodes: nodes.map(d => ({
+            id: d.id,
+            category: d.category,
+            links: Array.isArray(d.links) ? d.links.slice() : []
+        }))
+    };
 }
 
-function buildHierarchy(items) {
+function buildHierarchy(items, arcOrder) {
     const root = { name: "root", children: [] };
     const map = new Map();
+
+    // Preserve deterministic category order:
+    // - if arcOrder exists, use it (and append any missing categories at end)
+    // - otherwise, insertion order from nodes
+    const categoriesPresent = Array.from(new Set(items.map(d => d.category)));
+    let orderedCats = categoriesPresent;
+
+    if (Array.isArray(arcOrder) && arcOrder.length) {
+        const set = new Set(categoriesPresent);
+        const inOrder = arcOrder.filter(c => set.has(c));
+        const remaining = categoriesPresent.filter(c => !arcOrder.includes(c));
+        orderedCats = [...inOrder, ...remaining];
+    }
+
+    orderedCats.forEach(cat => {
+        const node = { name: cat, children: [] };
+        map.set(cat, node);
+        root.children.push(node);
+    });
+
     items.forEach(d => {
         if (!map.has(d.category)) {
             const node = { name: d.category, children: [] };
@@ -58,13 +94,12 @@ function buildHierarchy(items) {
         }
         map.get(d.category).children.push({ name: d.id, data: d });
     });
+
     return root;
 }
 
 /* =====================================================
  Deterministic dense links (visual parity)
- - For nodes with 0 links, create 1–3 links stably
- - Uses a hash-based pseudo-random so the same id => same targets always
 ===================================================== */
 function hashString(str) {
     let h = 2166136261;
@@ -95,10 +130,8 @@ function addDeterministicLinks(items) {
         const local = (byCategory.get(node.category) ?? [])
             .map(d => d.id)
             .filter(id => id !== node.id);
-
         const others = allIds.filter(id => !id.startsWith(node.category + "."));
 
-        // 1 local + 2 cross-category feels close to Modulmatik density
         const localPick = pickFromArray(local, seed ^ 0xA5A5A5A5, 1);
         const otherPick = pickFromArray(others, seed ^ 0x5A5A5A5A, 2);
         return [...localPick, ...otherPick].filter(Boolean);
@@ -109,7 +142,6 @@ function addDeterministicLinks(items) {
 
     out.forEach(d => {
         d.links = d.links.filter(t => idSet.has(t) && t !== d.id);
-
         if (d.links.length === 0) {
             d.links = makeTargets(d);
         } else if (d.links.length === 1) {
@@ -131,7 +163,8 @@ function addDeterministicLinks(items) {
  Text measurement for auto radius
 ===================================================== */
 function measureTextPx(text, font) {
-    const canvas = measureTextPx._canvas || (measureTextPx._canvas = document.createElement("canvas"));
+    const canvas = measureTextPx._canvas
+        || (measureTextPx._canvas = document.createElement("canvas"));
     const ctx = canvas.getContext("2d");
     ctx.font = font;
     return ctx.measureText(text).width;
@@ -143,7 +176,6 @@ function measureTextPx(text, font) {
 function computeAutoRadius(items) {
     const leafNames = items.map(d => (d.id.split(".")[1] ?? d.id));
     const maxLeaf = d3.max(leafNames, t => measureTextPx(t, LABEL_FONT)) ?? 120;
-
     const cats = Array.from(new Set(items.map(d => d.category)));
     const maxCat = d3.max(cats, t => measureTextPx(t, CAT_FONT)) ?? 80;
 
@@ -163,70 +195,121 @@ function normalizeAngle(a) {
     return ((a % twoPi) + twoPi) % twoPi;
 }
 
-function midAngle(a, b) {
-    const twoPi = 2 * Math.PI;
-    a = normalizeAngle(a);
-    b = normalizeAngle(b);
-    if (b < a) b += twoPi;
-    return a + (b - a) / 2;
-}
-
 function polarPoint(r, a) {
     // matches d3 arc angle convention: 0 at 12 o'clock, positive clockwise
     return [Math.cos(a - Math.PI / 2) * r, Math.sin(a - Math.PI / 2) * r];
 }
 
 /**
- * FIXED arc path generator:
- * - Works for BOTH directions (a1 > a0 and a1 < a0)
- * - Computes largeArc from abs(delta)
- * - Sets sweep flag based on delta sign
+ * Direction-correct arc path:
+ * - expects a0, a1 in a consistent frame (may exceed 2π for wrap representation)
+ * - computes largeArc from abs(delta)
+ * - sweep flag based on delta sign
  */
 function arcPathD(r, a0, a1) {
     const [x0, y0] = polarPoint(r, a0);
     const [x1, y1] = polarPoint(r, a1);
-
     const delta = a1 - a0;
     const largeArc = Math.abs(delta) > Math.PI ? 1 : 0;
-
-    // With our angle convention, delta>0 means clockwise.
-    // SVG sweep=1 draws the arc in the "positive-angle" direction.
     const sweep = delta >= 0 ? 1 : 0;
-
     return `M ${x0} ${y0} A ${r} ${r} 0 ${largeArc} ${sweep} ${x1} ${y1}`;
+}
+
+/* =====================================================
+ Category span computation (FIX)
+ - Produces stable, non-overlapping spans in [0,2π) with per-span wrap
+ - Prevents “double label / empty neighbor” artifacts
+===================================================== */
+function computeCategorySpans(leaves, arcOrder) {
+    // Group leaves by parent category name
+    const byCat = d3.groups(leaves, d => d.parent.data.name)
+        .map(([name, nodes]) => {
+            const xs = nodes.map(n => normalizeAngle(n.x)).sort((a, b) => a - b);
+            return { name, leafStart: xs[0], leafEnd: xs[xs.length - 1] };
+        });
+
+    // Order categories:
+    // - if arcOrder exists, follow it (only those present)
+    // - else order by leafStart angle
+    let ordered = byCat.slice();
+    if (Array.isArray(arcOrder) && arcOrder.length) {
+        const map = new Map(ordered.map(d => [d.name, d]));
+        const inOrder = arcOrder.map(n => map.get(n)).filter(Boolean);
+        const remaining = ordered.filter(d => !arcOrder.includes(d.name));
+        remaining.sort((a, b) => a.leafStart - b.leafStart);
+        ordered = [...inOrder, ...remaining];
+    } else {
+        ordered.sort((a, b) => a.leafStart - b.leafStart);
+    }
+
+    // Compute boundaries using midpoints between adjacent groups,
+    // but keep everything in [0,2π) then represent wrap by end<start => end+=2π
+    const n = ordered.length;
+    const spans = [];
+
+    for (let i = 0; i < n; i++) {
+        const prev = ordered[(i - 1 + n) % n];
+        const cur = ordered[i];
+        const next = ordered[(i + 1) % n];
+
+        // Midpoint helper that respects circular wrap but returns normalized [0,2π)
+        const mid = (a, b) => {
+            const twoPi = 2 * Math.PI;
+            a = normalizeAngle(a);
+            b = normalizeAngle(b);
+            // ensure b is ahead of a
+            if (b < a) b += twoPi;
+            const m = a + (b - a) / 2;
+            return normalizeAngle(m);
+        };
+
+        let start = mid(prev.leafEnd, cur.leafStart);
+        let end = mid(cur.leafEnd, next.leafStart);
+
+        // If end falls "behind" start, represent wrap by adding 2π to end ONLY for this span
+        let startN = normalizeAngle(start);
+        let endN = normalizeAngle(end);
+        if (endN <= startN) endN += 2 * Math.PI;
+
+        spans.push({
+            name: cur.name,
+            startAngle: startN,
+            endAngle: endN
+        });
+    }
+
+    return spans;
 }
 
 /* =====================================================
  Render
 ===================================================== */
-function render(items) {
-    const RADIUS = computeAutoRadius(items);
+function render(payload) {
+    const items = payload.nodes;
+    const arcOrder = payload.arcOrder;
 
+    const RADIUS = computeAutoRadius(items);
     const OUTER_ARC_RADIUS = RADIUS;
     const INNER_ARC_RADIUS = RADIUS - RING_THICKNESS;
-
     const LINK_RADIUS = RADIUS - 10;
-    // Place the text path slightly toward the inner side of the red ring.
-    // This is more stable than using dy for radial positioning.
+
+    // Place the text path slightly toward the inner side of the red ring
     const RING_TEXT_RADIUS = INNER_ARC_RADIUS + (RING_THICKNESS * 0.5);
 
-    // slightly tighter outer label placement
     const LABEL_RADIUS = RADIUS + 2;
     const LABEL_OFFSET = 5;
-
     const SEPARATOR_INSET = 0.5;
 
     const svg = d3.select("#chart")
         .attr("viewBox", [-WIDTH / 2, -HEIGHT / 2, WIDTH, HEIGHT]);
 
     svg.selectAll("*").remove();
-
     const defs = svg.append("defs");
     const g = svg.append("g");
 
     /* ---- layout ---- */
     const cluster = d3.cluster().size([2 * Math.PI, LINK_RADIUS]);
-    const root = d3.hierarchy(buildHierarchy(items));
+    const root = d3.hierarchy(buildHierarchy(items, arcOrder));
     cluster(root);
 
     // compact leaf angles inside each category (Modulmatik tightness)
@@ -249,7 +332,6 @@ function render(items) {
     leaves.forEach(source => {
         const src = source.data.data;
         if (!src || !Array.isArray(src.links)) return;
-
         src.links.forEach(targetId => {
             const target = leafById.get(targetId);
             if (!target) return;
@@ -257,12 +339,51 @@ function render(items) {
         });
     });
 
-    const linkSel = g.append("g")
-        .selectAll(".link")
+    // ---- links (two-pass: under + top) ----
+    const linkG = g.append("g").attr("class", "links");
+
+    // under-stroke first (behind)
+    const linkUnderSel = linkG
+        .selectAll("path.link-under")
+        .data(links)
+        .join("path")
+        .attr("class", "link-under")
+        .attr("d", d => line(d.path));
+
+    // crisp top line
+    const linkSel = linkG
+        .selectAll("path.link")
         .data(links)
         .join("path")
         .attr("class", "link")
         .attr("d", d => line(d.path));
+
+    // --- PERF: build node -> linkElements map so hover updates only connected paths ---
+    const linkElsByNode = new Map();   // node -> Set<SVGPathElement>
+    const underElsByNode = new Map();  // node -> Set<SVGPathElement>
+
+    function addToMap(map, node, el) {
+        let set = map.get(node);
+        if (!set) { set = new Set(); map.set(node, set); }
+        set.add(el);
+    }
+
+    // Attach DOM element refs to data, populate maps
+    linkSel.each(function (d) {
+        d._topEl = this;
+        addToMap(linkElsByNode, d.source, this);
+        addToMap(linkElsByNode, d.target, this);
+    });
+
+    linkUnderSel.each(function (d) {
+        d._underEl = this;
+        addToMap(underElsByNode, d.source, this);
+        addToMap(underElsByNode, d.target, this);
+    });
+
+    // Track last hovered to clear only what we touched
+    let _lastActiveTop = null;
+    let _lastActiveUnder = null;
 
     /* ---- continuous ring (never gaps) ---- */
     const ringArc = d3.arc()
@@ -275,33 +396,14 @@ function render(items) {
         .attr("class", "ring")
         .attr("d", ringArc());
 
-    /* ---- category boundaries (for separators + label spans) ---- */
-    const groups = d3.groups(leaves, d => d.parent.data.name)
-        .map(([name, nodes]) => {
-            const xs = nodes.map(n => normalizeAngle(n.x)).sort((a, b) => a - b);
-            return { name, leafStart: xs[0], leafEnd: xs[xs.length - 1] };
-        })
-        .sort((a, b) => a.leafStart - b.leafStart);
+    /* ---- category spans (FIXED) ---- */
+    const categories = computeCategorySpans(leaves, arcOrder);
 
-    let categories = groups.map((d, i, arr) => {
-        const prev = arr[(i - 1 + arr.length) % arr.length];
-        const next = arr[(i + 1) % arr.length];
+    // quick lookup: node -> category name
+    const leafCategory = new Map(leaves.map(d => [d, d.parent.data.name]));
 
-        const start = midAngle(prev.leafEnd, d.leafStart);
-        const end = midAngle(d.leafEnd, next.leafStart);
-
-        return { name: d.name, startAngle: start, endAngle: end };
-    });
-
-    // make angles monotonic for stable drawing
-    for (let i = 1; i < categories.length; i++) {
-        while (categories[i].startAngle < categories[i - 1].startAngle) categories[i].startAngle += 2 * Math.PI;
-        while (categories[i].endAngle < categories[i].startAngle) categories[i].endAngle += 2 * Math.PI;
-    }
-
-    /* ---- separators (white lines) ---- */
+    /* ---- separators ---- */
     const sepAngles = categories.map(d => d.startAngle);
-
     g.append("g")
         .selectAll("line.separator")
         .data(sepAngles)
@@ -313,13 +415,13 @@ function render(items) {
         .attr("y2", a => polarPoint(OUTER_ARC_RADIUS - SEPARATOR_INSET, a)[1]);
 
     /* =====================================================
-       RING TEXT — FIXED
-       - path reversal for bottom half (upright)
-       - arcPathD now direction-correct (sweep + largeArc)
-       - NO textLength stretching (prevents awkward glyph flow)
-       - Modulmatik-like placement (dy=16 + small start offset)
+     RING TEXT — upright + stable placement (FIXED)
+     - build one path per category span with local wrap handled
+     - reverse only the bottom-half paths (upright glyphs)
+     - also swap anchoring so reversed paths still “read naturally”
     ===================================================== */
     const labelPad = 0.022; // keep away from separators
+    const catBaseFont = 13;
 
     defs.selectAll("path.arc-label-path")
         .data(categories)
@@ -330,18 +432,18 @@ function render(items) {
             const a0 = d.startAngle + labelPad;
             const a1 = d.endAngle - labelPad;
 
-            const mid = (a0 + a1) / 2;
-            const midN = normalizeAngle(mid);
+            // Mid angle for top/bottom decision must be normalized back into [0,2π)
+            const midRaw = (a0 + a1) / 2;
+            const midN = normalizeAngle(midRaw);
 
             const bottomHalf = (midN > Math.PI / 2) && (midN < 3 * Math.PI / 2);
             d.bottomHalf = bottomHalf;
-            // reverse ONLY the path direction on bottom half
+
+            // Reverse path direction only on bottom half to keep glyphs upright
             return bottomHalf
                 ? arcPathD(RING_TEXT_RADIUS, a1, a0)
                 : arcPathD(RING_TEXT_RADIUS, a0, a1);
         });
-
-    const catBaseFont = 13;
 
     g.append("g")
         .selectAll("text.arc-label")
@@ -351,7 +453,6 @@ function render(items) {
         .attr("dominant-baseline", "middle")
         .attr("dy", "0")
         .each(function (d, i) {
-            // Keep font consistent; only shrink a bit if truly needed
             const a0 = d.startAngle + labelPad;
             const a1 = d.endAngle - labelPad;
             const span = Math.max(0.0001, Math.abs(a1 - a0));
@@ -361,17 +462,38 @@ function render(items) {
             const shrink = Math.min(1, available / Math.max(1, textWidth));
             const fontSize = Math.max(10, Math.round(catBaseFont * shrink));
 
-            d3.select(this)
+            // If the path is reversed (bottomHalf), use end anchoring so label sits consistently
+            const startOffset = d.bottomHalf ? "94%" : "6%";
+            const anchor = d.bottomHalf ? "end" : "start";
+
+            const t = d3.select(this)
                 .attr("font-size", fontSize)
-                .append("textPath")
+                .attr("text-anchor", anchor);
+
+            t.append("textPath")
                 .attr("href", `#arc-label-${i}`)
                 .attr("xlink:href", `#arc-label-${i}`)
-                .attr("startOffset", "6%")     // similar “x=5” feel
-                .attr("text-anchor", "start")  // do NOT center (prevents awkward flow)
+                .attr("startOffset", startOffset)
                 .text(d.name);
-        });
+        })
+        .on("mouseenter", (_, d) => focusCategory(d.name))
+        .on("mouseleave", clearFocus);
 
-    /* ---- outer labels (tangential + tight like Modulmatik) ---- */
+    // Invisible hit segments for easier category hover (optional)
+    const hitArc = d3.arc()
+        .innerRadius(INNER_ARC_RADIUS)
+        .outerRadius(OUTER_ARC_RADIUS);
+
+    g.append("g")
+        .selectAll("path.ring-segment-hit")
+        .data(categories)
+        .join("path")
+        .attr("class", "ring-segment-hit")
+        .attr("d", d => hitArc({ startAngle: d.startAngle, endAngle: d.endAngle }))
+        .on("mouseenter", (_, d) => focusCategory(d.name))
+        .on("mouseleave", clearFocus);
+
+    /* ---- outer labels ---- */
     const nodeSel = g.append("g")
         .selectAll(".node")
         .data(leaves)
@@ -391,15 +513,60 @@ function render(items) {
         .on("mouseenter", (_, d) => highlight(d))
         .on("mouseleave", reset);
 
+
+
     /* ---- interaction ---- */
     function highlight(node) {
         nodeText.classed("active", d => d === node);
-        linkSel.classed("active", d => (d.source === node || d.target === node));
+
+        // Fade everything with ONE class toggle on container
+        linkG.classed("has-focus", true);
+
+        // Clear previously activated subset only
+        if (_lastActiveTop) {
+            _lastActiveTop.forEach(el => el.classList.remove("active"));
+        }
+        if (_lastActiveUnder) {
+            _lastActiveUnder.forEach(el => el.classList.remove("active"));
+        }
+
+        // Activate only the connected subset
+        const topSet = linkElsByNode.get(node) || new Set();
+        const underSet = underElsByNode.get(node) || new Set();
+
+        topSet.forEach(el => el.classList.add("active"));
+        underSet.forEach(el => el.classList.add("active"));
+
+        _lastActiveTop = topSet;
+        _lastActiveUnder = underSet;
     }
 
     function reset() {
         nodeText.classed("active", false);
-        linkSel.classed("active", false);
+
+        linkG.classed("has-focus", false);
+
+        if (_lastActiveTop) _lastActiveTop.forEach(el => el.classList.remove("active"));
+        if (_lastActiveUnder) _lastActiveUnder.forEach(el => el.classList.remove("active"));
+
+        _lastActiveTop = null;
+        _lastActiveUnder = null;
+    }
+
+    function focusCategory(categoryName) {
+        // fade all nodes that are not in the category
+        nodeText.classed("faded", d => d.parent.data.name !== categoryName);
+
+        // fade links that don't touch the category
+        linkSel.classed("faded", l =>
+            l.source.parent.data.name !== categoryName &&
+            l.target.parent.data.name !== categoryName
+        );
+    }
+
+    function clearFocus() {
+        nodeText.classed("faded", false);
+        linkSel.classed("faded", false);
     }
 
     /* ---- auto-fit scaling to prevent label clipping ---- */
@@ -409,7 +576,6 @@ function render(items) {
 
         const availW = WIDTH - FIT_PADDING * 2;
         const availH = HEIGHT - FIT_PADDING * 2;
-
         const scale = Math.min(
             FIT_MAX_SCALE,
             availW / bbox.width,
@@ -418,7 +584,6 @@ function render(items) {
 
         const cx = bbox.x + bbox.width / 2;
         const cy = bbox.y + bbox.height / 2;
-
         g.attr("transform", `translate(${-cx * scale},${-cy * scale}) scale(${scale})`);
     });
 }

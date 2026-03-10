@@ -1,136 +1,1040 @@
-[
+{
+  "arcOrder": [
+    "Operation",
+    "Sustainability",
+    "Management",
+    "Regulations",
+    "Architecture",
+    "Physics",
+    "MEP",
+    "Procurement",
+    "Production",
+    "Logistics",
+    "Assembling"
+  ],
+  "categories": [
     {
-        "id": "Management.Project Management",
-        "category": "Management",
-        "links": [
-            "Regulations.Approvals",
-            "Production.Factory Planning"
-        ]
+      "name": "Operation",
+      "items": [
+        "Maintenance of facade",
+        "Maintenance of roof",
+        "Renovation and modernization"
+      ]
     },
     {
-        "id": "Management.Cost Control",
-        "category": "Management",
-        "links": [
-            "Production.Factory Planning",
-            "Logistics.Transport"
-        ]
+      "name": "Sustainability",
+      "items": [
+        "Embodied carbon analysis",
+        "Eco-friendly material usage",
+        "Material database",
+        "ESG-Reporting",
+        "Design rules for reuse",
+        "Disassembly",
+        "Refurbishment",
+        "Reuse",
+        "Recycling"
+      ]
     },
     {
-        "id": "Management.Schedule Planning",
-        "category": "Management",
-        "links": [
-            "Construction.Site Planning"
-        ]
+      "name": "Management",
+      "items": [
+        "Location",
+        "Business type",
+        "Target customer",
+        "General contractor",
+        "Project responsibility matrix",
+        "Controlling",
+        "Risk management",
+        "Project timeline",
+        "Project estimation",
+        "Contract",
+        "Project typology",
+        "Number of floors",
+        "Terms of reference",
+        "Geotechnical report",
+        "Topography",
+        "Execution planning",
+        "Collision detection",
+        "Building height",
+        "Building plinth",
+        "Safety systems",
+        "Main construction systems",
+        "Additional constructions",
+        "Foundation type",
+        "Structural details",
+        "Calculation of the main nodes",
+        "Impact on existing buildings",
+        "Building inspection",
+        "Fire extinguisher",
+        "Fire detection system",
+        "Heat generation method",
+        "Specification of basic materials",
+        "Right quantity at right time",
+        "Storage area",
+        "Capacity",
+        "Prefabrication technology",
+        "Time control",
+        "Cost control",
+        "Lifting and relocation",
+        "Fastening systems",
+        "Risks management",
+        "Max weight and dimensions",
+        "Defects control",
+        "Construction conditions monitoring",
+        "Reduction of material usage",
+        "Validation of construction conditions"
+      ]
     },
     {
-        "id": "Regulations.Approvals",
-        "category": "Regulations",
-        "links": [
-            "Architecture.Design Development"
-        ]
+      "name": "Regulations",
+      "items": [
+        "General building code",
+        "Regional building codes",
+        "Fire safety regulations",
+        "Building physic regulations",
+        "Accessibility regulations",
+        "Sustainability regulations",
+        "Certification",
+        "Local work execution regulations",
+        "Building class",
+        "Snow loads",
+        "Wind loads",
+        "Earthquake loads",
+        "Guidelines for planning",
+        "Building permit",
+        "Approval planning",
+        "Statics approval",
+        "Lifting loads"
+      ]
     },
     {
-        "id": "Regulations.Building Codes",
-        "category": "Regulations",
-        "links": [
-            "Architecture.Design Development"
-        ]
+      "name": "Architecture",
+      "items": [
+        "Build-ups",
+        "Architectural details",
+        "BIM standards",
+        "BIM modeling software",
+        "BIM coordination",
+        "Rooms layout",
+        "Ceiling height",
+        "Roof type",
+        "Facade system",
+        "Balcony",
+        "Window&door sizes",
+        "Elements specification",
+        "Sun protection",
+        "Material specification",
+        "Equipment specification"
+      ]
     },
     {
-        "id": "Architecture.Design Development",
-        "category": "Architecture",
-        "links": [
-            "Production.Module Design",
-            "MEP.System Coordination"
-        ]
+      "name": "Physics",
+      "items": [
+        "Energy performance",
+        "U-values",
+        "Air-tightness",
+        "Fire protection",
+        "Fire stopping elements",
+        "Firestopping openings",
+        "Fire-resistant walls",
+        "Sound insulation",
+        "Room acoustics",
+        "Building acoustics",
+        "Outdoor noise simulations",
+        "Sound measurement",
+        "Acoustic tests and optimisations"
+      ]
     },
     {
-        "id": "Architecture.BIM Modeling",
-        "category": "Architecture",
-        "links": [
-            "Production.Module Design"
-        ]
+      "name": "MEP",
+      "items": [
+        "Drainage channels & drains",
+        "Utility connections",
+        "Sanitary equipment",
+        "Cold Water supply",
+        "Hot Water supply",
+        "Heating system layouts",
+        "Cooling system",
+        "Ventilation system",
+        "Rainwater management",
+        "Blackwater sewerage",
+        "Low voltage layouts",
+        "Electrical layouts"
+      ]
     },
     {
-        "id": "Architecture.Detailing",
-        "category": "Architecture",
-        "links": [
-            "Production.Module Design"
-        ]
+      "name": "Procurement",
+      "items": [
+        "Typical products and materials",
+        "Materials order",
+        "Sourcing",
+        "Supply chain",
+        "Material quality control",
+        "Certification of materials",
+        "Forecasting system",
+        "Warehousing",
+        "Inventory status for planing"
+      ]
     },
     {
-        "id": "MEP.System Coordination",
-        "category": "MEP",
-        "links": [
-            "Production.Module Design"
-        ]
+      "name": "Production",
+      "items": [
+        "Framing modelling",
+        "Production area",
+        "Production equipment",
+        "Automated production lines",
+        "Build-up catalogue",
+        "Standard details",
+        "Shop drawings",
+        "Framing",
+        "CNC exporters",
+        "Nodal load calculation",
+        "Production instructions",
+        "Production schedule",
+        "Manufacturing processes",
+        "Cutting optimisation",
+        "Production logistics",
+        "Size limitations at the factory"
+      ]
     },
     {
-        "id": "MEP.Installation Planning",
-        "category": "MEP",
-        "links": [
-            "Construction.Onsite Assembly"
-        ]
+      "name": "Logistics",
+      "items": [
+        "Transport loads",
+        "Distance from factory",
+        "Transport costs",
+        "Transportation capacities",
+        "Truck tracking",
+        "Route optimisation",
+        "Transport limitations on site",
+        "Packing method type",
+        "Loading method",
+        "Fastening on truck"
+      ]
     },
     {
-        "id": "Production.Module Design",
-        "category": "Production",
-        "links": [
-            "Production.Factory Planning"
-        ]
-    },
-    {
-        "id": "Production.Factory Planning",
-        "category": "Production",
-        "links": [
-            "Logistics.Transport"
-        ]
-    },
-    {
-        "id": "Production.Quality Control",
-        "category": "Production",
-        "links": [
-            "Construction.Onsite Assembly"
-        ]
-    },
-    {
-        "id": "Logistics.Transport",
-        "category": "Logistics",
-        "links": [
-            "Construction.Onsite Assembly"
-        ]
-    },
-    {
-        "id": "Logistics.Site Delivery",
-        "category": "Logistics",
-        "links": [
-            "Construction.Onsite Assembly"
-        ]
-    },
-    {
-        "id": "Construction.Site Planning",
-        "category": "Construction",
-        "links": [
-            "Construction.Onsite Assembly"
-        ]
-    },
-    {
-        "id": "Construction.Onsite Assembly",
-        "category": "Construction",
-        "links": [
-            "Operation.Maintenance"
-        ]
-    },
-    {
-        "id": "Operation.Maintenance",
-        "category": "Operation",
-        "links": [
-            "Sustainability.Lifecycle Assessment"
-        ]
-    },
-    {
-        "id": "Sustainability.Lifecycle Assessment",
-        "category": "Sustainability",
-        "links": []
+      "name": "Assembling",
+      "items": [
+        "Cranes costs",
+        "Lifting capacity of crane",
+        "Fixing system",
+        "Clearance between modules",
+        "Assembly drawings",
+        "Utility installation",
+        "Assembling quality control"
+      ]
     }
-]
+  ],
+  "nodes": [
+    {
+      "id": "Management.Location",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Business type",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Target customer",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.General contractor",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Project responsibility matrix",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Controlling",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Risk management",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Project timeline",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Project estimation",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Contract",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Regulations.General building code",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Regional building codes",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Fire safety regulations",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Building physic regulations",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Accessibility regulations",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Sustainability regulations",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Certification",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Local work execution regulations",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Building class",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Snow loads",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Wind loads",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Earthquake loads",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Management.Project typology",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Number of floors",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Terms of reference",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Regulations.Guidelines for planning",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Regulations.Building permit",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Management.Geotechnical report",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Topography",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Regulations.Approval planning",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Management.Execution planning",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Architecture.Build-ups",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.Architectural details",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.BIM standards",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.BIM modeling software",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Management.Collision detection",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Architecture.BIM coordination",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.Rooms layout",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Management.Building height",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Architecture.Ceiling height",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Management.Building plinth",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Architecture.Roof type",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Management.Safety systems",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Architecture.Facade system",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.Balcony",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.Window&door sizes",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.Elements specification",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.Sun protection",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.Material specification",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Architecture.Equipment specification",
+      "category": "Architecture",
+      "links": []
+    },
+    {
+      "id": "Management.Main construction systems",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Additional constructions",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Foundation type",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Structural details",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Calculation of the main nodes",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Regulations.Statics approval",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Management.Impact on existing buildings",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Regulations.Lifting loads",
+      "category": "Regulations",
+      "links": []
+    },
+    {
+      "id": "Logistics.Transport loads",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Production.Framing modelling",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Physics.Energy performance",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.U-values",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.Air-tightness",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.Fire protection",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Management.Building inspection",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Construction.Construction monitoring sensors",
+      "category": "Construction",
+      "links": []
+    },
+    {
+      "id": "Physics.Fire stopping elements",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.Firestopping openings",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.Fire-resistant walls",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Management.Fire extinguisher",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Fire detection system",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Physics.Sound insulation",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.Room acoustics",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.Building acoustics",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.Outdoor noise simulations",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Physics.Sound measurement",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "MEP.Drainage channels & drains",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Utility connections",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Sanitary equipment",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Cold Water supply",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Hot Water supply",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "Management.Heat generation method",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "MEP.Heating system layouts",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Cooling system",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Ventilation system",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Rainwater management",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Blackwater sewerage",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Low voltage layouts",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "MEP.Electrical layouts",
+      "category": "MEP",
+      "links": []
+    },
+    {
+      "id": "Procurement.Typical products and materials",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Management.Specification of basic materials",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Procurement.Materials order",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Procurement.Sourcing",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Procurement.Supply chain",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Procurement.Material quality control",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Procurement.Certification of materials",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Procurement.Forecasting system",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Procurement.Warehousing",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Management.Right quantity at right time",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Procurement.Inventory status for planing",
+      "category": "Procurement",
+      "links": []
+    },
+    {
+      "id": "Production.Production area",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Management.Storage area",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Capacity",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Prefabrication technology",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Production.Production equipment",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Automated production lines",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Build-up catalogue",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Standard details",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Shop drawings",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Framing",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.CNC exporters",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Nodal load calculation",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Production instructions",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Production schedule",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Manufacturing processes",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Cutting optimisation",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Management.Time control",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Cost control",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Production.Production logistics",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Production.Size limitations at the factory",
+      "category": "Production",
+      "links": []
+    },
+    {
+      "id": "Management.Lifting and relocation",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Management.Fastening systems",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Logistics.Distance from factory",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Logistics.Transport costs",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Logistics.Transportation capacities",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Logistics.Truck tracking",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Logistics.Route optimisation",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Management.Risks management",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Logistics.Transport limitations on site",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Logistics.Packing method type",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Logistics.Loading method",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Management.Max weight and dimensions",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Logistics.Fastening on truck",
+      "category": "Logistics",
+      "links": []
+    },
+    {
+      "id": "Management.Defects control",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Assembling.Cranes costs",
+      "category": "Assembling",
+      "links": []
+    },
+    {
+      "id": "Assembling.Lifting capacity of crane",
+      "category": "Assembling",
+      "links": []
+    },
+    {
+      "id": "Assembling.Fixing system",
+      "category": "Assembling",
+      "links": []
+    },
+    {
+      "id": "Assembling.Clearance between modules",
+      "category": "Assembling",
+      "links": []
+    },
+    {
+      "id": "Assembling.Assembly drawings",
+      "category": "Assembling",
+      "links": []
+    },
+    {
+      "id": "Construction.4d scheduling",
+      "category": "Construction",
+      "links": []
+    },
+    {
+      "id": "Assembling.Utility installation",
+      "category": "Assembling",
+      "links": []
+    },
+    {
+      "id": "Construction.Foundation plan",
+      "category": "Construction",
+      "links": []
+    },
+    {
+      "id": "Construction.Construction site safety",
+      "category": "Construction",
+      "links": []
+    },
+    {
+      "id": "Assembling.Assembling quality control",
+      "category": "Assembling",
+      "links": []
+    },
+    {
+      "id": "Physics.Acoustic tests and optimisations",
+      "category": "Physics",
+      "links": []
+    },
+    {
+      "id": "Construction.Moisture monitoring",
+      "category": "Construction",
+      "links": []
+    },
+    {
+      "id": "Construction.Energy monitoring",
+      "category": "Construction",
+      "links": []
+    },
+    {
+      "id": "Management.Construction conditions monitoring",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Operation.Maintenance of facade",
+      "category": "Operation",
+      "links": []
+    },
+    {
+      "id": "Operation.Maintenance of roof",
+      "category": "Operation",
+      "links": []
+    },
+    {
+      "id": "Operation.Renovation and modernization",
+      "category": "Operation",
+      "links": []
+    },
+    {
+      "id": "Sustainability.Embodied carbon analysis",
+      "category": "Sustainability",
+      "links": []
+    },
+    {
+      "id": "Management.Reduction of material usage",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Sustainability.Eco-friendly material usage",
+      "category": "Sustainability",
+      "links": []
+    },
+    {
+      "id": "Sustainability.Material database",
+      "category": "Sustainability",
+      "links": []
+    },
+    {
+      "id": "Sustainability.ESG-Reporting",
+      "category": "Sustainability",
+      "links": []
+    },
+    {
+      "id": "Sustainability.Design rules for reuse",
+      "category": "Sustainability",
+      "links": []
+    },
+    {
+      "id": "Management.Validation of construction conditions",
+      "category": "Management",
+      "links": []
+    },
+    {
+      "id": "Sustainability.Disassembly",
+      "category": "Sustainability",
+      "links": []
+    },
+    {
+      "id": "Sustainability.Refurbishment",
+      "category": "Sustainability",
+      "links": []
+    },
+    {
+      "id": "Sustainability.Reuse",
+      "category": "Sustainability",
+      "links": []
+    },
+    {
+      "id": "Sustainability.Recycling",
+      "category": "Sustainability",
+      "links": []
+    }
+  ]
+}
