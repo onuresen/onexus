@@ -9,6 +9,18 @@ svg {
     margin: auto;
 }
 
+html,
+body {
+    height: 100%;
+}
+
+#chart {
+    width: min(96vmin, 1100px);
+    height: min(96vmin, 1100px);
+    display: block;
+    margin: auto;
+}
+
 /* ======================
    CONTINUOUS RING
 ====================== */
@@ -56,17 +68,110 @@ svg {
 }
 
 /* ======================
-   LINKS
+ LINKS (enhanced look)
 ====================== */
-.link {
+
+/* Soft under-stroke gives depth (like a subtle glow) */
+.link-under {
     fill: none;
-    stroke: #999;
-    stroke-opacity: 0.18;
-    stroke-width: 1.35;
+    stroke: rgba(0, 0, 0, 0.10);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-opacity: 0.10;
+    mix-blend-mode: normal;
 }
 
+/* Crisp top line for definition */
+.link {
+    fill: none;
+    stroke: rgba(60, 60, 60, 0.55);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-opacity: 0.14;
+    mix-blend-mode: normal;
+}
+
+/* Hover focus */
 .link.active {
-    stroke-opacity: 0.85;
-    stroke-width: 2.2;
-    stroke: #555;
+    stroke: rgba(35, 35, 35, 0.90);
+    stroke-opacity: 0.80;
+    stroke-width: 2.1;
+}
+
+.link-under.active {
+    stroke: rgba(0, 0, 0, 0.22);
+    stroke-opacity: 0.28;
+    stroke-width: 4;
+}
+
+/* PERF: when focused, fade all links via a single parent class */
+.links.has-focus .link,
+.links.has-focus .link-under {
+    stroke-opacity: 0.03;
+}
+
+/* The active links override the fade */
+.links.has-focus .link.active {
+    stroke-opacity: 0.80;
+}
+
+.links.has-focus .link-under.active {
+    stroke-opacity: 0.28;
+}
+
+.link,
+.link-under {
+    pointer-events: none;
+}
+
+/* ===== Focus / fade states ===== */
+.faded {
+    opacity: 0.06;
+}
+
+.node-label.faded {
+    opacity: 0.12;
+}
+
+.link.faded {
+    stroke-opacity: 0.04;
+}
+
+.ring-segment-hit {
+    fill: transparent;
+    pointer-events: all;
+}
+
+/* ======================
+ OUTER LABEL READABILITY
+====================== */
+
+/* Slightly stronger baseline readability */
+.node-label {
+    fill: #777;
+    font-size: 11px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Hide labels by default via class (LOD) */
+.node-label.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* When a category is expanded, show its labels */
+.node-label.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Make active node label always readable */
+.node-label.active {
+    fill: #000;
+    font-weight: 700;
+    opacity: 1 !important;
+    pointer-events: auto;
 }
