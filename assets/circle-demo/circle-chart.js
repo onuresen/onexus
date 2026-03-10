@@ -19,7 +19,7 @@ function updateSizeFromDOM() {
     WIDTH = w;
     HEIGHT = h;
 }
-const DATA_URL = "data.json";
+const DATA_URL = "data.onexus.json";
 
 /* ---- visual tuning knobs (safe to tweak) ---- */
 const RING_THICKNESS = 22;
@@ -46,12 +46,87 @@ d3.json(DATA_URL).then(raw => {
 /* =====================================================
  Data helpers
 ===================================================== */
-function normalizeData(raw) {
+function normalizeDataOld(raw) {
     // Accept either:
     // 1) array of {id, category, links}
     // 2) object { nodes: [...], arcOrder: [...] }
     const nodes = Array.isArray(raw) ? raw : (raw && raw.nodes ? raw.nodes : []);
     const arcOrder = (!Array.isArray(raw) && raw && Array.isArray(raw.arcOrder)) ? raw.arcOrder.slice() : null;
+
+    return {
+        arcOrder,
+        nodes: nodes.map(d => ({
+            id: d.id,
+            category: d.category,
+            links: Array.isArray(d.links) ? d.links.slice() : []
+        }))
+    };
+}
+
+function normalizeData(raw) {
+    // Supports:
+    // A) chord format: array of {id, category, links} OR {nodes:[...], arcOrder:[...]}
+    // B) ONEXUS-ish format: { view:{arcOrder:[...]}, elements:{ nodes:[{data:{...}}], edges:[{data:{source,target,...}}] } }
+
+    const isOnexus =
+        raw &&
+        raw.elements &&
+        Array.isArray(raw.elements.nodes) &&
+        Array.isArray(raw.elements.edges);
+
+    // ---------- B) ONEXUS style ----------
+    if (isOnexus) {
+        const arcOrder =
+            raw.view && Array.isArray(raw.view.arcOrder) ? raw.view.arcOrder.slice() : null;
+
+        const onodes = raw.elements.nodes.map(n => n.data);
+        const oedges = raw.elements.edges.map(e => e.data);
+
+        // Map ONEXUS nodeId -> chord leafId ("Category.Label")
+        const idToLeafId = new Map();
+
+        function labelOf(n) {
+            const lbl = n.label || {};
+            return (lbl.en || lbl.jp || n.name || n.id);
+        }
+
+        // Build leaf nodes expected by the renderer
+        const chordNodes = onodes.map(n => {
+            const category = n.category || n.nodeType || "Uncategorized";
+            const label = String(labelOf(n)).replace(/\./g, "·"); // avoid dots breaking split(".")
+            const leafId = `${category}.${label}`;
+            idToLeafId.set(n.id, leafId);
+            return { id: leafId, category, links: [] };
+        });
+
+        const chordById = new Map(chordNodes.map(n => [n.id, n]));
+
+        // Convert edges to undirected links (the renderer already treats connections as pairs)
+        oedges.forEach(e => {
+            const a = idToLeafId.get(e.source);
+            const b = idToLeafId.get(e.target);
+            if (!a || !b || a === b) return;
+
+            const na = chordById.get(a);
+            const nb = chordById.get(b);
+            if (!na || !nb) return;
+
+            na.links.push(b);
+            nb.links.push(a);
+        });
+
+        // Deduplicate links
+        chordNodes.forEach(n => {
+            n.links = Array.from(new Set(n.links));
+        });
+
+        return { arcOrder, nodes: chordNodes };
+    }
+
+    // ---------- A) Existing chord style ----------
+    const nodes = Array.isArray(raw) ? raw : (raw && raw.nodes ? raw.nodes : []);
+    const arcOrder =
+        (!Array.isArray(raw) && raw && Array.isArray(raw.arcOrder)) ? raw.arcOrder.slice() : null;
 
     return {
         arcOrder,
@@ -307,6 +382,11 @@ function render(payload) {
     const defs = svg.append("defs");
     const g = svg.append("g");
 
+    svg.on("click", () => {
+        pinnedNode = null;
+        reset();
+    });
+
     /* ---- layout ---- */
     const cluster = d3.cluster().size([2 * Math.PI, LINK_RADIUS]);
     const root = d3.hierarchy(buildHierarchy(items, arcOrder));
@@ -337,6 +417,18 @@ function render(payload) {
             if (!target) return;
             links.push({ source, target, path: source.path(target) });
         });
+    });
+
+    // --- NEW: build adjacency (node -> connected nodes) for label highlighting ---
+    const neighborMap = new Map(); // leafNode -> Set<leafNode>
+    function addNeighbor(a, b) {
+        let s = neighborMap.get(a);
+        if (!s) { s = new Set(); neighborMap.set(a, s); }
+        s.add(b);
+    }
+    links.forEach(l => {
+        addNeighbor(l.source, l.target);
+        addNeighbor(l.target, l.source);
     });
 
     // ---- links (two-pass: under + top) ----
@@ -384,6 +476,7 @@ function render(payload) {
     // Track last hovered to clear only what we touched
     let _lastActiveTop = null;
     let _lastActiveUnder = null;
+    let pinnedNode = null;
 
     /* ---- continuous ring (never gaps) ---- */
     const ringArc = d3.arc()
@@ -510,14 +603,25 @@ function render(payload) {
         .attr("text-anchor", d => (d.x < Math.PI ? "start" : "end"))
         .attr("transform", d => (d.x >= Math.PI ? "rotate(180)" : null))
         .text(d => (d.data.name.split(".")[1] ?? d.data.name))
-        .on("mouseenter", (_, d) => highlight(d))
-        .on("mouseleave", reset);
-
-
+        .on("mouseenter", (_, d) => { if (!pinnedNode) highlight(d); })
+        .on("mouseleave", () => { if (!pinnedNode) reset(); })
+        .on("click", (event, d) => {
+            event.stopPropagation();
+            if (pinnedNode === d) {
+                pinnedNode = null;
+                reset();
+            } else {
+                pinnedNode = d;
+                highlight(d);
+            }
+        });
 
     /* ---- interaction ---- */
     function highlight(node) {
-        nodeText.classed("active", d => d === node);
+        const neighbors = neighborMap.get(node) || new Set();
+        nodeText
+            .classed("active", d => d === node)
+            .classed("connected", d => neighbors.has(d));
 
         // Fade everything with ONE class toggle on container
         linkG.classed("has-focus", true);
