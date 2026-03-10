@@ -1,22 +1,17 @@
 /* ONEXUS – IO Host & Validation (load/validate JSON, host bridge, apply positions)
-   PATCHED for Revit exporter JSON (onexus-1.1, nodeType=Element, label.en only, etc.)
+ PATCH: preserve graph.view (arcOrder etc.) into meta.view for legacy loadJSON() path.
 */
 (function () {
   const cy = window.cy;
 
-  // ---- Normalization rules (tweak here if needed)
-  const NODETYPE_MAP = {
-    Element: "Component", // Revit exporter -> ONEXUS canonical
-  };
+  const NODETYPE_MAP = { Element: "Component" };
 
   function ensureLabelObject(label, fallback) {
-    // Accept: object {en,jp} OR string OR null
     if (label && typeof label === "object") {
       const en = String(label.en ?? fallback ?? "").trim() || String(fallback ?? "");
       const jp = String(label.jp ?? en).trim() || en;
       return { en, jp };
     }
-    // string / undefined
     const en = String(label ?? fallback ?? "").trim() || String(fallback ?? "");
     return { en, jp: en };
   }
@@ -25,19 +20,13 @@
     const id = String(nodeData.id ?? "");
     const revitCat = String(nodeData.revitCategory ?? "");
     const cat = String(nodeData.category ?? "").trim();
-
-    // Doors: keep consistent for UX
     if (id.startsWith("DOOR-")) return "Door";
-
-    // Components inside Doors families (your COMP-* are still Doors category in Revit)
     if (revitCat === "Doors") {
-      // If category is missing OR equals "Doors" already OR looks wrong, normalize to "Doors"
       if (!cat) return "Doors";
       if (cat === "Doors") return "Doors";
-      if (cat === "Door") return "Doors"; // components shouldn't be Door (instances are Door)
-      return cat; // keep custom categories if you later add them
+      if (cat === "Door") return "Doors";
+      return cat;
     }
-
     return cat || revitCat || "Uncategorized";
   }
 
@@ -46,23 +35,14 @@
     const id = String(d0.id ?? "").trim();
     const nodeTypeRaw = String(d0.nodeType ?? "").trim();
     const nodeType = NODETYPE_MAP[nodeTypeRaw] ?? (nodeTypeRaw || "Component");
-
     const label = ensureLabelObject(d0.label, d0.displayLabel ?? id);
-    const displayLabel = (window.__onexus_state?.language === "jp")
-      ? (label.jp ?? label.en ?? id)
-      : (label.en ?? id);
-
+    const displayLabel =
+      window.__onexus_state?.language === "jp"
+        ? label.jp ?? label.en ?? id
+        : label.en ?? id;
     const category = normalizeCategory({ ...d0, id });
-
     return {
-      data: {
-        ...d0,
-        id,
-        nodeType,
-        category,
-        label,
-        displayLabel,
-      }
+      data: { ...d0, id, nodeType, category, label, displayLabel },
     };
   }
 
@@ -75,34 +55,39 @@
     const target = String(d0.target ?? "").trim();
     const directional = !!d0.directional;
 
-    // displayType is computed by setLanguage(), but we can seed it
-    const map = (window.__onexus_labels?.[window.__onexus_state?.language ?? "en"] ?? {});
+    const map = window.__onexus_labels?.[window.__onexus_state?.language ?? "en"] ?? {};
     const displayType = d0.displayType ?? map[type] ?? type;
 
     return {
-      data: {
-        ...d0,
-        id,
-        type,
-        dimension,
-        source,
-        target,
-        directional,
-        displayType
-      }
+      data: { ...d0, id, type, dimension, source, target, directional, displayType },
     };
+  }
+
+  function mergeViewIntoMeta(meta, graph) {
+    const m = meta && typeof meta === "object" ? { ...meta } : {};
+    const rootView = graph?.view && typeof graph.view === "object" ? graph.view : null;
+
+    // normalize meta.view
+    let mv = {};
+    if (typeof m.view === "string") mv.key = String(m.view);
+    else if (m.view && typeof m.view === "object") mv = { ...m.view };
+
+    if (rootView) mv = { ...mv, ...rootView };
+
+    if (Object.keys(mv).length) m.view = mv;
+    return m;
   }
 
   function normalizeGraph(graph) {
     const nodes = (graph?.elements?.nodes ?? []).map(normalizeNode);
     const edges = (graph?.elements?.edges ?? []).map(normalizeEdge);
-    return {
-      meta: graph?.meta ?? {},
-      elements: { nodes, edges }
-    };
+
+    // ✅ preserve view → meta.view
+    const meta = mergeViewIntoMeta(graph?.meta ?? {}, graph);
+
+    return { meta, elements: { nodes, edges } };
   }
 
-  // ---- Validator (kept strict, but allows label to be string/object; nodeType any string)
   function validateOnexusJson(data) {
     const errors = [];
     if (!data || !data.elements) {
@@ -117,7 +102,6 @@
       if (!d.id) errors.push(`nodes[${i}].data.id is required`);
       if (!d.nodeType) errors.push(`nodes[${i}].data.nodeType is required`);
       if (!d.category && !d.revitCategory) errors.push(`nodes[${i}].data.category or .revitCategory is required`);
-      // label can be object OR string (Revit exporter might evolve)
       if (!(typeof d.label === "object" || typeof d.label === "string")) {
         errors.push(`nodes[${i}].data.label must be an object or string`);
       }
@@ -136,36 +120,25 @@
     return { valid: errors.length === 0, errors };
   }
 
-  // ---- File input: load a single ONEXUS JSON file
   function loadJSON(event) {
     const file = event.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (e) => {
       let raw;
-      try {
-        raw = JSON.parse(e.target.result);
-      } catch (err) {
-        alert("Invalid JSON: " + err.message);
-        return;
-      }
+      try { raw = JSON.parse(e.target.result); }
+      catch (err) { alert("Invalid JSON: " + err.message); return; }
 
       const { valid, errors } = validateOnexusJson(raw);
-      if (!valid) {
-        alert("Schema errors:\n" + errors.join("\n"));
-        return;
-      }
+      if (!valid) { alert("Schema errors:\n" + errors.join("\n")); return; }
 
       const data = normalizeGraph(raw);
 
       window.__onexus_meta = data.meta ?? {};
-
       cy.elements().remove();
       cy.add(data.elements.nodes);
       cy.add(data.elements.edges);
 
-      // keep existing pipeline
       const lang = window.__onexus_state?.language ?? (raw?.meta?.languageDefault ?? "en");
       window.setLanguage?.(lang);
       window.buildCategoryFilter?.();
@@ -174,36 +147,29 @@
       window.applyLayout?.("default");
       cy.fit(undefined, 50);
 
-      // Perf: don't force labels ON while a load/layout hide cycle is active
       const perfHide = window.ONEXUS_PERF?.isTempLabelHide?.() === true;
       if (!perfHide) {
         window.setEdgeLabelVisibility?.(true);
         window.setNodeLabelVisibility?.(true);
       }
-
       window.buildRelationshipLegend?.();
       window.updateMetrics?.();
     };
     reader.readAsText(file);
   }
 
-  // ---- Host integration: load graph object (used by unified loader & compare)
   function loadGraphObject(graph) {
     try {
-      // NEW: plugin lifecycle event (willLoad)
       try { window.ONEXUS?.bus?.emit?.("graphWillLoad", { graph }); } catch { }
 
-      // --- NEW: unify importer meta + normalize graph schema (if helper present)
       try {
         const norm = window.ONEXUS?.import?.normalizeGraph;
         if (typeof norm === "function") {
-          // Preserve any incoming meta but ensure required import fields exist
-          const sourceFiles =
-            Array.isArray(graph?.meta?.sourceFiles) ? graph.meta.sourceFiles : [];
+          const sourceFiles = Array.isArray(graph?.meta?.sourceFiles) ? graph.meta.sourceFiles : [];
           graph = norm(graph, {
             importer: graph?.meta?.importer ?? "onexusLoadGraph",
             sourceFiles,
-            sourceKind: graph?.meta?.sourceKind ?? "import"
+            sourceKind: graph?.meta?.sourceKind ?? "import",
           });
         }
       } catch (e) {
@@ -214,7 +180,6 @@
       if (res && res.valid === false) {
         console.error("ONEXUS schema errors:", res.errors);
         alert("Invalid ONEXUS JSON:\n" + res.errors.join("\n"));
-        // NEW: plugin lifecycle event (failed)
         try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph, errors: res.errors }); } catch { }
         return;
       }
@@ -228,9 +193,11 @@
 
       const data = normalizeGraph(graph);
       window.__onexus_meta = data.meta ?? {};
+
       c.elements().remove();
       c.add(data.elements?.nodes ?? []);
       c.add(data.elements?.edges ?? []);
+
       const lang = window.__onexus_state?.language ?? (graph?.meta?.languageDefault ?? "en");
       window.setLanguage?.(lang);
       window.buildCategoryFilter?.();
@@ -239,7 +206,6 @@
       window.applyLayout?.("default");
       c.fit(undefined, 50);
 
-      // Perf: don't force labels ON while a load/layout hide cycle is active
       const perfHide = window.ONEXUS_PERF?.isTempLabelHide?.() === true;
       if (!perfHide) {
         window.setEdgeLabelVisibility?.(true);
@@ -249,15 +215,13 @@
       window.buildRelationshipLegend?.();
       window.updateMetrics?.();
 
-      // NEW: plugin lifecycle event (loaded)
       try {
         window.ONEXUS?.bus?.emit?.("graphLoaded", {
           graph: data,
           meta: window.__onexus_meta,
-          counts: { nodes: c.nodes().length, edges: c.edges().length }
+          counts: { nodes: c.nodes().length, edges: c.edges().length },
         });
       } catch { }
-
     } catch (e) {
       console.error("Failed to load graph object:", e);
       alert("Failed to load graph: " + e.message);
@@ -265,37 +229,31 @@
     }
   }
 
-  // ---- Apply absolute positions from exported layout
   function applyLayoutPositions(positions) {
     if (!Array.isArray(positions) || !positions.length) return;
-    positions.forEach(p => {
+    positions.forEach((p) => {
       if (!p || !p.id) return;
       const n = cy.getElementById(p.id);
-      if (n && n.nonempty && n.nonempty() && p.position
-        && typeof p.position.x === "number"
-        && typeof p.position.y === "number") {
-        n.position(p.position);
-      }
+      if (
+        n && n.nonempty && n.nonempty() &&
+        p.position && typeof p.position.x === "number" && typeof p.position.y === "number"
+      ) n.position(p.position);
     });
     cy.fit(undefined, 50);
   }
 
-  // ---- WebView2 bridge (optional)
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener("message", (e) => {
       if (!e || !e.data) return;
-
       if (e.data.type === "onexus-graph") { loadGraphObject(e.data.graph); return; }
-
       if (e.data.type === "highlight-nodes") {
         const ids = new Set(e.data.ids ?? []);
         cy.nodes().removeClass("highlight");
-        const hits = cy.nodes().filter(n => ids.has(n.id()));
+        const hits = cy.nodes().filter((n) => ids.has(n.id()));
         hits.addClass("highlight");
         if (hits.nonempty && hits.nonempty()) cy.fit(hits, 60);
         return;
       }
-
       if (e.data.type === "apply-layout") {
         const positions = e.data.positions ?? [];
         if (Array.isArray(positions) && positions.length) window.applyLayoutPositions(positions);
@@ -304,10 +262,8 @@
     });
   }
 
-  // expose
   window.loadJSON = loadJSON;
   window.onexusLoadGraph = loadGraphObject;
   window.applyLayoutPositions = applyLayoutPositions;
   window.validateOnexusJson = validateOnexusJson;
-
 })();
