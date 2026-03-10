@@ -175,3 +175,14 @@ body {
     opacity: 1 !important;
     pointer-events: auto;
 }
+
+.node-label.connected {
+    fill: #222;
+    font-weight: 600;
+    opacity: 1 !important;
+}
+
+.node-label.pinned {
+    fill: #000;
+    font-weight: 800;
+}

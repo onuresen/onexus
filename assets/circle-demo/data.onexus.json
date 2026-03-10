@@ -1,0 +1,1647 @@
+{
+  "meta": {
+    "schema": "onexus-visual-0.1",
+    "view": "circle-chord",
+    "languageDefault": "en"
+  },
+  "view": {
+    "arcOrder": [
+      "Operation",
+      "Sustainability",
+      "Management",
+      "Regulations",
+      "Architecture",
+      "Physics",
+      "MEP",
+      "Procurement",
+      "Production",
+      "Logistics",
+      "Assembling"
+    ]
+  },
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "TOPIC-management-location",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Location"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-business-type",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Business type"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-target-customer",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Target customer"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-general-contractor",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "General contractor"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-project-responsibility-matrix",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Project responsibility matrix"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-controlling",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Controlling"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-risk-management",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Risk management"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-project-timeline",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Project timeline"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-project-estimation",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Project estimation"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-contract",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Contract"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-general-building-code",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "General building code"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-regional-building-codes",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Regional building codes"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-fire-safety-regulations",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Fire safety regulations"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-building-physic-regulations",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Building physic regulations"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-accessibility-regulations",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Accessibility regulations"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-sustainability-regulations",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Sustainability regulations"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-certification",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Certification"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-local-work-execution-regulations",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Local work execution regulations"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-building-class",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Building class"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-snow-loads",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Snow loads"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-wind-loads",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Wind loads"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-earthquake-loads",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Earthquake loads"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-project-typology",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Project typology"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-number-of-floors",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Number of floors"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-terms-of-reference",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Terms of reference"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-guidelines-for-planning",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Guidelines for planning"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-building-permit",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Building permit"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-geotechnical-report",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Geotechnical report"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-topography",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Topography"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-approval-planning",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Approval planning"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-execution-planning",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Execution planning"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-build-ups",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Build-ups"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-architectural-details",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Architectural details"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-bim-standards",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "BIM standards"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-bim-modeling-software",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "BIM modeling software"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-collision-detection",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Collision detection"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-bim-coordination",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "BIM coordination"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-rooms-layout",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Rooms layout"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-building-height",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Building height"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-ceiling-height",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Ceiling height"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-building-plinth",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Building plinth"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-roof-type",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Roof type"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-safety-systems",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Safety systems"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-facade-system",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Facade system"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-balcony",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Balcony"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-windowdoor-sizes",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Window&door sizes"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-elements-specification",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Elements specification"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-sun-protection",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Sun protection"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-material-specification",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Material specification"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-architecture-equipment-specification",
+          "nodeType": "Topic",
+          "category": "Architecture",
+          "label": {
+            "en": "Equipment specification"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-main-construction-systems",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Main construction systems"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-additional-constructions",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Additional constructions"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-foundation-type",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Foundation type"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-structural-details",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Structural details"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-calculation-of-the-main-nodes",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Calculation of the main nodes"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-statics-approval",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Statics approval"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-impact-on-existing-buildings",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Impact on existing buildings"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-regulations-lifting-loads",
+          "nodeType": "Topic",
+          "category": "Regulations",
+          "label": {
+            "en": "Lifting loads"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-transport-loads",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Transport loads"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-framing-modelling",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Framing modelling"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-energy-performance",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Energy performance"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-u-values",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "U-values"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-air-tightness",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Air-tightness"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-fire-protection",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Fire protection"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-building-inspection",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Building inspection"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-construction-construction-monitoring-sensors",
+          "nodeType": "Topic",
+          "category": "Construction",
+          "label": {
+            "en": "Construction monitoring sensors"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-fire-stopping-elements",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Fire stopping elements"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-firestopping-openings",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Firestopping openings"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-fire-resistant-walls",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Fire-resistant walls"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-fire-extinguisher",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Fire extinguisher"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-fire-detection-system",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Fire detection system"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-sound-insulation",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Sound insulation"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-room-acoustics",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Room acoustics"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-building-acoustics",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Building acoustics"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-outdoor-noise-simulations",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Outdoor noise simulations"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-sound-measurement",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Sound measurement"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-drainage-channels-drains",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Drainage channels & drains"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-utility-connections",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Utility connections"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-sanitary-equipment",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Sanitary equipment"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-cold-water-supply",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Cold Water supply"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-hot-water-supply",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Hot Water supply"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-heat-generation-method",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Heat generation method"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-heating-system-layouts",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Heating system layouts"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-cooling-system",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Cooling system"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-ventilation-system",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Ventilation system"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-rainwater-management",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Rainwater management"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-blackwater-sewerage",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Blackwater sewerage"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-low-voltage-layouts",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Low voltage layouts"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-mep-electrical-layouts",
+          "nodeType": "Topic",
+          "category": "MEP",
+          "label": {
+            "en": "Electrical layouts"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-typical-products-and-materials",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Typical products and materials"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-specification-of-basic-materials",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Specification of basic materials"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-materials-order",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Materials order"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-sourcing",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Sourcing"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-supply-chain",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Supply chain"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-material-quality-control",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Material quality control"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-certification-of-materials",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Certification of materials"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-forecasting-system",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Forecasting system"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-warehousing",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Warehousing"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-right-quantity-at-right-time",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Right quantity at right time"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-procurement-inventory-status-for-planing",
+          "nodeType": "Topic",
+          "category": "Procurement",
+          "label": {
+            "en": "Inventory status for planing"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-production-area",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Production area"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-storage-area",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Storage area"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-capacity",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Capacity"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-prefabrication-technology",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Prefabrication technology"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-production-equipment",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Production equipment"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-automated-production-lines",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Automated production lines"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-build-up-catalogue",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Build-up catalogue"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-standard-details",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Standard details"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-shop-drawings",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Shop drawings"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-framing",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Framing"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-cnc-exporters",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "CNC exporters"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-nodal-load-calculation",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Nodal load calculation"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-production-instructions",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Production instructions"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-production-schedule",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Production schedule"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-manufacturing-processes",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Manufacturing processes"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-cutting-optimisation",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Cutting optimisation"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-time-control",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Time control"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-cost-control",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Cost control"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-production-logistics",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Production logistics"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-production-size-limitations-at-the-factory",
+          "nodeType": "Topic",
+          "category": "Production",
+          "label": {
+            "en": "Size limitations at the factory"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-lifting-and-relocation",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Lifting and relocation"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-fastening-systems",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Fastening systems"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-distance-from-factory",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Distance from factory"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-transport-costs",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Transport costs"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-transportation-capacities",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Transportation capacities"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-truck-tracking",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Truck tracking"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-route-optimisation",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Route optimisation"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-risks-management",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Risks management"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-transport-limitations-on-site",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Transport limitations on site"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-packing-method-type",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Packing method type"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-loading-method",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Loading method"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-max-weight-and-dimensions",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Max weight and dimensions"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-logistics-fastening-on-truck",
+          "nodeType": "Topic",
+          "category": "Logistics",
+          "label": {
+            "en": "Fastening on truck"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-defects-control",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Defects control"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-assembling-cranes-costs",
+          "nodeType": "Topic",
+          "category": "Assembling",
+          "label": {
+            "en": "Cranes costs"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-assembling-lifting-capacity-of-crane",
+          "nodeType": "Topic",
+          "category": "Assembling",
+          "label": {
+            "en": "Lifting capacity of crane"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-assembling-fixing-system",
+          "nodeType": "Topic",
+          "category": "Assembling",
+          "label": {
+            "en": "Fixing system"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-assembling-clearance-between-modules",
+          "nodeType": "Topic",
+          "category": "Assembling",
+          "label": {
+            "en": "Clearance between modules"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-assembling-assembly-drawings",
+          "nodeType": "Topic",
+          "category": "Assembling",
+          "label": {
+            "en": "Assembly drawings"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-construction-4d-scheduling",
+          "nodeType": "Topic",
+          "category": "Construction",
+          "label": {
+            "en": "4d scheduling"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-assembling-utility-installation",
+          "nodeType": "Topic",
+          "category": "Assembling",
+          "label": {
+            "en": "Utility installation"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-construction-foundation-plan",
+          "nodeType": "Topic",
+          "category": "Construction",
+          "label": {
+            "en": "Foundation plan"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-construction-construction-site-safety",
+          "nodeType": "Topic",
+          "category": "Construction",
+          "label": {
+            "en": "Construction site safety"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-assembling-assembling-quality-control",
+          "nodeType": "Topic",
+          "category": "Assembling",
+          "label": {
+            "en": "Assembling quality control"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-physics-acoustic-tests-and-optimisations",
+          "nodeType": "Topic",
+          "category": "Physics",
+          "label": {
+            "en": "Acoustic tests and optimisations"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-construction-moisture-monitoring",
+          "nodeType": "Topic",
+          "category": "Construction",
+          "label": {
+            "en": "Moisture monitoring"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-construction-energy-monitoring",
+          "nodeType": "Topic",
+          "category": "Construction",
+          "label": {
+            "en": "Energy monitoring"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-construction-conditions-monitoring",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Construction conditions monitoring"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-operation-maintenance-of-facade",
+          "nodeType": "Topic",
+          "category": "Operation",
+          "label": {
+            "en": "Maintenance of facade"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-operation-maintenance-of-roof",
+          "nodeType": "Topic",
+          "category": "Operation",
+          "label": {
+            "en": "Maintenance of roof"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-operation-renovation-and-modernization",
+          "nodeType": "Topic",
+          "category": "Operation",
+          "label": {
+            "en": "Renovation and modernization"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-embodied-carbon-analysis",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "Embodied carbon analysis"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-reduction-of-material-usage",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Reduction of material usage"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-eco-friendly-material-usage",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "Eco-friendly material usage"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-material-database",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "Material database"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-esg-reporting",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "ESG-Reporting"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-design-rules-for-reuse",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "Design rules for reuse"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-management-validation-of-construction-conditions",
+          "nodeType": "Topic",
+          "category": "Management",
+          "label": {
+            "en": "Validation of construction conditions"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-disassembly",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "Disassembly"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-refurbishment",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "Refurbishment"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-reuse",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "Reuse"
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "TOPIC-sustainability-recycling",
+          "nodeType": "Topic",
+          "category": "Sustainability",
+          "label": {
+            "en": "Recycling"
+          }
+        }
+      }
+    ],
+    "edges": []
+  }
+}
