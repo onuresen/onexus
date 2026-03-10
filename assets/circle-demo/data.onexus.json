@@ -1,1647 +1,4913 @@
 {
   "meta": {
-    "schema": "onexus-visual-0.1",
-    "view": "circle-chord",
-    "languageDefault": "en"
-  },
-  "view": {
-    "arcOrder": [
-      "Operation",
-      "Sustainability",
-      "Management",
-      "Regulations",
-      "Architecture",
-      "Physics",
-      "MEP",
-      "Procurement",
-      "Production",
-      "Logistics",
-      "Assembling"
+    "schema": "onexus-1.1",
+    "project": "AEC & BIM Solution Landscape (All tools incl. open-source)",
+    "languageDefault": "en",
+    "phases": [
+      "Plan",
+      "Design",
+      "Construction",
+      "Handover",
+      "Operations"
+    ],
+    "notes": [
+      "Nodes: Capability, Solution, Standard, Format, Organization (optional).",
+      "Edges: UsedFor (Solution->Capability), SupportsStandard (Solution->Standard), UsesFormat (Solution->Format).",
+      "This dataset is a starter 'comprehensive' pack; ask to expand to 250+ solutions or to add Japan-specific tools."
     ]
   },
   "elements": {
     "nodes": [
       {
         "data": {
-          "id": "TOPIC-management-location",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SYS-AEC-BIM",
+          "nodeType": "System",
+          "category": "SolutionLandscape",
           "label": {
-            "en": "Location"
+            "en": "AEC & BIM Solutions",
+            "jp": "AEC・BIMソリューション"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-business-type",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-IM",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Business type"
+            "en": "Information Management (ISO 19650 / EIR / BEP)",
+            "jp": "情報マネジメント（ISO 19650 / EIR / BEP）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-target-customer",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-CDE",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Target customer"
+            "en": "CDE / Document Control",
+            "jp": "CDE／文書管理"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-general-contractor",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-AUTH-ARC",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "General contractor"
+            "en": "Authoring (Architecture)",
+            "jp": "BIM作成（建築）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-project-responsibility-matrix",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-AUTH-STR",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Project responsibility matrix"
+            "en": "Authoring (Structure)",
+            "jp": "BIM作成（構造）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-controlling",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-AUTH-MEP",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Controlling"
+            "en": "Authoring (MEP)",
+            "jp": "BIM作成（設備）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-risk-management",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-COMP-DES",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Risk management"
+            "en": "Computational / Parametric Design",
+            "jp": "計算・パラメトリックデザイン"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-project-timeline",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-COORD",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Project timeline"
+            "en": "Coordination / Model Federation",
+            "jp": "調整／モデル統合"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-project-estimation",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-ISSUES",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Project estimation"
+            "en": "Issue / RFI / BCF Management",
+            "jp": "課題管理／RFI／BCF"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-contract",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-CLASH",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Contract"
+            "en": "Clash Detection",
+            "jp": "干渉チェック"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-general-building-code",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-QAQC",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "General building code"
+            "en": "QA/QC / Model Checking",
+            "jp": "品質管理／モデルチェック"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-regional-building-codes",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-4D",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Regional building codes"
+            "en": "4D Planning / Scheduling",
+            "jp": "4D工程計画"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-fire-safety-regulations",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-5D",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Fire safety regulations"
+            "en": "5D Cost / Quantity",
+            "jp": "5D積算／数量"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-building-physic-regulations",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-TAKEOFF",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Building physic regulations"
+            "en": "2D/3D Takeoff",
+            "jp": "2D/3D拾い出し"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-accessibility-regulations",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-SCAN2BIM",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Accessibility regulations"
+            "en": "Scan to BIM / Reality to BIM",
+            "jp": "スキャンto BIM"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-sustainability-regulations",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-POINTCLOUD",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Sustainability regulations"
+            "en": "Point Cloud Processing",
+            "jp": "点群処理"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-certification",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-REALITY",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Certification"
+            "en": "Reality Capture (360/Drone/Photogrammetry)",
+            "jp": "現場撮影（360／ドローン／写真測量）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-local-work-execution-regulations",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-PROGRESS",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Local work execution regulations"
+            "en": "Progress Tracking",
+            "jp": "進捗管理"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-building-class",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-FIELD",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Building class"
+            "en": "Field Management (Site, Punch, Snag)",
+            "jp": "現場管理（検査・是正）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-snow-loads",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-SAFETY",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Snow loads"
+            "en": "Safety",
+            "jp": "安全"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-wind-loads",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-ASSET-FM",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Wind loads"
+            "en": "Asset Data / FM / Handover",
+            "jp": "資産情報／FM／引渡し"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-earthquake-loads",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-DT",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Earthquake loads"
+            "en": "Digital Twin / IoT Integration",
+            "jp": "デジタルツイン／IoT連携"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-project-typology",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-VIEW",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Project typology"
+            "en": "Model Viewing / Web Visualization",
+            "jp": "閲覧／Web可視化"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-number-of-floors",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-INTEROP",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Number of floors"
+            "en": "Interoperability / OpenBIM",
+            "jp": "相互運用／openBIM"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-terms-of-reference",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-API",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Terms of reference"
+            "en": "Automation / API / Scripting",
+            "jp": "自動化／API／スクリプト"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-guidelines-for-planning",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-DATA",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Guidelines for planning"
+            "en": "Data Platform / Analytics / BI",
+            "jp": "データ基盤／分析／BI"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-building-permit",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-SUS-ENERGY",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Building permit"
+            "en": "Energy Simulation",
+            "jp": "エネルギー解析"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-geotechnical-report",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-SUS-DAY",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Geotechnical report"
+            "en": "Daylight / Lighting Simulation",
+            "jp": "採光／照明解析"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-topography",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-SUS-LCA",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Topography"
+            "en": "LCA / Carbon / ESG",
+            "jp": "LCA／カーボン／ESG"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-approval-planning",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "CAP-STRUCT-AN",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Approval planning"
+            "en": "Structural Analysis",
+            "jp": "構造解析"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-execution-planning",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "CAP-CFD",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Execution planning"
+            "en": "CFD / Wind / Thermal Comfort",
+            "jp": "CFD／風／温熱快適"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-build-ups",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "CAP-GIS",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Build-ups"
+            "en": "GIS / Geospatial",
+            "jp": "GIS／地理空間"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-architectural-details",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "CAP-INFRA",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "Architectural details"
+            "en": "Infrastructure / Civil",
+            "jp": "インフラ／土木"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-bim-standards",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "CAP-DFMA",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "BIM standards"
+            "en": "DfMA / Prefab / Manufacturing",
+            "jp": "DfMA／プレファブ／製造"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-bim-modeling-software",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "CAP-CODECHECK",
+          "nodeType": "Capability",
+          "category": "Workflow",
           "label": {
-            "en": "BIM modeling software"
+            "en": "Code / Rule Checking (IDS etc.)",
+            "jp": "法規・ルールチェック（IDS等）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-collision-detection",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "STD-IFC",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "Collision detection"
+            "en": "IFC (openBIM)",
+            "jp": "IFC（openBIM）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-bim-coordination",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "STD-BCF",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "BIM coordination"
+            "en": "BCF (Issue Exchange)",
+            "jp": "BCF（課題共有）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-rooms-layout",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "STD-ISO19650",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "Rooms layout"
+            "en": "ISO 19650",
+            "jp": "ISO 19650"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-building-height",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "STD-COBIE",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "Building height"
+            "en": "COBie",
+            "jp": "COBie"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-ceiling-height",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "STD-IDS",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "Ceiling height"
+            "en": "IDS (Information Delivery Specification)",
+            "jp": "IDS（情報要件仕様）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-building-plinth",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "STD-bSDD",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "Building plinth"
+            "en": "bSDD (buildingSMART Data Dictionary)",
+            "jp": "bSDD（データ辞書）"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-roof-type",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "STD-gbXML",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "Roof type"
+            "en": "gbXML",
+            "jp": "gbXML"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-safety-systems",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "STD-CityGML",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "Safety systems"
+            "en": "CityGML",
+            "jp": "CityGML"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-facade-system",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "STD-LandXML",
+          "nodeType": "Standard",
+          "category": "OpenStandard",
           "label": {
-            "en": "Facade system"
+            "en": "LandXML",
+            "jp": "LandXML"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-balcony",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "FMT-IFC",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Balcony"
+            "en": "IFC",
+            "jp": "IFC"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-windowdoor-sizes",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "FMT-RVT",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Window&door sizes"
+            "en": "RVT",
+            "jp": "RVT"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-elements-specification",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "FMT-DWG",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Elements specification"
+            "en": "DWG",
+            "jp": "DWG"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-sun-protection",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "FMT-DGN",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Sun protection"
+            "en": "DGN",
+            "jp": "DGN"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-material-specification",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "FMT-NWD",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Material specification"
+            "en": "NWD/NWC",
+            "jp": "NWD/NWC"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-architecture-equipment-specification",
-          "nodeType": "Topic",
-          "category": "Architecture",
+          "id": "FMT-BCFZIP",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Equipment specification"
+            "en": "BCFZIP",
+            "jp": "BCFZIP"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-main-construction-systems",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "FMT-LAS",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Main construction systems"
+            "en": "LAS/LAZ",
+            "jp": "LAS/LAZ"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-additional-constructions",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "FMT-E57",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Additional constructions"
+            "en": "E57",
+            "jp": "E57"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-foundation-type",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "FMT-OBJ",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Foundation type"
+            "en": "OBJ",
+            "jp": "OBJ"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-structural-details",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "FMT-GLTF",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Structural details"
+            "en": "glTF",
+            "jp": "glTF"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-calculation-of-the-main-nodes",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "FMT-CSV",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Calculation of the main nodes"
+            "en": "CSV",
+            "jp": "CSV"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-regulations-statics-approval",
-          "nodeType": "Topic",
-          "category": "Regulations",
+          "id": "FMT-JSON",
+          "nodeType": "Format",
+          "category": "DataFormat",
           "label": {
-            "en": "Statics approval"
+            "en": "JSON",
+            "jp": "JSON"
           }
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-impact-on-existing-buildings",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-REVIT",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Impact on existing buildings"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-regulations-lifting-loads",
-          "nodeType": "Topic",
-          "category": "Regulations",
-          "label": {
-            "en": "Lifting loads"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-logistics-transport-loads",
-          "nodeType": "Topic",
-          "category": "Logistics",
-          "label": {
-            "en": "Transport loads"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-production-framing-modelling",
-          "nodeType": "Topic",
-          "category": "Production",
-          "label": {
-            "en": "Framing modelling"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-energy-performance",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Energy performance"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-u-values",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "U-values"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-air-tightness",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Air-tightness"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-fire-protection",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Fire protection"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-management-building-inspection",
-          "nodeType": "Topic",
-          "category": "Management",
-          "label": {
-            "en": "Building inspection"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-construction-construction-monitoring-sensors",
-          "nodeType": "Topic",
-          "category": "Construction",
-          "label": {
-            "en": "Construction monitoring sensors"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-fire-stopping-elements",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Fire stopping elements"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-firestopping-openings",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Firestopping openings"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-fire-resistant-walls",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Fire-resistant walls"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-management-fire-extinguisher",
-          "nodeType": "Topic",
-          "category": "Management",
-          "label": {
-            "en": "Fire extinguisher"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-management-fire-detection-system",
-          "nodeType": "Topic",
-          "category": "Management",
-          "label": {
-            "en": "Fire detection system"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-sound-insulation",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Sound insulation"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-room-acoustics",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Room acoustics"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-building-acoustics",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Building acoustics"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-outdoor-noise-simulations",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Outdoor noise simulations"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-physics-sound-measurement",
-          "nodeType": "Topic",
-          "category": "Physics",
-          "label": {
-            "en": "Sound measurement"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-drainage-channels-drains",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Drainage channels & drains"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-utility-connections",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Utility connections"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-sanitary-equipment",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Sanitary equipment"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-cold-water-supply",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Cold Water supply"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-hot-water-supply",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Hot Water supply"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-management-heat-generation-method",
-          "nodeType": "Topic",
-          "category": "Management",
-          "label": {
-            "en": "Heat generation method"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-heating-system-layouts",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Heating system layouts"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-cooling-system",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Cooling system"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-ventilation-system",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Ventilation system"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-rainwater-management",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Rainwater management"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-blackwater-sewerage",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Blackwater sewerage"
-          }
-        }
-      },
-      {
-        "data": {
-          "id": "TOPIC-mep-low-voltage-layouts",
-          "nodeType": "Topic",
-          "category": "MEP",
-          "label": {
-            "en": "Low voltage layouts"
-          }
+            "en": "Autodesk Revit",
+            "jp": "Autodesk Revit"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "authoring",
+            "bim"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-mep-electrical-layouts",
-          "nodeType": "Topic",
-          "category": "MEP",
+          "id": "SOL-ARCHICAD",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Electrical layouts"
-          }
+            "en": "Graphisoft Archicad",
+            "jp": "Graphisoft Archicad"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "authoring",
+            "bim"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-typical-products-and-materials",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-ALLPLAN",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Typical products and materials"
-          }
+            "en": "ALLPLAN",
+            "jp": "ALLPLAN"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "authoring"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-specification-of-basic-materials",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-TEKLA",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Specification of basic materials"
-          }
+            "en": "Tekla Structures",
+            "jp": "Tekla Structures"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "structure",
+            "fabrication"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-materials-order",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-OPENBLDG",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Materials order"
-          }
+            "en": "Bentley OpenBuildings Designer",
+            "jp": "Bentley OpenBuildings Designer"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "authoring"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-sourcing",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-VECTORWORKS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Sourcing"
-          }
+            "en": "Vectorworks Architect",
+            "jp": "Vectorworks Architect"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "authoring"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-supply-chain",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-RHINO",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Supply chain"
-          }
+            "en": "Rhino",
+            "jp": "Rhino"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "geometry"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-material-quality-control",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-GRASSHOPPER",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Material quality control"
-          }
+            "en": "Grasshopper",
+            "jp": "Grasshopper"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "parametric"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-certification-of-materials",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-DYNAMO",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Certification of materials"
-          }
+            "en": "Dynamo",
+            "jp": "Dynamo"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "visual_scripting"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-forecasting-system",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-CIVIL3D",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Forecasting system"
-          }
+            "en": "Autodesk Civil 3D",
+            "jp": "Autodesk Civil 3D"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "civil"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-warehousing",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-OPENROADS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Warehousing"
-          }
+            "en": "Bentley OpenRoads Designer",
+            "jp": "Bentley OpenRoads Designer"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "civil"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-right-quantity-at-right-time",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-INFRAWORKS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Right quantity at right time"
-          }
+            "en": "Autodesk InfraWorks",
+            "jp": "Autodesk InfraWorks"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "infra",
+            "context"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-procurement-inventory-status-for-planing",
-          "nodeType": "Topic",
-          "category": "Procurement",
+          "id": "SOL-NAVIS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Inventory status for planing"
-          }
+            "en": "Navisworks Manage",
+            "jp": "Navisworks Manage"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "coordination",
+            "clash"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-production-area",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-SOLIBRI",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Production area"
-          }
+            "en": "Solibri",
+            "jp": "Solibri"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "model_checking"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-storage-area",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-REVIZTO",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Storage area"
-          }
+            "en": "Revizto",
+            "jp": "Revizto"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "issues",
+            "coordination"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-capacity",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-BIMCOLLAB",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Capacity"
-          }
+            "en": "BIMcollab",
+            "jp": "BIMcollab"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "bcf"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-prefabrication-technology",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-BIMTRACK",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Prefabrication technology"
-          }
+            "en": "BIM Track",
+            "jp": "BIM Track"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "issues"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-production-equipment",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-ACC",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Production equipment"
-          }
+            "en": "Autodesk Construction Cloud (ACC)",
+            "jp": "Autodesk Construction Cloud (ACC)"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "cde",
+            "docs"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-automated-production-lines",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-PROCORE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Automated production lines"
-          }
+            "en": "Procore",
+            "jp": "Procore"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "construction_mgmt"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-build-up-catalogue",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-PROJWISE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Build-up catalogue"
-          }
+            "en": "Bentley ProjectWise",
+            "jp": "Bentley ProjectWise"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "cde"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-standard-details",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-TRIMBLE-CONNECT",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Standard details"
-          }
+            "en": "Trimble Connect",
+            "jp": "Trimble Connect"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "cde",
+            "model"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-shop-drawings",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-BIMCLOUD",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Shop drawings"
-          }
+            "en": "BIMcloud",
+            "jp": "BIMcloud"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "cde"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-framing",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-BLUEBEAM",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Framing"
-          }
+            "en": "Bluebeam Revu",
+            "jp": "Bluebeam Revu"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "pdf",
+            "qa"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-cnc-exporters",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-SYNCHRO",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "CNC exporters"
-          }
+            "en": "Synchro (4D)",
+            "jp": "Synchro (4D)"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "4d"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-nodal-load-calculation",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-PRIMAVERA",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Nodal load calculation"
-          }
+            "en": "Oracle Primavera P6",
+            "jp": "Oracle Primavera P6"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "schedule"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-production-instructions",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-MS-PROJECT",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Production instructions"
-          }
+            "en": "Microsoft Project",
+            "jp": "Microsoft Project"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "schedule"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-production-schedule",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-COSTX",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Production schedule"
-          }
+            "en": "CostX",
+            "jp": "CostX"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "5d",
+            "estimating"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-manufacturing-processes",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-RIB-ITWO",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Manufacturing processes"
-          }
+            "en": "RIB iTWO 5D",
+            "jp": "RIB iTWO 5D"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "5d"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-cutting-optimisation",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-ASSEMBLE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Cutting optimisation"
-          }
+            "en": "Assemble",
+            "jp": "Assemble"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "model_data"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-time-control",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-RECAP",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Time control"
-          }
+            "en": "Autodesk ReCap",
+            "jp": "Autodesk ReCap"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "pointcloud"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-cost-control",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-LEICA-CYCLONE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Cost control"
-          }
+            "en": "Leica Cyclone",
+            "jp": "Leica Cyclone"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "pointcloud"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-production-logistics",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-FARO-SCENE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Production logistics"
-          }
+            "en": "FARO SCENE",
+            "jp": "FARO SCENE"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "pointcloud"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-production-size-limitations-at-the-factory",
-          "nodeType": "Topic",
-          "category": "Production",
+          "id": "SOL-CLOUDCOMPARE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Size limitations at the factory"
-          }
+            "en": "CloudCompare",
+            "jp": "CloudCompare"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "pointcloud",
+            "oss"
+          ],
+          "license": "GPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-lifting-and-relocation",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-PDAL",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Lifting and relocation"
-          }
+            "en": "PDAL",
+            "jp": "PDAL"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "pointcloud",
+            "pipeline",
+            "oss"
+          ],
+          "license": "BSD"
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-fastening-systems",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-OPENDRONEMAP",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Fastening systems"
-          }
+            "en": "OpenDroneMap",
+            "jp": "OpenDroneMap"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "drone",
+            "photogrammetry",
+            "oss"
+          ],
+          "license": "AGPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-distance-from-factory",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-MATTERPORT",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Distance from factory"
-          }
+            "en": "Matterport",
+            "jp": "Matterport"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "360"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-transport-costs",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-PIX4D",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Transport costs"
-          }
+            "en": "Pix4D",
+            "jp": "Pix4D"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "photogrammetry"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-transportation-capacities",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-OPENSPACE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Transportation capacities"
-          }
+            "en": "OpenSpace",
+            "jp": "OpenSpace"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "progress",
+            "360"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-truck-tracking",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-HOLOBUILDER",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Truck tracking"
-          }
+            "en": "HoloBuilder",
+            "jp": "HoloBuilder"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "progress",
+            "360"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-route-optimisation",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-DALUX",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Route optimisation"
-          }
+            "en": "Dalux",
+            "jp": "Dalux"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "field",
+            "snag"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-risks-management",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-PLANRADAR",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Risks management"
-          }
+            "en": "PlanRadar",
+            "jp": "PlanRadar"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "field"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-transport-limitations-on-site",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-FIELDWIRE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Transport limitations on site"
-          }
+            "en": "Fieldwire",
+            "jp": "Fieldwire"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "field"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-packing-method-type",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-ITWIN",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Packing method type"
-          }
+            "en": "Bentley iTwin",
+            "jp": "Bentley iTwin"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "digital_twin"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-loading-method",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-UNITY",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Loading method"
-          }
+            "en": "Unity",
+            "jp": "Unity"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "realtime"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-max-weight-and-dimensions",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-UNREAL",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Max weight and dimensions"
-          }
+            "en": "Unreal Engine",
+            "jp": "Unreal Engine"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "realtime"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-logistics-fastening-on-truck",
-          "nodeType": "Topic",
-          "category": "Logistics",
+          "id": "SOL-CESIUMJS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Fastening on truck"
-          }
+            "en": "CesiumJS",
+            "jp": "CesiumJS"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "3dtiles",
+            "gis",
+            "oss"
+          ],
+          "license": "Apache-2.0"
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-defects-control",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-POTREE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Defects control"
-          }
+            "en": "Potree",
+            "jp": "Potree"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "pointcloud_viewer",
+            "oss"
+          ],
+          "license": "BSD"
         }
       },
       {
         "data": {
-          "id": "TOPIC-assembling-cranes-costs",
-          "nodeType": "Topic",
-          "category": "Assembling",
+          "id": "SOL-SPECKLE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Cranes costs"
-          }
+            "en": "Speckle",
+            "jp": "Speckle"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "interop",
+            "data"
+          ],
+          "license": "Apache-2.0"
         }
       },
       {
         "data": {
-          "id": "TOPIC-assembling-lifting-capacity-of-crane",
-          "nodeType": "Topic",
-          "category": "Assembling",
+          "id": "SOL-IFCOPENSHELL",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Lifting capacity of crane"
-          }
+            "en": "IfcOpenShell",
+            "jp": "IfcOpenShell"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "ifc",
+            "oss",
+            "sdk"
+          ],
+          "license": "LGPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-assembling-fixing-system",
-          "nodeType": "Topic",
-          "category": "Assembling",
+          "id": "SOL-BONSAI",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Fixing system"
-          }
+            "en": "Bonsai (Blender OpenBIM)",
+            "jp": "Bonsai (Blender OpenBIM)"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "ifc",
+            "authoring",
+            "oss"
+          ],
+          "license": "GPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-assembling-clearance-between-modules",
-          "nodeType": "Topic",
-          "category": "Assembling",
+          "id": "SOL-BIMSERVER",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Clearance between modules"
-          }
+            "en": "BIMserver",
+            "jp": "BIMserver"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "ifc",
+            "server",
+            "oss"
+          ],
+          "license": "AGPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-assembling-assembly-drawings",
-          "nodeType": "Topic",
-          "category": "Assembling",
+          "id": "SOL-IFCJS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Assembly drawings"
-          }
+            "en": "IFC.js",
+            "jp": "IFC.js"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "web",
+            "ifc",
+            "oss"
+          ],
+          "license": "MIT"
         }
       },
       {
         "data": {
-          "id": "TOPIC-construction-4d-scheduling",
-          "nodeType": "Topic",
-          "category": "Construction",
+          "id": "SOL-XEOKIT",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "4d scheduling"
-          }
+            "en": "xeokit SDK",
+            "jp": "xeokit SDK"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "web",
+            "viewer",
+            "oss"
+          ],
+          "license": "MIT"
         }
       },
       {
         "data": {
-          "id": "TOPIC-assembling-utility-installation",
-          "nodeType": "Topic",
-          "category": "Assembling",
+          "id": "SOL-XBIM",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Utility installation"
-          }
+            "en": "xBIM Toolkit",
+            "jp": "xBIM Toolkit"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "ifc",
+            ".net",
+            "oss"
+          ],
+          "license": "MIT"
         }
       },
       {
         "data": {
-          "id": "TOPIC-construction-foundation-plan",
-          "nodeType": "Topic",
-          "category": "Construction",
+          "id": "SOL-FREECAD-BIM",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Foundation plan"
-          }
+            "en": "FreeCAD (BIM Workbench)",
+            "jp": "FreeCAD (BIM Workbench)"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "cad",
+            "bim",
+            "oss"
+          ],
+          "license": "LGPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-construction-construction-site-safety",
-          "nodeType": "Topic",
-          "category": "Construction",
+          "id": "SOL-BLENDER",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Construction site safety"
-          }
+            "en": "Blender",
+            "jp": "Blender"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "3d",
+            "oss"
+          ],
+          "license": "GPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-assembling-assembling-quality-control",
-          "nodeType": "Topic",
-          "category": "Assembling",
+          "id": "SOL-ENERGYPLUS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Assembling quality control"
-          }
+            "en": "EnergyPlus",
+            "jp": "EnergyPlus"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "energy",
+            "oss"
+          ],
+          "license": "BSD"
         }
       },
       {
         "data": {
-          "id": "TOPIC-physics-acoustic-tests-and-optimisations",
-          "nodeType": "Topic",
-          "category": "Physics",
+          "id": "SOL-OPENSTUDIO",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Acoustic tests and optimisations"
-          }
+            "en": "OpenStudio",
+            "jp": "OpenStudio"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "energy",
+            "workflow",
+            "oss"
+          ],
+          "license": "BSD"
         }
       },
       {
         "data": {
-          "id": "TOPIC-construction-moisture-monitoring",
-          "nodeType": "Topic",
-          "category": "Construction",
+          "id": "SOL-RADIANCE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Moisture monitoring"
-          }
+            "en": "Radiance",
+            "jp": "Radiance"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "daylight",
+            "oss"
+          ],
+          "license": "BSD"
         }
       },
       {
         "data": {
-          "id": "TOPIC-construction-energy-monitoring",
-          "nodeType": "Topic",
-          "category": "Construction",
+          "id": "SOL-LADYBUG",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Energy monitoring"
-          }
+            "en": "Ladybug Tools",
+            "jp": "Ladybug Tools"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "daylight",
+            "energy",
+            "parametric",
+            "oss"
+          ],
+          "license": "AGPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-construction-conditions-monitoring",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-OPENFOAM",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Construction conditions monitoring"
-          }
+            "en": "OpenFOAM",
+            "jp": "OpenFOAM"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "cfd",
+            "oss"
+          ],
+          "license": "GPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-operation-maintenance-of-facade",
-          "nodeType": "Topic",
-          "category": "Operation",
+          "id": "SOL-ONECLICKLCA",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Maintenance of facade"
-          }
+            "en": "One Click LCA",
+            "jp": "One Click LCA"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "lca"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-operation-maintenance-of-roof",
-          "nodeType": "Topic",
-          "category": "Operation",
+          "id": "SOL-IESVE",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Maintenance of roof"
-          }
+            "en": "IESVE",
+            "jp": "IESVE"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "energy"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-operation-renovation-and-modernization",
-          "nodeType": "Topic",
-          "category": "Operation",
+          "id": "SOL-ROBOT",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Renovation and modernization"
-          }
+            "en": "Autodesk Robot Structural Analysis",
+            "jp": "Autodesk Robot Structural Analysis"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "structure"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-embodied-carbon-analysis",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-SAP2000",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Embodied carbon analysis"
-          }
+            "en": "SAP2000",
+            "jp": "SAP2000"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "structure"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-reduction-of-material-usage",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-ETABS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Reduction of material usage"
-          }
+            "en": "ETABS",
+            "jp": "ETABS"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "structure"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-eco-friendly-material-usage",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-OPENSEES",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Eco-friendly material usage"
-          }
+            "en": "OpenSees",
+            "jp": "OpenSees"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "structure",
+            "oss"
+          ],
+          "license": "BSD"
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-material-database",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-CALCULIX",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Material database"
-          }
+            "en": "CalculiX",
+            "jp": "CalculiX"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "fea",
+            "oss"
+          ],
+          "license": "GPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-esg-reporting",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-QGIS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "ESG-Reporting"
-          }
+            "en": "QGIS",
+            "jp": "QGIS"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "gis",
+            "oss"
+          ],
+          "license": "GPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-design-rules-for-reuse",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-POSTGIS",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Design rules for reuse"
-          }
+            "en": "PostGIS",
+            "jp": "PostGIS"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "gis",
+            "database",
+            "oss"
+          ],
+          "license": "GPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-management-validation-of-construction-conditions",
-          "nodeType": "Topic",
-          "category": "Management",
+          "id": "SOL-POWERBI",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Validation of construction conditions"
-          }
+            "en": "Power BI",
+            "jp": "Power BI"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "bi"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-disassembly",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-EXCEL",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Disassembly"
-          }
+            "en": "Microsoft Excel",
+            "jp": "Microsoft Excel"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "analysis"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-refurbishment",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-SIMPLEBIM",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Refurbishment"
-          }
+            "en": "Simplebim",
+            "jp": "Simplebim"
+          },
+          "isOpenSource": false,
+          "tags": [
+            "ifc",
+            "qa"
+          ]
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-reuse",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-OPENPROJECT",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Reuse"
-          }
+            "en": "OpenProject",
+            "jp": "OpenProject"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "pm",
+            "oss"
+          ],
+          "license": "GPL"
         }
       },
       {
         "data": {
-          "id": "TOPIC-sustainability-recycling",
-          "nodeType": "Topic",
-          "category": "Sustainability",
+          "id": "SOL-NEXTCLOUD",
+          "nodeType": "Solution",
+          "category": "Tool",
           "label": {
-            "en": "Recycling"
-          }
+            "en": "Nextcloud",
+            "jp": "Nextcloud"
+          },
+          "isOpenSource": true,
+          "tags": [
+            "cde",
+            "oss"
+          ],
+          "license": "AGPL"
         }
       }
     ],
-    "edges": []
+    "edges": [
+      {
+        "data": {
+          "id": "R-SYS-CAP-IM",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-IM",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-CDE",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-AUTH-ARC",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-AUTH-STR",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-AUTH-STR",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-AUTH-MEP",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-AUTH-MEP",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-COMP-DES",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-COMP-DES",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-COORD",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-COORD",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-ISSUES",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-CLASH",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-CLASH",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-QAQC",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-QAQC",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-4D",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-4D",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-5D",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-5D",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-TAKEOFF",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-TAKEOFF",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-SCAN2BIM",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-SCAN2BIM",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-POINTCLOUD",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-POINTCLOUD",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-REALITY",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-REALITY",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-PROGRESS",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-PROGRESS",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-FIELD",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-FIELD",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-SAFETY",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-SAFETY",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-ASSET-FM",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-ASSET-FM",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-DT",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-DT",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-VIEW",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-INTEROP",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-API",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-DATA",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-SUS-ENERGY",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-SUS-ENERGY",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-SUS-DAY",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-SUS-DAY",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-SUS-LCA",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-SUS-LCA",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-STRUCT-AN",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-STRUCT-AN",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-CFD",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-CFD",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-GIS",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-INFRA",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-INFRA",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-DFMA",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-DFMA",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-SYS-CAP-CODECHECK",
+          "type": "Includes",
+          "dimension": "Landscape",
+          "source": "SYS-AEC-BIM",
+          "target": "CAP-CODECHECK",
+          "directional": true,
+          "confidence": "Explicit"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0001",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIT",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0002",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIT",
+          "target": "CAP-AUTH-STR",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0003",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIT",
+          "target": "CAP-AUTH-MEP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0004",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIT",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0005",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIT",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0006",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ARCHICAD",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0007",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ARCHICAD",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0008",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ALLPLAN",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0009",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ALLPLAN",
+          "target": "CAP-AUTH-STR",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0010",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ALLPLAN",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0011",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-TEKLA",
+          "target": "CAP-AUTH-STR",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0012",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-TEKLA",
+          "target": "CAP-DFMA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0013",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-TEKLA",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0014",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENBLDG",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0015",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENBLDG",
+          "target": "CAP-AUTH-MEP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0016",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENBLDG",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0017",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-VECTORWORKS",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0018",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-RHINO",
+          "target": "CAP-COMP-DES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0019",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-RHINO",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0020",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-GRASSHOPPER",
+          "target": "CAP-COMP-DES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0021",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-GRASSHOPPER",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0022",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-DYNAMO",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0023",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-DYNAMO",
+          "target": "CAP-COMP-DES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0024",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CIVIL3D",
+          "target": "CAP-INFRA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0025",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CIVIL3D",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0026",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CIVIL3D",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0027",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENROADS",
+          "target": "CAP-INFRA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0028",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENROADS",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0029",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-INFRAWORKS",
+          "target": "CAP-INFRA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0030",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-INFRAWORKS",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0031",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-INFRAWORKS",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0032",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-NAVIS",
+          "target": "CAP-COORD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0033",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-NAVIS",
+          "target": "CAP-CLASH",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0034",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-NAVIS",
+          "target": "CAP-4D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0035",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-NAVIS",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0036",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SOLIBRI",
+          "target": "CAP-QAQC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0037",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SOLIBRI",
+          "target": "CAP-CODECHECK",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0038",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SOLIBRI",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0039",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SOLIBRI",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0040",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIZTO",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0041",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIZTO",
+          "target": "CAP-COORD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0042",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIZTO",
+          "target": "CAP-FIELD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0043",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-REVIZTO",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0044",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMCOLLAB",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0045",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMCOLLAB",
+          "target": "CAP-COORD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0046",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMTRACK",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0047",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMTRACK",
+          "target": "CAP-COORD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0048",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ACC",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0049",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ACC",
+          "target": "CAP-FIELD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0050",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ACC",
+          "target": "CAP-IM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0051",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ACC",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0052",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PROCORE",
+          "target": "CAP-FIELD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0053",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PROCORE",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0054",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PROCORE",
+          "target": "CAP-SAFETY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0055",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PROCORE",
+          "target": "CAP-PROGRESS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0056",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PROJWISE",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0057",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PROJWISE",
+          "target": "CAP-IM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0058",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-TRIMBLE-CONNECT",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0059",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-TRIMBLE-CONNECT",
+          "target": "CAP-COORD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0060",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-TRIMBLE-CONNECT",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0061",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMCLOUD",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0062",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMCLOUD",
+          "target": "CAP-IM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0063",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BLUEBEAM",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0064",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BLUEBEAM",
+          "target": "CAP-TAKEOFF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0065",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BLUEBEAM",
+          "target": "CAP-QAQC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0066",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SYNCHRO",
+          "target": "CAP-4D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0067",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SYNCHRO",
+          "target": "CAP-COORD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0068",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SYNCHRO",
+          "target": "CAP-PROGRESS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0069",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PRIMAVERA",
+          "target": "CAP-4D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0070",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-MS-PROJECT",
+          "target": "CAP-4D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0071",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-COSTX",
+          "target": "CAP-5D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0072",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-COSTX",
+          "target": "CAP-TAKEOFF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0073",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-RIB-ITWO",
+          "target": "CAP-5D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0074",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-RIB-ITWO",
+          "target": "CAP-4D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0075",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-RIB-ITWO",
+          "target": "CAP-COORD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0076",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ASSEMBLE",
+          "target": "CAP-5D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0077",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ASSEMBLE",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0078",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ASSEMBLE",
+          "target": "CAP-TAKEOFF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0079",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-RECAP",
+          "target": "CAP-POINTCLOUD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0080",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-RECAP",
+          "target": "CAP-SCAN2BIM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0081",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-LEICA-CYCLONE",
+          "target": "CAP-POINTCLOUD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0082",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-LEICA-CYCLONE",
+          "target": "CAP-SCAN2BIM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0083",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-FARO-SCENE",
+          "target": "CAP-POINTCLOUD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0084",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-FARO-SCENE",
+          "target": "CAP-SCAN2BIM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0085",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CLOUDCOMPARE",
+          "target": "CAP-POINTCLOUD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0086",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CLOUDCOMPARE",
+          "target": "CAP-SCAN2BIM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0087",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PDAL",
+          "target": "CAP-POINTCLOUD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0088",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PDAL",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0089",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENDRONEMAP",
+          "target": "CAP-REALITY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0090",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENDRONEMAP",
+          "target": "CAP-SCAN2BIM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0091",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENDRONEMAP",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0092",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-MATTERPORT",
+          "target": "CAP-REALITY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0093",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-MATTERPORT",
+          "target": "CAP-PROGRESS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0094",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-MATTERPORT",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0095",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PIX4D",
+          "target": "CAP-REALITY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0096",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PIX4D",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0097",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENSPACE",
+          "target": "CAP-PROGRESS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0098",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENSPACE",
+          "target": "CAP-REALITY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0099",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENSPACE",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0100",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-HOLOBUILDER",
+          "target": "CAP-PROGRESS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0101",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-HOLOBUILDER",
+          "target": "CAP-REALITY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0102",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-HOLOBUILDER",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0103",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-DALUX",
+          "target": "CAP-FIELD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0104",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-DALUX",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0105",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-DALUX",
+          "target": "CAP-QAQC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0106",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-DALUX",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0107",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PLANRADAR",
+          "target": "CAP-FIELD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0108",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PLANRADAR",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0109",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-PLANRADAR",
+          "target": "CAP-QAQC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0110",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-FIELDWIRE",
+          "target": "CAP-FIELD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0111",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-FIELDWIRE",
+          "target": "CAP-ISSUES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0112",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ITWIN",
+          "target": "CAP-DT",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0113",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ITWIN",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0114",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ITWIN",
+          "target": "CAP-ASSET-FM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0115",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ITWIN",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0116",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-UNITY",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0117",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-UNITY",
+          "target": "CAP-DT",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0118",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-UNITY",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0119",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-UNREAL",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0120",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-UNREAL",
+          "target": "CAP-DT",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0121",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-UNREAL",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0122",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CESIUMJS",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0123",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CESIUMJS",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0124",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CESIUMJS",
+          "target": "CAP-INFRA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0125",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-POTREE",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0126",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-POTREE",
+          "target": "CAP-POINTCLOUD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0127",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SPECKLE",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0128",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SPECKLE",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0129",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SPECKLE",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0130",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0131",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0132",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "CAP-QAQC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0133",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "CAP-CODECHECK",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0134",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BONSAI",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0135",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BONSAI",
+          "target": "CAP-AUTH-STR",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0136",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BONSAI",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0137",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BONSAI",
+          "target": "CAP-QAQC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0138",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMSERVER",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0139",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMSERVER",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0140",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BIMSERVER",
+          "target": "CAP-IM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0141",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IFCJS",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0142",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IFCJS",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0143",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IFCJS",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0144",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-XEOKIT",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0145",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-XEOKIT",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0146",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-XEOKIT",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0147",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-XBIM",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0148",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-XBIM",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0149",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-XBIM",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0150",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-FREECAD-BIM",
+          "target": "CAP-AUTH-ARC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0151",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-FREECAD-BIM",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0152",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-FREECAD-BIM",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0153",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BLENDER",
+          "target": "CAP-COMP-DES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0154",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-BLENDER",
+          "target": "CAP-VIEW",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0155",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ENERGYPLUS",
+          "target": "CAP-SUS-ENERGY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0156",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENSTUDIO",
+          "target": "CAP-SUS-ENERGY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0157",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENSTUDIO",
+          "target": "CAP-SUS-DAY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0158",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENSTUDIO",
+          "target": "CAP-API",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0159",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-RADIANCE",
+          "target": "CAP-SUS-DAY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0160",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-LADYBUG",
+          "target": "CAP-SUS-ENERGY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0161",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-LADYBUG",
+          "target": "CAP-SUS-DAY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0162",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-LADYBUG",
+          "target": "CAP-CFD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0163",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-LADYBUG",
+          "target": "CAP-COMP-DES",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0164",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENFOAM",
+          "target": "CAP-CFD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0165",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ONECLICKLCA",
+          "target": "CAP-SUS-LCA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0166",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ONECLICKLCA",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0167",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IESVE",
+          "target": "CAP-SUS-ENERGY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0168",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-IESVE",
+          "target": "CAP-SUS-DAY",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0169",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ROBOT",
+          "target": "CAP-STRUCT-AN",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0170",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ROBOT",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0171",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SAP2000",
+          "target": "CAP-STRUCT-AN",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0172",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-ETABS",
+          "target": "CAP-STRUCT-AN",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0173",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENSEES",
+          "target": "CAP-STRUCT-AN",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0174",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-CALCULIX",
+          "target": "CAP-STRUCT-AN",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0175",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-QGIS",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0176",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-QGIS",
+          "target": "CAP-INFRA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0177",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-QGIS",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0178",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-POSTGIS",
+          "target": "CAP-GIS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0179",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-POSTGIS",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0180",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-POWERBI",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0181",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-EXCEL",
+          "target": "CAP-DATA",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0182",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-EXCEL",
+          "target": "CAP-5D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0183",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SIMPLEBIM",
+          "target": "CAP-QAQC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0184",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SIMPLEBIM",
+          "target": "CAP-INTEROP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0185",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-SIMPLEBIM",
+          "target": "CAP-CODECHECK",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0186",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENPROJECT",
+          "target": "CAP-4D",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0187",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENPROJECT",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0188",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-OPENPROJECT",
+          "target": "CAP-IM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0189",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-NEXTCLOUD",
+          "target": "CAP-CDE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-UF-0190",
+          "type": "UsedFor",
+          "dimension": "Capability",
+          "source": "SOL-NEXTCLOUD",
+          "target": "CAP-IM",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-IFCOPENSHELL-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-IFCOPENSHELL-STD-IDS",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "STD-IDS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-IFCOPENSHELL-STD-bSDD",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "STD-bSDD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-IFCOPENSHELL-STD-BCF",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "STD-BCF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-BONSAI-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-BONSAI",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-BONSAI-STD-IDS",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-BONSAI",
+          "target": "STD-IDS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-BONSAI-STD-bSDD",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-BONSAI",
+          "target": "STD-bSDD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-BONSAI-STD-BCF",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-BONSAI",
+          "target": "STD-BCF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-BIMSERVER-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-BIMSERVER",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-IFCJS-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-IFCJS",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-XEOKIT-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-XEOKIT",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-XBIM-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-XBIM",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-SOLIBRI-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-SOLIBRI",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-SOLIBRI-STD-BCF",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-SOLIBRI",
+          "target": "STD-BCF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-SOLIBRI-STD-IDS",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-SOLIBRI",
+          "target": "STD-IDS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-BIMCOLLAB-STD-BCF",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-BIMCOLLAB",
+          "target": "STD-BCF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-REVIT-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-REVIT",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-REVIT-STD-BCF",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-REVIT",
+          "target": "STD-BCF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-REVIT-STD-COBIE",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-REVIT",
+          "target": "STD-COBIE",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-ARCHICAD-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-ARCHICAD",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-ARCHICAD-STD-BCF",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-ARCHICAD",
+          "target": "STD-BCF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-ALLPLAN-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-ALLPLAN",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-TEKLA-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-TEKLA",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-ACC-STD-ISO19650",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-ACC",
+          "target": "STD-ISO19650",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-PROJWISE-STD-ISO19650",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-PROJWISE",
+          "target": "STD-ISO19650",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-OPENSTUDIO-STD-gbXML",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-OPENSTUDIO",
+          "target": "STD-gbXML",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-OPENSTUDIO-STD-IFC",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-OPENSTUDIO",
+          "target": "STD-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-QGIS-STD-CityGML",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-QGIS",
+          "target": "STD-CityGML",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-QGIS-STD-LandXML",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-QGIS",
+          "target": "STD-LandXML",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-CIVIL3D-STD-LandXML",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-CIVIL3D",
+          "target": "STD-LandXML",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-STD-SOL-OPENROADS-STD-LandXML",
+          "type": "SupportsStandard",
+          "dimension": "Standard",
+          "source": "SOL-OPENROADS",
+          "target": "STD-LandXML",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-REVIT-FMT-RVT",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-REVIT",
+          "target": "FMT-RVT",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-REVIT-FMT-IFC",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-REVIT",
+          "target": "FMT-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-NAVIS-FMT-NWD",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-NAVIS",
+          "target": "FMT-NWD",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-NAVIS-FMT-IFC",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-NAVIS",
+          "target": "FMT-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-SOLIBRI-FMT-IFC",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-SOLIBRI",
+          "target": "FMT-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-SOLIBRI-FMT-BCFZIP",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-SOLIBRI",
+          "target": "FMT-BCFZIP",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-IFCOPENSHELL-FMT-IFC",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "FMT-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-IFCOPENSHELL-FMT-JSON",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-IFCOPENSHELL",
+          "target": "FMT-JSON",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-BONSAI-FMT-IFC",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-BONSAI",
+          "target": "FMT-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-IFCJS-FMT-IFC",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-IFCJS",
+          "target": "FMT-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-IFCJS-FMT-GLTF",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-IFCJS",
+          "target": "FMT-GLTF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-XEOKIT-FMT-IFC",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-XEOKIT",
+          "target": "FMT-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-XEOKIT-FMT-GLTF",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-XEOKIT",
+          "target": "FMT-GLTF",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-XBIM-FMT-IFC",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-XBIM",
+          "target": "FMT-IFC",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-CLOUDCOMPARE-FMT-LAS",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-CLOUDCOMPARE",
+          "target": "FMT-LAS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-CLOUDCOMPARE-FMT-E57",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-CLOUDCOMPARE",
+          "target": "FMT-E57",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-LEICA-CYCLONE-FMT-LAS",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-LEICA-CYCLONE",
+          "target": "FMT-LAS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-LEICA-CYCLONE-FMT-E57",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-LEICA-CYCLONE",
+          "target": "FMT-E57",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-FARO-SCENE-FMT-LAS",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-FARO-SCENE",
+          "target": "FMT-LAS",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-FARO-SCENE-FMT-E57",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-FARO-SCENE",
+          "target": "FMT-E57",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-QGIS-FMT-CSV",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-QGIS",
+          "target": "FMT-CSV",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-QGIS-FMT-JSON",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-QGIS",
+          "target": "FMT-JSON",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-SPECKLE-FMT-JSON",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-SPECKLE",
+          "target": "FMT-JSON",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      },
+      {
+        "data": {
+          "id": "R-FMT-SOL-BLUEBEAM-FMT-CSV",
+          "type": "UsesFormat",
+          "dimension": "Data",
+          "source": "SOL-BLUEBEAM",
+          "target": "FMT-CSV",
+          "directional": true,
+          "confidence": "Curated"
+        }
+      }
+    ]
   }
 }
