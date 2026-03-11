@@ -1,46 +1,39 @@
 /* ONEXUS – Filters + Legend + Metrics + Phase Filter
-   Fix:
-   - When edge filters are active (type/dimension/phase) in Relationship layer,
-     hide orphan nodes (nodes with no visible edges).
-   - Robust fallback: also applies inline display:none for orphan nodes.
+ Fix:
+ - When edge filters are active (type/dimension/phase) in Relationship layer,
+   hide orphan nodes (nodes with no visible edges).
+ - Robust fallback: also applies inline display:none for orphan nodes.
 */
 (function () {
   const cy = window.cy;
   const state = window.__onexus_state;
 
-  // hide classes (must exist in style, but we also apply inline fallback)
   const HIDE_FILTER = "onx-hide-filter";
   const HIDE_ENDS = "onx-hide-end";
   const HIDE_ISOLATED = "onx-hide-isolated";
 
-  // Edge filters
-  let relationshipFilter = null; // edge.type
-  let dimensionFilter = null;    // edge.dimension
-  let phaseFilterSet = new Set();// selected phases
+  let relationshipFilter = null;
+  let dimensionFilter = null;
+  let phaseFilterSet = new Set();
 
-  // Pref: hide isolated nodes when edge filters active
   const PREF_HIDE_ISOLATED = "onexus.filter.hideIsolatedNodes";
   const readPref = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
   const writePref = (k, v) => { try { localStorage.setItem(k, String(v)); } catch { } };
   let hideIsolatedNodes = readPref(PREF_HIDE_ISOLATED, "1") !== "0";
 
-  // ---- helpers ----
   const normStr = (s) => String(s ?? "").trim();
   const getLayer = () => window.getLayerMode?.() ?? state?.layerMode ?? "relationship";
-  const escapeHtml = (s) => (window.ONEXUS?.util?.escapeHtml
-    ? window.ONEXUS.util.escapeHtml(s)
-    : String(s ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;"));
+
+  // ✅ canonical safe escape
+  const escapeHtml = (s) => {
+    const fn = window.ONEXUS?.util?.escapeHtml;
+    return (typeof fn === "function") ? fn(s) : String(s ?? "");
+  };
 
   function anyEdgeFilterActive() {
     return !!relationshipFilter || !!dimensionFilter || (phaseFilterSet?.size ?? 0) > 0;
   }
 
-  // Exclude compare/reveal hides so legend/metrics remain informative
   function baseEdgesForLegendAndMetrics() {
     return cy.edges().filter(e =>
       !e.hasClass("onx-hide-compare") &&
@@ -48,7 +41,6 @@
     );
   }
 
-  // keep edges hidden if either endpoint hidden
   const syncEdges = (() => {
     const f = () => {
       cy.edges().forEach((e) => {
@@ -61,53 +53,33 @@
     return () => { clearTimeout(t); t = setTimeout(f, 40); };
   })();
 
-  // =========================================================
-  // CRITICAL: hide orphan nodes when edge filters active
-  // =========================================================
   function applyHideIsolatedNodesFromVisibleEdges() {
     const layer = getLayer();
     const enabled = hideIsolatedNodes && layer === "relationship" && anyEdgeFilterActive();
 
     if (!enabled) {
-      // remove class and clear inline display override
       cy.nodes().forEach(n => {
         n.removeClass(HIDE_ISOLATED);
-        // clear only our override
         if (n.style("display") === "none") n.style("display", null);
       });
-      // also ensure edges are re-synced after clearing isolated hides
       syncEdges();
       return;
     }
 
-    // IMPORTANT:
-    // Do NOT use cy.edges(":visible") here because .onx-hide-end is applied via a debounced sync.
-    // Instead, derive "active" edges by filter state + current endpoint visibility.
     const keep = new Set();
-
     cy.edges().forEach(e => {
-      // Edge must not be filtered out by relationship/dimension/phase filter
       if (e.hasClass(HIDE_FILTER)) return;
-
-      // Also respect any other visibility hides already in play (compare/reveal/layer etc.)
-      // If an edge is not currently visible, skip it.
       if (!e.visible()) return;
-
-      // Endpoint visibility must be true *now* (independent of debounced .onx-hide-end)
-      const s = e.source();
-      const t = e.target();
+      const s = e.source(), t = e.target();
       if (!s.visible() || !t.visible()) return;
-
       keep.add(s.id());
       keep.add(t.id());
     });
 
-    // Hide/show nodes based on whether they are connected to any active visible edge
     cy.nodes().forEach(n => {
       const orphan = !keep.has(n.id());
       if (orphan) {
         n.addClass(HIDE_ISOLATED);
-        // fallback even if stylesheet lacks selector
         n.style("display", "none");
       } else {
         n.removeClass(HIDE_ISOLATED);
@@ -115,12 +87,9 @@
       }
     });
 
-    // After node hide/show, update endpoint edge visibility
     syncEdges();
 
-    // Second pass after debounce window: fixes “sometimes” cases when visibility settles
     setTimeout(() => {
-      // Re-run quickly, but only if still enabled (user might have reset)
       const enabled2 = hideIsolatedNodes && (getLayer() === "relationship") && anyEdgeFilterActive();
       if (!enabled2) return;
 
@@ -156,15 +125,14 @@
     updateMetrics();
   }
 
-  // -------- Category dropdown filter (kept) --------
   function buildCategoryFilter() {
     const select = document.getElementById("categoryFilter");
     if (!select) return;
     select.innerHTML = `<option value="ALL">All Categories</option>`;
     const cats = [...new Set(
-      cy.nodes().map((n) => n.data("category") ?? n.data("revitCategory"))
+      cy.nodes().map(n => n.data("category") ?? n.data("revitCategory"))
     )].filter(Boolean).sort((a, b) => String(a).localeCompare(String(b)));
-    cats.forEach((cat) => {
+    cats.forEach(cat => {
       const opt = document.createElement("option");
       opt.value = cat;
       opt.textContent = cat;
@@ -173,12 +141,98 @@
   }
 
   function filterByCategory(cat) {
-    cy.nodes().forEach((n) => {
+    cy.nodes().forEach(n => {
       const val = n.data("category") ?? n.data("revitCategory");
       const hit = (val === cat);
       if (cat === "ALL" || hit) n.removeClass(HIDE_FILTER);
       else n.addClass(HIDE_FILTER);
     });
+    syncEdges();
+    applyHideIsolatedNodesFromVisibleEdges();
+    if (state?.focusedNode) window.applyDepthFocus?.(state.focusedNode);
+    buildRelationshipLegend();
+    updateMetrics();
+  }
+
+  function filterByDimension(dim) { dimensionFilter = dim ?? null; applyEdgeFilters(); }
+  function filterByRelationshipType(type) { relationshipFilter = (relationshipFilter === type) ? null : type; applyEdgeFilters(); }
+  function clearRelationshipFilter() { relationshipFilter = null; applyEdgeFilters(); }
+
+  function showAllEdges() {
+    relationshipFilter = null;
+    dimensionFilter = null;
+    phaseFilterSet.clear();
+
+    cy.nodes().removeClass(HIDE_FILTER);
+    cy.edges().removeClass(HIDE_FILTER);
+    cy.edges().removeClass(HIDE_ENDS);
+
+    cy.nodes().removeClass(HIDE_ISOLATED);
+    cy.nodes().forEach(n => { if (n.style("display") === "none") n.style("display", null); });
+
+    setTimeout(() => {
+      syncEdges();
+      setTimeout(() => {
+        cy.edges().removeClass(HIDE_ENDS);
+        syncEdges();
+        applyHideIsolatedNodesFromVisibleEdges();
+        if (state?.focusedNode) window.applyDepthFocus?.(state.focusedNode);
+        buildRelationshipLegend();
+        updateMetrics();
+      }, 120);
+    }, 0);
+
+    buildRelationshipLegend();
+    updateMetrics();
+  }
+
+  function buildPhaseFilter() {
+    const sel = document.getElementById("phaseFilter");
+    if (!sel) return;
+    const all = new Set();
+    cy.edges().forEach(e => {
+      const ph = e.data("phase") ?? [];
+      (Array.isArray(ph) ? ph : [ph]).forEach(p => {
+        const s = normStr(p);
+        if (s) all.add(s);
+      });
+    });
+    const options = [...all].sort((a, b) => a.localeCompare(b));
+    sel.innerHTML = "";
+    options.forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p;
+      opt.textContent = p;
+      sel.appendChild(opt);
+    });
+    if (!sel.__onexus_hooked) {
+      sel.addEventListener("change", () => {
+        const picks = [...sel.selectedOptions].map(o => o.value);
+        filterByPhase(picks);
+      });
+      sel.__onexus_hooked = true;
+    }
+  }
+
+  function filterByPhase(phases) {
+    phaseFilterSet = new Set((phases ?? []).map(String));
+    applyEdgeFilters();
+  }
+
+  function applyEdgeFilters() {
+    cy.edges().forEach(e => {
+      let vis = true;
+      if (dimensionFilter) vis = vis && (e.data("dimension") === dimensionFilter);
+      if (relationshipFilter) vis = vis && (e.data("type") === relationshipFilter);
+      if (phaseFilterSet.size) {
+        const ph = e.data("phase") ?? [];
+        const list = Array.isArray(ph) ? ph : [ph];
+        vis = vis && list.some(p => phaseFilterSet.has(String(p)));
+      }
+      if (vis) e.removeClass(HIDE_FILTER);
+      else e.addClass(HIDE_FILTER);
+    });
+
     syncEdges();
     applyHideIsolatedNodesFromVisibleEdges();
     if (state?.focusedNode) window.applyDepthFocus?.(state.focusedNode);

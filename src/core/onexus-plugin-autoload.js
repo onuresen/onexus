@@ -10,7 +10,7 @@
             const s = document.createElement("script");
             s.src = src;
             s.async = false; // keep order
-            s.onload = resolve;
+            s.onload = () => resolve(true);
             s.onerror = () => reject(new Error("Failed to load: " + src));
             document.head.appendChild(s);
         });
@@ -19,7 +19,6 @@
     async function autoload() {
         const base = "./src/plugins/";
         const manifestUrl = base + "manifest.json";
-
         let list = [];
         try {
             const res = await fetch(manifestUrl, { cache: "no-cache" });
@@ -31,22 +30,30 @@
             return;
         }
 
-        // Optional: enable suffix filter via window.ONEXUS_PLUGIN_FILTER = "-importer.js"
         const suffix = String(window.ONEXUS_PLUGIN_FILTER ?? "").trim();
         const files = list
-            .map((x) => String(x ?? "").trim())
+            .map(x => String(x ?? "").trim())
             .filter(Boolean)
-            .filter((f) => !suffix || f.endsWith(suffix))
-            .map((f) => base + f);
+            .filter(f => !(suffix && f.endsWith(suffix)))
+            .map(f => base + f);
+
+        const loaded = [];
+        const failed = [];
 
         for (const src of files) {
             try {
                 await loadScript(src);
+                loaded.push(src);
                 console.debug("[ONEXUS] Plugin loaded:", src);
             } catch (e) {
+                failed.push({ src, error: e });
                 console.error("[ONEXUS] Plugin failed:", src, e);
             }
         }
+
+        try {
+            window.ONEXUS?.bus?.emit?.("pluginsLoaded", { loaded, failed });
+        } catch { /* noop */ }
     }
 
     if (document.readyState === "loading") {

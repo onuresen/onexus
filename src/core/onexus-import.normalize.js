@@ -3,39 +3,31 @@
  - Canonicalizes importer outputs into ONEXUS schema
  - Stamps meta.importer/sourceFiles/importedAt/importSession
  - Preserves graph.view (e.g., view.arcOrder) into meta.view
+ - NEW (Set C): ONEXUS.import.applyMeta(graph, opts) as single meta entry point
 ========================================================= */
 (function () {
     const ONX = (window.ONEXUS = window.ONEXUS || {});
     ONX.util = ONX.util || {};
     const U = ONX.util;
 
-    const clone =
-        U.clone ||
-        function (x) {
-            return typeof structuredClone === "function"
-                ? structuredClone(x)
-                : JSON.parse(JSON.stringify(x));
-        };
+    const clone = U.clone || function (x) {
+        return (typeof structuredClone === "function")
+            ? structuredClone(x)
+            : JSON.parse(JSON.stringify(x));
+    };
 
-    const idSafe =
-        U.idSafe ||
-        function (s) {
-            return String(s ?? "").replace(/[^\w\-:.]+/g, "_");
-        };
+    const idSafe = U.idSafe || function (s) {
+        return String(s ?? "").replace(/[^\w\-:.]+/g, "_");
+    };
 
     const isObj = (v) => !!v && typeof v === "object" && !Array.isArray(v);
-
-    function nowIso() {
-        return new Date().toISOString();
-    }
-
-    function asStr(x, fallback = "") {
+    const nowIso = () => new Date().toISOString();
+    const asStr = (x, fallback = "") => {
         const s = String(x ?? "").trim();
         return s ? s : fallback;
-    }
+    };
 
     function ensureLabelObject(label, fallback) {
-        // Accept object {en,jp} or string; normalize to {en,jp}
         if (label && typeof label === "object") {
             const en = asStr(label.en, asStr(fallback, ""));
             const jp = asStr(label.jp, en);
@@ -52,7 +44,7 @@
     }
 
     function normalizeNodeWrap(nw) {
-        const d0 = nw && nw.data ? nw.data : nw || {};
+        const d0 = (nw && nw.data) ? nw.data : (nw || {});
         const id = asStr(d0.id, "");
         if (!id) return null;
 
@@ -60,53 +52,39 @@
         const category = normalizeCategory(d0);
         const label = ensureLabelObject(d0.label, d0.displayLabel ?? id);
 
-        const lang =
-            window.___onexus_state?.language ||
-            window.__onexus_state?.language ||
-            "en";
-
+        const lang = window.__onexus_state?.language ?? window.___onexus_state?.language ?? "en";
         const displayLabel = asStr(d0.displayLabel, label[lang] ?? label.en ?? id);
 
-        const data = {
-            ...d0,
-            id,
-            nodeType,
-            category,
-            label,
-            displayLabel,
-        };
-
+        const data = { ...d0, id, nodeType, category, label, displayLabel };
         return { data, classes: nw?.classes ?? "" };
     }
 
     function normalizePhase(ph) {
         if (ph == null) return [];
-        if (Array.isArray(ph)) return ph.map((x) => asStr(x, "")).filter(Boolean);
+        if (Array.isArray(ph)) return ph.map(x => asStr(x, "")).filter(Boolean);
         const s = asStr(ph, "");
         if (!s) return [];
-        return s.split(/\n/g).map((x) => asStr(x, "")).filter(Boolean);
+        return s.split(/\n/g).map(x => asStr(x, "")).filter(Boolean);
     }
 
     function normalizeEdgeWrap(ew) {
-        const d0 = ew && ew.data ? ew.data : ew || {};
+        const d0 = (ew && ew.data) ? ew.data : (ew || {});
         const source = asStr(d0.source, "");
         const target = asStr(d0.target, "");
         if (!source || !target) return null;
 
         const type = asStr(d0.type, "RelatedTo");
         const dimension = asStr(d0.dimension, "System");
-        const directional =
-            typeof d0.directional === "boolean" ? d0.directional : !!d0.directional;
+        const directional = (typeof d0.directional === "boolean") ? d0.directional : !!d0.directional;
         const phase = normalizePhase(d0.phase);
-
         const owner = asStr(d0.owner, "");
         const risk = asStr(d0.risk, "");
         const confidence = asStr(d0.confidence, "");
-        const notes = d0.notes == null ? "" : String(d0.notes);
+        const notes = (d0.notes == null) ? "" : String(d0.notes);
 
         const labelsMap =
-            window.__onexus_labels?.[window.__onexus_state?.language ?? "en"] ||
-            window.__onexus_labels?.en ||
+            window.__onexus_labels?.[window.__onexus_state?.language ?? "en"] ??
+            window.__onexus_labels?.en ??
             {};
 
         const displayType = asStr(d0.displayType, labelsMap[type] ?? type);
@@ -173,28 +151,19 @@
     }
 
     function mergeViewIntoMeta(meta0, g0) {
-        // Preserve root-level graph.view (e.g., view.arcOrder) into meta.view
         const meta = isObj(meta0) ? { ...meta0 } : {};
         const rootView = isObj(g0?.view) ? clone(g0.view) : null;
 
-        // meta.view can be string or object
         let metaViewObj = {};
-        if (typeof meta.view === "string") {
-            metaViewObj.key = asStr(meta.view, "");
-        } else if (isObj(meta.view)) {
-            metaViewObj = { ...meta.view };
-        }
+        if (typeof meta.view === "string") metaViewObj.key = asStr(meta.view, "");
+        else if (isObj(meta.view)) metaViewObj = { ...meta.view };
 
         if (rootView) metaViewObj = { ...metaViewObj, ...rootView };
 
-        // If we have any view settings, store object form
         if (Object.keys(metaViewObj).length) {
-            if (!metaViewObj.key && typeof meta.view === "string") {
-                metaViewObj.key = asStr(meta.view, "");
-            }
+            if (!metaViewObj.key && typeof meta.view === "string") metaViewObj.key = asStr(meta.view, "");
             meta.view = metaViewObj;
         }
-
         return meta;
     }
 
@@ -202,35 +171,58 @@
         const meta = isObj(metaIn) ? metaIn : {};
         const sess = {
             importer: asStr(meta.importer, "unknown"),
-            sourceFiles: Array.isArray(meta.sourceFiles)
-                ? meta.sourceFiles.map(String)
-                : [],
+            sourceFiles: Array.isArray(meta.sourceFiles) ? meta.sourceFiles.map(String) : [],
             mode: asStr(meta.mode, ""),
             importedAt: asStr(meta.importedAt, nowIso()),
         };
+
         window.__onexus_meta = window.__onexus_meta || {};
         window.__onexus_meta.importSession = sess;
+
+        // compat alias
+        window.___onexus_meta = window.___onexus_meta || window.__onexus_meta;
+
         return sess;
+    }
+
+    /**
+     * ✅ Single meta entry point for Set C.
+     * applyMeta(graph, opts) returns graph with meta merged + normalized.
+     */
+    function applyMeta(graph, opts = {}) {
+        const g0 = isObj(graph) ? graph : {};
+        const metaPatch = isObj(opts) ? opts : {};
+
+        const baseMeta = mergeMeta(g0.meta, metaPatch);
+        const withView = mergeViewIntoMeta(baseMeta, g0);
+
+        const meta = {
+            ...withView,
+            schema: asStr(withView.schema, "onexus"),
+            importedAt: asStr(withView.importedAt, nowIso()),
+            importer: asStr(withView.importer, asStr(metaPatch.importer, "unknown")),
+            sourceFiles: Array.isArray(withView.sourceFiles)
+                ? withView.sourceFiles.map(String)
+                : (Array.isArray(metaPatch.sourceFiles) ? metaPatch.sourceFiles.map(String) : []),
+            sourceKind: asStr(withView.sourceKind, asStr(metaPatch.sourceKind, "import")),
+            mode: asStr(withView.mode, asStr(metaPatch.mode, "")),
+        };
+
+        // allow explicit view patch (e.g., { view:{ key:'circle-chord', arcOrder:[...] } })
+        if (metaPatch.view && (typeof metaPatch.view === "string" || isObj(metaPatch.view))) {
+            meta.view = mergeViewIntoMeta({ view: metaPatch.view }, { view: (meta.view && isObj(meta.view)) ? meta.view : null }).view;
+        }
+
+        g0.meta = meta;
+        stampSession(meta);
+        return g0;
     }
 
     function normalizeGraph(graph, metaPatch = {}) {
         const g0 = isObj(graph) ? graph : {};
 
-        // Merge meta & preserve view into meta.view
-        let meta0 = mergeMeta(g0.meta, metaPatch);
-        meta0 = mergeViewIntoMeta(meta0, g0);
-
-        // Standard meta fields
-        const meta = {
-            ...meta0,
-            schema: asStr(meta0.schema, "onexus"),
-            importedAt: asStr(meta0.importedAt, nowIso()),
-            importer: asStr(meta0.importer, metaPatch.importer ?? "unknown"),
-            sourceFiles: Array.isArray(meta0.sourceFiles)
-                ? meta0.sourceFiles
-                : metaPatch.sourceFiles ?? [],
-            sourceKind: asStr(meta0.sourceKind, metaPatch.sourceKind ?? "import"),
-        };
+        // ✅ ensure meta is always present & consistent
+        applyMeta(g0, metaPatch);
 
         const nodesIn = Array.isArray(g0.elements?.nodes) ? g0.elements.nodes : [];
         const edgesIn = Array.isArray(g0.elements?.edges) ? g0.elements.edges : [];
@@ -282,9 +274,7 @@
         const edges = dedupeEdges(edgesNorm);
         const nodes = Array.from(nodesMap.values());
 
-        stampSession(meta);
-
-        return { meta, elements: { nodes, edges } };
+        return { meta: g0.meta, elements: { nodes, edges } };
     }
 
     function tagElements(elements, metaIn) {
@@ -295,12 +285,10 @@
             sourceFiles: Array.isArray(meta.sourceFiles) ? meta.sourceFiles.map(String) : [],
             mode: asStr(meta.mode, ""),
         };
-
         const addTag = (wrap) => {
             if (!wrap || !wrap.data) return;
             wrap.data._import = { ...(wrap.data._import || {}), ...stamp };
         };
-
         (elements?.nodes || []).forEach(addTag);
         (elements?.edges || []).forEach(addTag);
         return elements;
@@ -310,4 +298,5 @@
     ONX.import.normalizeGraph = normalizeGraph;
     ONX.import.stampSession = stampSession;
     ONX.import.tagElements = tagElements;
+    ONX.import.applyMeta = applyMeta; // ✅ Set C export
 })();

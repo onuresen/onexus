@@ -1,15 +1,15 @@
 /* =========================================================
  ONEXUS Plugin — Chord View (D3 edge-bundling)
- FIX:
- - After chord was shown (cy container display:none), Cytoscape needs resize()
-   AFTER DOM repaints, otherwise fitView() and other layouts become broken.
- - This plugin restores graph viewport robustly on exit.
- - It also intercepts applyLayout('chord') to mount chord from View dropdown.
+
+ SET D PATCH:
+ - Do NOT set #cy to display:none (this breaks Cytoscape viewport/fit/layout). [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-chordview.plugin.js)[2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-compat.js)
+ - Instead: keep #cy mounted, set opacity:0 + pointer-events:none while chord is active.
+ - Hide/show minimap + overlays without affecting cy size.
+ - Preserve selection sync with Cytoscape nodes (pin ↔ select).
 ========================================================= */
 (function () {
     const ONX = (window.ONEXUS = window.ONEXUS || {});
     const bus = ONX.bus;
-
     const CFG = {
         viewKey: "chord",
         viewLabel: "Circle Chord",
@@ -65,9 +65,29 @@
         return host;
     }
 
+    // ---------------------------------------------------------
+    // ✅ Set D: visibility control WITHOUT display:none on #cy
+    // ---------------------------------------------------------
+    const overlayIdsToToggle = [
+        "minimap",
+        "legendOverlay",
+        "metricsOverlay",
+        "onxFloatDetails",
+        "cy-context-menu",
+    ];
+
+    function setOverlayVisible(el, visible) {
+        if (!el) return;
+        if (!el.dataset) el.dataset = {};
+        if (el.dataset.__onxPrevDisplay === undefined) {
+            // cache initial display only once
+            el.dataset.__onxPrevDisplay = el.style.display || "";
+        }
+        el.style.display = visible ? (el.dataset.__onxPrevDisplay || "") : "none";
+    }
+
     function setGraphVisible(isGraph) {
         const cyEl = $("cy");
-        const mm = $("minimap");
         const host = $("onx-chord-host");
 
         if (host) {
@@ -75,33 +95,29 @@
             host.style.pointerEvents = isGraph ? "none" : "auto";
         }
 
+        // IMPORTANT: keep cy mounted and sized
         if (cyEl) {
-            cyEl.style.display = isGraph ? "block" : "none";
+            // never display:none
+            cyEl.style.opacity = isGraph ? "1" : "0";
             cyEl.style.pointerEvents = isGraph ? "auto" : "none";
+            // keep layout space unchanged
+            cyEl.style.visibility = "visible";
         }
-        if (mm) mm.style.display = isGraph ? "block" : "none";
+
+        // hide overlays while chord is active
+        for (const id of overlayIdsToToggle) {
+            setOverlayVisible($(id), isGraph);
+        }
+
+        // Ensure Cytoscape knows it can render immediately after toggles
+        // (safe even if no size changed)
+        try { window.cy?.resize?.(); } catch { }
+        requestAnimationFrame(() => { try { window.cy?.resize?.(); } catch { } });
     }
 
-    function restoreGraphViewport() {
-        const cy = window.cy;
-        if (!cy) return;
-
-        // 1) resize immediately (may still be stale)
-        try { cy.resize(); } catch { }
-
-        // 2) resize after DOM paint
-        requestAnimationFrame(() => {
-            try { cy.resize(); } catch { }
-
-            // 3) after one more tick, fit + center
-            setTimeout(() => {
-                try {
-                    const vis = cy.elements(":visible");
-                    cy.fit(vis, 55);
-                    cy.center(vis);
-                } catch { }
-            }, 40);
-        });
+    function safeCyResize() {
+        try { window.cy?.resize?.(); } catch { }
+        requestAnimationFrame(() => { try { window.cy?.resize?.(); } catch { } });
     }
 
     function getChordCfgFromMeta(meta) {
@@ -128,14 +144,14 @@
         const allow = new Set((subsetNodeTypes || []).map(String));
 
         const visNodes = cy.nodes(":visible")
-            .map((n) => ({ data: { ...n.data() } }))
-            .filter((nw) => allow.size === 0 || allow.has(String(nw.data.nodeType || "")));
+            .map(n => ({ data: { ...n.data() } }))
+            .filter(nw => allow.size === 0 || allow.has(String(nw.data.nodeType || "")));
 
-        const allowedIds = new Set(visNodes.map((nw) => String(nw.data.id)));
+        const allowedIds = new Set(visNodes.map(nw => String(nw.data.id)));
 
         const visEdges = cy.edges(":visible")
-            .filter((e) => allowedIds.has(String(e.data("source"))) && allowedIds.has(String(e.data("target"))))
-            .map((e) => ({ data: { ...e.data() } }));
+            .filter(e => allowedIds.has(String(e.data("source"))) && allowedIds.has(String(e.data("target"))))
+            .map(e => ({ data: { ...e.data() } }));
 
         const meta = window.__onexus_meta || window.___onexus_meta || {};
         const view = {};
@@ -160,19 +176,8 @@
     };
 
     // ------------------------------
-    // NEW: auto fallback for generic graphs
+    // Auto pick nodeTypeAllow for generic graphs
     // ------------------------------
-    function inferNodeTypesFromGraph(graph) {
-        const nodes = graph?.elements?.nodes ?? [];
-        const set = new Set();
-        for (const nw of nodes) {
-            const d = nw?.data ?? nw ?? {};
-            const t = String(d.nodeType ?? "").trim();
-            if (t) set.add(t);
-        }
-        return Array.from(set);
-    }
-
     function countByNodeType(graph) {
         const nodes = graph?.elements?.nodes ?? [];
         const map = new Map();
@@ -184,69 +189,44 @@
         return map;
     }
 
-    /**
-     * Choose a chord-friendly subset automatically.
-     * Strategy:
-     * - Prefer types that yield enough nodes (>=8) but not too many (<=160)
-     * - Favor semantic types first (System/Element/Component/Space/Organization/Vendor/etc.)
-     * - If nothing matches, include all nodeTypes.
-     */
     function pickAutoNodeTypeAllow(graph) {
         const counts = countByNodeType(graph);
         const types = Array.from(counts.keys());
 
-        // priority list: works for onexus_sample and typical ONEXUS graphs
         const preferred = [
             "Component", "Element", "System", "Space", "Organization", "Vendor",
             "Capability", "Solution", "Format", "Standard", "Topic"
         ];
 
-        // Sort candidates by preference + size closeness
         const candidates = types
-            .map(t => ({
-                t,
-                c: counts.get(t) ?? 0,
-                pref: preferred.indexOf(t) >= 0 ? preferred.indexOf(t) : 999
-            }))
+            .map(t => ({ t, c: counts.get(t) ?? 0, pref: preferred.includes(t) ? preferred.indexOf(t) : 999 }))
             .sort((a, b) => (a.pref - b.pref) || (a.c - b.c));
 
-        // Try: single best type
         for (const x of candidates) {
             if (x.c >= 8 && x.c <= 160) return [x.t];
         }
 
-        // Try: combine a few types until we reach minimum
         const picked = [];
         let sum = 0;
         for (const x of candidates) {
-            // skip tiny types unless we need them
             if (x.c < 2) continue;
             picked.push(x.t);
             sum += x.c;
             if (sum >= 10) break;
         }
-
         if (picked.length) return picked;
-
-        // Worst-case: include all
         return types;
     }
 
-    // ------------------------------
-    // REPLACE your existing applyMetaConfig(meta) with this
-    // ------------------------------
     function applyMetaConfig(meta, loadedGraphForFallback) {
         const cfg = getChordCfgFromMeta(meta);
 
-        // 1) If dataset explicitly configures chord, do NOT override it.
-        //    (This preserves CircleChord_Solutions.json behavior exactly.) [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/CircleChord_Solutions.json)
         if (Array.isArray(cfg.nodeTypeAllow) && cfg.nodeTypeAllow.length) {
             runtime.subsetNodeTypes = cfg.nodeTypeAllow.slice();
             runtime.arcOrder = cfg.arcOrder || null;
             return;
         }
 
-        // 2) If meta.view.key (or meta.view string) indicates circle-chord, keep Topic default.
         const key = String(cfg.key || "").toLowerCase();
         if (key.includes("circle-chord")) {
             runtime.subsetNodeTypes = ["Topic"];
@@ -254,15 +234,11 @@
             return;
         }
 
-        // 3) Generic graphs (no chord config): auto pick node types from the graph.
-        //    This is what makes onexus_sample.json usable in chord view. [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus_sample.json)
         if (loadedGraphForFallback) {
             runtime.subsetNodeTypes = pickAutoNodeTypeAllow(loadedGraphForFallback);
         } else {
-            // fallback if caller didn't pass a graph
             runtime.subsetNodeTypes = CFG.defaultNodeTypes.slice();
         }
-
         runtime.arcOrder = cfg.arcOrder || null;
     }
 
@@ -271,15 +247,16 @@
         if (!cy) return;
 
         await ensureDeps();
-
         ensureHost();
+
+        // Activate chord overlay
         setGraphVisible(false);
         runtime.active = true;
 
         if (!runtime.chart) {
             const svg = $("onxChordSvg");
             runtime.chart = window.ONEXUS_CIRCLE_CHART.create(svg, {
-                language: window.___onexus_state?.language || window.__onexus_state?.language || "en",
+                language: window.__onexus_state?.language ?? window.___onexus_state?.language ?? "en",
                 nodeTypeAllow: runtime.subsetNodeTypes,
                 onPinChanged: (onexusId) => {
                     runtime.pinnedOnexusId = onexusId || null;
@@ -306,11 +283,9 @@
     }
 
     function unmountChord() {
-        setGraphVisible(true);
         runtime.active = false;
-
-        // ✅ Critical fix: make Cytoscape usable again (Fit/Center/layout)
-        restoreGraphViewport();
+        setGraphVisible(true);
+        safeCyResize();
     }
 
     const refreshChord = debounce(() => {
@@ -319,7 +294,7 @@
 
         const g = snapshotVisibleSubgraph(cy, runtime.subsetNodeTypes, runtime.arcOrder);
         runtime.chart.setGraph(g, {
-            language: window.___onexus_state?.language || window.__onexus_state?.language || "en",
+            language: window.__onexus_state?.language ?? window.___onexus_state?.language ?? "en",
             nodeTypeAllow: runtime.subsetNodeTypes,
         });
 
@@ -333,25 +308,21 @@
         }
     }, 140);
 
-    // View dropdown: add option (safe, non-destructive)
     function ensureViewOption() {
         const sel = $("layoutSelect");
         if (!sel) return;
         if ([...sel.options].some(o => o.value === CFG.viewKey)) return;
-
         const opt = document.createElement("option");
         opt.value = CFG.viewKey;
         opt.textContent = CFG.viewLabel;
         sel.appendChild(opt);
     }
 
-    // Wrap applyLayout so applyLayout('chord') mounts chord,
-    // and switching away unmounts chord and restores cy viewport.
     function wrapApplyLayoutOnce() {
         if (runtime.wrappedApplyLayout) return;
         if (typeof window.applyLayout !== "function") return;
-        runtime.wrappedApplyLayout = true;
 
+        runtime.wrappedApplyLayout = true;
         const orig = window.applyLayout;
 
         window.applyLayout = function (type) {
@@ -371,15 +342,11 @@
                 return;
             }
 
-            if (runtime.active) {
-                unmountChord();
-            }
+            // switching away from chord
+            if (runtime.active) unmountChord();
 
-            // Now run real layout
             const r = orig.call(this, t);
-
-            // Extra safety: after any layout request post-chord, ensure viewport is correct
-            restoreGraphViewport();
+            safeCyResize();
             return r;
         };
     }
@@ -401,7 +368,6 @@
                 runtime.chart.setPinnedOnexusId(null);
                 return;
             }
-
             const id = sel[0].id();
             runtime.pinnedOnexusId = id;
             runtime.chart.setPinnedOnexusId(id);
@@ -413,6 +379,7 @@
         ensureViewOption();
         wrapApplyLayoutOnce();
         applyMetaConfig(window.__onexus_meta);
+
         hookGraphEvents();
 
         try {

@@ -1,16 +1,10 @@
 /* ONEXUS – Generative Design Importer (overlay / materialize-edges)
- Usage:
- IMPORT_GD.importFromFile(event, { mode: 'overlay'|'materialize-edges', optionId?: 'opt-...' })
- IMPORT_GD.importFromPayload(payload, { mode, optionId })
-
- Notes:
- - Non-invasive: augments current graph held by window.cy
- - Host bridge: listens to WebView2 messages { type: 'onexus-gd-import', payload, mode, optionId }
+ SET C PATCH:
+ - Standardize import session stamping using ONEXUS.import.applyMeta()/stampSession()
 */
 (function () {
-  // ---------- utils ----------
   const clone = (x) =>
-    typeof structuredClone === "function" ? structuredClone(x) : JSON.parse(JSON.stringify(x));
+    (typeof structuredClone === "function") ? structuredClone(x) : JSON.parse(JSON.stringify(x));
   const exists = (col) => !!col && !!col.nonempty && col.nonempty();
   const nowIso = () => new Date().toISOString();
 
@@ -20,27 +14,50 @@
     return cy;
   }
 
+  function stampImportSession({ importer, sourceFiles, mode }) {
+    try {
+      const applyMeta = window.ONEXUS?.import?.applyMeta;
+      const stampSession = window.ONEXUS?.import?.stampSession;
+
+      // meta-only graph object
+      let g = { meta: {} };
+      if (typeof applyMeta === "function") {
+        g = applyMeta(g, {
+          importer,
+          sourceFiles,
+          sourceKind: "mutation",
+          mode: mode ?? "",
+          importedAt: nowIso(),
+        });
+      } else if (typeof stampSession === "function") {
+        stampSession({
+          importer,
+          sourceFiles,
+          sourceKind: "mutation",
+          mode: mode ?? "",
+          importedAt: nowIso(),
+        });
+      }
+    } catch { }
+  }
+
   function chooseOption(payload, optionId) {
     const opts = Array.isArray(payload?.options) ? payload.options : [];
     if (!opts.length) throw new Error("GD payload has no options[]");
-
     if (optionId) {
-      const found = opts.find((o) => String(o.id) === String(optionId));
+      const found = opts.find(o => String(o.id) === String(optionId));
       if (!found) throw new Error(`Option '${optionId}' not found`);
       return found;
     }
-
-    const byRank1 = opts.find((o) => o.rank === 1);
+    const byRank1 = opts.find(o => o.rank === 1);
     if (byRank1) return byRank1;
-
-    const pareto = opts.find((o) => o.pareto === true);
+    const pareto = opts.find(o => o.pareto === true);
     return pareto ?? opts[0];
   }
 
   function normalizePayload(payload) {
     if (!payload) throw new Error("GD payload is empty.");
     if (payload.type && payload.type !== "onexus/generative-design") {
-      // still accept raw objects if they look like GD
       if (!payload?.options) throw new Error("Not a GD payload (missing options[]).");
     }
     return payload;
@@ -80,16 +97,14 @@
     window.updateMetrics?.();
   }
 
-  // ---------- overlay mode ----------
   function overlayOptionOnGraph(payload, option) {
     const cy = getCy();
     const probId = payload?.problem?.id ?? "GD";
     const optId = option.id;
     const mark = { problemId: probId, optionId: optId, when: nowIso(), type: "overlay" };
 
-    // nodes
     const nodes = option?.affected?.nodes ?? [];
-    nodes.forEach((n) => {
+    nodes.forEach(n => {
       const node = ensureNode(n.id);
       const d = clone(node.data());
       d.gd = d.gd ?? {};
@@ -103,19 +118,15 @@
       node.data(d);
     });
 
-    // edges (overlay to existing edges only)
     const eitems = option?.affected?.edges ?? [];
-    eitems.forEach((e) => {
+    eitems.forEach(e => {
       let hit = null;
-
       if (e.id) {
         const col = cy.getElementById(e.id);
         if (exists(col)) hit = col;
       }
       if (!hit) {
-        const fwd = cy
-          .edges()
-          .filter((x) => x.data("source") === e.source && x.data("target") === e.target);
+        const fwd = cy.edges().filter(x => x.data("source") === e.source && x.data("target") === e.target);
         if (fwd.length) hit = fwd[0];
       }
       if (!hit) return;
@@ -136,14 +147,12 @@
     window.showTransientMessage?.(`GD overlay applied: ${probId} / ${optId}`);
   }
 
-  // ---------- materialize-edges mode ----------
   function materializeOptionToGraph(payload, option) {
     const cy = getCy();
     const prob = payload?.problem?.id ?? "GD";
     const opt = String(option.id);
     const optNodeId = `GDOPT_${prob}_${opt}`;
 
-    // Ensure Option node
     const optNode = ensureNode(optNodeId, {
       nodeType: "Option",
       category: "DesignOption",
@@ -151,7 +160,6 @@
       displayLabel: `Option ${opt}`,
     });
 
-    // Attach meta to option node
     const d0 = clone(optNode.data());
     d0.gd = d0.gd ?? {};
     d0.gd.meta = {
@@ -163,9 +171,8 @@
     };
     optNode.data(d0);
 
-    // Materialize edges: Option -> affected.nodes (type: Optimizes)
     const nodes = option?.affected?.nodes ?? [];
-    nodes.forEach((n) => {
+    nodes.forEach(n => {
       const target = ensureNode(n.id);
       const eid = ensureEdgeId(`e_${optNodeId}_Optimizes_${target.id()}`);
       cy.add({
@@ -181,9 +188,8 @@
       });
     });
 
-    // Materialize any provided domain edges
     const eitems = option?.affected?.edges ?? [];
-    eitems.forEach((e) => {
+    eitems.forEach(e => {
       ensureNode(e.source);
       ensureNode(e.target);
       const base = `e_${e.source}_${e.type ?? "RelatedTo"}_${e.target}`;
@@ -205,42 +211,36 @@
     window.showTransientMessage?.(`GD materialized: ${prob} / ${opt}`);
   }
 
-  // ---------- public API ----------
   async function importFromFile(event, { mode = "overlay", optionId = null } = {}) {
     const file = event?.target?.files?.[0];
     if (!file) return;
-
     const text = await file.text();
     const payload = JSON.parse(text);
-    return importFromPayload(payload, { mode, optionId });
+    return importFromPayload(payload, { mode, optionId, sourceFiles: [file.name] });
   }
 
-  function importFromPayload(payload, { mode = "overlay", optionId = null } = {}) {
+  function importFromPayload(payload, { mode = "overlay", optionId = null, sourceFiles = ["(in-memory)"] } = {}) {
     const P = normalizePayload(payload);
     const opt = chooseOption(P, optionId);
 
-    // NEW: stamp import session meta (GD is often in-place mutation)
-    try {
-      window.ONEXUS?.import?.stampSession?.({
-        importer: "gd",
-        sourceFiles: ["(in-memory)"],
-        mode: mode ?? "overlay",
-        importedAt: new Date().toISOString()
-      });
-    } catch { }
+    // ✅ Set C: stamp mutation session
+    stampImportSession({ importer: "gd", sourceFiles, mode });
 
     if (mode === "materialize-edges") materializeOptionToGraph(P, opt);
     else overlayOptionOnGraph(P, opt);
   }
 
-  // ---------- host bridge (WebView2) ----------
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener("message", (e) => {
       const msg = e?.data;
       if (!msg || !msg.type) return;
       if (msg.type === "onexus-gd-import") {
         try {
-          importFromPayload(msg.payload, { mode: msg.mode ?? "overlay", optionId: msg.optionId ?? null });
+          importFromPayload(msg.payload, {
+            mode: msg.mode ?? "overlay",
+            optionId: msg.optionId ?? null,
+            sourceFiles: ["(webview)"],
+          });
         } catch (err) {
           alert("GD import failed: " + err.message);
         }
@@ -248,18 +248,10 @@
     });
   }
 
-  // expose
-  window.IMPORT_GD = {
-    importFromFile,
-    importFromPayload,
-    overlayOptionOnGraph,
-    materializeOptionToGraph,
-  };
+  window.IMPORT_GD = { importFromFile, importFromPayload, overlayOptionOnGraph, materializeOptionToGraph };
 })();
 
-// ==============================
-// ONEXUS Plugin Registration: GD
-// ==============================
+// Plugin registration: GD
 (function () {
   const ONX = window.ONEXUS;
   if (!ONX || typeof ONX.registerPlugin !== "function") return;
@@ -274,28 +266,23 @@
         priority: 80,
         extensions: ["json"],
         acceptMultiple: false,
-
         canHandleText: async (text) => {
-          // Lightweight sniff; avoid full parse if possible
-          const t = String(text || "");
+          const t = String(text ?? "");
           return t.includes('"options"') && (t.includes('"problem"') || t.includes('"onexus/generative-design"'));
         },
-
         importText: async (text, file, ctx) => {
           const payload = JSON.parse(text);
-          // Choose mode via opts if provided; defaults to overlay
-          const mode = ctx?.opts?.mode || "overlay";
-          const optionId = ctx?.opts?.optionId || null;
-
+          const mode = ctx?.opts?.mode ?? "overlay";
+          const optionId = ctx?.opts?.optionId ?? null;
+          const sourceFiles = [file?.name ?? "(file)"];
           if (window.IMPORT_GD?.importFromPayload) {
-            window.IMPORT_GD.importFromPayload(payload, { mode, optionId });
+            window.IMPORT_GD.importFromPayload(payload, { mode, optionId, sourceFiles });
             return;
           }
           throw new Error("IMPORT_GD.importFromPayload is not available");
         },
       });
 
-      // Optional: add edge labels used by GD materialize mode
       api.registerEdgeTypeLabels("Optimizes", { en: "Optimizes", jp: "最適化" });
     },
   });
