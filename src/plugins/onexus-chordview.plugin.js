@@ -1,9 +1,12 @@
 /* =========================================================
  ONEXUS Plugin — Chord View (D3 edge-bundling)
- FIXES:
- - Reads chord config from meta.view (key, arcOrder, nodeTypeAllow)
- - Supports meta.view being string OR object
- - Optional JSON importer for chord datasets (meta.view.key / meta.view string == "circle-chord")
+ UX CHANGE:
+ - Move entry point from toolbar button -> View dropdown (#layoutSelect)
+ - Adds View option: "Circle Chord" (value: "chord")
+ - Wraps window.applyLayout() so selecting "chord" toggles overlay
+ - Switching away from "chord" unmounts overlay + runs real layout
+ Notes:
+ - No edits required in graph-ui.bindings.js (it already calls applyLayout(value)) [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/indexCircle.html)
 ========================================================= */
 (function () {
     const ONX = (window.ONEXUS = window.ONEXUS || {});
@@ -11,14 +14,17 @@
     const bus = ONX.bus;
 
     const CFG = {
-        id: "chord",
-        title: "Chord",
+        // View dropdown item
+        viewKey: "chord",
+        viewLabel: "Circle Chord",
+        // Dependencies
         d3Url: "https://d3js.org/d3.v7.min.js",
         cssUrl: "./src/views/chord/styles.css",
         chartUrl: "./src/views/chord/circle-chart.js",
-        // default subset for “solutions landscape”
-        subsetNodeTypes: ["Solution", "Capability", "Format", "Standard"],
-        persistKey: "onexus.viewMode",
+        // Default subset (for solution landscape)
+        defaultNodeTypes: ["Solution", "Capability", "Format", "Standard"],
+        // If a dataset is “circle-chord”, prefer Topic unless overridden by meta.view.nodeTypeAllow
+        topicDefaultNodeTypes: ["Topic"],
     };
 
     function $(id) { return document.getElementById(id); }
@@ -55,6 +61,7 @@
         const wrap = $("canvas-wrap") || $("cy")?.parentElement;
         if (!wrap) return null;
         if (getComputedStyle(wrap).position === "static") wrap.style.position = "relative";
+
         let host = $("onx-chord-host");
         if (!host) {
             host = document.createElement("div");
@@ -63,37 +70,6 @@
             wrap.appendChild(host);
         }
         return host;
-    }
-
-    function ensureToolbarBtn() {
-        const toolbar = $("toolbar");
-        if (!toolbar) return null;
-        const iconbar = toolbar.querySelector(".iconbar");
-        const row = iconbar || toolbar.querySelector(".onx-tb-row.onx-tb-actions") || toolbar;
-
-        let btn = $("btnViewChord");
-        if (!btn) {
-            btn = document.createElement("button");
-            btn.id = "btnViewChord";
-            btn.className = "icon-btn";
-            btn.title = "Chord View";
-            btn.setAttribute("aria-label", "Chord View");
-            btn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="8"></circle>
-          <path d="M7 13c3-4 7-4 10 0"></path>
-        </svg>`;
-            row.appendChild(btn);
-        }
-        return btn;
-    }
-
-    function readViewMode() {
-        try { return localStorage.getItem(CFG.persistKey) || "graph"; }
-        catch { return "graph"; }
-    }
-    function writeViewMode(v) {
-        try { localStorage.setItem(CFG.persistKey, v); } catch { }
     }
 
     function setGraphVisible(isGraph) {
@@ -122,7 +98,7 @@
             if (Array.isArray(mv.nodeTypeAllow)) nodeTypeAllow = mv.nodeTypeAllow.slice();
         }
 
-        // Back-compat: allow meta.arcOrder
+        // back-compat
         if (!arcOrder && Array.isArray(m.arcOrder)) arcOrder = m.arcOrder.slice();
 
         return { key, arcOrder, nodeTypeAllow };
@@ -143,28 +119,47 @@
 
         const meta = window.__onexus_meta || window.___onexus_meta || {};
         const view = {};
-
         if (Array.isArray(arcOrder) && arcOrder.length) view.arcOrder = arcOrder.slice();
+
         return { meta, view, elements: { nodes: visNodes, edges: visEdges } };
     }
 
-    function debounce(fn, ms = 120) {
+    function debounce(fn, ms = 140) {
         let t = 0;
         return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
     }
 
     const runtime = {
-        mode: "graph",
+        active: false,
         chart: null,
         pinnedOnexusId: null,
         internalSelection: false,
-        subsetNodeTypes: CFG.subsetNodeTypes.slice(),
+        subsetNodeTypes: CFG.defaultNodeTypes.slice(),
         arcOrder: null,
+        wrappedApplyLayout: false,
+        injectedViewOption: false,
     };
+
+    function applyMetaConfig(meta) {
+        const cfg = getChordCfgFromMeta(meta);
+
+        // nodeTypeAllow from meta overrides everything
+        if (Array.isArray(cfg.nodeTypeAllow) && cfg.nodeTypeAllow.length) {
+            runtime.subsetNodeTypes = cfg.nodeTypeAllow.slice();
+        } else {
+            const k = String(cfg.key || "").toLowerCase();
+            runtime.subsetNodeTypes = k.includes("circle-chord")
+                ? CFG.topicDefaultNodeTypes.slice()
+                : CFG.defaultNodeTypes.slice();
+        }
+
+        runtime.arcOrder = cfg.arcOrder || null;
+    }
 
     async function mountChord() {
         const cy = window.cy;
         if (!cy) return;
+
         await ensureDeps();
 
         const host = ensureHost();
@@ -172,6 +167,7 @@
 
         host.classList.add("active");
         setGraphVisible(false);
+        runtime.active = true;
 
         if (!runtime.chart) {
             const svg = $("onxChordSvg");
@@ -195,7 +191,7 @@
                         runtime.internalSelection = false;
                         try { window.updateDetailsForNode?.(node); } catch { }
                     }
-                },
+                }
             });
         }
 
@@ -206,18 +202,21 @@
         const host = $("onx-chord-host");
         if (host) host.classList.remove("active");
         setGraphVisible(true);
+        runtime.active = false;
     }
 
     const refreshChord = debounce(() => {
         const cy = window.cy;
-        if (!cy || !runtime.chart) return;
+        if (!cy || !runtime.chart || !runtime.active) return;
 
         const g = snapshotVisibleSubgraph(cy, runtime.subsetNodeTypes, runtime.arcOrder);
+
         runtime.chart.setGraph(g, {
             language: window.___onexus_state?.language || window.__onexus_state?.language || "en",
             nodeTypeAllow: runtime.subsetNodeTypes,
         });
 
+        // re-pin from graph selection
         const sel = cy.nodes(":selected");
         if (sel && sel.length && !runtime.pinnedOnexusId) {
             const id = sel[0].id();
@@ -228,23 +227,74 @@
         }
     }, 140);
 
-    function setMode(mode) {
-        runtime.mode = mode === "chord" ? "chord" : "graph";
-        writeViewMode(runtime.mode);
-        if (runtime.mode === "chord") mountChord();
-        else unmountChord();
+    // ------------------------------
+    // View dropdown integration
+    // ------------------------------
+    function ensureViewOption() {
+        const sel = $("layoutSelect");
+        if (!sel) return;
+
+        // already there?
+        if ([...sel.options].some(o => o.value === CFG.viewKey)) {
+            runtime.injectedViewOption = true;
+            return;
+        }
+
+        const opt = document.createElement("option");
+        opt.value = CFG.viewKey;
+        opt.textContent = CFG.viewLabel;
+        sel.appendChild(opt);
+
+        runtime.injectedViewOption = true;
     }
 
-    function toggleMode() { setMode(runtime.mode === "chord" ? "graph" : "chord"); }
+    // ------------------------------
+    // Intercept applyLayout('chord')
+    // ------------------------------
+    function wrapApplyLayoutOnce() {
+        if (runtime.wrappedApplyLayout) return;
+        if (typeof window.applyLayout !== "function") return;
 
-    function hookSelectionSync() {
+        runtime.wrappedApplyLayout = true;
+
+        const orig = window.applyLayout;
+
+        window.applyLayout = function (type) {
+            const t = String(type ?? "default");
+
+            // Selecting chord in View dropdown -> mount overlay (no cy layout run)
+            if (t === CFG.viewKey) {
+                applyMetaConfig(window.__onexus_meta);
+                mountChord();
+                return;
+            }
+
+            // Switching away from chord -> unmount overlay then run real layout
+            if (runtime.active) unmountChord();
+
+            return orig.call(this, t);
+        };
+    }
+
+    // Keep dropdown selection consistent when we auto-refresh chord
+    function syncDropdownIfNeeded() {
+        const sel = $("layoutSelect");
+        if (!sel) return;
+        if (runtime.active && sel.value !== CFG.viewKey) sel.value = CFG.viewKey;
+    }
+
+    // ------------------------------
+    // React to lifecycle events
+    // ------------------------------
+    function hookEvents() {
         const cy = window.cy;
-        if (!cy || cy.__onxChordSelHooked) return;
-        cy.__onxChordSelHooked = true;
+        if (!cy || cy.__onxChordHooked) return;
+        cy.__onxChordHooked = true;
+
+        cy.on("add remove", () => { if (runtime.active) refreshChord(); });
 
         cy.on("select unselect", "node", () => {
-            if (runtime.mode !== "chord") return;
-            if (!runtime.chart) return;
+            if (!runtime.active || !runtime.chart) return;
             if (runtime.internalSelection) return;
 
             const sel = cy.nodes(":selected");
@@ -253,144 +303,64 @@
                 runtime.chart.setPinnedOnexusId(null);
                 return;
             }
+
             const id = sel[0].id();
             runtime.pinnedOnexusId = id;
             runtime.chart.setPinnedOnexusId(id);
             try { window.updateDetailsForNode?.(sel[0]); } catch { }
         });
-    }
 
-    function hookKeys() {
-        if (document.__onxChordKeysHooked) return;
-        document.__onxChordKeysHooked = true;
-
+        // ESC clears pinned selection (chord-only)
         document.addEventListener("keydown", (e) => {
             const tag = e.target?.tagName || "";
             if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-            if (runtime.mode !== "chord") return;
+            if (!runtime.active) return;
 
             if (e.key === "Escape") {
                 e.preventDefault();
                 runtime.pinnedOnexusId = null;
                 runtime.chart?.setPinnedOnexusId(null);
-                try { window.cy?.elements().unselect(); } catch { }
-                return;
+                try { cy.elements().unselect(); } catch { }
             }
-
-            if (e.key === "Enter") {
-                const cy = window.cy;
-                const id = runtime.pinnedOnexusId;
-                if (!cy || !id) return;
-
-                const node = cy.getElementById(id);
-                if (!node || !node.nonempty || !node.nonempty()) return;
-
-                e.preventDefault();
-                setMode("graph");
-                setTimeout(() => { try { cy.fit(node, 60); } catch { } }, 30);
-            }
-        });
-    }
-
-    function applyMetaConfig(meta) {
-        const cfg = getChordCfgFromMeta(meta);
-
-        // nodeTypeAllow: if provided, use it; otherwise use defaults
-        if (Array.isArray(cfg.nodeTypeAllow)) {
-            runtime.subsetNodeTypes = cfg.nodeTypeAllow.slice();
-        } else {
-            // if chord dataset is marked circle-chord, default to Topic
-            const key = String(cfg.key || "").toLowerCase();
-            runtime.subsetNodeTypes = key.includes("circle-chord") ? ["Topic"] : CFG.subsetNodeTypes.slice();
-        }
-
-        runtime.arcOrder = cfg.arcOrder || null;
-    }
-
-    // ------------------------------
-    // Optional importer: chord JSON
-    // ------------------------------
-    function registerChordImporter(api) {
-        if (!api?.registerImporter) return;
-
-        api.registerImporter({
-            id: "onexus-chord-json",
-            label: "ONEXUS Chord JSON",
-            priority: 60,
-            extensions: ["json"],
-            acceptMultiple: false,
-            canHandleText: async (headText) => {
-                const t = String(headText || "").toLowerCase();
-                // narrow match: only chord datasets
-                return t.includes("circle-chord") || t.includes("\"arcorder\"") && t.includes("\"view\"");
-            },
-            importFiles: async (files) => {
-                const f = Array.from(files || [])[0];
-                if (!f) return;
-                const text = await f.text();
-                const obj = JSON.parse(text);
-
-                // Let core normalizer handle schema; but we want chord settings preserved.
-                window.onexusLoadGraph?.(obj);
-
-                // Switch to chord view after load
-                setTimeout(() => setMode("chord"), 60);
-
-                window.showTransientMessage?.("Imported chord dataset", 1400);
-            },
-            help: "Loads chord-oriented JSON (meta.view.key=\"circle-chord\" or view.arcOrder).",
         });
     }
 
     function boot() {
-        const btn = ensureToolbarBtn();
-        if (btn && !btn.__onxHooked) {
-            btn.__onxHooked = true;
-            btn.addEventListener("click", (e) => { e.preventDefault(); toggleMode(); });
-        }
+        ensureViewOption();
+        wrapApplyLayoutOnce();
 
-        hookKeys();
+        // Initial meta-based config
         applyMetaConfig(window.__onexus_meta);
 
+        hookEvents();
+
+        // If user had saved onexus.layout=chord, bindings will call applyLayout('chord') on restore. [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/indexCircle.html)
+        // Our wrapper will catch it and mount.
         try {
             bus?.on?.("graphLoaded", (payload) => {
                 applyMetaConfig(payload?.meta || window.__onexus_meta);
-                hookSelectionSync();
-                if (runtime.mode === "chord") refreshChord();
+                if (runtime.active) refreshChord();
             });
-
-            bus?.on?.("layerModeChanged", () => {
-                if (runtime.mode === "chord") refreshChord();
-            });
+            bus?.on?.("layerModeChanged", () => { if (runtime.active) refreshChord(); });
         } catch { }
 
-        try {
-            const cy = window.cy;
-            if (cy && !cy.__onxChordGraphHooked) {
-                cy.__onxChordGraphHooked = true;
-                cy.on("add remove", () => { if (runtime.mode === "chord") refreshChord(); });
-            }
-        } catch { }
-
-        // restore persisted mode
-        const mode = readViewMode();
-        setMode(mode === "chord" ? "chord" : "graph");
+        // Keep dropdown aligned when chord is active (some scripts may re-render toolbar)
+        setTimeout(syncDropdownIfNeeded, 150);
+        setTimeout(syncDropdownIfNeeded, 600);
     }
 
+    // Plugin registration
     if (typeof ONX.registerPlugin === "function") {
         ONX.registerPlugin({
             id: "chord-view",
             title: "Chord View (D3)",
-            register(api) {
-                // ✅ register chord json importer (optional but matches your request)
-                registerChordImporter(api);
-
+            register() {
                 if (document.readyState === "loading") {
                     document.addEventListener("DOMContentLoaded", () => setTimeout(boot, 0));
                 } else {
                     setTimeout(boot, 0);
                 }
-            },
+            }
         });
     } else {
         if (document.readyState === "loading") {
