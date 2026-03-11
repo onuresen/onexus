@@ -1,0 +1,99 @@
+{
+    "_purpose": "Human-readable rules for creating ONEXUS JSONs",
+    "nodeTypes": {
+        "System": {
+            "meaning": "High-level system or framework",
+            "categories": [
+                "BuildingSystem",
+                "ProcessFramework",
+                "SolutionLandscape"
+            ],
+            "mustHave": [
+                "id",
+                "nodeType",
+                "category",
+                "label"
+            ]
+        },
+        "Element": {
+            "meaning": "Concrete item like document, door, stage",
+            "categories": [
+                "Document",
+                "Stage",
+                "Door",
+                "Space",
+                "Management"
+            ],
+            "mustHave": [
+                "id",
+                "nodeType",
+                "category",
+                "label"
+            ]
+        },
+        "Topic": {
+            "meaning": "Conceptual topic for Circle / Chord views",
+            "categories": [
+                "Architecture",
+                "MEP",
+                "Management",
+                "Regulations",
+                "Production",
+                "Logistics",
+                "Operation",
+                "Sustainability",
+                "Assembling",
+                "Physics"
+            ],
+            "mustHave": [
+                "id",
+                "nodeType",
+                "category"
+            ]
+        }
+    },
+    "edgeTypes": {
+        "PartOfSystem": {
+            "meaning": "Component belongs to a system",
+            "from": [
+                "Element",
+                "System"
+            ],
+            "to": [
+                "System"
+            ],
+            "directional": false
+        },
+        "ConnectsTo": {
+            "meaning": "One thing affects or leads to another",
+            "from": [
+                "System",
+                "Element"
+            ],
+            "to": [
+                "System",
+                "Element"
+            ],
+            "directional": true
+        },
+        "UsedFor": {
+            "meaning": "Tool supports a capability",
+            "from": [
+                "Solution"
+            ],
+            "to": [
+                "Capability"
+            ],
+            "directional": true
+        }
+    },
+    "views": {
+        "circle-chord": {
+            "whatItNeeds": [
+                "nodeType must be Topic",
+                "category is used as arc",
+                "edges only show existence"
+            ]
+        }
+    }
+}
