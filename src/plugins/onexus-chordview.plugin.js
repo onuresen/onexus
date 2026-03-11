@@ -159,17 +159,110 @@
         wrappedApplyLayout: false,
     };
 
-    function applyMetaConfig(meta) {
+    // ------------------------------
+    // NEW: auto fallback for generic graphs
+    // ------------------------------
+    function inferNodeTypesFromGraph(graph) {
+        const nodes = graph?.elements?.nodes ?? [];
+        const set = new Set();
+        for (const nw of nodes) {
+            const d = nw?.data ?? nw ?? {};
+            const t = String(d.nodeType ?? "").trim();
+            if (t) set.add(t);
+        }
+        return Array.from(set);
+    }
+
+    function countByNodeType(graph) {
+        const nodes = graph?.elements?.nodes ?? [];
+        const map = new Map();
+        for (const nw of nodes) {
+            const d = nw?.data ?? nw ?? {};
+            const t = String(d.nodeType ?? "").trim() || "Unknown";
+            map.set(t, (map.get(t) ?? 0) + 1);
+        }
+        return map;
+    }
+
+    /**
+     * Choose a chord-friendly subset automatically.
+     * Strategy:
+     * - Prefer types that yield enough nodes (>=8) but not too many (<=160)
+     * - Favor semantic types first (System/Element/Component/Space/Organization/Vendor/etc.)
+     * - If nothing matches, include all nodeTypes.
+     */
+    function pickAutoNodeTypeAllow(graph) {
+        const counts = countByNodeType(graph);
+        const types = Array.from(counts.keys());
+
+        // priority list: works for onexus_sample and typical ONEXUS graphs
+        const preferred = [
+            "Component", "Element", "System", "Space", "Organization", "Vendor",
+            "Capability", "Solution", "Format", "Standard", "Topic"
+        ];
+
+        // Sort candidates by preference + size closeness
+        const candidates = types
+            .map(t => ({
+                t,
+                c: counts.get(t) ?? 0,
+                pref: preferred.indexOf(t) >= 0 ? preferred.indexOf(t) : 999
+            }))
+            .sort((a, b) => (a.pref - b.pref) || (a.c - b.c));
+
+        // Try: single best type
+        for (const x of candidates) {
+            if (x.c >= 8 && x.c <= 160) return [x.t];
+        }
+
+        // Try: combine a few types until we reach minimum
+        const picked = [];
+        let sum = 0;
+        for (const x of candidates) {
+            // skip tiny types unless we need them
+            if (x.c < 2) continue;
+            picked.push(x.t);
+            sum += x.c;
+            if (sum >= 10) break;
+        }
+
+        if (picked.length) return picked;
+
+        // Worst-case: include all
+        return types;
+    }
+
+    // ------------------------------
+    // REPLACE your existing applyMetaConfig(meta) with this
+    // ------------------------------
+    function applyMetaConfig(meta, loadedGraphForFallback) {
         const cfg = getChordCfgFromMeta(meta);
 
+        // 1) If dataset explicitly configures chord, do NOT override it.
+        //    (This preserves CircleChord_Solutions.json behavior exactly.) [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/CircleChord_Solutions.json)
         if (Array.isArray(cfg.nodeTypeAllow) && cfg.nodeTypeAllow.length) {
             runtime.subsetNodeTypes = cfg.nodeTypeAllow.slice();
-        } else {
-            const k = String(cfg.key || "").toLowerCase();
-            runtime.subsetNodeTypes = k.includes("circle-chord")
-                ? CFG.topicDefaultNodeTypes.slice()
-                : CFG.defaultNodeTypes.slice();
+            runtime.arcOrder = cfg.arcOrder || null;
+            return;
         }
+
+        // 2) If meta.view.key (or meta.view string) indicates circle-chord, keep Topic default.
+        const key = String(cfg.key || "").toLowerCase();
+        if (key.includes("circle-chord")) {
+            runtime.subsetNodeTypes = ["Topic"];
+            runtime.arcOrder = cfg.arcOrder || null;
+            return;
+        }
+
+        // 3) Generic graphs (no chord config): auto pick node types from the graph.
+        //    This is what makes onexus_sample.json usable in chord view. [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus_sample.json)
+        if (loadedGraphForFallback) {
+            runtime.subsetNodeTypes = pickAutoNodeTypeAllow(loadedGraphForFallback);
+        } else {
+            // fallback if caller didn't pass a graph
+            runtime.subsetNodeTypes = CFG.defaultNodeTypes.slice();
+        }
+
         runtime.arcOrder = cfg.arcOrder || null;
     }
 
@@ -265,7 +358,15 @@
             const t = String(type ?? "default");
 
             if (t === CFG.viewKey) {
-                applyMetaConfig(window.__onexus_meta);
+                const cy = window.cy;
+                const curGraph = {
+                    meta: window.__onexus_meta || {},
+                    elements: {
+                        nodes: cy.nodes().map(n => ({ data: { ...n.data() } })),
+                        edges: cy.edges().map(e => ({ data: { ...e.data() } })),
+                    }
+                };
+                applyMetaConfig(window.__onexus_meta, curGraph);
                 mountChord();
                 return;
             }
