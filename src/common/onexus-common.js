@@ -1,32 +1,39 @@
 /* =========================================
  ONEXUS Common JS (shared)
- PATCH:
- - Wrap fitView/centerView/resetView so they always call cy.resize() first.
- - Fixes “Fit stops working after a view hides #cy”.
+
+ SET D PATCH:
+ - Keep wrapping fitView/centerView/resetView with cy.resize() first.
+ - Expose ONEXUS.util.safeCyResize() for plugins/views (Chord, etc.).
 ========================================= */
 (function () {
     function safeResize() {
         try { window.cy?.resize?.(); } catch { }
     }
 
+    // Export for plugins (single consistent helper)
+    window.ONEXUS = window.ONEXUS || {};
+    window.ONEXUS.util = window.ONEXUS.util || {};
+    window.ONEXUS.util.safeCyResize = function () {
+        safeResize();
+        requestAnimationFrame(() => safeResize());
+    };
+
     function wrapOnce(name) {
         const fn = window[name];
         if (typeof fn !== "function") return;
         if (fn.__onxWrapped) return;
+
         function wrapped(...args) {
-            safeResize();
-            // next paint also helps after display:none -> block
-            requestAnimationFrame(() => safeResize());
+            window.ONEXUS.util.safeCyResize();
             return fn.apply(this, args);
         }
         wrapped.__onxWrapped = true;
         window[name] = wrapped;
     }
 
-    // Existing: keep cy responsive on resize
+    // Keep cy responsive on resize
     window.addEventListener("resize", () => {
-        safeResize();
-        requestAnimationFrame(() => safeResize());
+        window.ONEXUS.util.safeCyResize();
     });
 
     // Wrap navigation helpers (buttons call these)
@@ -42,7 +49,7 @@
         setTimeout(bootWrap, 0);
     }
 
-    // Keep your existing hotkeys + undo logic (original content kept)
+    // Existing hotkeys + undo logic
     document.addEventListener("keydown", (e) => {
         const tag = (e.target ?? {}).tagName;
         if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;

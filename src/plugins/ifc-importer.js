@@ -4,21 +4,23 @@
  - IFC: STEP text (.ifc) and IFCZIP (.ifczip with a .ifc entry)
  - web-ifc version-locked via CDN (JS+WASM): OpenModel(Uint8Array)
 
- FIXES:
+ FIXES (already in your file):
  - Stable IDs: GlobalId-first (fallback to expressID)
  - Always non-empty category for validator
  - Persist ifcExpressId / ifcGlobalId / ifcType on nodes
+
+ SET C PATCH:
+ - Canonical meta stamping via ONEXUS.import.applyMeta(graph, { importer, sourceFiles, sourceKind })
+ - Single source of truth for import session stamping
  ============================================ */
-
 const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
-
 (function () {
   let apiInstance = null;
 
   async function ensureIfcApi() {
     if (apiInstance) return apiInstance;
-    const mod = await import(WEBIFC_BASE + "web-ifc-api.js");
 
+    const mod = await import(WEBIFC_BASE + "web-ifc-api.js");
     // Merge ALL exports (constants + classes) so type codes exist
     window.WebIFC = window.WebIFC || {};
     Object.assign(window.WebIFC, mod);
@@ -27,6 +29,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
     api.SetWasmPath(WEBIFC_BASE);
     await api.Init();
     api.SetLogLevel?.(3);
+
     apiInstance = api;
     return apiInstance;
   }
@@ -92,11 +95,9 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
   // GlobalId-first ID mapping: expressID -> nodeId (stable)
   function makeNodeIdResolver(api, modelID, opt) {
     const cache = new Map(); // expressID -> nodeId
-
     return function nodeIdFor(expressID, prefix = "IFC") {
       const k = Number(expressID);
       if (!Number.isFinite(k) || k <= 0) return idSafe(`${prefix}_${expressID}`);
-
       if (cache.has(k)) return cache.get(k);
 
       let id = "";
@@ -105,8 +106,8 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         if (gid) id = `${prefix}_${gid}`; // stable
       }
       if (!id) id = `${prefix}_${k}`; // fallback: expressID
-
       id = idSafe(id);
+
       cache.set(k, id);
       return id;
     };
@@ -131,7 +132,6 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         },
       });
     }
-
     const d = nodesMap.get(key).data;
 
     // shallow merge (but keep category non-empty)
@@ -139,14 +139,12 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
       const v = data[k];
       if (v !== undefined && v !== "") d[k] = v;
     }
-
     d.category = normalizeCategory(d.category ?? d.revitCategory);
 
     // align displayLabel if label object exists
     if (d.label && typeof d.label === "object") {
       d.displayLabel = d.label.en ?? d.displayLabel ?? d.id;
     }
-
     return nodesMap.get(key);
   }
 
@@ -199,6 +197,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
     const entries = [];
     for (let i = 0; i < totalEntries; i++) {
       if (u32(v, off) !== SIG_CEN) break;
+
       const gpFlag = u16(v, off + 8);
       const compMethod = u16(v, off + 10);
       const compSize = u32(v, off + 20);
@@ -207,9 +206,11 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
       const extLen = u16(v, off + 30);
       const cmtLen = u16(v, off + 32);
       const relOffLH = u32(v, off + 42);
+
       const fnStart = off + 46;
       const fnEnd = fnStart + fnLen;
       const filename = new TextDecoder("utf-8").decode(u8.slice(fnStart, fnEnd));
+
       entries.push({ filename, gpFlag, compMethod, compSize, uncompSize, relOffLH });
       off = fnEnd + extLen + cmtLen;
       if (off > offCD + sizeCD) break;
@@ -247,6 +248,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
 
     if (!ifcEntries.length) throw new Error("IFCZIP: No .ifc entry found inside archive.");
     const pick = ifcEntries[0];
+
     if (pick.gpFlag & 0x01) throw new Error("IFCZIP: Encrypted entries are not supported.");
 
     const loc = parseLocalHeader(u8zip, pick.relOffLH);
@@ -269,7 +271,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
       includeElementConnectivity: true,
       limitPropsPerPset: 8,
       capFallbackElements: 5000,
-      useGlobalIdAsId: true, // ✅ FIX: stable IDs by default
+      useGlobalIdAsId: true, // ✅ stable IDs by default
       ...options,
     };
 
@@ -311,14 +313,10 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
     };
 
     let modelID = 0;
-    try {
-      modelID = api.OpenModel(u8, SETTINGS);
-    } catch { }
+    try { modelID = api.OpenModel(u8, SETTINGS); } catch { }
     if (!modelID) {
       const reader = (offset, length) => u8.subarray(offset, offset + length);
-      try {
-        modelID = api.OpenModelFromCallback(reader, SETTINGS);
-      } catch { }
+      try { modelID = api.OpenModelFromCallback(reader, SETTINGS); } catch { }
     }
     if (!modelID) {
       const snippet = headTxt.slice(0, 120).replace(/\s+/g, " ");
@@ -360,7 +358,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
       return s;
     };
 
-    // Diagnostics (kept)
+    // Diagnostics
     const COUNT = (typecode) => {
       try {
         const ids = api.GetLineIDsWithType(modelID, typecode);
@@ -369,6 +367,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         return 0;
       }
     };
+
     (window.ONEXUS_LOG || console).table({
       Building: COUNT(IFCBUILDING),
       Storey: COUNT(IFCBUILDINGSTOREY),
@@ -411,7 +410,6 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         ifcGlobalId: gid,
         ifcType,
       });
-
       return nid;
     }
 
@@ -423,8 +421,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
 
     // ---------- System nodes ----------
     for (const id of iterIds(api.GetLineIDsWithType(modelID, IFCSYSTEM))) upsertIfcNode(id, "System", "BuildingSystem");
-    for (const id of iterIds(api.GetLineIDsWithType(modelID, IFCDISTRIBUTIONSYSTEM)))
-      upsertIfcNode(id, "System", "BuildingSystem");
+    for (const id of iterIds(api.GetLineIDsWithType(modelID, IFCDISTRIBUTIONSYSTEM))) upsertIfcNode(id, "System", "BuildingSystem");
 
     // ---------- RelContainedInSpatialStructure -> LocatedIn ----------
     for (const rid of iterIds(api.GetLineIDsWithType(modelID, IFCRELCONTAINEDINSPATIALSTRUCTURE))) {
@@ -438,23 +435,22 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         const eid = r.value;
         const eNode = upsertIfcNode(eid, "Component", "BuiltElement");
         pushEdge(edges, { type: "LocatedIn", source: eNode, target: sNode, dimension: "Spatial", directional: true });
+
         try {
-          // Populate `level` on the element node using the spatial container's displayLabel
           const elemEntry = nodesMap.get(idSafe(eNode));
           const storeyEntry = nodesMap.get(idSafe(sNode));
           if (elemEntry && storeyEntry && storeyEntry.data && storeyEntry.data.displayLabel) {
             elemEntry.data.level = storeyEntry.data.displayLabel;
-            // convenient nesting summary
             elemEntry.data.nesting = elemEntry.data.nesting || {};
             elemEntry.data.nesting.level = storeyEntry.data.displayLabel;
             elemEntry.data.nesting.category = elemEntry.data.category;
             elemEntry.data.nesting.type = elemEntry.data.nodeType;
           }
-        } catch (e) { }
+        } catch { }
       }
     }
 
-    // ---------- Aggregates -> PartOfSystem (kept as before) ----------
+    // ---------- Aggregates -> PartOfSystem ----------
     for (const rid of iterIds(api.GetLineIDsWithType(modelID, IFCRELAGGREGATES))) {
       const rel = getLineSafe(api, modelID, rid);
       const parent = rel?.RelatingObject?.value;
@@ -481,11 +477,9 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
       if (!isSystem && !isZone) continue;
 
       const gNode = upsertIfcNode(groupId, isZone ? "Space" : "System", isZone ? "Zone" : "BuildingSystem");
-
       for (const o of objs) {
         const eid = o.value;
         const eNode = upsertIfcNode(eid, "Component", "BuiltElement");
-
         if (isSystem) {
           pushEdge(edges, { type: "PartOfSystem", source: eNode, target: gNode, dimension: "System", directional: false });
         } else {
@@ -509,10 +503,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
       }
     }
 
-    // ---------- DefinesByProperties -> HasProperties ----------
-    // Two modes supported:
-    // - includePropertiesAsNodes === true -> legacy: create PropertySet nodes + HasProperties edges
-    // - includePropertiesAsNodes === false -> attach properties directly onto the element node under `data.ifcProperties`
+    // ---------- DefinesByProperties -> HasProperties / inline ifcProperties ----------
     if (opt.includeProperties) {
       for (const rid of iterIds(api.GetLineIDsWithType(modelID, IFCRELDEFINESBYPROPERTIES))) {
         const rel = getLineSafe(api, modelID, rid);
@@ -524,7 +515,6 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         const pset = getLineSafe(api, modelID, psetId);
         const psetName = asLabel(pset?.Name?.value ?? `PSet_${psetId}`);
 
-        // Build properties map for this property set (capped)
         const props = {};
         try {
           const pItems = pset?.HasProperties ?? [];
@@ -535,15 +525,17 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
             const pval = prop?.NominalValue?.value ?? prop?.NominalValue?._text ?? "";
             if (pname) props[pname] = pval;
           }
-        } catch (e) { }
+        } catch { }
 
         if (opt.includePropertiesAsNodes) {
-          // Legacy behavior: create a PropertySet node and HasProperties edges
           let summary = psetName;
           try {
-            const pairs = Object.keys(props).slice(0, opt.limitPropsPerPset).map((k) => `${k}${props[k] ? `=${props[k]}` : ""}`);
+            const pairs = Object.keys(props)
+              .slice(0, opt.limitPropsPerPset)
+              .map((k) => `${k}${props[k] ? `=${props[k]}` : ""}`);
             if (pairs.length) summary = `${psetName}: ${pairs.join(", ")}`;
           } catch { }
+
           const pNode = upsertIfcNode(psetId, "PropertySet", "PropertySet", summary);
           for (const o of objs) {
             const eid = o.value;
@@ -551,7 +543,6 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
             pushEdge(edges, { type: "HasProperties", source: eNode, target: pNode, dimension: "System", directional: false });
           }
         } else {
-          // Attach properties onto each related element node under `data.ifcProperties`.
           for (const o of objs) {
             const eid = o.value;
             const eNode = upsertIfcNode(eid, "Component", "BuiltElement");
@@ -559,11 +550,10 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
               const entry = nodesMap.get(idSafe(eNode));
               if (entry && entry.data) {
                 entry.data.ifcProperties = entry.data.ifcProperties || {};
-                // Merge pset properties (existing values preserved unless overwritten here)
                 const existing = entry.data.ifcProperties[psetName] || {};
                 entry.data.ifcProperties[psetName] = Object.assign({}, existing, props);
               }
-            } catch (e) { }
+            } catch { }
           }
         }
       }
@@ -586,7 +576,6 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
 
       const fNode = upsertIfcNode(filler, "Component", "DoorLike");
       const host = openingToHost.get(opening);
-
       if (host) {
         const hNode = upsertIfcNode(host, "Component", "Wall");
         pushEdge(edges, { type: "FillsOpeningIn", source: fNode, target: hNode, dimension: "System", directional: true });
@@ -660,11 +649,12 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
       }
     }
 
-    // ---------- FALLBACK A: If still nothing, build from IFCELEMENT / IFCPRODUCT ----------
+    // ---------- FALLBACK A ----------
     if (nodesMap.size === 0) {
       console.warn("[ONEXUS/IFC] Fallback A: enumerating IFCELEMENT/IFCPRODUCT (no relations).");
       let list = api.GetLineIDsWithType(modelID, IFCELEMENT);
       if (!itLen(list)) list = api.GetLineIDsWithType(modelID, IFCPRODUCT);
+
       let count = 0;
       for (const id of iterIds(list)) {
         upsertIfcNode(id, "Component", "BuiltElement");
@@ -673,7 +663,7 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
       }
     }
 
-    // ---------- FALLBACK B: Enumerate by types and filter by IsIfcElement ----------
+    // ---------- FALLBACK B ----------
     if (nodesMap.size === 0) {
       try {
         console.warn("[ONEXUS/IFC] Fallback B: GetAllTypesOfModel() & IsIfcElement().");
@@ -700,7 +690,31 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
     console.info(`[ONEXUS/IFC] Built nodes=${nodes.length}, edges=${edges.length}.`);
 
     api.CloseModel(modelID);
+
     return { elements: { nodes, edges } };
+  }
+
+  // ---------- Set C: canonical meta stamping helper ----------
+  function applyMetaIfAvailable(graph, { importer, sourceFiles, sourceKind = "import", mode = "" } = {}) {
+    const applyMeta = window.ONEXUS?.import?.applyMeta;
+    if (typeof applyMeta === "function") {
+      return applyMeta(graph, {
+        importer,
+        sourceFiles: Array.isArray(sourceFiles) ? sourceFiles : [],
+        sourceKind,
+        mode,
+      });
+    }
+
+    // fallback (no normalizer present)
+    graph.meta = graph.meta || {};
+    graph.meta.schema = graph.meta.schema || "onexus";
+    graph.meta.importer = importer || "unknown";
+    graph.meta.importedAt = graph.meta.importedAt || new Date().toISOString();
+    graph.meta.sourceFiles = Array.isArray(sourceFiles) ? sourceFiles : [];
+    graph.meta.sourceKind = sourceKind;
+    graph.meta.mode = mode || "";
+    return graph;
   }
 
   // ---------- UI glue ----------
@@ -708,31 +722,22 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
     const files = Array.from(event?.target?.files ?? []);
     if (!files.length) return;
 
-    const file = files.find(f => {
+    const file = files.find((f) => {
       const n = (f.name ?? "").toLowerCase();
       return n.endsWith(".ifc") || n.endsWith(".ifczip");
     });
     if (!file) return;
 
     const buf = await file.arrayBuffer();
-    const graph = await parseIFCToOnexusGraph(buf);
+    let graph = await parseIFCToOnexusGraph(buf);
 
-    // ✅ Stamp meta *here* (graph exists here)
-    graph.meta = graph.meta || {};
-    graph.meta.schema = graph.meta.schema || "onexus";
-    graph.meta.importer = "ifc";
-    graph.meta.importedAt = new Date().toISOString();
-    graph.meta.sourceFiles = [file.name];
-    graph.meta.sourceFile = file.name; // optional legacy
-
-    // Optional: stamp session bucket if you added normalizer earlier
-    try {
-      window.ONEXUS?.import?.stampSession?.({
-        importer: "ifc",
-        sourceFiles: [file.name],
-        importedAt: graph.meta.importedAt
-      });
-    } catch { }
+    // ✅ Set C: canonical meta
+    graph = applyMetaIfAvailable(graph, {
+      importer: "ifc",
+      sourceFiles: [file.name],
+      sourceKind: "import",
+      mode: "",
+    });
 
     injectGraph(graph);
   }
@@ -773,48 +778,47 @@ const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
         priority: 90,
         extensions: ["ifc", "ifczip"],
         acceptMultiple: false,
-
         canHandleFiles: async (files) => {
           if (!files || files.length !== 1) return false;
-          const n = (files[0].name || "").toLowerCase();
+          const n = (files[0].name ?? "").toLowerCase();
           return n.endsWith(".ifc") || n.endsWith(".ifczip");
         },
-
         importFiles: async (files) => {
           const f = files[0];
-          // Use existing API from this script
+
+          // Preferred: use existing event-based loader (keeps behavior consistent)
           if (window.ONEXUS_IFC?.loadIFC) {
-            // adapt to existing event-based signature
             const fakeEvt = { target: { files: [f] } };
             await window.ONEXUS_IFC.loadIFC(fakeEvt);
             return;
           }
 
+          // Fallback: direct parse + meta + load
           const buf = await f.arrayBuffer();
-          const graph = await window.ONEXUS_IFC.parseIFCToOnexusGraph(buf);
+          let graph = await window.ONEXUS_IFC.parseIFCToOnexusGraph(buf);
 
-          // ✅ stamp meta here too
-          graph.meta = graph.meta || {};
-          graph.meta.schema = graph.meta.schema || "onexus";
-          graph.meta.importer = "ifc";
-          graph.meta.importedAt = new Date().toISOString();
-          graph.meta.sourceFiles = [f.name];
-          graph.meta.sourceFile = f.name;
-
-          // optional: unify import session bucket
-          try {
-            window.ONEXUS?.import?.stampSession?.({
+          const applyMeta = window.ONEXUS?.import?.applyMeta;
+          if (typeof applyMeta === "function") {
+            graph = applyMeta(graph, {
               importer: "ifc",
               sourceFiles: [f.name],
-              importedAt: graph.meta.importedAt
+              sourceKind: "import",
+              mode: "",
             });
-          } catch { }
+          } else {
+            graph.meta = graph.meta || {};
+            graph.meta.schema = graph.meta.schema || "onexus";
+            graph.meta.importer = "ifc";
+            graph.meta.importedAt = new Date().toISOString();
+            graph.meta.sourceFiles = [f.name];
+            graph.meta.sourceKind = "import";
+          }
 
           window.onexusLoadGraph?.(graph);
         },
       });
 
-      // Optional: edge labels added by IFC (only if you want to override/add)
+      // Optional: edge labels added by IFC
       api.registerEdgeTypeLabels("OfType", { en: "Of Type", jp: "形式" });
       api.registerEdgeTypeLabels("HasProperties", { en: "Has Properties", jp: "プロパティ有" });
       api.registerEdgeTypeLabels("InZone", { en: "In Zone", jp: "ゾーン所属" });

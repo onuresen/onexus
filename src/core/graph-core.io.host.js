@@ -1,5 +1,8 @@
 /* ONEXUS – IO Host & Validation (load/validate JSON, host bridge, apply positions)
- PATCH: preserve graph.view (arcOrder etc.) into meta.view for legacy loadJSON() path.
+ SET C PATCH:
+ - Always run meta unification via ONEXUS.import.applyMeta()
+ - Always normalize via ONEXUS.import.normalizeGraph()
+ - Preserve graph.view -> meta.view (legacy + modern paths)
 */
 (function () {
   const cy = window.cy;
@@ -36,14 +39,14 @@
     const nodeTypeRaw = String(d0.nodeType ?? "").trim();
     const nodeType = NODETYPE_MAP[nodeTypeRaw] ?? (nodeTypeRaw || "Component");
     const label = ensureLabelObject(d0.label, d0.displayLabel ?? id);
+
     const displayLabel =
-      window.__onexus_state?.language === "jp"
-        ? label.jp ?? label.en ?? id
-        : label.en ?? id;
+      (window.__onexus_state?.language === "jp")
+        ? (label.jp ?? label.en ?? id)
+        : (label.en ?? id);
+
     const category = normalizeCategory({ ...d0, id });
-    return {
-      data: { ...d0, id, nodeType, category, label, displayLabel },
-    };
+    return { data: { ...d0, id, nodeType, category, label, displayLabel } };
   }
 
   function normalizeEdge(eWrap) {
@@ -58,33 +61,27 @@
     const map = window.__onexus_labels?.[window.__onexus_state?.language ?? "en"] ?? {};
     const displayType = d0.displayType ?? map[type] ?? type;
 
-    return {
-      data: { ...d0, id, type, dimension, source, target, directional, displayType },
-    };
+    return { data: { ...d0, id, type, dimension, source, target, directional, displayType } };
   }
 
   function mergeViewIntoMeta(meta, graph) {
     const m = meta && typeof meta === "object" ? { ...meta } : {};
     const rootView = graph?.view && typeof graph.view === "object" ? graph.view : null;
 
-    // normalize meta.view
     let mv = {};
     if (typeof m.view === "string") mv.key = String(m.view);
     else if (m.view && typeof m.view === "object") mv = { ...m.view };
 
     if (rootView) mv = { ...mv, ...rootView };
-
     if (Object.keys(mv).length) m.view = mv;
+
     return m;
   }
 
-  function normalizeGraph(graph) {
+  function normalizeGraphLegacy(graph) {
     const nodes = (graph?.elements?.nodes ?? []).map(normalizeNode);
     const edges = (graph?.elements?.edges ?? []).map(normalizeEdge);
-
-    // ✅ preserve view → meta.view
     const meta = mergeViewIntoMeta(graph?.meta ?? {}, graph);
-
     return { meta, elements: { nodes, edges } };
   }
 
@@ -102,9 +99,7 @@
       if (!d.id) errors.push(`nodes[${i}].data.id is required`);
       if (!d.nodeType) errors.push(`nodes[${i}].data.nodeType is required`);
       if (!d.category && !d.revitCategory) errors.push(`nodes[${i}].data.category or .revitCategory is required`);
-      if (!(typeof d.label === "object" || typeof d.label === "string")) {
-        errors.push(`nodes[${i}].data.label must be an object or string`);
-      }
+      if (!(typeof d.label === "object" || typeof d.label === "string")) errors.push(`nodes[${i}].data.label must be an object or string`);
     });
 
     (data.elements.edges ?? []).forEach((e, i) => {
@@ -123,6 +118,7 @@
   function loadJSON(event) {
     const file = event.target.files[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = (e) => {
       let raw;
@@ -132,12 +128,32 @@
       const { valid, errors } = validateOnexusJson(raw);
       if (!valid) { alert("Schema errors:\n" + errors.join("\n")); return; }
 
-      const data = normalizeGraph(raw);
+      // ✅ Set C: unify meta + normalize via ONEXUS.import if available
+      try { window.ONEXUS?.bus?.emit?.("graphWillLoad", { graph: raw }); } catch { }
 
-      window.__onexus_meta = data.meta ?? {};
+      let graph = raw;
+      try {
+        const applyMeta = window.ONEXUS?.import?.applyMeta;
+        const norm = window.ONEXUS?.import?.normalizeGraph;
+        if (typeof applyMeta === "function") {
+          graph = applyMeta(graph, { importer: "json", sourceFiles: [file.name], sourceKind: "import" });
+        }
+        if (typeof norm === "function") {
+          graph = norm(graph, { importer: graph?.meta?.importer ?? "json", sourceFiles: graph?.meta?.sourceFiles ?? [file.name], sourceKind: "import" });
+        } else {
+          graph = normalizeGraphLegacy(graph);
+        }
+      } catch (err) {
+        console.warn("[ONEXUS] normalize/applyMeta failed (fallback legacy):", err);
+        graph = normalizeGraphLegacy(raw);
+      }
+
+      window.__onexus_meta = graph.meta ?? {};
+      window.___onexus_meta = window.___onexus_meta || window.__onexus_meta;
+
       cy.elements().remove();
-      cy.add(data.elements.nodes);
-      cy.add(data.elements.edges);
+      cy.add(graph.elements.nodes);
+      cy.add(graph.elements.edges);
 
       const lang = window.__onexus_state?.language ?? (raw?.meta?.languageDefault ?? "en");
       window.setLanguage?.(lang);
@@ -152,8 +168,17 @@
         window.setEdgeLabelVisibility?.(true);
         window.setNodeLabelVisibility?.(true);
       }
+
       window.buildRelationshipLegend?.();
       window.updateMetrics?.();
+
+      try {
+        window.ONEXUS?.bus?.emit?.("graphLoaded", {
+          graph,
+          meta: window.__onexus_meta,
+          counts: { nodes: cy.nodes().length, edges: cy.edges().length },
+        });
+      } catch { }
     };
     reader.readAsText(file);
   }
@@ -162,43 +187,59 @@
     try {
       try { window.ONEXUS?.bus?.emit?.("graphWillLoad", { graph }); } catch { }
 
+      // ✅ Set C: always apply meta + normalize if available
+      let g = graph;
       try {
+        const applyMeta = window.ONEXUS?.import?.applyMeta;
         const norm = window.ONEXUS?.import?.normalizeGraph;
-        if (typeof norm === "function") {
-          const sourceFiles = Array.isArray(graph?.meta?.sourceFiles) ? graph.meta.sourceFiles : [];
-          graph = norm(graph, {
-            importer: graph?.meta?.importer ?? "onexusLoadGraph",
+
+        const sourceFiles = Array.isArray(g?.meta?.sourceFiles) ? g.meta.sourceFiles : [];
+        if (typeof applyMeta === "function") {
+          g = applyMeta(g, {
+            importer: g?.meta?.importer ?? "onexusLoadGraph",
             sourceFiles,
-            sourceKind: graph?.meta?.sourceKind ?? "import",
+            sourceKind: g?.meta?.sourceKind ?? "import",
+            mode: g?.meta?.mode ?? "",
           });
+        }
+        if (typeof norm === "function") {
+          g = norm(g, {
+            importer: g?.meta?.importer ?? "onexusLoadGraph",
+            sourceFiles,
+            sourceKind: g?.meta?.sourceKind ?? "import",
+            mode: g?.meta?.mode ?? "",
+          });
+        } else {
+          g = normalizeGraphLegacy(g);
         }
       } catch (e) {
         console.warn("[ONEXUS] import normalization failed (continuing):", e);
+        g = normalizeGraphLegacy(graph);
       }
 
-      const res = validateOnexusJson(graph);
+      const res = validateOnexusJson(g);
       if (res && res.valid === false) {
         console.error("ONEXUS schema errors:", res.errors);
         alert("Invalid ONEXUS JSON:\n" + res.errors.join("\n"));
-        try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph, errors: res.errors }); } catch { }
+        try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph: g, errors: res.errors }); } catch { }
         return;
       }
 
       const c = window.cy;
       if (!c) {
         console.error("Cytoscape not ready");
-        try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph, errors: ["Cytoscape not ready"] }); } catch { }
+        try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph: g, errors: ["Cytoscape not ready"] }); } catch { }
         return;
       }
 
-      const data = normalizeGraph(graph);
-      window.__onexus_meta = data.meta ?? {};
+      window.__onexus_meta = g.meta ?? {};
+      window.___onexus_meta = window.___onexus_meta || window.__onexus_meta;
 
       c.elements().remove();
-      c.add(data.elements?.nodes ?? []);
-      c.add(data.elements?.edges ?? []);
+      c.add(g.elements?.nodes ?? []);
+      c.add(g.elements?.edges ?? []);
 
-      const lang = window.__onexus_state?.language ?? (graph?.meta?.languageDefault ?? "en");
+      const lang = window.__onexus_state?.language ?? (g?.meta?.languageDefault ?? "en");
       window.setLanguage?.(lang);
       window.buildCategoryFilter?.();
       window.buildPhaseFilter?.();
@@ -217,7 +258,7 @@
 
       try {
         window.ONEXUS?.bus?.emit?.("graphLoaded", {
-          graph: data,
+          graph: g,
           meta: window.__onexus_meta,
           counts: { nodes: c.nodes().length, edges: c.edges().length },
         });
@@ -242,10 +283,13 @@
     cy.fit(undefined, 50);
   }
 
+  // Host bridge (WebView2)
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener("message", (e) => {
       if (!e || !e.data) return;
+
       if (e.data.type === "onexus-graph") { loadGraphObject(e.data.graph); return; }
+
       if (e.data.type === "highlight-nodes") {
         const ids = new Set(e.data.ids ?? []);
         cy.nodes().removeClass("highlight");
@@ -254,6 +298,7 @@
         if (hits.nonempty && hits.nonempty()) cy.fit(hits, 60);
         return;
       }
+
       if (e.data.type === "apply-layout") {
         const positions = e.data.positions ?? [];
         if (Array.isArray(positions) && positions.length) window.applyLayoutPositions(positions);

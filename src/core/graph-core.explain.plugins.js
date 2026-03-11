@@ -3,13 +3,15 @@
  - Does NOT fork graph-core.state.js
  - Wraps updateDetailsForNode / updateDetailsForEdge and appends plugin HTML
  - Reads templates from: ONEXUS.plugins.explanations (Map)
+
  Template shapes supported:
-   A) function(ctx) -> htmlString
-   B) { label?, when?(ctx)->bool, render(ctx)->htmlString, order?, appliesTo?: 'node'|'edge'|'both' }
+ A) function(ctx) -> htmlString
+ B) { label?, when?(ctx)->bool, render(ctx)->htmlString, order?, appliesTo?: 'node'|'edge'|'both' }
+
  Matching rules:
-   - If template key equals edge.type, it matches that edge
-   - If template key equals node.nodeType or node.category, it matches that node
-   - If template.when exists, it must return true
+ - If template key equals edge.type, it matches that edge
+ - If template key equals node.nodeType or node.category, it matches that node
+ - If template.when exists, it must return true
 ========================================================= */
 (function () {
     const ONX = window.ONEXUS;
@@ -26,15 +28,10 @@
         } catch { }
     }
 
+    // ✅ canonical safe escape
     function escapeHtml(s) {
         const fn = window.ONEXUS?.util?.escapeHtml;
-        if (typeof fn === "function") return fn(s);
-        return String(s ?? "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#39;");
+        return (typeof fn === "function") ? fn(s) : String(s ?? "");
     }
 
     function normalizeTplEntry(key, value) {
@@ -46,7 +43,7 @@
             return {
                 id,
                 order: Number.isFinite(value.order) ? value.order : 100,
-                appliesTo: value.appliesTo || "both",
+                appliesTo: value.appliesTo ?? "both",
                 label: value.label ?? null,
                 when: (typeof value.when === "function") ? value.when : null,
                 render: (typeof value.render === "function") ? value.render : null
@@ -79,14 +76,9 @@
 
     function matchTemplate(e, ctx) {
         const kind = ctx.kind;
-
-        // appliesTo filter
-        const a = String(e.appliesTo || "both").toLowerCase();
+        const a = String(e.appliesTo ?? "both").toLowerCase();
         if (a !== "both" && a !== kind) return false;
 
-        // implicit key matching:
-        // - edge: key === edge.type
-        // - node: key === node.nodeType OR key === node.category
         const key = e.id;
         if (kind === "edge") {
             const t = String(ctx.data?.type ?? "");
@@ -97,22 +89,18 @@
             if (key === nt || key === cat) return true;
         }
 
-        // if no implicit match, allow when() to decide
         if (e.when) {
             try { return !!e.when(ctx); } catch { return false; }
         }
-
-        // default: no match
         return false;
     }
 
     function renderExplanations(kind, ele) {
         const templates = entriesFromExplanationMap();
         if (!templates.length) return "";
-
         const data = ele?.data?.() ?? {};
         const ctxBase = {
-            kind,                  // 'node' | 'edge'
+            kind,
             cy: window.cy,
             ele,
             data,
@@ -123,8 +111,6 @@
 
         const matches = [];
         for (const tpl of templates) {
-            // If tpl has when(), it can override implicit match (by returning true),
-            // but implicit key match has priority.
             let ok = false;
             try {
                 ok = matchTemplate(tpl, ctxBase) || (tpl.when ? !!tpl.when(ctxBase) : false);
@@ -133,18 +119,15 @@
             }
             if (ok) matches.push(tpl);
         }
-
         if (!matches.length) return "";
 
         matches.sort((a, b) => (a.order - b.order) || a.id.localeCompare(b.id));
 
-        // Render blocks
         const blocks = [];
         for (const m of matches) {
             let html = "";
-            try { html = String(m.render(ctxBase) ?? ""); } catch (e) { html = ""; }
+            try { html = String(m.render(ctxBase) ?? ""); } catch { html = ""; }
             if (!html.trim()) continue;
-
             const title = m.label ? escapeHtml(m.label) : escapeHtml(m.id);
             blocks.push(`
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--stroke);">
@@ -157,7 +140,6 @@
         </div>
       `);
         }
-
         if (!blocks.length) return "";
 
         return `
@@ -170,14 +152,10 @@
     function appendExplain(kind, ele) {
         const el = getDetailsEl();
         if (!el) return;
-
         removeOldExplain(el);
-
         const html = renderExplanations(kind, ele);
         if (!html) return;
-
         try {
-            // append without destroying existing details
             el.insertAdjacentHTML("beforeend", html);
             ONX.bus?.emit?.("explainRendered", { kind, id: ele?.id?.(), data: ele?.data?.() });
         } catch (e) {
@@ -205,14 +183,8 @@
                 try { appendExplain("edge", edge); } catch { }
             };
         }
-
-        // also re-append on language change (details content gets rebuilt by core)
-        try {
-            ONX.bus?.on?.("graphLoaded", () => { /* no-op */ });
-        } catch { }
     }
 
-    // Boot after core state defines updateDetails*
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => setTimeout(wrapOnce, 0));
     } else {

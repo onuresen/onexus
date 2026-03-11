@@ -2,15 +2,23 @@
 // ONEXUS – Unified Loader (PLUGIN-AWARE + Import-as chooser)
 // Exposes: window.handleUnifiedLoad(event)
 //
-// PATCH (Core improvement):
-// - Multi-JSON merge is now deterministic and order-independent.
-// - Nodes merge by id with "prefer non-empty / richer" policy (safe).
-// - Edges merge by signature (type,dimension,source,target,directional) with stable IDs.
-// - Only affects legacy fallback for 2+ JSON files (no plugin candidates).
+// PATCH (Set A):
+// - Always escape UI HTML via ONEXUS.util.escapeHtml (correct), never raw fallback.
 // ===============================
 (function () {
   const U = window.ONEXUS?.util ?? {};
-  const escapeHtml = U.escapeHtml ?? ((s) => String(s ?? ""));
+  const escapeHtml = (s) => {
+    const fn = U.escapeHtml;
+    if (typeof fn === "function") return fn(s);
+    const str = String(s ?? "");
+    if (!/[&<>"']/.test(str)) return str;
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
 
   // ---------- Utils ----------
   const isObj = (v) => v && typeof v === "object" && !Array.isArray(v);
@@ -25,15 +33,12 @@
     if (isObj(v)) return Object.keys(v).length > 0;
     return true;
   };
-
-  // Treat these as "empty-ish" categories (so a real category overwrites them)
   const isTrivialCategory = (v) => {
     const s = normStr(v);
     return !s || s.toLowerCase() === "uncategorized";
   };
 
   function stableHash36(str) {
-    // FNV-1a 32-bit -> base36
     let h = 2166136261;
     const s = String(str ?? "");
     for (let i = 0; i < s.length; i++) {
@@ -65,7 +70,6 @@
     if (!sa && sb) return sb;
     if (sa && !sb) return sa;
     if (!sa && !sb) return "";
-    // both exist: choose longer; if tie choose stable lexicographic
     if (sb.length > sa.length) return sb;
     if (sa.length > sb.length) return sa;
     return (sb < sa) ? sb : sa;
@@ -74,11 +78,7 @@
   function mergeValuePreferNonEmpty(base, incoming) {
     if (!isMeaningful(base) && isMeaningful(incoming)) return incoming;
     if (isMeaningful(base) && !isMeaningful(incoming)) return base;
-
-    // arrays: union
     if (Array.isArray(base) && Array.isArray(incoming)) return mergeArrays(base, incoming);
-
-    // objects: shallow recursive merge
     if (isObj(base) && isObj(incoming)) {
       const out = { ...base };
       for (const k of Object.keys(incoming)) {
@@ -86,18 +86,13 @@
       }
       return out;
     }
-
-    // primitives: pick "better"
     if (typeof base === "string" || typeof incoming === "string") {
       return chooseBetterString(base, incoming);
     }
-
-    // default: keep base (stable, non-destructive)
     return base;
   }
 
   function normalizeLabel(label, fallback) {
-    // Allow string or object; return {en,jp}
     if (isObj(label)) {
       const en = normStr(label.en) || normStr(fallback);
       const jp = normStr(label.jp) || en;
@@ -110,36 +105,21 @@
   function normalizeNodeData(d) {
     const id = normStr(d?.id);
     if (!id) return null;
-
     const nodeType = normStr(d.nodeType) || "Component";
     const category =
       !isTrivialCategory(d.category) ? normStr(d.category) :
         (normStr(d.revitCategory) || "Uncategorized");
-
     const label = normalizeLabel(d.label, d.displayLabel ?? id);
     const displayLabel = normStr(d.displayLabel) || label.en || id;
-
-    return {
-      ...d,
-      id,
-      nodeType,
-      category,
-      label,
-      displayLabel,
-    };
+    return { ...d, id, nodeType, category, label, displayLabel };
   }
 
   function nodeRichnessScore(d) {
-    // Used only for tie-breaking: more fields/non-empty means "richer"
     if (!d) return 0;
     let score = 0;
-
-    // strong signals
     if (!isTrivialCategory(d.category)) score += 5;
     if (normStr(d.nodeType)) score += 2;
     if (isObj(d.label) && (normStr(d.label.en) || normStr(d.label.jp))) score += 4;
-
-    // extra fields
     for (const [k, v] of Object.entries(d)) {
       if (k === "id" || k === "displayLabel") continue;
       if (isMeaningful(v)) score += 1;
@@ -148,7 +128,6 @@
   }
 
   function mergeNodeData(a, b) {
-    // Order-independent merge: choose richer as base, then fill gaps from the other.
     const da = normalizeNodeData(a);
     const db = normalizeNodeData(b);
     if (!da) return db;
@@ -156,35 +135,27 @@
 
     const sa = nodeRichnessScore(da);
     const sb = nodeRichnessScore(db);
-
     const base = (sb > sa) ? db : da;
     const other = (base === da) ? db : da;
 
     const out = { ...base };
 
-    // Prefer real category over Uncategorized
     if (isTrivialCategory(out.category) && !isTrivialCategory(other.category)) out.category = other.category;
 
-    // Merge label per-lang
     out.label = {
       en: chooseBetterString(out.label?.en, other.label?.en) || out.id,
-      jp: chooseBetterString(out.label?.jp, other.label?.jp) || (chooseBetterString(out.label?.en, other.label?.en) || out.id),
+      jp: chooseBetterString(out.label?.jp, other.label?.jp) ||
+        (chooseBetterString(out.label?.en, other.label?.en) || out.id),
     };
 
-    // Fill other fields with prefer-non-empty semantics
     for (const k of Object.keys(other)) {
-      if (k === "id") continue;
-      if (k === "category") continue; // handled above
-      if (k === "label") continue;    // handled above
-      if (k === "displayLabel") continue; // recompute after merge
+      if (k === "id" || k === "category" || k === "label" || k === "displayLabel") continue;
       out[k] = mergeValuePreferNonEmpty(out[k], other[k]);
     }
 
-    // Recompute displayLabel (prefer current out.displayLabel but ensure not empty)
     const dl = chooseBetterString(base.displayLabel, other.displayLabel);
     out.displayLabel = dl || out.label.en || out.id;
 
-    // Ensure required fields
     out.nodeType = normStr(out.nodeType) || "Component";
     out.category = normStr(out.category) || "Uncategorized";
     out.label = normalizeLabel(out.label, out.displayLabel ?? out.id);
@@ -205,26 +176,13 @@
     const source = normStr(d?.source);
     const target = normStr(d?.target);
     if (!source || !target) return null;
-
     const type = normStr(d.type) || "RelatedTo";
     const dimension = normStr(d.dimension) || "System";
     const directional = (typeof d.directional === "boolean") ? d.directional : !!d.directional;
-
-    // normalize phase as array
     let phase = d.phase ?? [];
     if (typeof phase === "string") phase = phase.split(/\n/).map(normStr).filter(Boolean);
     if (!Array.isArray(phase)) phase = [];
-
-    return {
-      ...d,
-      id: normStr(d.id) || "",
-      type,
-      dimension,
-      source,
-      target,
-      directional,
-      phase,
-    };
+    return { ...d, id: normStr(d.id) || "", type, dimension, source, target, directional, phase };
   }
 
   function mergeEdgeData(a, b) {
@@ -234,25 +192,18 @@
     if (!eb) return ea;
 
     const out = { ...ea };
-
-    // stable merge: union phase
     out.phase = mergeArrays(ea.phase ?? [], eb.phase ?? []);
-
-    // prefer non-empty strings / richer notes
     out.owner = chooseBetterString(ea.owner, eb.owner);
     out.risk = chooseBetterString(ea.risk, eb.risk);
     out.confidence = chooseBetterString(ea.confidence, eb.confidence);
     out.notes = chooseBetterString(ea.notes, eb.notes);
 
-    // merge any other fields, prefer non-empty
     for (const k of Object.keys(eb)) {
       if (k === "id" || k === "phase" || k === "owner" || k === "risk" || k === "confidence" || k === "notes") continue;
       out[k] = mergeValuePreferNonEmpty(out[k], eb[k]);
     }
 
-    // keep a real id if either has it (stable)
     out.id = chooseBetterString(ea.id, eb.id);
-
     return out;
   }
 
@@ -272,18 +223,13 @@
     }
   }
 
-  // ---------- Merge ONEXUS JSON graphs (legacy fallback only) ----------
   async function mergeJsonFiles(jsonFiles) {
-    // 0) stable file ordering to reduce nondeterminism (but merge is order-independent anyway)
     const files = [...jsonFiles].sort((a, b) => String(a.name).localeCompare(String(b.name)));
-
-    // 1) parse all
     const texts = await Promise.all(files.map((f) => f.text()));
     const parsed = texts.map((t) => JSON.parse(t));
 
-    // 2) normalize each graph if normalizer exists (safe canonicalization)
     const normFn = window.ONEXUS?.import?.normalizeGraph;
-    const graphs = parsed.map((g, i) => {
+    const graphs = parsed.map((g) => {
       try {
         if (typeof normFn === "function") {
           return normFn(g, {
@@ -292,37 +238,32 @@
             sourceKind: "import",
           });
         }
-      } catch { /* fall through */ }
+      } catch { }
       return g;
     });
 
-    // 3) merge nodes by id (order-independent)
-    const nodeMap = new Map(); // id -> nodeWrap
+    const nodeMap = new Map();
     for (const g of graphs) {
       for (const n of (g?.elements?.nodes ?? [])) {
         const d0 = n?.data ?? {};
         const id = normStr(d0.id);
         if (!id) continue;
-
         const prev = nodeMap.get(id);
         const mergedData = mergeNodeData(prev?.data, d0);
         nodeMap.set(id, { data: mergedData });
       }
     }
 
-    // 4) merge edges by signature (order-independent)
-    const edgeMap = new Map(); // signature -> edgeData
+    const edgeMap = new Map();
     for (const g of graphs) {
       for (const e of (g?.elements?.edges ?? [])) {
         const d0 = normalizeEdgeData(e?.data ?? {});
         if (!d0) continue;
         const sig = edgeSignature(d0);
-
         const prev = edgeMap.get(sig);
         const merged = prev ? mergeEdgeData(prev, d0) : d0;
         edgeMap.set(sig, merged);
 
-        // ensure endpoints exist in nodeMap (schema-friendly)
         if (!nodeMap.has(d0.source)) {
           nodeMap.set(d0.source, { data: normalizeNodeData({ id: d0.source, nodeType: "Component", category: "Uncategorized", label: { en: d0.source, jp: d0.source }, displayLabel: d0.source }) });
         }
@@ -335,8 +276,7 @@
     const edges = Array.from(edgeMap.values());
     ensureUniqueEdgeIds(edges);
 
-    // 5) build merged graph + meta (safe; core loader will re-normalize if present)
-    const merged = {
+    return {
       meta: {
         schema: "onexus",
         importer: "json-merge",
@@ -350,11 +290,8 @@
         edges: edges.map((d) => ({ data: d })),
       },
     };
-
-    return merged;
   }
 
-  // ---------- Import-as chooser ----------
   function openImporterChoiceDialog(candidates, files) {
     return new Promise((resolve, reject) => {
       const overlay = document.createElement("div");
@@ -367,6 +304,7 @@
         justifyContent: "center",
         zIndex: 10070,
       });
+
       const panel = document.createElement("div");
       Object.assign(panel.style, {
         background: "#fff",
@@ -379,6 +317,7 @@
         fontSize: "13px",
         color: "#111",
       });
+
       const fileList = (files ?? []).map((f) => f?.name).filter(Boolean).join(", ");
       const rows = candidates
         .map((c) => {
@@ -414,6 +353,7 @@
           </button>
         </div>
       `;
+
       overlay.appendChild(panel);
       document.body.appendChild(overlay);
 
@@ -443,12 +383,10 @@
     });
   }
 
-  // ---------- Unified loader ----------
   async function handleUnifiedLoad(event) {
     const files = Array.from(event?.target?.files ?? []);
     if (!files.length) return;
 
-    // 1) Plugin import (SINGLE SOURCE OF TRUTH if any candidate exists)
     const candidatesFn = window.ONEXUS?.plugins?.getImporterCandidates;
     const importAsFn = window.ONEXUS?.plugins?.importFilesAs;
 
@@ -462,7 +400,6 @@
       }
 
       if (candidates.length > 0) {
-        // IMPORTANT: if we have candidates, we do NOT fall back to legacy.
         try {
           if (candidates.length === 1) {
             const chosen = candidates[0];
@@ -476,7 +413,6 @@
             return;
           }
 
-          // candidates.length > 1
           const chosenId = await openImporterChoiceDialog(candidates, files);
           const chosen = candidates.find((c) => c.id === chosenId);
           const res = await importAsFn(chosenId, files, {
@@ -492,21 +428,19 @@
           window.showTransientMessage?.(`Imported: ${chosen?.label ?? chosenId}`);
           return;
         } catch (e) {
-          // user cancelled chooser OR unexpected error
           const msg = String(e?.message ?? e).toLowerCase();
           if (msg.includes("cancel")) {
             window.showTransientMessage?.("Import cancelled", 1400);
-            return; // no legacy fallback
+            return;
           }
           console.error("[ONEXUS] Import flow error:", e);
           alert("Import failed: " + (e?.message ?? e));
-          return; // no legacy fallback
+          return;
         }
       }
-      // candidates.length === 0 -> proceed to legacy fallback below
+      // else: no candidates -> legacy fallback below
     }
 
-    // 2) Legacy fallback: JSON / IFC / CSV (only if no plugin candidate exists)
     const jsonFiles = files.filter((f) => f.name.toLowerCase().endsWith(".json"));
     const csvFiles = files.filter((f) => f.name.toLowerCase().endsWith(".csv"));
     const ifcFiles = files.filter((f) => {
@@ -537,7 +471,6 @@
 
     if (!csvFiles.length) return;
 
-    // Prefer plugin legacy helpers if present
     if (window.ONEXUS_EDGESCSV?.importFiles) {
       try { await window.ONEXUS_EDGESCSV.importFiles(csvFiles); return; }
       catch { /* continue */ }

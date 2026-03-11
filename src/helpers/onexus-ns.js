@@ -25,9 +25,13 @@
     return String(s ?? "").replace(/[^\w\-:.]+/g, "_");
   };
 
-  // ✅ Correct HTML escape (used by loaders, dialogs, details renderers)
+  // ✅ Correct HTML escape (single source of truth)
+  // NOTE: returns a safe string for innerHTML usage.
   U.escapeHtml = U.escapeHtml || function escapeHtml(s) {
-    return String(s ?? "")
+    const str = String(s ?? "");
+    // Fast path: no special chars
+    if (!/[&<>"']/.test(str)) return str;
+    return str
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -35,6 +39,7 @@
       .replace(/'/g, "&#39;");
   };
 
+  // Simple event bus
   root.bus = root.bus || {
     on(type, fn) {
       document.addEventListener("onexus:" + type, (e) => fn(e.detail));
