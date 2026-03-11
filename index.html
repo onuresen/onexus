@@ -102,15 +102,16 @@
     <div class="tool-group">
       <label>View</label>
       <select id="layoutSelect" onchange="applyLayout(this.value)">
-        <option value="default">Free</option>
-        <option value="tree_nested">Tree (Nested)</option>
-        <option value="system">System</option>
-        <option value="responsibility">Responsibility</option>
-        <option value="spatial">Spatial</option>
-        <option value="category_lanes">Category Swimlanes</option>
+        <option value="default">Free (Auto)</option>
+        <option value="tree_nested">Hierarchy (Nested) (Nested)</option>
+        <option value="system">Domain Focus: System</option>
+        <option value="responsibility">Domain Focus: Responsibility</option>
+        <option value="spatial">Domain Focus: Spatial </option>
+        <option value="category_lanes">Swimlanes (By Category) </option>
         <option value="degree_rings">Degree Rings</option>
-        <option value="dependency_flow">Dependency Flow</option>
-        <option value="assembly_chains">Assembly Chains</option>
+        <option value="dependency_flow">Flow (Directed)</option>
+        <option value="assembly_chains">Chains (Assembly)</option>
+        <option value="compact_grid">Compact Grid</option>
       </select>
     </div>
     <div class="tool-group">

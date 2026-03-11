@@ -1,15 +1,48 @@
 /* =========================================
- ONEXUS Common JS (shared by both layouts)
- - window resize -> cy.resize()
- - keyboard shortcuts (F/C/R, Undo/Redo, delete, Alt+D)
+ ONEXUS Common JS (shared)
+ PATCH:
+ - Wrap fitView/centerView/resetView so they always call cy.resize() first.
+ - Fixes “Fit stops working after a view hides #cy”.
 ========================================= */
 (function () {
-    window.addEventListener("resize", () => {
-        if (window.cy && typeof window.cy.resize === "function") {
-            window.cy.resize();
+    function safeResize() {
+        try { window.cy?.resize?.(); } catch { }
+    }
+
+    function wrapOnce(name) {
+        const fn = window[name];
+        if (typeof fn !== "function") return;
+        if (fn.__onxWrapped) return;
+        function wrapped(...args) {
+            safeResize();
+            // next paint also helps after display:none -> block
+            requestAnimationFrame(() => safeResize());
+            return fn.apply(this, args);
         }
+        wrapped.__onxWrapped = true;
+        window[name] = wrapped;
+    }
+
+    // Existing: keep cy responsive on resize
+    window.addEventListener("resize", () => {
+        safeResize();
+        requestAnimationFrame(() => safeResize());
     });
 
+    // Wrap navigation helpers (buttons call these)
+    function bootWrap() {
+        wrapOnce("fitView");
+        wrapOnce("centerView");
+        wrapOnce("resetView");
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", bootWrap);
+    } else {
+        setTimeout(bootWrap, 0);
+    }
+
+    // Keep your existing hotkeys + undo logic (original content kept)
     document.addEventListener("keydown", (e) => {
         const tag = (e.target ?? {}).tagName;
         if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
@@ -30,7 +63,6 @@
             window.ONEXUS_UNDO?.undo?.();
             return;
         }
-
         if ((mod && e.shiftKey && key === "z") || (mod && key === "y")) {
             e.preventDefault();
             window.ONEXUS_UNDO?.redo?.();
