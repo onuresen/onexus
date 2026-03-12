@@ -14,7 +14,7 @@ Works for both layouts without duplicating IDs
         let host = $("legendControls");
         if (host) return host;
 
-        // If legendOverlay exists, create legendControls inside it (matches layout-leftRail.css) [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/layout-leftRail.css)[1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-ns.js)
+        // If legendOverlay exists, create legendControls inside it (matches layout-leftRail.css)
         const overlay = $("legendOverlay");
         if (overlay) {
             host = document.createElement("div");
@@ -96,7 +96,7 @@ Works for both layouts without duplicating IDs
 
         if (edge && edge.cb) host.appendChild(edge.label);
         else if (edge instanceof HTMLInputElement) {
-            // Wrap existing input in a label for consistent styling in legendControls [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/layout-leftRail.css)
+            // Wrap existing input in a label for consistent styling in legendControls
             const lab = document.createElement("label");
             lab.appendChild(edge);
             lab.appendChild(document.createTextNode(" Show edge labels"));
@@ -114,11 +114,11 @@ Works for both layouts without duplicating IDs
         const edgeCb = $("toggleEdgeLabels");
         const nodeCb = $("toggleNodeLabels");
 
-        // Wire handlers to state methods (provided by graph-core.state.js) [4](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
+        // Wire handlers to state methods (provided by graph-core.state.js)
         wire(edgeCb, (checked) => window.setEdgeLabelVisibility?.(checked));
         wire(nodeCb, (checked) => window.setNodeLabelVisibility?.(checked));
 
-        // Sync initial state (graph-core.state.js keeps showEdgeLabels/showNodeLabels) [4](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
+        // Sync initial state (graph-core.state.js keeps showEdgeLabels/showNodeLabels)
         syncFromState(edgeCb, nodeCb);
     }
 

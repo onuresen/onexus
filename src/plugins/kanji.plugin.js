@@ -1,7 +1,7 @@
 /* =========================================================
    ONEXUS Plugin — Kanji Graph (JLPT + nodeType styling)
    - Adds a color mode: "kanji_jlpt"
-   - Uses data.level (N1..N5) for Kanji nodes (sample uses "N2") [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus_kanji_n2_20.json)
+   - Uses data.level (N1..N5) for Kanji nodes (sample uses "N2")
    - Gives Radicals/Phonetics stable colors
 ========================================================= */
 (function () {
@@ -36,7 +36,7 @@
         const nt = String(d.nodeType ?? "").trim();
 
         if (nt === "Kanji") {
-            const lvl = normLevel(d.level); // sample: "N2" [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus_kanji_n2_20.json)
+            const lvl = normLevel(d.level); // sample: "N2"
             return JLPT_COLORS[lvl] ?? JLPT_COLORS[""];
         }
         if (nt === "Radical") return TYPE_COLORS.Radical;
@@ -62,7 +62,7 @@
         title: "Kanji Graph Tools",
         register(api) {
             // If you implemented the color mode registry wrapper earlier, prefer it.
-            // Otherwise, just use style hooks directly (works with current core). [3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.bindings.js)
+            // Otherwise, just use style hooks directly (works with current core).
             if (ONX.style?.registerColorMode) {
                 ONX.style.registerColorMode("kanji_jlpt", {
                     label: "Kanji: JLPT levels",

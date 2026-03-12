@@ -625,7 +625,7 @@
     // -----------------------------
     function ensureUI() {
         const panel = document.getElementById("panelAnim");
-        if (!panel) return; // panel exists in your layout [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/layout-leftRail.js)
+        if (!panel) return; // panel exists in your layout
         if (panel.querySelector("#onxWaterFlowPanel")) return;
 
         const wrap = document.createElement("div");
@@ -741,7 +741,7 @@
 
         window.addEventListener("resize", () => { if (CFG.enabled) resizeCanvas(); });
 
-        // Graph lifecycle events exist via bus [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/manifest.json)[3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.perf.labelsDuringLoad.js)
+        // Graph lifecycle events exist via bus
         try {
             ONX.bus?.on?.("graphWillLoad", () => { edgeCache.clear(); });
             ONX.bus?.on?.("graphLoaded", () => { if (CFG.enabled) { initFromGraph(); edgeCache.clear(); } });

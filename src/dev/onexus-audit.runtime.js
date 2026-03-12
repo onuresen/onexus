@@ -92,41 +92,41 @@ ONEXUS – Runtime Module Audit (NO SIDE EFFECTS)
     function checkGlobals() {
         const checks = [
             // Core graph / state
-            { name: "cy", ok: () => exists(window.cy) && isFn(window.cy.nodes) }, // cy is created in graph-core.state.js [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
-            { name: "__onexus_state", ok: () => exists(window.__onexus_state) && typeof window.__onexus_state === "object" }, // exported in graph-core.state.js [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
-            { name: "setLanguage", ok: () => isFn(window.setLanguage) }, // graph-core.state.js [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
-            { name: "applyLayout", ok: () => isFn(window.applyLayout) }, // graph-core.layouts.js [13](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.loader.js)
-            { name: "applyTheme", ok: () => isFn(window.applyTheme) }, // onexus-style.js [14](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-style.js)
-            { name: "buildRelationshipLegend", ok: () => isFn(window.buildRelationshipLegend) }, // graph-core.filters.js [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.popoverPositioner.js)
-            { name: "updateMetrics", ok: () => isFn(window.updateMetrics) }, // graph-core.filters.js [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.popoverPositioner.js)
-            { name: "onexusLoadGraph", ok: () => isFn(window.onexusLoadGraph) }, // graph-core.io.host.js [7](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/ifc-importer.js)
+            { name: "cy", ok: () => exists(window.cy) && isFn(window.cy.nodes) }, // cy is created in graph-core.state.js
+            { name: "__onexus_state", ok: () => exists(window.__onexus_state) && typeof window.__onexus_state === "object" }, // exported in graph-core.state.js
+            { name: "setLanguage", ok: () => isFn(window.setLanguage) }, // graph-core.state.js
+            { name: "applyLayout", ok: () => isFn(window.applyLayout) }, // graph-core.layouts.js
+            { name: "applyTheme", ok: () => isFn(window.applyTheme) }, // onexus-style.js
+            { name: "buildRelationshipLegend", ok: () => isFn(window.buildRelationshipLegend) }, // graph-core.filters.js
+            { name: "updateMetrics", ok: () => isFn(window.updateMetrics) }, // graph-core.filters.js
+            { name: "onexusLoadGraph", ok: () => isFn(window.onexusLoadGraph) }, // graph-core.io.host.js
 
             // Undo / editing
-            { name: "ONEXUS_UNDO", ok: () => exists(window.ONEXUS_UNDO) && isFn(window.ONEXUS_UNDO.do) }, // graph-core.undo.js [5](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/index.html)
-            { name: "openNodeWizard", ok: () => isFn(window.openNodeWizard) }, // graph-core.nodes.js [11](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.leftDock.js)
-            { name: "openEdgeWizard", ok: () => isFn(window.openEdgeWizard) }, // graph-core.context.link.js [15](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.layerWidget.js)
+            { name: "ONEXUS_UNDO", ok: () => exists(window.ONEXUS_UNDO) && isFn(window.ONEXUS_UNDO.do) }, // graph-core.undo.js
+            { name: "openNodeWizard", ok: () => isFn(window.openNodeWizard) }, // graph-core.nodes.js
+            { name: "openEdgeWizard", ok: () => isFn(window.openEdgeWizard) }, // graph-core.context.link.js
 
             // Layering
-            { name: "getLayerMode", ok: () => isFn(window.getLayerMode) }, // graph-core.state.js [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
-            { name: "setLayerMode", ok: () => isFn(window.setLayerMode) }, // graph-core.state.js [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
-            { name: "registerLayerMode", ok: () => isFn(window.registerLayerMode) }, // graph-core.state.js [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
-            { name: "ONEXUS_LAYERS", ok: () => exists(window.ONEXUS_LAYERS) }, // graph-core.state.js [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
+            { name: "getLayerMode", ok: () => isFn(window.getLayerMode) }, // graph-core.state.js
+            { name: "setLayerMode", ok: () => isFn(window.setLayerMode) }, // graph-core.state.js
+            { name: "registerLayerMode", ok: () => isFn(window.registerLayerMode) }, // graph-core.state.js
+            { name: "ONEXUS_LAYERS", ok: () => exists(window.ONEXUS_LAYERS) }, // graph-core.state.js
 
             // Filters / orphan logic
-            { name: "ONEXUS_FILTERS", ok: () => exists(window.ONEXUS_FILTERS) && isFn(window.ONEXUS_FILTERS.applyHideIsolatedNodesFromVisibleEdges) }, // graph-core.filters.js [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.popoverPositioner.js)
+            { name: "ONEXUS_FILTERS", ok: () => exists(window.ONEXUS_FILTERS) && isFn(window.ONEXUS_FILTERS.applyHideIsolatedNodesFromVisibleEdges) }, // graph-core.filters.js
 
             // Compare / path / lifecycle / nodevis / importers
-            { name: "ONEXUS_COMPARE", ok: () => exists(window.ONEXUS_COMPARE) && isFn(window.ONEXUS_COMPARE.compareAB) }, // graph-core.compare.js [9](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/layout-leftRail.js)
-            { name: "onexusPath", ok: () => exists(window.onexusPath) && isFn(window.onexusPath.shortestTo) }, // graph-core.path.js [8](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/gd-importer.js)
-            { name: "ONEXUS_LIFECYCLE", ok: () => exists(window.ONEXUS_LIFECYCLE) && isFn(window.ONEXUS_LIFECYCLE.setPhase) }, // graph-core.layerMode.lifecycle.js [10](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.nodeVisWidget.js)
-            { name: "ONEXUS_NODEVIS", ok: () => exists(window.ONEXUS_NODEVIS) && isFn(window.ONEXUS_NODEVIS.toggleCategoryVisible) }, // graph-ui.nodeVisWidget.js [10](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.nodeVisWidget.js)
-            { name: "IMPORT_GD", ok: () => exists(window.IMPORT_GD) && isFn(window.IMPORT_GD.importFromPayload) }, // gd-importer.js [8](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/gd-importer.js)
-            { name: "ONEXUS_IFC", ok: () => exists(window.ONEXUS_IFC) && isFn(window.ONEXUS_IFC.loadIFC) }, // ifc-importer.js [7](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/ifc-importer.js)
-            { name: "ONEXUS_COBie", ok: () => exists(window.ONEXUS_COBie) && isFn(window.ONEXUS_COBie.loadCOBieCSVs) }, // cobie-importer.js [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
+            { name: "ONEXUS_COMPARE", ok: () => exists(window.ONEXUS_COMPARE) && isFn(window.ONEXUS_COMPARE.compareAB) }, // graph-core.compare.js
+            { name: "onexusPath", ok: () => exists(window.onexusPath) && isFn(window.onexusPath.shortestTo) }, // graph-core.path.js
+            { name: "ONEXUS_LIFECYCLE", ok: () => exists(window.ONEXUS_LIFECYCLE) && isFn(window.ONEXUS_LIFECYCLE.setPhase) }, // graph-core.layerMode.lifecycle.js
+            { name: "ONEXUS_NODEVIS", ok: () => exists(window.ONEXUS_NODEVIS) && isFn(window.ONEXUS_NODEVIS.toggleCategoryVisible) }, // graph-ui.nodeVisWidget.js
+            { name: "IMPORT_GD", ok: () => exists(window.IMPORT_GD) && isFn(window.IMPORT_GD.importFromPayload) }, // gd-importer.js
+            { name: "ONEXUS_IFC", ok: () => exists(window.ONEXUS_IFC) && isFn(window.ONEXUS_IFC.loadIFC) }, // ifc-importer.js
+            { name: "ONEXUS_COBie", ok: () => exists(window.ONEXUS_COBie) && isFn(window.ONEXUS_COBie.loadCOBieCSVs) }, // cobie-importer.js
 
             // Shared UI helpers
-            { name: "ONEXUS.ui.positionPopover", ok: () => isFn(safeGet("ONEXUS.ui.positionPopover")) }, // graph-ui.popoverPositioner.js [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.popoverPositioner.js)
-            { name: "handleUnifiedLoad", ok: () => isFn(window.handleUnifiedLoad) }, // graph-ui.loader.js [13](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.loader.js)
+            { name: "ONEXUS.ui.positionPopover", ok: () => isFn(safeGet("ONEXUS.ui.positionPopover")) }, // graph-ui.popoverPositioner.js
+            { name: "handleUnifiedLoad", ok: () => isFn(window.handleUnifiedLoad) }, // graph-ui.loader.js
         ];
 
         return checks.map((c) => {
@@ -138,7 +138,7 @@ ONEXUS – Runtime Module Audit (NO SIDE EFFECTS)
     }
 
     function checkDomAnchors() {
-        // These ids are referenced directly by core/UI modules (legend/metrics loader etc.) [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.popoverPositioner.js)[3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-ns.js)[4](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.tour.js)
+        // These ids are referenced directly by core/UI modules (legend/metrics loader etc.)
         const ids = [
             "cy",
             "canvas-wrap",
@@ -217,7 +217,7 @@ ONEXUS – Runtime Module Audit (NO SIDE EFFECTS)
     }
 
     function checkLegendAndMetricsHealth() {
-        // Core renders to #legend and #metrics. If missing, UI appears "gone". [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.popoverPositioner.js)[3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-ns.js)[4](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.tour.js)
+        // Core renders to #legend and #metrics. If missing, UI appears "gone".
         const legend = el("legend");
         const metrics = el("metrics");
         const okLegend = !!legend;
@@ -256,7 +256,7 @@ ONEXUS – Runtime Module Audit (NO SIDE EFFECTS)
     }
 
     function checkLayerWidgetHealth() {
-        // layer widget uses these ids in UI module and common css [15](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.layerWidget.js)[12](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-core.io.export.js)
+        // layer widget uses these ids in UI module and common css
         const fab = el("onx-layer-fab");
         const pop = el("onx-layer-pop");
         return {
