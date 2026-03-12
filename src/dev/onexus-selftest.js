@@ -71,20 +71,20 @@
 
     async function contractChecks() {
         // Core existence
-        ensure(!!window.cy, "Missing window.cy (Cytoscape not initialized).");                        // core boot [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.tour.js)
-        ensure(can(window.onexusLoadGraph), "Missing window.onexusLoadGraph (host loader).");         // loader contract [7](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/kanji.plugin.js)
-        ensure(can(window.setLanguage), "Missing window.setLanguage.");                               // core contract [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.tour.js)
-        ensure(can(window.applyLayout), "Missing window.applyLayout.");                               // layouts contract [8](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.layerWidget.js)
-        ensure(can(window.applyTheme), "Missing window.applyTheme.");                                 // theme contract [9](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.nodeVisWidget.js)
+        ensure(!!window.cy, "Missing window.cy (Cytoscape not initialized).");                        // core boot
+        ensure(can(window.onexusLoadGraph), "Missing window.onexusLoadGraph (host loader).");         // loader contract
+        ensure(can(window.setLanguage), "Missing window.setLanguage.");                               // core contract
+        ensure(can(window.applyLayout), "Missing window.applyLayout.");                               // layouts contract
+        ensure(can(window.applyTheme), "Missing window.applyTheme.");                                 // theme contract
 
         // Plugin system
-        ensure(!!window.ONEXUS, "Missing window.ONEXUS namespace.");                                  // namespace [5](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/cobie-importer.js)
-        ensure(!!window.ONEXUS.plugins, "Missing ONEXUS.plugins.");                                   // plugin core [2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/gd-importer.js)
-        ensure(can(window.ONEXUS.plugins.getImporterCandidates), "Missing ONEXUS.plugins.getImporterCandidates."); // loader depends [3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.loader.js)
-        ensure(can(window.ONEXUS.plugins.importFilesAs), "Missing ONEXUS.plugins.importFilesAs.");    // loader depends [3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.loader.js)
+        ensure(!!window.ONEXUS, "Missing window.ONEXUS namespace.");                                  // namespace
+        ensure(!!window.ONEXUS.plugins, "Missing ONEXUS.plugins.");                                   // plugin core
+        ensure(can(window.ONEXUS.plugins.getImporterCandidates), "Missing ONEXUS.plugins.getImporterCandidates."); // loader depends
+        ensure(can(window.ONEXUS.plugins.importFilesAs), "Missing ONEXUS.plugins.importFilesAs.");    // loader depends
 
         // Unified loader entrypoint
-        ensure(can(window.handleUnifiedLoad), "Missing window.handleUnifiedLoad.");                   // UI binds to it [10](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.bindings.js)[3](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.loader.js)
+        ensure(can(window.handleUnifiedLoad), "Missing window.handleUnifiedLoad.");                   // UI binds to it
 
         // escapeHtml must actually escape
         try {

@@ -2,7 +2,7 @@
  ONEXUS Plugin — Chord View (D3 edge-bundling)
 
  SET D PATCH:
- - Do NOT set #cy to display:none (this breaks Cytoscape viewport/fit/layout). [1](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-chordview.plugin.js)[2](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-compat.js)
+ - Do NOT set #cy to display:none (this breaks Cytoscape viewport/fit/layout).
  - Instead: keep #cy mounted, set opacity:0 + pointer-events:none while chord is active.
  - Hide/show minimap + overlays without affecting cy size.
  - Preserve selection sync with Cytoscape nodes (pin ↔ select).

@@ -42,7 +42,7 @@
 
     // ---------------------------------------------------------
     // ✅ Core label map integration (single target)
-    // graph-core.state.js defines window.__onexus_labels. [4](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.mobile.filepicker.js)
+    // graph-core.state.js defines window.__onexus_labels.
     // ---------------------------------------------------------
     function getCoreLabelsMap() {
         // canonical
@@ -308,7 +308,7 @@
 
     // ---------------------------------------------------------
     // Apply pre-registered plugin edge labels once core is ready
-    // (core defines __onexus_labels in graph-core.state.js). [4](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.mobile.filepicker.js)
+    // (core defines __onexus_labels in graph-core.state.js).
     // ---------------------------------------------------------
     function applyAllQueuedLabelsIfCoreReady() {
         const core = getCoreLabelsMap();
@@ -323,7 +323,7 @@
         return true;
     }
 
-    // Call once after DOM boot (core state comes after onexus-style + graph-core.state in index.html) [7](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/onexus-edgescsv.plugin.js)[4](https://obayashig-my.sharepoint.com/personal/u52119_obayashi_co_jp/Documents/Microsoft%20Copilot%20%E3%83%81%E3%83%A3%E3%83%83%E3%83%88%20%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB/graph-ui.mobile.filepicker.js)
+    // Call once after DOM boot (core state comes after onexus-style + graph-core.state in index.html)
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => setTimeout(applyAllQueuedLabelsIfCoreReady, 0));
     } else {
