@@ -168,6 +168,10 @@
       e.data("displayType", LABELS[lang]?.[t] ?? t);
     });
     window.buildRelationshipLegend?.();
+    // Emit languageChanged event for plugins/views
+    try {
+      window.ONEXUS?.bus?.emit?.("languageChanged", lang);
+    } catch { }
   }
 
   // ---- label visibility

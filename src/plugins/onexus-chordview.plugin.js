@@ -381,13 +381,20 @@
         ensureViewOption();
         wrapApplyLayoutOnce();
         applyMetaConfig(window.__onexus_meta);
-
         hookGraphEvents();
 
         try {
             bus?.on?.("graphLoaded", (payload) => {
                 applyMetaConfig(payload?.meta || window.__onexus_meta);
                 if (runtime.active) refreshChord();
+            });
+        } catch { }
+
+        try {
+            bus?.on?.("languageChanged", (lang) => {
+                if (runtime.active && runtime.chart) {
+                    runtime.chart.updateLanguage(lang);
+                }
             });
         } catch { }
     }
