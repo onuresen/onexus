@@ -6,6 +6,7 @@
         "gd-importer.js",
         "kanji.plugin.js",
         "waterflow.plugin.js",
-        "onexus-chordview.plugin.js"
+        "onexus-chordview.plugin.js",
+        "onexus-imagebadges.plugin.js"
     ]
 }

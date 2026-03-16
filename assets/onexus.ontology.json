@@ -1,5 +1,107 @@
 {
     "_purpose": "Human-readable rules for creating ONEXUS JSONs",
+    "dataFields": {
+        "commonNodeData": {
+            "id": {
+                "type": "string",
+                "required": true,
+                "meaning": "Unique node id (stable)"
+            },
+            "nodeType": {
+                "type": "string",
+                "required": true,
+                "meaning": "Node semantic type (System/Element/Topic/...)"
+            },
+            "category": {
+                "type": "string",
+                "required": true,
+                "meaning": "Category (used for grouping + styling)"
+            },
+            "label": {
+                "type": [
+                    "object",
+                    "string"
+                ],
+                "required": false,
+                "meaning": "Localized label object: {en,jp,tr,...} or a string"
+            },
+            "displayLabel": {
+                "type": "string",
+                "required": false,
+                "meaning": "Rendered label (normally derived from label + language)"
+            }
+        },
+        "thumbnailNode": {
+            "img": {
+                "type": "string",
+                "required": false,
+                "meaning": "Thumbnail image URL or data URI (e.g., ./assets/p.png or data:image/png;base64,...)"
+            },
+            "imgFit": {
+                "type": "string",
+                "required": false,
+                "allowed": [
+                    "cover",
+                    "contain",
+                    "none"
+                ],
+                "default": "cover",
+                "meaning": "How the image fits inside the node shape"
+            },
+            "imgShowLabel": {
+                "type": "boolean",
+                "required": false,
+                "default": false,
+                "meaning": "If true, node label is shown (typically at bottom); otherwise hidden for photo nodes"
+            },
+            "imgRepeat": {
+                "type": "string",
+                "required": false,
+                "default": "no-repeat",
+                "meaning": "Background image repeat behavior"
+            },
+            "imgPosX": {
+                "type": "string",
+                "required": false,
+                "default": "50%",
+                "meaning": "Background image horizontal position (CSS percentage)"
+            },
+            "imgPosY": {
+                "type": "string",
+                "required": false,
+                "default": "50%",
+                "meaning": "Background image vertical position (CSS percentage)"
+            }
+        },
+        "badgeIcon": {
+            "badgeImg": {
+                "type": "string",
+                "required": false,
+                "meaning": "Badge image URL or data URI (drawn as overlay). If present, preferred over badgeText."
+            },
+            "badgeText": {
+                "type": "string",
+                "required": false,
+                "meaning": "Text fallback badge (e.g., ★, !, CEO). Used if badgeImg missing or still loading."
+            },
+            "badgeSize": {
+                "type": "number",
+                "required": false,
+                "default": 22,
+                "meaning": "Badge diameter in px"
+            },
+            "badgeBg": {
+                "type": "string",
+                "required": false,
+                "meaning": "Badge background color (CSS color string)"
+            },
+            "badgeFg": {
+                "type": "string",
+                "required": false,
+                "meaning": "Badge foreground color (text color, CSS color string)"
+            }
+        }
+    },
     "nodeTypes": {
         "System": {
             "meaning": "High-level system or framework",
@@ -13,6 +115,10 @@
                 "nodeType",
                 "category",
                 "label"
+            ],
+            "optionalDataFields": [
+                "thumbnailNode.*",
+                "badgeIcon.*"
             ]
         },
         "Element": {
@@ -29,6 +135,10 @@
                 "nodeType",
                 "category",
                 "label"
+            ],
+            "optionalDataFields": [
+                "thumbnailNode.*",
+                "badgeIcon.*"
             ]
         },
         "Topic": {
@@ -49,6 +159,30 @@
                 "id",
                 "nodeType",
                 "category"
+            ],
+            "optionalDataFields": [
+                "badgeIcon.*"
+            ]
+        },
+        "Person": {
+            "meaning": "Person node for org chart / profile thumbnail use cases (optional; not required by core)",
+            "categories": [
+                "Person",
+                "Role",
+                "TeamMember"
+            ],
+            "mustHave": [
+                "id",
+                "nodeType",
+                "category",
+                "label"
+            ],
+            "optionalDataFields": [
+                "thumbnailNode.*",
+                "badgeIcon.*"
+            ],
+            "notes": [
+                "You can also keep nodeType as Organization/Element and still use img/badge fields. Person is purely a convenience classification."
             ]
         }
     },
@@ -83,6 +217,20 @@
             ],
             "to": [
                 "Capability"
+            ],
+            "directional": true
+        },
+        "ReportsTo": {
+            "meaning": "Org chart relation (person -> manager)",
+            "from": [
+                "Person",
+                "Element",
+                "System"
+            ],
+            "to": [
+                "Person",
+                "Element",
+                "System"
             ],
             "directional": true
         }

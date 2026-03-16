@@ -5,10 +5,14 @@
  - Color mode registry: ONEXUS.style.registerColorMode()
  - UI sync: auto inject color modes into #colorModeSelect
 
- SET E PATCH:
- - Formalize ColorMode registry as FIRST-CLASS (no plugin monkey-patching needed)
- - Add ONEXUS.style.syncColorModeSelect() and auto-run on registration
+ SET E (existing):
+ - Formalize ColorMode registry as FIRST-CLASS
+ - Add ONEXUS.style.syncColorModeSelect()
  - Provide unified label-policy helpers so SAFE MODE and PERF don't fight
+
+ SET F (this patch):
+ - Thumbnail nodes (node.data.img) with minimal impact
+ - Image rendering policy + preference toggle
 ========================================================= */
 
 /* Theme palettes */
@@ -66,9 +70,11 @@ window.__onexus_styleHooks = window.__onexus_styleHooks || {
 function setStyleHooks(partial = {}) {
   window.__onexus_styleHooks = window.__onexus_styleHooks || {};
   Object.assign(window.__onexus_styleHooks, partial);
+
   const cy = window.cy;
   NEXUS_STYLE = buildStyle(currentTheme);
   if (cy?.style) cy.style(NEXUS_STYLE);
+
   window.buildRelationshipLegend?.();
 }
 
@@ -78,9 +84,11 @@ function clearStyleHooks() {
   window.__onexus_styleHooks.edgeLabelFn = null;
   window.__onexus_styleHooks.nodeColorFn = null;
   window.__onexus_styleHooks.edgeColorFn = null;
+
   const cy = window.cy;
   NEXUS_STYLE = buildStyle(currentTheme);
   if (cy?.style) cy.style(NEXUS_STYLE);
+
   window.buildRelationshipLegend?.();
 }
 
@@ -152,26 +160,43 @@ function colorFromKey(key) {
 
 // =====================================================
 // ✅ Color Mode Registry (Set E)
-// - Plugins can register: { label, nodeColorFn?, edgeColorFn? }
-// - applyColorMode() routes through registry (no plugin patching needed)
 // =====================================================
 (function () {
   window.ONEXUS = window.ONEXUS || {};
   window.ONEXUS.style = window.ONEXUS.style || {};
 
-  const registry = (window.ONEXUS.style.__colorModes = window.ONEXUS.style.__colorModes || new Map());
+  const registry = (window.ONEXUS.style.__colorModes =
+    window.ONEXUS.style.__colorModes || new Map());
+
+  function registerColorMode(key, def) {
+    const k = String(key ?? "").trim();
+    if (!k) throw new Error("registerColorMode: key required");
+    const d = def && typeof def === "object" ? def : {};
+
+    registry.set(k, {
+      key: k,
+      label: d.label ?? k,
+      nodeColorFn: (typeof d.nodeColorFn === "function") ? d.nodeColorFn : null,
+      edgeColorFn: (typeof d.edgeColorFn === "function") ? d.edgeColorFn : null,
+    });
+
+    // auto sync UI when modes change
+    try { window.ONEXUS.style.syncColorModeSelect?.(); } catch { /* noop */ }
+
+    return registry.get(k);
+  }
 
   function ensureBuiltinColorModesOnce() {
     if (registry.__builtinsApplied) return;
     registry.__builtinsApplied = true;
 
-    // Built-ins that map to existing legacy behavior:
     registerColorMode("json_category", {
       label: "JSON / Category",
       nodeColorFn: (ele, ctx) => {
         const d = ele.data?.() || {};
         const explicit = d.color || d.fill || d.bg || d.background;
         if (explicit) return explicit;
+
         const category = d.category || "";
         const nodeType = d.nodeType || d.type || "";
         return CATEGORY_COLORS[category] ?? colorFromKey(category || nodeType || d.id);
@@ -208,22 +233,6 @@ function colorFromKey(key) {
     });
   }
 
-  function registerColorMode(key, def) {
-    const k = String(key ?? "").trim();
-    if (!k) throw new Error("registerColorMode: key required");
-    const d = def && typeof def === "object" ? def : {};
-    registry.set(k, {
-      key: k,
-      label: d.label ?? k,
-      nodeColorFn: (typeof d.nodeColorFn === "function") ? d.nodeColorFn : null,
-      edgeColorFn: (typeof d.edgeColorFn === "function") ? d.edgeColorFn : null,
-    });
-
-    // Auto sync UI when modes change
-    try { window.ONEXUS.style.syncColorModeSelect?.(); } catch { }
-    return registry.get(k);
-  }
-
   function listColorModes() {
     ensureBuiltinColorModesOnce();
     return Array.from(registry.values());
@@ -234,12 +243,10 @@ function colorFromKey(key) {
     return registry.get(String(key ?? "").trim()) || null;
   }
 
-  // Expose
   window.ONEXUS.style.registerColorMode = registerColorMode;
   window.ONEXUS.style.listColorModes = listColorModes;
   window.ONEXUS.style.getColorMode = getColorMode;
 
-  // UI sync helper (dropdown options)
   window.ONEXUS.style.syncColorModeSelect = function syncColorModeSelect() {
     ensureBuiltinColorModesOnce();
     const sel = document.getElementById("colorModeSelect");
@@ -247,11 +254,8 @@ function colorFromKey(key) {
 
     const current = String(sel.value || "").trim();
     const modes = listColorModes();
-
-    // Build a stable set of existing values
     const existing = new Set([...sel.options].map(o => o.value));
 
-    // Add missing options
     for (const m of modes) {
       if (existing.has(m.key)) continue;
       const opt = document.createElement("option");
@@ -260,14 +264,13 @@ function colorFromKey(key) {
       sel.appendChild(opt);
     }
 
-    // If current value was "level" (old), map to json_category
+    // migration: "level" -> json_category
     if (current === "level") {
       sel.value = "json_category";
-      try { localStorage.setItem("onexus.colorMode", "json_category"); } catch { }
+      try { localStorage.setItem("onexus.colorMode", "json_category"); } catch { /* noop */ }
     }
   };
 
-  // Boot UI sync
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => setTimeout(window.ONEXUS.style.syncColorModeSelect, 0));
   } else {
@@ -277,19 +280,14 @@ function colorFromKey(key) {
 
 // =====================================================
 // Label Policy Helpers (Set E)
-// - Safe Mode wants edge labels OFF by default.
-// - Perf mode may temporarily force both labels off.
-// - These helpers keep behavior consistent.
 // =====================================================
 window.ONEXUS = window.ONEXUS || {};
 window.ONEXUS.style = window.ONEXUS.style || {};
 
 window.ONEXUS.style.shouldShowEdgeLabels = function shouldShowEdgeLabels() {
-  // If perf temp hide is active, ALWAYS hide.
   if (window.ONEXUS_PERF?.isTempLabelHide?.() === true) return false;
-  // If safe mode enabled, prefer hidden edge labels.
   if (window.ONEXUS_SAFE_MODE?.isEnabled?.() === true) return false;
-  // Otherwise use core state if available.
+
   const st = window.__onexus_state;
   if (st && typeof st.showEdgeLabels === "boolean") return st.showEdgeLabels;
   return true;
@@ -297,10 +295,64 @@ window.ONEXUS.style.shouldShowEdgeLabels = function shouldShowEdgeLabels() {
 
 window.ONEXUS.style.shouldShowNodeLabels = function shouldShowNodeLabels() {
   if (window.ONEXUS_PERF?.isTempLabelHide?.() === true) return false;
+
   const st = window.__onexus_state;
   if (st && typeof st.showNodeLabels === "boolean") return st.showNodeLabels;
   return true;
 };
+
+// =====================================================
+// ✅ Image Node Policy (Set F) — minimal impact
+// - Only affects nodes that have data.img
+// - Preference: localStorage "onexus.imageNodes.enabled" (default ON)
+// - Auto-off when SAFE MODE is enabled (keeps large graphs fast)
+// =====================================================
+(function () {
+  const LS_KEY = "onexus.imageNodes.enabled";
+
+  function readPref() {
+    try {
+      const v = localStorage.getItem(LS_KEY);
+      if (v === "0") return false;
+      if (v === "1") return true;
+      return true; // default ON (but no effect unless node has img)
+    } catch {
+      return true;
+    }
+  }
+
+  function writePref(v) {
+    try { localStorage.setItem(LS_KEY, v ? "1" : "0"); } catch { /* noop */ }
+  }
+
+  window.ONEXUS = window.ONEXUS || {};
+  window.ONEXUS.style = window.ONEXUS.style || {};
+
+  window.ONEXUS.style.isImageNodesEnabled = function isImageNodesEnabled() {
+    return readPref();
+  };
+
+  window.ONEXUS.style.setImageNodesEnabled = function setImageNodesEnabled(enabled) {
+    writePref(!!enabled);
+
+    // re-apply style
+    try {
+      const cy = window.cy;
+      NEXUS_STYLE = buildStyle(currentTheme);
+      if (cy?.style) cy.style(NEXUS_STYLE);
+      window.buildRelationshipLegend?.();
+      window.showTransientMessage?.(enabled ? "Thumbnails: ON" : "Thumbnails: OFF", 1400);
+    } catch { /* noop */ }
+  };
+
+  // Central policy used by style functions
+  window.ONEXUS.style.shouldRenderNodeImages = function shouldRenderNodeImages() {
+    if (!readPref()) return false;
+    if (window.ONEXUS_SAFE_MODE?.isEnabled?.() === true) return false;
+    // Perf hide is for labels; keep images unless safe mode says otherwise.
+    return true;
+  };
+})();
 
 // =====================================================
 // Color mode (active) + applyColorMode()
@@ -325,7 +377,7 @@ function nodeColorByMode(ele) {
     }
   }
 
-  // 3) legacy fallback (json_category-like)
+  // 3) legacy fallback
   const category = d.category || "";
   const nodeType = d.nodeType || d.type || "";
   return CATEGORY_COLORS[category] ?? colorFromKey(category || nodeType || d.id);
@@ -336,6 +388,9 @@ function edgeColorByType(ele) {
   return RELATIONSHIP_COLORS[t] ?? "#999";
 }
 
+// =====================================================
+// Build Cytoscape style
+// =====================================================
 function buildStyle(themeKey) {
   const T = THEMES[themeKey] ?? THEMES.light;
   const S = Number(window.__onexus_scale ?? currentScale ?? 1.0);
@@ -357,21 +412,34 @@ function buildStyle(themeKey) {
   const hooks = window.__onexus_styleHooks || {};
   const ctx = { theme: T, scale: S };
 
+  // ---- helpers for image nodes ----
+  const imgEnabled = () => window.ONEXUS?.style?.shouldRenderNodeImages?.() !== false;
+  const imgFit = (ele) => {
+    const v = String(ele.data("imgFit") ?? "cover").toLowerCase();
+    return (v === "contain" || v === "cover" || v === "none") ? v : "cover";
+  };
+  const imgShowLabel = (ele) => ele.data("imgShowLabel") === true;
+
   return [
     {
       selector: "node",
       style: {
         label: (ele) => {
           if (window.ONEXUS?.style?.shouldShowNodeLabels?.() === false) return "";
-          try { return hooks.nodeLabelFn ? hooks.nodeLabelFn(ele, ctx) : (ele.data("displayLabel") ?? ""); }
-          catch { return ele.data("displayLabel") ?? ""; }
+          try {
+            return hooks.nodeLabelFn ? hooks.nodeLabelFn(ele, ctx) : (ele.data("displayLabel") ?? "");
+          } catch {
+            return ele.data("displayLabel") ?? "";
+          }
         },
         "text-opacity": () => (window.ONEXUS?.style?.shouldShowNodeLabels?.() === false ? 0 : 1),
+
         "background-color": (ele) => {
           const base = nodeColorByMode(ele);
           try { return hooks.nodeColorFn ? hooks.nodeColorFn(ele, { ...ctx, base }) : base; }
           catch { return base; }
         },
+
         color: T.text,
         "text-wrap": "wrap",
         "text-max-width": `${clamp(90 * S, 60, 160)}px`,
@@ -386,6 +454,51 @@ function buildStyle(themeKey) {
       },
     },
 
+    // =====================================================
+    // ✅ Image nodes (thumbnail) — Set F
+    // Only triggers when node has data.img
+    // =====================================================
+    {
+      selector: "node[img]",
+      style: {
+        // IMPORTANT: background-image uses runtime policy so user can toggle it off
+        "background-image": (ele) => {
+          if (!imgEnabled()) return "none";
+          const u = ele.data("img");
+          return u ? String(u) : "none";
+        },
+        "background-fit": (ele) => imgFit(ele),
+        "background-clip": "node",
+        "background-opacity": 1,
+
+        // avoid tiling by default
+        "background-repeat": (ele) => (String(ele.data("imgRepeat") ?? "no-repeat")),
+        "background-position-x": (ele) => (String(ele.data("imgPosX") ?? "50%")),
+        "background-position-y": (ele) => (String(ele.data("imgPosY") ?? "50%")),
+        "background-width": "100%",
+        "background-height": "100%",
+
+        // give image nodes a subtle border so photos stand out on light/dark
+        "border-width": clamp(2 * Math.pow(S, 0.9), 1, 4),
+        "border-color": (themeKey === "dark") ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.10)",
+        "border-opacity": 1,
+
+        // label policy: default off for photo nodes unless imgShowLabel = true
+        label: (ele) => {
+          if (!imgShowLabel(ele)) return "";
+          if (window.ONEXUS?.style?.shouldShowNodeLabels?.() === false) return "";
+          return ele.data("displayLabel") ?? "";
+        },
+        "text-opacity": (ele) => (imgShowLabel(ele) ? 1 : 0),
+        "text-valign": (ele) => (imgShowLabel(ele) ? "bottom" : "center"),
+        "text-margin-y": (ele) => (imgShowLabel(ele) ? clamp(10 * S, 6, 16) : 0),
+        "text-background-opacity": (ele) => (imgShowLabel(ele) ? 0.65 : 0),
+        "text-background-color": (themeKey === "dark") ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.70)",
+        "text-background-padding": `${clamp(2.5 * S, 2, 7)}px`,
+      },
+    },
+
+    // Node type shapes (existing)
     { selector: 'node[nodeType = "System"]', style: { shape: "hexagon", width: 90 * S, height: 90 * S, "border-width": 1, "border-color": T.outline } },
     { selector: 'node[nodeType = "Space"]', style: { shape: "round-rectangle", width: 80 * S, height: 50 * S } },
     { selector: 'node[nodeType = "Organization"]', style: { shape: "rectangle", width: 80 * S, height: 40 * S } },
@@ -393,6 +506,7 @@ function buildStyle(themeKey) {
     { selector: 'node[nodeType = "ComponentType"]', style: { shape: "round-rectangle", width: 80 * S, height: 36 * S, "border-width": 1, "border-color": THEMES[currentTheme]?.text ?? "#111" } },
     { selector: 'node[nodeType = "PropertySet"]', style: { shape: "rectangle", width: 90 * S, height: 36 * S, "background-opacity": 0.9, "border-width": 1, "border-color": THEMES[currentTheme]?.text ?? "#111" } },
     { selector: 'node[nodeType = "Port"]', style: { shape: "vee", width: 46 * S, height: 46 * S, "border-width": 1, "border-color": THEMES[currentTheme]?.text ?? "#111" } },
+
     { selector: "node.linkTarget", style: { "border-width": 4, "border-color": "#a855f7" } },
 
     {
@@ -400,8 +514,11 @@ function buildStyle(themeKey) {
       style: {
         label: (ele) => {
           if (window.ONEXUS?.style?.shouldShowEdgeLabels?.() === false) return "";
-          try { return hooks.edgeLabelFn ? hooks.edgeLabelFn(ele, ctx) : (ele.data("displayType") ?? ele.data("type") ?? ""); }
-          catch { return ele.data("displayType") ?? ele.data("type") ?? ""; }
+          try {
+            return hooks.edgeLabelFn ? hooks.edgeLabelFn(ele, ctx) : (ele.data("displayType") ?? ele.data("type") ?? "");
+          } catch {
+            return ele.data("displayType") ?? ele.data("type") ?? "";
+          }
         },
         "text-opacity": () => (window.ONEXUS?.style?.shouldShowEdgeLabels?.() === false ? 0 : 1),
 
@@ -420,6 +537,7 @@ function buildStyle(themeKey) {
         "arrow-scale": arrowScale,
         "curve-style": "bezier",
         width: edgeW,
+
         color: T.edgeLabelText,
         "text-background-color": T.edgeLabelBg,
         "text-background-opacity": 0.9,
@@ -439,10 +557,11 @@ function buildStyle(themeKey) {
         width: clamp(1.8 * Math.pow(S, 0.9), 1, 4),
         opacity: 0.75,
         "target-arrow-shape": (ele) => (ele.data("directional") ? "triangle" : "none"),
-        "arrow-scale": clamp(0.9 * Math.pow(S, 0.9), 0.6, 1.3)
-      }
+        "arrow-scale": clamp(0.9 * Math.pow(S, 0.9), 0.6, 1.3),
+      },
     },
 
+    // Relationship styles (existing)
     { selector: 'edge[type = "PartOfSystem"]', style: { "line-style": "dotted", width: edgeWThin, opacity: 0.8 } },
     { selector: 'edge[confidence = "Inferred"]', style: { "line-style": "dashed", opacity: 0.6 } },
     { selector: 'edge[type = "OfType"]', style: { "line-style": "dashed", width: edgeWThin } },
@@ -452,9 +571,9 @@ function buildStyle(themeKey) {
     { selector: 'edge[type = "PortOf"]', style: { "line-style": "solid", width: edgeWThin } },
     { selector: 'edge[type = "FillsOpeningIn"]', style: { "line-style": "solid", width: clamp(3 * Math.pow(S, 0.9), 2, 6) } },
 
+    // selection & highlights (existing)
     { selector: "node:selected", style: { "border-width": clamp(5 * Math.pow(S, 0.85), 3, 8), "border-color": "#22c55e", "border-opacity": 0.95, "background-opacity": 1 } },
     { selector: "edge:selected", style: { "line-color": "#22c55e", "target-arrow-color": "#22c55e", width: clamp(6 * Math.pow(S, 0.9), 3, 10), opacity: 0.95 } },
-
     { selector: ".faded", style: { opacity: 0.15, "text-opacity": 0.1 } },
     { selector: ".highlight", style: { "border-width": 4, "border-color": "#2563eb", "background-opacity": 0.95 } },
     { selector: "node.path", style: { "border-width": 4, "border-color": "#2563eb", "background-opacity": 0.98 } },
@@ -462,6 +581,7 @@ function buildStyle(themeKey) {
     { selector: "edge.path.upstream", style: { "line-color": "#f59e0b", "target-arrow-color": "#f59e0b" } },
     { selector: "edge.path.downstream", style: { "line-color": "#10b981", "target-arrow-color": "#10b981" } },
 
+    // LOD (existing)
     { selector: ".lod-low", style: { "text-opacity": 0 } },
     { selector: "edge.lod-low", style: { label: "", "curve-style": "haystack", "target-arrow-shape": "none" } },
     { selector: "node.lod-low", style: { label: "", "text-opacity": 0 } },
@@ -469,9 +589,11 @@ function buildStyle(themeKey) {
     { selector: "edge.lod-mid", style: { label: "", "curve-style": "straight", "target-arrow-shape": "none" } },
     { selector: "edge.lod-high", style: { label: "data(displayType)", "curve-style": "bezier", "target-arrow-shape": (ele) => (ele.data("directional") ? "triangle" : "none") } },
 
+    // Tree nested (existing)
     { selector: "edge.nestEdge", style: { "line-color": "#607D8B", width: clamp(4 * Math.pow(S, 0.9), 2, 7) } },
     { selector: "edge.nonNestEdge", style: { opacity: 0.25 } },
 
+    // compare (existing)
     { selector: "node.diff-added", style: { "border-width": 4, "border-color": "#10b981" } },
     { selector: "node.diff-removed", style: { "border-width": 4, "border-color": "#ef4444", opacity: 0.65 } },
     { selector: "node.diff-changed", style: { "border-width": 4, "border-color": "#f59e0b" } },
@@ -479,12 +601,13 @@ function buildStyle(themeKey) {
     { selector: "edge.diff-removed", style: { "line-color": "#ef4444", "target-arrow-color": "#ef4444", "line-style": "dashed", width: clamp(4 * Math.pow(S, 0.9), 2, 7), opacity: 0.7 } },
     { selector: "edge.diff-changed", style: { "line-color": "#f59e0b", "target-arrow-color": "#f59e0b", width: clamp(5 * Math.pow(S, 0.9), 3, 8) } },
 
+    // risk/option (existing)
     { selector: "edge.conf-inferred", style: { "line-style": "dashed", opacity: 0.65 } },
     { selector: "edge.layer-risk", style: { "text-opacity": 1 } },
     { selector: 'node[layer-option][nodeType = "Option"]', style: { "border-width": 4, "border-color": "#6366f1" } },
     { selector: 'edge[layer-option][type = "Optimizes"]', style: { width: clamp(5 * Math.pow(S, 0.9), 3, 8) } },
 
-    // Visibility toggles (class-based)
+    // Visibility toggles (class-based) (existing)
     { selector: ".layer-hide", style: { display: "none" } },
     { selector: ".onx-hide-filter", style: { display: "none" } },
     { selector: ".onx-hide-end", style: { display: "none" } },
@@ -493,7 +616,7 @@ function buildStyle(themeKey) {
     { selector: ".onx-hide-node-vis", style: { display: "none" } },
     { selector: ".onx-hide-isolated", style: { display: "none" } },
 
-    // Perf: Hide labels during load/layout (temp class)
+    // Perf: hide labels during load/layout (temp class) (existing)
     { selector: "node.onx-hide-labels-temp", style: { "text-opacity": 0, label: "" } },
     { selector: "edge.onx-hide-labels-temp", style: { "text-opacity": 0, label: "" } },
   ];
@@ -508,28 +631,30 @@ window.THEMES = THEMES;
 function applyScale(scale) {
   currentScale = Math.max(0.5, Math.min(2.0, Number(scale ?? 1.0)));
   window.__onexus_scale = currentScale;
+
   const cy = window.cy;
   NEXUS_STYLE = buildStyle(currentTheme);
   if (cy?.style) cy.style(NEXUS_STYLE);
+
   window.buildRelationshipLegend?.();
 }
 
 function applyColorMode(mode) {
-  // ensure built-ins are registered
+  // ensure built-ins registered
   window.ONEXUS?.style?.listColorModes?.();
 
   currentColorMode = String(mode ?? "json_category").trim() || "json_category";
+
   const cy = window.cy;
   NEXUS_STYLE = buildStyle(currentTheme);
   if (cy?.style) cy.style(NEXUS_STYLE);
-  window.buildRelationshipLegend?.();
 
-  // sync dropdown options (plugins may register later)
-  try { window.ONEXUS?.style?.syncColorModeSelect?.(); } catch { }
+  window.buildRelationshipLegend?.();
+  try { window.ONEXUS?.style?.syncColorModeSelect?.(); } catch { /* noop */ }
 }
 
 function applyTheme(themeKey) {
-  currentTheme = themeKey === "dark" ? "dark" : "light";
+  currentTheme = (themeKey === "dark") ? "dark" : "light";
   window.currentTheme = currentTheme;
 
   const root = document.documentElement;
@@ -559,6 +684,7 @@ function applyTheme(themeKey) {
     cy.container().style.backgroundColor = THEMES[currentTheme].canvas;
     cy.style(NEXUS_STYLE);
   }
+
   window.buildRelationshipLegend?.();
 }
 
