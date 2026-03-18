@@ -1,0 +1,1994 @@
+{
+    "meta": {
+        "schema": "onexus-1.1",
+        "project": "Industrialized Construction / DfMA Decision Framework (Generic)",
+        "languageDefault": "en",
+        "phases": [
+            "Sekkei",
+            "SeisanSekkei",
+            "Kouji"
+        ],
+        "notes": [
+            "Generic, element-agnostic DfMA decision model: objectives → constraints/rules → options → decision gates → evidence (V&V) → KPI outcomes.",
+            "Nodes use {id, nodeType, category, label{en,jp}}. Edges include {type, dimension, directional, phase, owner, risk, confidence, notes}.",
+            "Replace ELM-001 and Generic labels to create element-specific graphs (façade/pod/MEP rack/etc)."
+        ],
+        "view": {
+            "key": "network",
+            "nodeTypeAllow": [
+                "System",
+                "Layer",
+                "Objective",
+                "KPI",
+                "Requirement",
+                "Constraint",
+                "Assumption",
+                "Rule",
+                "Option",
+                "Decision",
+                "DecisionGate",
+                "Capability",
+                "Process",
+                "Risk",
+                "Verification",
+                "Validation",
+                "Deliverable",
+                "Artifact",
+                "Stakeholder"
+            ]
+        }
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "SYS-DFMA",
+                    "nodeType": "System",
+                    "category": "DecisionFramework",
+                    "label": {
+                        "en": "DfMA Decision Framework",
+                        "jp": "DfMA意思決定フレームワーク"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ELM-001",
+                    "nodeType": "Element",
+                    "category": "IndustrializedElement",
+                    "label": {
+                        "en": "Generic Industrialized Element",
+                        "jp": "汎用 工業化要素"
+                    },
+                    "tags": [
+                        "template",
+                        "industrialized",
+                        "dfma"
+                    ]
+                }
+            },
+            {
+                "data": {
+                    "id": "LYR-CLIENT",
+                    "nodeType": "Layer",
+                    "category": "Client",
+                    "label": {
+                        "en": "Client / Business Case",
+                        "jp": "発注者／事業要件"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "LYR-DESIGN",
+                    "nodeType": "Layer",
+                    "category": "Design",
+                    "label": {
+                        "en": "Design / Engineering",
+                        "jp": "設計／技術"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "LYR-SUPPLY",
+                    "nodeType": "Layer",
+                    "category": "Supply",
+                    "label": {
+                        "en": "Supply / Manufacturing",
+                        "jp": "供給／製造"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "LYR-SITE",
+                    "nodeType": "Layer",
+                    "category": "Site",
+                    "label": {
+                        "en": "Logistics / Site Assembly",
+                        "jp": "物流／現場施工"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OBJ-SCHED",
+                    "nodeType": "Objective",
+                    "category": "Value",
+                    "label": {
+                        "en": "Objective: Schedule certainty",
+                        "jp": "目的：工期確実性"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OBJ-QUALITY",
+                    "nodeType": "Objective",
+                    "category": "Value",
+                    "label": {
+                        "en": "Objective: Consistent quality",
+                        "jp": "目的：品質の安定"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OBJ-LABOR",
+                    "nodeType": "Objective",
+                    "category": "Value",
+                    "label": {
+                        "en": "Objective: Reduce on-site labor",
+                        "jp": "目的：現場作業の削減"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OBJ-SAFETY",
+                    "nodeType": "Objective",
+                    "category": "Value",
+                    "label": {
+                        "en": "Objective: Improve safety",
+                        "jp": "目的：安全性向上"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OBJ-CARBON",
+                    "nodeType": "Objective",
+                    "category": "Value",
+                    "label": {
+                        "en": "Objective: Lower embodied carbon",
+                        "jp": "目的：CO2排出削減（エンボディド）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "KPI-TACT",
+                    "nodeType": "KPI",
+                    "category": "Schedule",
+                    "label": {
+                        "en": "KPI: Installation rate (units/day)",
+                        "jp": "KPI：施工速度（個／日）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "KPI-REWORK",
+                    "nodeType": "KPI",
+                    "category": "Quality",
+                    "label": {
+                        "en": "KPI: Rework rate (%)",
+                        "jp": "KPI：手戻り率（％）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "KPI-INJURY",
+                    "nodeType": "KPI",
+                    "category": "Safety",
+                    "label": {
+                        "en": "KPI: Safety incidents",
+                        "jp": "KPI：安全事象件数"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "KPI-CO2",
+                    "nodeType": "KPI",
+                    "category": "Sustainability",
+                    "label": {
+                        "en": "KPI: Embodied carbon (kgCO2e)",
+                        "jp": "KPI：エンボディドカーボン（kgCO2e）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-PERF",
+                    "nodeType": "Requirement",
+                    "category": "Performance",
+                    "label": {
+                        "en": "Requirement: Performance targets (thermal/acoustic/fire)",
+                        "jp": "要件：性能（断熱・遮音・防火）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-AESTH",
+                    "nodeType": "Requirement",
+                    "category": "DesignIntent",
+                    "label": {
+                        "en": "Requirement: Aesthetic / brand constraints",
+                        "jp": "要件：意匠・ブランド制約"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-MAINT",
+                    "nodeType": "Requirement",
+                    "category": "Lifecycle",
+                    "label": {
+                        "en": "Requirement: Maintainability / access",
+                        "jp": "要件：維持管理性／アクセス"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-COST",
+                    "nodeType": "Requirement",
+                    "category": "Commercial",
+                    "label": {
+                        "en": "Requirement: Target cost / budget ceiling",
+                        "jp": "要件：目標コスト／上限"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CST-CODE",
+                    "nodeType": "Constraint",
+                    "category": "Regulatory",
+                    "label": {
+                        "en": "Constraint: Codes & regulations",
+                        "jp": "制約：法規・規制"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CST-TOL",
+                    "nodeType": "Constraint",
+                    "category": "Technical",
+                    "label": {
+                        "en": "Constraint: Tolerance stack-up limits",
+                        "jp": "制約：許容差の積み上げ"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CST-STRUCT",
+                    "nodeType": "Constraint",
+                    "category": "Technical",
+                    "label": {
+                        "en": "Constraint: Structural movement / drift",
+                        "jp": "制約：構造変形・層間変位"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CST-MEP",
+                    "nodeType": "Constraint",
+                    "category": "Coordination",
+                    "label": {
+                        "en": "Constraint: MEP zones & interfaces",
+                        "jp": "制約：設備ゾーン／取り合い"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CST-LEAD",
+                    "nodeType": "Constraint",
+                    "category": "SupplyChain",
+                    "label": {
+                        "en": "Constraint: Long-lead materials/hardware",
+                        "jp": "制約：長納期材・金物"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CST-TRANSPORT",
+                    "nodeType": "Constraint",
+                    "category": "Logistics",
+                    "label": {
+                        "en": "Constraint: Transport size/weight/route limits",
+                        "jp": "制約：輸送（サイズ・重量・ルート）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CST-CRANE",
+                    "nodeType": "Constraint",
+                    "category": "Site",
+                    "label": {
+                        "en": "Constraint: Crane capacity & picks",
+                        "jp": "制約：クレーン能力／揚重"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CST-SITEACCESS",
+                    "nodeType": "Constraint",
+                    "category": "Site",
+                    "label": {
+                        "en": "Constraint: Site access / laydown area",
+                        "jp": "制約：搬入動線／仮置き"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ASM-FREEZE",
+                    "nodeType": "Assumption",
+                    "category": "Governance",
+                    "label": {
+                        "en": "Assumption: Early design freeze is possible",
+                        "jp": "前提：設計フリーズを早期に実施できる"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ASM-ESI",
+                    "nodeType": "Assumption",
+                    "category": "Procurement",
+                    "label": {
+                        "en": "Assumption: Early supplier involvement (ESI)",
+                        "jp": "前提：サプライヤー早期参画（ESI）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RULE-VARIANTS",
+                    "nodeType": "Rule",
+                    "category": "DfMA",
+                    "label": {
+                        "en": "DfMA Rule: Minimize variants (standardization)",
+                        "jp": "DfMAルール：バリエーション最小化（標準化）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RULE-INTERFACE",
+                    "nodeType": "Rule",
+                    "category": "DfMA",
+                    "label": {
+                        "en": "DfMA Rule: Standardize interfaces & reference datums",
+                        "jp": "DfMAルール：取り合い・基準面の標準化"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RULE-PARTS",
+                    "nodeType": "Rule",
+                    "category": "DfMA",
+                    "label": {
+                        "en": "DfMA Rule: Reduce unique parts & fastener types",
+                        "jp": "DfMAルール：部品・締結種類削減"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RULE-ASSEMBLY",
+                    "nodeType": "Rule",
+                    "category": "DfMA",
+                    "label": {
+                        "en": "DfMA Rule: Design for simple assembly sequence",
+                        "jp": "DfMAルール：単純な施工手順"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RULE-TEST",
+                    "nodeType": "Rule",
+                    "category": "DfMA",
+                    "label": {
+                        "en": "DfMA Rule: Test critical performance via mockup",
+                        "jp": "DfMAルール：重要性能はモックアップで検証"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-STICK",
+                    "nodeType": "Option",
+                    "category": "Architecture",
+                    "label": {
+                        "en": "Option: Traditional on-site build",
+                        "jp": "案：現場施工（従来）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-PANEL",
+                    "nodeType": "Option",
+                    "category": "Architecture",
+                    "label": {
+                        "en": "Option: Panelized sub-assemblies",
+                        "jp": "案：パネル化（サブアッセンブリ）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-UNIT",
+                    "nodeType": "Option",
+                    "category": "Architecture",
+                    "label": {
+                        "en": "Option: Unitized / modularized units",
+                        "jp": "案：ユニット化／モジュール化"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "OPT-HYBRID",
+                    "nodeType": "Option",
+                    "category": "Architecture",
+                    "label": {
+                        "en": "Option: Hybrid (selective industrialization)",
+                        "jp": "案：ハイブリッド（部分工業化）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DEC-SYS",
+                    "nodeType": "Decision",
+                    "category": "KeyDecision",
+                    "label": {
+                        "en": "Decision: Select industrialization approach",
+                        "jp": "意思決定：工業化方式の選定"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GATE-GO",
+                    "nodeType": "DecisionGate",
+                    "category": "Governance",
+                    "label": {
+                        "en": "Gate: Industrialization Go/No-Go",
+                        "jp": "ゲート：工業化Go/No-Go"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GATE-ICD",
+                    "nodeType": "DecisionGate",
+                    "category": "Governance",
+                    "label": {
+                        "en": "Gate: Interface Freeze (ICD approved)",
+                        "jp": "ゲート：取り合いフリーズ（ICD承認）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GATE-PROT",
+                    "nodeType": "DecisionGate",
+                    "category": "Governance",
+                    "label": {
+                        "en": "Gate: Prototype/Mockup pass",
+                        "jp": "ゲート：試作・モックアップ合格"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GATE-MFG",
+                    "nodeType": "DecisionGate",
+                    "category": "Governance",
+                    "label": {
+                        "en": "Gate: Manufacturing readiness",
+                        "jp": "ゲート：製造準備完了"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "GATE-SITE",
+                    "nodeType": "DecisionGate",
+                    "category": "Governance",
+                    "label": {
+                        "en": "Gate: Site install readiness",
+                        "jp": "ゲート：施工準備完了"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CAP-MAX",
+                    "nodeType": "Capability",
+                    "category": "Manufacturing",
+                    "label": {
+                        "en": "Capability: Max size/weight & tolerances",
+                        "jp": "能力：最大サイズ／重量／許容差"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CAP-QA",
+                    "nodeType": "Capability",
+                    "category": "Manufacturing",
+                    "label": {
+                        "en": "Capability: QA/QC maturity & traceability",
+                        "jp": "能力：品質管理成熟度／トレーサビリティ"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "CAP-CAPACITY",
+                    "nodeType": "Capability",
+                    "category": "Manufacturing",
+                    "label": {
+                        "en": "Capability: Capacity & lead time",
+                        "jp": "能力：生産能力／リードタイム"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PROC-BOM",
+                    "nodeType": "Process",
+                    "category": "Manufacturing",
+                    "label": {
+                        "en": "Process: BOM & variant control",
+                        "jp": "プロセス：BOM／バリアント管理"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PROC-JIG",
+                    "nodeType": "Process",
+                    "category": "Manufacturing",
+                    "label": {
+                        "en": "Process: Jigs/fixtures & repeatability",
+                        "jp": "プロセス：治具／再現性"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PROC-PACK",
+                    "nodeType": "Process",
+                    "category": "Logistics",
+                    "label": {
+                        "en": "Process: Packaging & damage prevention",
+                        "jp": "プロセス：梱包／損傷防止"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PROC-INSTALL",
+                    "nodeType": "Process",
+                    "category": "Site",
+                    "label": {
+                        "en": "Process: Installation sequence & takt plan",
+                        "jp": "プロセス：施工手順／タクト計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PROC-SURVEY",
+                    "nodeType": "Process",
+                    "category": "Site",
+                    "label": {
+                        "en": "Process: Survey & tolerance management",
+                        "jp": "プロセス：測量／許容差管理"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RISK-VAR",
+                    "nodeType": "Risk",
+                    "category": "Design",
+                    "label": {
+                        "en": "Risk: Variant explosion (too many types)",
+                        "jp": "リスク：種類増大（バリアント爆発）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RISK-CHANGE",
+                    "nodeType": "Risk",
+                    "category": "Client",
+                    "label": {
+                        "en": "Risk: Late changes after freeze",
+                        "jp": "リスク：フリーズ後の変更"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RISK-LEAD",
+                    "nodeType": "Risk",
+                    "category": "SupplyChain",
+                    "label": {
+                        "en": "Risk: Long-lead delays",
+                        "jp": "リスク：長納期遅延"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RISK-TRAN",
+                    "nodeType": "Risk",
+                    "category": "Logistics",
+                    "label": {
+                        "en": "Risk: Transport constraints discovered late",
+                        "jp": "リスク：輸送制約の後出し"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "RISK-SITE",
+                    "nodeType": "Risk",
+                    "category": "Site",
+                    "label": {
+                        "en": "Risk: Site deviation / as-built mismatch",
+                        "jp": "リスク：現場誤差／出来形不一致"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VV-FAT",
+                    "nodeType": "Verification",
+                    "category": "Quality",
+                    "label": {
+                        "en": "Verification: Factory Acceptance Test (FAT)",
+                        "jp": "検証：工場受入試験（FAT）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VV-IQC",
+                    "nodeType": "Verification",
+                    "category": "Quality",
+                    "label": {
+                        "en": "Verification: Incoming Quality Check (IQC)",
+                        "jp": "検証：受入検査（IQC）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VV-SITEQA",
+                    "nodeType": "Verification",
+                    "category": "Quality",
+                    "label": {
+                        "en": "Verification: Site installation QA checklist",
+                        "jp": "検証：施工QAチェックリスト"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "VAL-MOCK",
+                    "nodeType": "Validation",
+                    "category": "Performance",
+                    "label": {
+                        "en": "Validation: Mockup / prototype performance tests",
+                        "jp": "妥当性確認：モックアップ性能試験"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DEL-ICD",
+                    "nodeType": "Deliverable",
+                    "category": "DesignControl",
+                    "label": {
+                        "en": "Deliverable: Interface Control Document (ICD)",
+                        "jp": "成果物：ICD（取り合い管理図書）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DEL-TOL",
+                    "nodeType": "Deliverable",
+                    "category": "DesignControl",
+                    "label": {
+                        "en": "Deliverable: Tolerance strategy & datum plan",
+                        "jp": "成果物：許容差戦略／基準面計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DEL-METHOD",
+                    "nodeType": "Deliverable",
+                    "category": "ConstructionPlanning",
+                    "label": {
+                        "en": "Deliverable: Method statement & lifting plan",
+                        "jp": "成果物：施工計画／揚重計画"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DEL-QAP",
+                    "nodeType": "Deliverable",
+                    "category": "Quality",
+                    "label": {
+                        "en": "Deliverable: Quality Assurance Plan (QAP)",
+                        "jp": "成果物：品質保証計画（QAP）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-OPT",
+                    "nodeType": "Artifact",
+                    "category": "Evidence",
+                    "label": {
+                        "en": "Artifact: Option trade study / evaluation record",
+                        "jp": "根拠：案比較・評価記録"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-RACI",
+                    "nodeType": "Artifact",
+                    "category": "Evidence",
+                    "label": {
+                        "en": "Artifact: Decision RACI (who decides/approves)",
+                        "jp": "根拠：RACI（意思決定・承認）"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-PROT",
+                    "nodeType": "Artifact",
+                    "category": "Evidence",
+                    "label": {
+                        "en": "Artifact: Prototype report & NCR log",
+                        "jp": "根拠：試作報告／不適合記録"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ASBUILT",
+                    "nodeType": "Artifact",
+                    "category": "Evidence",
+                    "label": {
+                        "en": "Artifact: As-built survey report",
+                        "jp": "根拠：出来形測量報告"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STK-CLIENT",
+                    "nodeType": "Stakeholder",
+                    "category": "Organization",
+                    "label": {
+                        "en": "Stakeholder: Client",
+                        "jp": "関係者：発注者"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STK-ARCH",
+                    "nodeType": "Stakeholder",
+                    "category": "Organization",
+                    "label": {
+                        "en": "Stakeholder: Architect",
+                        "jp": "関係者：建築設計"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STK-STR",
+                    "nodeType": "Stakeholder",
+                    "category": "Organization",
+                    "label": {
+                        "en": "Stakeholder: Structural engineer",
+                        "jp": "関係者：構造設計"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STK-MEP",
+                    "nodeType": "Stakeholder",
+                    "category": "Organization",
+                    "label": {
+                        "en": "Stakeholder: MEP engineer",
+                        "jp": "関係者：設備設計"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STK-MFG",
+                    "nodeType": "Stakeholder",
+                    "category": "Organization",
+                    "label": {
+                        "en": "Stakeholder: Manufacturer / Supplier",
+                        "jp": "関係者：メーカー／サプライヤー"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "STK-GC",
+                    "nodeType": "Stakeholder",
+                    "category": "Organization",
+                    "label": {
+                        "en": "Stakeholder: Main contractor (site)",
+                        "jp": "関係者：ゼネコン（現場）"
+                    }
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "E-SYS-1",
+                    "type": "FrameworkFor",
+                    "dimension": "System",
+                    "source": "SYS-DFMA",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "confidence": "Curated",
+                    "notes": "This framework describes the decision chain for an industrialized element."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LAYER-1",
+                    "type": "HasLayer",
+                    "dimension": "System",
+                    "source": "SYS-DFMA",
+                    "target": "LYR-CLIENT",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LAYER-2",
+                    "type": "HasLayer",
+                    "dimension": "System",
+                    "source": "SYS-DFMA",
+                    "target": "LYR-DESIGN",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LAYER-3",
+                    "type": "HasLayer",
+                    "dimension": "System",
+                    "source": "SYS-DFMA",
+                    "target": "LYR-SUPPLY",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LAYER-4",
+                    "type": "HasLayer",
+                    "dimension": "System",
+                    "source": "SYS-DFMA",
+                    "target": "LYR-SITE",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OBJ-1",
+                    "type": "ObjectiveFor",
+                    "dimension": "Value",
+                    "source": "OBJ-SCHED",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "Medium",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OBJ-2",
+                    "type": "ObjectiveFor",
+                    "dimension": "Value",
+                    "source": "OBJ-QUALITY",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "Medium",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OBJ-3",
+                    "type": "ObjectiveFor",
+                    "dimension": "Value",
+                    "source": "OBJ-LABOR",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "Medium",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OBJ-4",
+                    "type": "ObjectiveFor",
+                    "dimension": "Value",
+                    "source": "OBJ-SAFETY",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "Low",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OBJ-5",
+                    "type": "ObjectiveFor",
+                    "dimension": "Value",
+                    "source": "OBJ-CARBON",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "Low",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-KPI-1",
+                    "type": "Measures",
+                    "dimension": "KPI",
+                    "source": "KPI-TACT",
+                    "target": "OBJ-SCHED",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-KPI-2",
+                    "type": "Measures",
+                    "dimension": "KPI",
+                    "source": "KPI-REWORK",
+                    "target": "OBJ-QUALITY",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-KPI-3",
+                    "type": "Measures",
+                    "dimension": "KPI",
+                    "source": "KPI-INJURY",
+                    "target": "OBJ-SAFETY",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-KPI-4",
+                    "type": "Measures",
+                    "dimension": "KPI",
+                    "source": "KPI-CO2",
+                    "target": "OBJ-CARBON",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-REQ-1",
+                    "type": "RequirementFor",
+                    "dimension": "Requirement",
+                    "source": "REQ-PERF",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-REQ-2",
+                    "type": "RequirementFor",
+                    "dimension": "Requirement",
+                    "source": "REQ-AESTH",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-REQ-3",
+                    "type": "RequirementFor",
+                    "dimension": "Requirement",
+                    "source": "REQ-MAINT",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-REQ-4",
+                    "type": "RequirementFor",
+                    "dimension": "Requirement",
+                    "source": "REQ-COST",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "High",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CST-1",
+                    "type": "Constrains",
+                    "dimension": "Constraint",
+                    "source": "CST-CODE",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CST-2",
+                    "type": "Constrains",
+                    "dimension": "Constraint",
+                    "source": "CST-TOL",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei",
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CST-3",
+                    "type": "Constrains",
+                    "dimension": "Constraint",
+                    "source": "CST-STRUCT",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei",
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Structure",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CST-4",
+                    "type": "Constrains",
+                    "dimension": "Constraint",
+                    "source": "CST-MEP",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei",
+                        "SeisanSekkei"
+                    ],
+                    "owner": "MEP",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CST-5",
+                    "type": "Constrains",
+                    "dimension": "Constraint",
+                    "source": "CST-LEAD",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "High",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CST-6",
+                    "type": "Constrains",
+                    "dimension": "Constraint",
+                    "source": "CST-TRANSPORT",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Logistics",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CST-7",
+                    "type": "Constrains",
+                    "dimension": "Constraint",
+                    "source": "CST-CRANE",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei",
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CST-8",
+                    "type": "Constrains",
+                    "dimension": "Constraint",
+                    "source": "CST-SITEACCESS",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei",
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ASM-1",
+                    "type": "AssumptionFor",
+                    "dimension": "Governance",
+                    "source": "ASM-FREEZE",
+                    "target": "GATE-ICD",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "High",
+                    "confidence": "Curated",
+                    "notes": "If freeze is not possible, DfMA effectiveness reduces."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-ASM-2",
+                    "type": "AssumptionFor",
+                    "dimension": "Procurement",
+                    "source": "ASM-ESI",
+                    "target": "GATE-GO",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RULE-1",
+                    "type": "AppliesTo",
+                    "dimension": "DfMA",
+                    "source": "RULE-VARIANTS",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RULE-2",
+                    "type": "AppliesTo",
+                    "dimension": "DfMA",
+                    "source": "RULE-INTERFACE",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RULE-3",
+                    "type": "AppliesTo",
+                    "dimension": "DfMA",
+                    "source": "RULE-PARTS",
+                    "target": "ELM-001",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei",
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RULE-4",
+                    "type": "AppliesTo",
+                    "dimension": "DfMA",
+                    "source": "RULE-ASSEMBLY",
+                    "target": "PROC-INSTALL",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RULE-5",
+                    "type": "AppliesTo",
+                    "dimension": "DfMA",
+                    "source": "RULE-TEST",
+                    "target": "VAL-MOCK",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-1",
+                    "type": "CandidateOption",
+                    "dimension": "Option",
+                    "source": "OPT-STICK",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Low",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-2",
+                    "type": "CandidateOption",
+                    "dimension": "Option",
+                    "source": "OPT-PANEL",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-3",
+                    "type": "CandidateOption",
+                    "dimension": "Option",
+                    "source": "OPT-UNIT",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OPT-4",
+                    "type": "CandidateOption",
+                    "dimension": "Option",
+                    "source": "OPT-HYBRID",
+                    "target": "DEC-SYS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GATE-1",
+                    "type": "DecidedAtGate",
+                    "dimension": "Governance",
+                    "source": "DEC-SYS",
+                    "target": "GATE-GO",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "High",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GATE-2",
+                    "type": "Requires",
+                    "dimension": "Governance",
+                    "source": "GATE-GO",
+                    "target": "ART-OPT",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Curated",
+                    "notes": "Trade study is evidence for Go/No-Go."
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GATE-3",
+                    "type": "Requires",
+                    "dimension": "Governance",
+                    "source": "GATE-GO",
+                    "target": "ART-RACI",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "Low",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DEL-1",
+                    "type": "Produces",
+                    "dimension": "Output",
+                    "source": "GATE-ICD",
+                    "target": "DEL-ICD",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DEL-2",
+                    "type": "Produces",
+                    "dimension": "Output",
+                    "source": "GATE-ICD",
+                    "target": "DEL-TOL",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PROT-1",
+                    "type": "ValidatedBy",
+                    "dimension": "Validation",
+                    "source": "DEL-ICD",
+                    "target": "VAL-MOCK",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-PROT-2",
+                    "type": "Evidence",
+                    "dimension": "Evidence",
+                    "source": "VAL-MOCK",
+                    "target": "ART-PROT",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "Medium",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-GATE-4",
+                    "type": "PassesGate",
+                    "dimension": "Governance",
+                    "source": "VAL-MOCK",
+                    "target": "GATE-PROT",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CAP-1",
+                    "type": "ProvidedBy",
+                    "dimension": "Capability",
+                    "source": "CAP-MAX",
+                    "target": "STK-MFG",
+                    "directional": false,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "Medium",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CAP-2",
+                    "type": "ProvidedBy",
+                    "dimension": "Capability",
+                    "source": "CAP-QA",
+                    "target": "STK-MFG",
+                    "directional": false,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "Medium",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-CAP-3",
+                    "type": "ProvidedBy",
+                    "dimension": "Capability",
+                    "source": "CAP-CAPACITY",
+                    "target": "STK-MFG",
+                    "directional": false,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "High",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-MFG-1",
+                    "type": "Enables",
+                    "dimension": "Manufacturing",
+                    "source": "CAP-QA",
+                    "target": "VV-FAT",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-MFG-2",
+                    "type": "Requires",
+                    "dimension": "Manufacturing",
+                    "source": "GATE-MFG",
+                    "target": "DEL-QAP",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-MFG-3",
+                    "type": "UsesProcess",
+                    "dimension": "Manufacturing",
+                    "source": "STK-MFG",
+                    "target": "PROC-BOM",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-MFG-4",
+                    "type": "UsesProcess",
+                    "dimension": "Manufacturing",
+                    "source": "STK-MFG",
+                    "target": "PROC-JIG",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-LOG-1",
+                    "type": "UsesProcess",
+                    "dimension": "Logistics",
+                    "source": "STK-MFG",
+                    "target": "PROC-PACK",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SITE-1",
+                    "type": "UsesProcess",
+                    "dimension": "Site",
+                    "source": "STK-GC",
+                    "target": "PROC-INSTALL",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-SITE-2",
+                    "type": "UsesProcess",
+                    "dimension": "Site",
+                    "source": "STK-GC",
+                    "target": "PROC-SURVEY",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VV-1",
+                    "type": "VerifiedBy",
+                    "dimension": "Verification",
+                    "source": "ELM-001",
+                    "target": "VV-FAT",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VV-2",
+                    "type": "VerifiedBy",
+                    "dimension": "Verification",
+                    "source": "ELM-001",
+                    "target": "VV-IQC",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-VV-3",
+                    "type": "VerifiedBy",
+                    "dimension": "Verification",
+                    "source": "ELM-001",
+                    "target": "VV-SITEQA",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OUT-1",
+                    "type": "Drives",
+                    "dimension": "KPI",
+                    "source": "PROC-INSTALL",
+                    "target": "KPI-TACT",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OUT-2",
+                    "type": "Improves",
+                    "dimension": "KPI",
+                    "source": "VV-SITEQA",
+                    "target": "KPI-REWORK",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-OUT-3",
+                    "type": "Improves",
+                    "dimension": "KPI",
+                    "source": "PROC-SURVEY",
+                    "target": "KPI-REWORK",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Inferred"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RISK-1",
+                    "type": "RiskTo",
+                    "dimension": "Risk",
+                    "source": "RISK-VAR",
+                    "target": "RULE-VARIANTS",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RISK-2",
+                    "type": "RiskTo",
+                    "dimension": "Risk",
+                    "source": "RISK-CHANGE",
+                    "target": "ASM-FREEZE",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RISK-3",
+                    "type": "RiskTo",
+                    "dimension": "Risk",
+                    "source": "RISK-LEAD",
+                    "target": "CST-LEAD",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Supply",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RISK-4",
+                    "type": "RiskTo",
+                    "dimension": "Risk",
+                    "source": "RISK-TRAN",
+                    "target": "CST-TRANSPORT",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Logistics",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RISK-5",
+                    "type": "RiskTo",
+                    "dimension": "Risk",
+                    "source": "RISK-SITE",
+                    "target": "PROC-SURVEY",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-EVID-1",
+                    "type": "Evidence",
+                    "dimension": "Evidence",
+                    "source": "PROC-SURVEY",
+                    "target": "ART-ASBUILT",
+                    "directional": true,
+                    "phase": [
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-DEL-3",
+                    "type": "Produces",
+                    "dimension": "Output",
+                    "source": "GATE-SITE",
+                    "target": "DEL-METHOD",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei",
+                        "Kouji"
+                    ],
+                    "owner": "Site",
+                    "risk": "Medium",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RSP-1",
+                    "type": "Approves",
+                    "dimension": "Responsibility",
+                    "source": "STK-CLIENT",
+                    "target": "GATE-GO",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Client",
+                    "risk": "Medium",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RSP-2",
+                    "type": "Defines",
+                    "dimension": "Responsibility",
+                    "source": "STK-ARCH",
+                    "target": "DEL-ICD",
+                    "directional": true,
+                    "phase": [
+                        "SeisanSekkei"
+                    ],
+                    "owner": "Design",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RSP-3",
+                    "type": "Defines",
+                    "dimension": "Responsibility",
+                    "source": "STK-STR",
+                    "target": "CST-STRUCT",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "Structure",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "E-RSP-4",
+                    "type": "Defines",
+                    "dimension": "Responsibility",
+                    "source": "STK-MEP",
+                    "target": "CST-MEP",
+                    "directional": true,
+                    "phase": [
+                        "Sekkei"
+                    ],
+                    "owner": "MEP",
+                    "risk": "High",
+                    "confidence": "Curated"
+                }
+            }
+        ]
+    }
+}

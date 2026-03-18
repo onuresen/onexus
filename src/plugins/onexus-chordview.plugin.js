@@ -251,12 +251,18 @@
         await ensureDeps();
         ensureHost();
 
+        // Set overflow: visible on SVG and parent to allow full zoom/pan
+        const svg = $("onxChordSvg");
+        if (svg) {
+            svg.style.overflow = "visible";
+            if (svg.parentElement) svg.parentElement.style.overflow = "visible";
+        }
+
         // Activate chord overlay
         setGraphVisible(false);
         runtime.active = true;
 
         if (!runtime.chart) {
-            const svg = $("onxChordSvg");
             runtime.chart = window.ONEXUS_CIRCLE_CHART.create(svg, {
                 language: window.__onexus_state?.language ?? window.___onexus_state?.language ?? "en",
                 nodeTypeAllow: runtime.subsetNodeTypes,
