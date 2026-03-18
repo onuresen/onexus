@@ -346,6 +346,9 @@
             clearTouchedActive();
         }
 
+        // --- Zoom state ---
+        let zoomTransform = null;
+
         function render() {
             const d3 = ensureD3();
             updateSizeFromDOM();
@@ -357,6 +360,20 @@
             state.svg = d3.select(state.svgEl);
             state.svg.selectAll("*").remove();
             state.svg.attr("viewBox", [-state.width / 2, -state.height / 2, state.width, state.height]);
+
+            // --- D3 Zoom ---
+            const zoom = d3.zoom()
+                .scaleExtent([0.3, 6])
+                .on("zoom", (event) => {
+                    zoomTransform = event.transform;
+                    if (state.g) {
+                        state.g.attr("transform", zoomTransform);
+                    }
+                });
+            state.svg.call(zoom);
+            // Reset zoom on each render (auto-fit)
+            zoomTransform = null;
+            state.svg.transition().duration(0).call(zoom.transform, d3.zoomIdentity);
 
             state.defs = state.svg.append("defs");
             state.g = state.svg.append("g");
@@ -548,7 +565,9 @@
                     }
                 });
 
+            // Auto-fit only if not zoomed by user
             requestAnimationFrame(() => {
+                if (zoomTransform) return; // Don't auto-fit if user has zoomed
                 const bbox = state.g.node().getBBox();
                 if (!bbox || !isFinite(bbox.width) || !isFinite(bbox.height)) return;
                 const availW = state.width - state.opts.fitPadding * 2;
@@ -556,7 +575,12 @@
                 const scale = Math.min(state.opts.fitMaxScale, availW / bbox.width, availH / bbox.height);
                 const cx = bbox.x + bbox.width / 2;
                 const cy = bbox.y + bbox.height / 2;
-                state.g.attr("transform", `translate(${-cx * scale},${-cy * scale}) scale(${scale})`);
+                // Use zoom transform to set initial fit
+                const t = d3.zoomIdentity
+                    .translate(-cx * scale, -cy * scale)
+                    .scale(scale);
+                state.g.attr("transform", t);
+                state.svg.transition().duration(0).call(zoom.transform, t);
             });
 
             if (state.pinnedLeaf) applyHighlight(state.pinnedLeaf);
