@@ -7,6 +7,7 @@
         "kanji.plugin.js",
         "waterflow.plugin.js",
         "onexus-chordview.plugin.js",
+        "onexus-sankeyview.plugin.js",
         "onexus-imagebadges.plugin.js"
     ]
 }

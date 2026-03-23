@@ -258,6 +258,15 @@
             if (svg.parentElement) svg.parentElement.style.overflow = "visible";
         }
 
+        // --- Ensure other overlays are not active (Sankey, etc.) ---
+        (function deactivateOtherViews() {
+            const sankeyHost = document.getElementById("onx-sankey-host");
+            if (sankeyHost && sankeyHost.classList.contains("active")) {
+                sankeyHost.classList.remove("active");
+                sankeyHost.style.pointerEvents = "none";
+            }
+        })();
+
         // Activate chord overlay
         setGraphVisible(false);
         runtime.active = true;

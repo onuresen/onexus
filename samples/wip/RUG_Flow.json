@@ -1,0 +1,2278 @@
+{
+    "meta": {
+        "schema": "onexus-1.1",
+        "project": "RUG Japan BIM Workflow (RUG20160908) - Merged",
+        "languageDefault": "jp",
+        "phases": [
+            "企画設計",
+            "基本設計",
+            "実施設計"
+        ],
+        "notes": [
+            "Source: RUG Japan workflow PDFs (ALL / Design / Structure / Equipment+Electrical).",
+            "Node types used here: System, Phase, Discipline, Event, Activity, Artifact, Model, Tool.",
+            "Edges used here: Includes, Performs, Produces, Requires, UsesTool, Gate, Feeds, ConstraintRequest."
+        ],
+        "view": {
+            "key": "workflow",
+            "nodeTypeAllow": [
+                "System",
+                "Phase",
+                "Discipline",
+                "Event",
+                "Activity",
+                "Artifact",
+                "Model",
+                "Tool"
+            ]
+        }
+    },
+    "elements": {
+        "nodes": [
+            {
+                "data": {
+                    "id": "SYS-RUG-JP-WF",
+                    "nodeType": "System",
+                    "category": "WorkflowSystem",
+                    "label": {
+                        "jp": "RUG Japan BIMワークフロー（部門間連携／ミッシングリンク解消）",
+                        "en": "RUG Japan BIM Workflow (Inter-discipline / Missing Link)"
+                    },
+                    "displayLabel": "RUG Japan BIM Workflow"
+                }
+            },
+            {
+                "data": {
+                    "id": "PH-PLN",
+                    "nodeType": "Phase",
+                    "category": "ProjectPhase",
+                    "label": {
+                        "jp": "企画設計",
+                        "en": "Planning / Concept Design"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PH-BSD",
+                    "nodeType": "Phase",
+                    "category": "ProjectPhase",
+                    "label": {
+                        "jp": "基本設計",
+                        "en": "Basic Design"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "PH-DD",
+                    "nodeType": "Phase",
+                    "category": "ProjectPhase",
+                    "label": {
+                        "jp": "実施設計",
+                        "en": "Detailed Design"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DISC-ARCH",
+                    "nodeType": "Discipline",
+                    "category": "Discipline",
+                    "label": {
+                        "jp": "意匠（建築）",
+                        "en": "Architecture"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DISC-STR",
+                    "nodeType": "Discipline",
+                    "category": "Discipline",
+                    "label": {
+                        "jp": "構造",
+                        "en": "Structure"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DISC-MEP-M",
+                    "nodeType": "Discipline",
+                    "category": "Discipline",
+                    "label": {
+                        "jp": "空調・衛生（機械設備）",
+                        "en": "Mechanical/Plumbing"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "DISC-ELEC",
+                    "nodeType": "Discipline",
+                    "category": "Discipline",
+                    "label": {
+                        "jp": "電気設備",
+                        "en": "Electrical"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "EV-DR1",
+                    "nodeType": "Event",
+                    "category": "Gate",
+                    "label": {
+                        "jp": "DRⅠ（レビュー）",
+                        "en": "DR I (Review)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "EV-DR2",
+                    "nodeType": "Event",
+                    "category": "Gate",
+                    "label": {
+                        "jp": "DRⅡ（レビュー）",
+                        "en": "DR II (Review)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "EV-DR3",
+                    "nodeType": "Event",
+                    "category": "Gate",
+                    "label": {
+                        "jp": "DRⅢ（レビュー）",
+                        "en": "DR III (Review)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "EV-ISSUE",
+                    "nodeType": "Event",
+                    "category": "Milestone",
+                    "label": {
+                        "jp": "図書発行",
+                        "en": "Document Issue"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "EV-CONTRACT",
+                    "nodeType": "Event",
+                    "category": "Milestone",
+                    "label": {
+                        "jp": "契約",
+                        "en": "Contract"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-REVIT",
+                    "nodeType": "Tool",
+                    "category": "Authoring",
+                    "label": {
+                        "jp": "Revit",
+                        "en": "Revit"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-EXCEL",
+                    "nodeType": "Tool",
+                    "category": "Spreadsheet",
+                    "label": {
+                        "jp": "Excel",
+                        "en": "Excel"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-AUTOCAD",
+                    "nodeType": "Tool",
+                    "category": "CAD",
+                    "label": {
+                        "jp": "AutoCAD（2D）",
+                        "en": "AutoCAD (2D)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-REBRO",
+                    "nodeType": "Tool",
+                    "category": "MEP",
+                    "label": {
+                        "jp": "Rebro",
+                        "en": "Rebro"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-SS3",
+                    "nodeType": "Tool",
+                    "category": "StructuralAnalysis",
+                    "label": {
+                        "jp": "SS3",
+                        "en": "SS3"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-SEIN",
+                    "nodeType": "Tool",
+                    "category": "StructuralAnalysis",
+                    "label": {
+                        "jp": "SEIN",
+                        "en": "SEIN"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-SS3LINK",
+                    "nodeType": "Tool",
+                    "category": "Interop",
+                    "label": {
+                        "jp": "SS3Link",
+                        "en": "SS3Link"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-STCNV",
+                    "nodeType": "Tool",
+                    "category": "Interop",
+                    "label": {
+                        "jp": "ST-CNV",
+                        "en": "ST-CNV"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-ADS",
+                    "nodeType": "Tool",
+                    "category": "CodeCheck",
+                    "label": {
+                        "jp": "ADSwin（法規等）",
+                        "en": "ADSwin (code check etc.)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-STABRO",
+                    "nodeType": "Tool",
+                    "category": "MEP",
+                    "label": {
+                        "jp": "Stabro for Revit",
+                        "en": "Stabro for Revit"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "TOOL-NEWHASP",
+                    "nodeType": "Tool",
+                    "category": "Simulation",
+                    "label": {
+                        "jp": "NewHASP（設備計算）",
+                        "en": "NewHASP (MEP calc)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-PHASEDOC-PLN",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "企画設計図書",
+                        "en": "Planning Design Package"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-PHASEDOC-BSD",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "基本設計図書",
+                        "en": "Basic Design Package"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-PHASEDOC-DD",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "確認申請図書／実施設計図",
+                        "en": "Permit / Detailed Design Docs"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-REQ",
+                    "nodeType": "Artifact",
+                    "category": "Input",
+                    "label": {
+                        "jp": "与条件整理（敷地条件・法令・予算・BCP・要求性能等）",
+                        "en": "Requirements & Constraints"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-SPEC-SHURUI",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "特記仕様書",
+                        "en": "Specifications"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-SYOGEN",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "諸元表",
+                        "en": "Project Data Sheet"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-AREA",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "面積表（マス/エリア/部屋）",
+                        "en": "Area Schedules"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ARCH-GA",
+                    "nodeType": "Artifact",
+                    "category": "Drawing",
+                    "label": {
+                        "jp": "一般図（平面・立面・断面）",
+                        "en": "General Drawings (Plans/Elevations/Sections)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ARCH-RCP",
+                    "nodeType": "Artifact",
+                    "category": "Drawing",
+                    "label": {
+                        "jp": "天井伏図",
+                        "en": "Reflected Ceiling Plan"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ARCH-FIN",
+                    "nodeType": "Artifact",
+                    "category": "Schedule",
+                    "label": {
+                        "jp": "仕上表",
+                        "en": "Finish Schedule"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ARCH-OPEN",
+                    "nodeType": "Artifact",
+                    "category": "Schedule",
+                    "label": {
+                        "jp": "建具表（ドア・窓・カーテンウォール・ガラリ）",
+                        "en": "Openings Schedule"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ARCH-CODE",
+                    "nodeType": "Artifact",
+                    "category": "Check",
+                    "label": {
+                        "jp": "法規チェック（斜線/日影/天空率/高さ制限 等）",
+                        "en": "Code Check Results"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-STR-LOAD",
+                    "nodeType": "Artifact",
+                    "category": "Input",
+                    "label": {
+                        "jp": "荷重表（用途・スペックに基づく）",
+                        "en": "Load Table"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-STR-GEO",
+                    "nodeType": "Artifact",
+                    "category": "Input",
+                    "label": {
+                        "jp": "地盤調査",
+                        "en": "Geotechnical Survey"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-STR-FRAMING",
+                    "nodeType": "Artifact",
+                    "category": "Drawing",
+                    "label": {
+                        "jp": "伏図・軸組図・断面リスト",
+                        "en": "Framing/Axis/Section Lists"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-STR-CALC",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "構造計算書・構造図",
+                        "en": "Structural Calc & Drawings"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-MEP-ZONING",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "設備ゾーニング図",
+                        "en": "MEP Zoning Diagram"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-MEP-ROOMCARD",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "部屋カルテ図",
+                        "en": "Room Data Card"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-MEP-SYSFLOW",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "システムフロー図（系統図）",
+                        "en": "System Flow / Schematic"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-MEP-EQLIST",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "機器表・衛生器具表",
+                        "en": "Equipment & Fixture Schedules"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-MEP-MAINROUTE",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "メインルート図（ダクト・配管）",
+                        "en": "Main Route Drawings (Duct/Pipe)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-MEP-CALC",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "各種計算書（負荷/省エネ/静圧揚程 等）",
+                        "en": "MEP Calculations (Load/Energy/Static pressure etc.)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-MEP-SLEEVE",
+                    "nodeType": "Artifact",
+                    "category": "Coordination",
+                    "label": {
+                        "jp": "スリーブ・壁/床開口登録",
+                        "en": "Sleeves & Openings Register"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-MEP-GRILLE",
+                    "nodeType": "Artifact",
+                    "category": "Coordination",
+                    "label": {
+                        "jp": "ガラリ登録（位置・大きさ）",
+                        "en": "Grille Register"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ELEC-SLD",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "単線結線図",
+                        "en": "Single Line Diagram"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ELEC-PANELLIST",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "盤リスト・幹線リスト",
+                        "en": "Panel & Feeder Lists"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ELEC-MAINROUTE",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "メイン幹線ルート図",
+                        "en": "Main Feeder Route"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ART-ELEC-CALC",
+                    "nodeType": "Artifact",
+                    "category": "Deliverable",
+                    "label": {
+                        "jp": "電源集計・照度計算・省エネ計算",
+                        "en": "Power Summary / Lighting / Energy Calc"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-ARCH-LOD100",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "意匠BIMモデル LOD100（マス/通り芯/階高/ゾーニング）",
+                        "en": "ARCH BIM LOD100"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-ARCH-LOD200",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "意匠BIMモデル LOD200（一般図レベル）",
+                        "en": "ARCH BIM LOD200"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-ARCH-LOD300",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "意匠BIMモデル LOD300（建具/二次部材/詳細）",
+                        "en": "ARCH BIM LOD300"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-STR-LOD100",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "構造BIMモデル LOD100（柱・大梁・耐震壁・ブレース）",
+                        "en": "STR BIM LOD100"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-STR-LOD200",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "構造BIMモデル LOD200（小梁・スラブ・基礎・杭含む）",
+                        "en": "STR BIM LOD200"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-STR-LOD300",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "構造BIMモデル LOD300（詳細図/鉄筋/継手等）",
+                        "en": "STR BIM LOD300"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-MEP-LOD100",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "設備BIMモデル LOD100（機械室・シャフトスペース）",
+                        "en": "MEP BIM LOD100"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-MEP-LOD200A",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "設備BIMモデル LOD200（床置機器・主要ダクト/配管・クリティカル調整）",
+                        "en": "MEP BIM LOD200 (critical)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-MEP-LOD200B",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "設備BIMモデル LOD200（機器・衛生器具・メインダクト/配管・荷重/動力）",
+                        "en": "MEP BIM LOD200 (main)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-MEP-LOD300",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "設備BIMモデル LOD300（点検口/詳細図/付属品/制気口）",
+                        "en": "MEP BIM LOD300"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-ELEC-LOD100",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "電気BIMモデル LOD100（電気室・シャフトスペース）",
+                        "en": "ELEC BIM LOD100"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-ELEC-LOD200",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "電気BIMモデル LOD200（照明器具/主要機器/幹線クリティカル）",
+                        "en": "ELEC BIM LOD200"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "MODEL-ELEC-LOD300",
+                    "nodeType": "Model",
+                    "category": "BIMModel",
+                    "label": {
+                        "jp": "電気BIMモデル LOD300（幹線平面/動力/単線/弱電/防災）",
+                        "en": "ELEC BIM LOD300"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-PLN-REQ",
+                    "nodeType": "Activity",
+                    "category": "Architecture",
+                    "label": {
+                        "jp": "与条件整理／敷地・法令・予算・BCP・要求性能整理",
+                        "en": "Consolidate requirements/constraints"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-PLN-VOL",
+                    "nodeType": "Activity",
+                    "category": "Architecture",
+                    "label": {
+                        "jp": "ボリューム検討・ゾーニング・配置案（マスモデル）",
+                        "en": "Volume/Zoning/Massing"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-PLN-GRID",
+                    "nodeType": "Activity",
+                    "category": "Architecture",
+                    "label": {
+                        "jp": "通り芯・階高・コア配置の仮設定",
+                        "en": "Set grids/levels/core (draft)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-BSD-PLANFIX",
+                    "nodeType": "Activity",
+                    "category": "Architecture",
+                    "label": {
+                        "jp": "平面プラン決定／主要断面・立面決定",
+                        "en": "Fix plan and key sections/elevations"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-BSD-RCPFIN",
+                    "nodeType": "Activity",
+                    "category": "Architecture",
+                    "label": {
+                        "jp": "天井伏図・仕上表・区画図作成",
+                        "en": "RCP/Finishes/Compartments"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-BSD-CODE",
+                    "nodeType": "Activity",
+                    "category": "Architecture",
+                    "label": {
+                        "jp": "法規チェック（斜線/日影/天空率/高さ 等）",
+                        "en": "Code checks"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-DD-OPENINGS",
+                    "nodeType": "Activity",
+                    "category": "Architecture",
+                    "label": {
+                        "jp": "建具配置（ドア/窓/CW/ガラリ）・建具表作成",
+                        "en": "Openings & schedules"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-DD-DETAIL",
+                    "nodeType": "Activity",
+                    "category": "Architecture",
+                    "label": {
+                        "jp": "二次部材・展開図・外構図・詳細検討",
+                        "en": "Secondary components/details/site"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ARCH-DD-CLASH",
+                    "nodeType": "Activity",
+                    "category": "Coordination",
+                    "label": {
+                        "jp": "構造・設備干渉チェック／調整",
+                        "en": "Clash check & coordination"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-STR-PLN-FRAME",
+                    "nodeType": "Activity",
+                    "category": "Structure",
+                    "label": {
+                        "jp": "架構計画・構造材料/基礎計画・土工事計画",
+                        "en": "Structural concept & foundation plan"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-STR-PLN-LOAD",
+                    "nodeType": "Activity",
+                    "category": "Structure",
+                    "label": {
+                        "jp": "荷重設定（用途・スペック）／荷重表作成",
+                        "en": "Set loads and create load table"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-STR-BSD-ANALYSIS",
+                    "nodeType": "Activity",
+                    "category": "Structure",
+                    "label": {
+                        "jp": "一貫構造計算／解析モデル（仮定断面）",
+                        "en": "Integrated analysis model (assumed sections)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-STR-BSD-SECONDARY",
+                    "nodeType": "Activity",
+                    "category": "Structure",
+                    "label": {
+                        "jp": "二次部材（小梁・床・基礎・杭）仮定断面",
+                        "en": "Secondary members (draft)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-STR-DD-FINAL",
+                    "nodeType": "Activity",
+                    "category": "Structure",
+                    "label": {
+                        "jp": "解析モデル（確定断面）／計算書まとめ／構造図",
+                        "en": "Finalize analysis, calc book, drawings"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-STR-DD-DETAIL",
+                    "nodeType": "Activity",
+                    "category": "Structure",
+                    "label": {
+                        "jp": "詳細図（鉄骨継手・仕口・鉄筋モデル等）",
+                        "en": "Structural detailing"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-MEP-PLN-SPACE",
+                    "nodeType": "Activity",
+                    "category": "MEP",
+                    "label": {
+                        "jp": "機械室・シャフトスペース検討／設備スペース仮登録",
+                        "en": "Reserve plant/shaft spaces"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-MEP-PLN-ZONING",
+                    "nodeType": "Activity",
+                    "category": "MEP",
+                    "label": {
+                        "jp": "設備方針／システム検討／設備ゾーニング",
+                        "en": "MEP concept & zoning"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-MEP-BSD-CRITICAL",
+                    "nodeType": "Activity",
+                    "category": "MEP",
+                    "label": {
+                        "jp": "クリティカル部ダクト・配管検討／天井伏・梁せい・階高調整／概略荷重・ガラリ",
+                        "en": "Critical routing & key adjustments"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-MEP-BSD-SYSFLOW",
+                    "nodeType": "Activity",
+                    "category": "MEP",
+                    "label": {
+                        "jp": "系統図（システムフロー）／機器仮選定／負荷計算準備",
+                        "en": "Schematics and preliminary selection"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-MEP-DD-MAIN",
+                    "nodeType": "Activity",
+                    "category": "MEP",
+                    "label": {
+                        "jp": "機器・衛生器具・メインダクト/配管・荷重/動力登録",
+                        "en": "Main MEP model and registrations"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-MEP-DD-DETAIL",
+                    "nodeType": "Activity",
+                    "category": "MEP",
+                    "label": {
+                        "jp": "枝ルート・付属品・制気口・点検口・詳細図",
+                        "en": "MEP detailed routing and accessories"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ELEC-PLN-SPACE",
+                    "nodeType": "Activity",
+                    "category": "Electrical",
+                    "label": {
+                        "jp": "電気室・シャフトスペース検討／電気スペース登録",
+                        "en": "Reserve electrical rooms/shafts"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ELEC-BSD-CRITICAL",
+                    "nodeType": "Activity",
+                    "category": "Electrical",
+                    "label": {
+                        "jp": "照明器具プロット／主要機器・幹線クリティカル調整",
+                        "en": "Lighting + critical feeders coordination"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "ACT-ELEC-DD-MAIN",
+                    "nodeType": "Activity",
+                    "category": "Electrical",
+                    "label": {
+                        "jp": "幹線平面・動力設備平面・単線結線図・盤/幹線リスト",
+                        "en": "Electrical drawings & lists"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-MEP-TO-ARCH-EARLYLOAD",
+                    "nodeType": "Artifact",
+                    "category": "Request",
+                    "label": {
+                        "jp": "（要望）負荷計算に関連する情報を早めに提示して欲しい",
+                        "en": "(Request) Provide load-calc related info earlier"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-MEP-TO-ARCH-AREA",
+                    "nodeType": "Artifact",
+                    "category": "Request",
+                    "label": {
+                        "jp": "（要望）面積の仮決定を早期に行いたい",
+                        "en": "(Request) Early area fixation"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-MEP-TO-ARCHSTR-PIT",
+                    "nodeType": "Artifact",
+                    "category": "Request",
+                    "label": {
+                        "jp": "（要望）ピット計画方針をこのタイミングで検討したい",
+                        "en": "(Request) Decide pit planning policy at this timing"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-STR-TO-ARCH-GRID",
+                    "nodeType": "Artifact",
+                    "category": "Request",
+                    "label": {
+                        "jp": "（要望）通り芯の早期確定（構造→意匠）",
+                        "en": "(Request) Early grid fixation (STR→ARCH)"
+                    }
+                }
+            },
+            {
+                "data": {
+                    "id": "REQ-STR-TO-MEP-SLEEVEDEC",
+                    "nodeType": "Artifact",
+                    "category": "Request",
+                    "label": {
+                        "jp": "（要望）スリーブor梁下通しを決定してほしい（構造→設備）",
+                        "en": "(Request) Decide sleeves vs under-beam routing (STR→MEP)"
+                    }
+                }
+            }
+        ],
+        "edges": [
+            {
+                "data": {
+                    "id": "R-SYS-PH-1",
+                    "type": "Includes",
+                    "dimension": "Workflow",
+                    "source": "SYS-RUG-JP-WF",
+                    "target": "PH-PLN",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-SYS-PH-2",
+                    "type": "Includes",
+                    "dimension": "Workflow",
+                    "source": "SYS-RUG-JP-WF",
+                    "target": "PH-BSD",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-SYS-PH-3",
+                    "type": "Includes",
+                    "dimension": "Workflow",
+                    "source": "SYS-RUG-JP-WF",
+                    "target": "PH-DD",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-SYS-DISC-A",
+                    "type": "Includes",
+                    "dimension": "Discipline",
+                    "source": "SYS-RUG-JP-WF",
+                    "target": "DISC-ARCH",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-SYS-DISC-S",
+                    "type": "Includes",
+                    "dimension": "Discipline",
+                    "source": "SYS-RUG-JP-WF",
+                    "target": "DISC-STR",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-SYS-DISC-M",
+                    "type": "Includes",
+                    "dimension": "Discipline",
+                    "source": "SYS-RUG-JP-WF",
+                    "target": "DISC-MEP-M",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-SYS-DISC-E",
+                    "type": "Includes",
+                    "dimension": "Discipline",
+                    "source": "SYS-RUG-JP-WF",
+                    "target": "DISC-ELEC",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-PH-PLN-GATE",
+                    "type": "Gate",
+                    "dimension": "Governance",
+                    "source": "PH-PLN",
+                    "target": "EV-DR1",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-PH-BSD-GATE",
+                    "type": "Gate",
+                    "dimension": "Governance",
+                    "source": "PH-BSD",
+                    "target": "EV-DR2",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-PH-DD-GATE",
+                    "type": "Gate",
+                    "dimension": "Governance",
+                    "source": "PH-DD",
+                    "target": "EV-DR3",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-PLN-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-ARCH",
+                    "target": "ACT-ARCH-PLN-REQ",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "Architecture",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-PLN-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-ARCH-PLN-REQ",
+                    "target": "ACT-ARCH-PLN-VOL",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "Architecture",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-PLN-3",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-ARCH-PLN-VOL",
+                    "target": "ACT-ARCH-PLN-GRID",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "Architecture",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-PLN-PROD-REQ",
+                    "type": "Produces",
+                    "dimension": "Data",
+                    "source": "ACT-ARCH-PLN-REQ",
+                    "target": "ART-REQ",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-PLN-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-ARCH-PLN-VOL",
+                    "target": "MODEL-ARCH-LOD100",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-PLN-PROD-SYOGEN",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ARCH-PLN-GRID",
+                    "target": "ART-SYOGEN",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-BSD-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-ARCH",
+                    "target": "ACT-ARCH-BSD-PLANFIX",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "Architecture",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-BSD-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-ARCH-BSD-PLANFIX",
+                    "target": "ACT-ARCH-BSD-RCPFIN",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "Architecture",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-BSD-3",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-ARCH-BSD-RCPFIN",
+                    "target": "ACT-ARCH-BSD-CODE",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "Architecture",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-BSD-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-ARCH-BSD-PLANFIX",
+                    "target": "MODEL-ARCH-LOD200",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-BSD-PROD-GA",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ARCH-BSD-PLANFIX",
+                    "target": "ART-ARCH-GA",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-BSD-PROD-RCP",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ARCH-BSD-RCPFIN",
+                    "target": "ART-ARCH-RCP",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-BSD-PROD-FIN",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ARCH-BSD-RCPFIN",
+                    "target": "ART-ARCH-FIN",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-BSD-PROD-CODE",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ARCH-BSD-CODE",
+                    "target": "ART-ARCH-CODE",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-DD-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-ARCH",
+                    "target": "ACT-ARCH-DD-OPENINGS",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "owner": "Architecture",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-DD-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-ARCH-DD-OPENINGS",
+                    "target": "ACT-ARCH-DD-DETAIL",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "owner": "Architecture",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-DD-3",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-ARCH-DD-DETAIL",
+                    "target": "ACT-ARCH-DD-CLASH",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "owner": "Coordination",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-DD-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-ARCH-DD-DETAIL",
+                    "target": "MODEL-ARCH-LOD300",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ARCH-DD-PROD-OPEN",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ARCH-DD-OPENINGS",
+                    "target": "ART-ARCH-OPEN",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-PLN-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-STR",
+                    "target": "ACT-STR-PLN-FRAME",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "Structure",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-PLN-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-STR-PLN-FRAME",
+                    "target": "ACT-STR-PLN-LOAD",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "Structure",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-PLN-PROD-LOAD",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-STR-PLN-LOAD",
+                    "target": "ART-STR-LOAD",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-PLN-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-STR-PLN-FRAME",
+                    "target": "MODEL-STR-LOD100",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-BSD-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-STR",
+                    "target": "ACT-STR-BSD-ANALYSIS",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "Structure",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-BSD-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-STR-BSD-ANALYSIS",
+                    "target": "ACT-STR-BSD-SECONDARY",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "Structure",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-BSD-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-STR-BSD-SECONDARY",
+                    "target": "MODEL-STR-LOD200",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-BSD-PROD-FRAMING",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-STR-BSD-ANALYSIS",
+                    "target": "ART-STR-FRAMING",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-DD-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-STR",
+                    "target": "ACT-STR-DD-FINAL",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "owner": "Structure",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-DD-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-STR-DD-FINAL",
+                    "target": "ACT-STR-DD-DETAIL",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "owner": "Structure",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-DD-PROD-CALC",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-STR-DD-FINAL",
+                    "target": "ART-STR-CALC",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-STR-DD-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-STR-DD-DETAIL",
+                    "target": "MODEL-STR-LOD300",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-PLN-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-MEP-M",
+                    "target": "ACT-MEP-PLN-SPACE",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-PLN-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-MEP-PLN-SPACE",
+                    "target": "ACT-MEP-PLN-ZONING",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-PLN-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-MEP-PLN-SPACE",
+                    "target": "MODEL-MEP-LOD100",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-PLN-PROD-ZONING",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-MEP-PLN-ZONING",
+                    "target": "ART-MEP-ZONING",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-BSD-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-MEP-M",
+                    "target": "ACT-MEP-BSD-CRITICAL",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-BSD-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-MEP-BSD-CRITICAL",
+                    "target": "ACT-MEP-BSD-SYSFLOW",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-BSD-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-MEP-BSD-CRITICAL",
+                    "target": "MODEL-MEP-LOD200A",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-BSD-PROD-SYSFLOW",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-MEP-BSD-SYSFLOW",
+                    "target": "ART-MEP-SYSFLOW",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-BSD-PROD-SLEEVE",
+                    "type": "Produces",
+                    "dimension": "Coordination",
+                    "source": "ACT-MEP-BSD-CRITICAL",
+                    "target": "ART-MEP-SLEEVE",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-BSD-PROD-GRILLE",
+                    "type": "Produces",
+                    "dimension": "Coordination",
+                    "source": "ACT-MEP-BSD-CRITICAL",
+                    "target": "ART-MEP-GRILLE",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-DD-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-MEP-M",
+                    "target": "ACT-MEP-DD-MAIN",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-DD-2",
+                    "type": "Feeds",
+                    "dimension": "Workflow",
+                    "source": "ACT-MEP-DD-MAIN",
+                    "target": "ACT-MEP-DD-DETAIL",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-DD-PROD-MODEL1",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-MEP-DD-MAIN",
+                    "target": "MODEL-MEP-LOD200B",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-DD-PROD-MODEL2",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-MEP-DD-DETAIL",
+                    "target": "MODEL-MEP-LOD300",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-DD-PROD-EQLIST",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-MEP-DD-MAIN",
+                    "target": "ART-MEP-EQLIST",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-DD-PROD-MAINROUTE",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-MEP-DD-MAIN",
+                    "target": "ART-MEP-MAINROUTE",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-MEP-DD-PROD-CALC",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-MEP-DD-MAIN",
+                    "target": "ART-MEP-CALC",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-PLN-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-ELEC",
+                    "target": "ACT-ELEC-PLN-SPACE",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "Electrical",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-PLN-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-ELEC-PLN-SPACE",
+                    "target": "MODEL-ELEC-LOD100",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-BSD-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-ELEC",
+                    "target": "ACT-ELEC-BSD-CRITICAL",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "Electrical",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-BSD-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-ELEC-BSD-CRITICAL",
+                    "target": "MODEL-ELEC-LOD200",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-DD-1",
+                    "type": "Performs",
+                    "dimension": "Responsibility",
+                    "source": "DISC-ELEC",
+                    "target": "ACT-ELEC-DD-MAIN",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "owner": "Electrical",
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-DD-PROD-MODEL",
+                    "type": "Produces",
+                    "dimension": "Model",
+                    "source": "ACT-ELEC-DD-MAIN",
+                    "target": "MODEL-ELEC-LOD300",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-DD-PROD-SLD",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ELEC-DD-MAIN",
+                    "target": "ART-ELEC-SLD",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-DD-PROD-LISTS",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ELEC-DD-MAIN",
+                    "target": "ART-ELEC-PANELLIST",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-DD-PROD-MAINROUTE",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ELEC-DD-MAIN",
+                    "target": "ART-ELEC-MAINROUTE",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ELEC-DD-PROD-CALC",
+                    "type": "Produces",
+                    "dimension": "Deliverable",
+                    "source": "ACT-ELEC-DD-MAIN",
+                    "target": "ART-ELEC-CALC",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-REVIT-1",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-ARCH-PLN-VOL",
+                    "target": "TOOL-REVIT",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-REVIT-2",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-STR-BSD-ANALYSIS",
+                    "target": "TOOL-REVIT",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-SS3",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-STR-BSD-ANALYSIS",
+                    "target": "TOOL-SS3",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-SEIN",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-STR-BSD-ANALYSIS",
+                    "target": "TOOL-SEIN",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-REBRO",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-MEP-DD-MAIN",
+                    "target": "TOOL-REBRO",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-EXCEL-1",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-ARCH-PLN-GRID",
+                    "target": "TOOL-EXCEL",
+                    "directional": true,
+                    "confidence": "Curated"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-AUTOCAD-1",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-MEP-DD-DETAIL",
+                    "target": "TOOL-AUTOCAD",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-ADS",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-ARCH-BSD-CODE",
+                    "target": "TOOL-ADS",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-STABRO",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-MEP-DD-MAIN",
+                    "target": "TOOL-STABRO",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ACT-USES-NEWHASP",
+                    "type": "UsesTool",
+                    "dimension": "Tool",
+                    "source": "ACT-MEP-DD-MAIN",
+                    "target": "TOOL-NEWHASP",
+                    "directional": true,
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-GATE-DR1-PLN",
+                    "type": "Gate",
+                    "dimension": "Review",
+                    "source": "EV-DR1",
+                    "target": "ART-PHASEDOC-PLN",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-GATE-DR2-BSD",
+                    "type": "Gate",
+                    "dimension": "Review",
+                    "source": "EV-DR2",
+                    "target": "ART-PHASEDOC-BSD",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-GATE-DR3-DD",
+                    "type": "Gate",
+                    "dimension": "Review",
+                    "source": "EV-DR3",
+                    "target": "ART-PHASEDOC-DD",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-ISSUE-DD",
+                    "type": "Gate",
+                    "dimension": "Publication",
+                    "source": "EV-ISSUE",
+                    "target": "ART-PHASEDOC-DD",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-CONTRACT",
+                    "type": "Gate",
+                    "dimension": "Commercial",
+                    "source": "EV-CONTRACT",
+                    "target": "ART-PHASEDOC-DD",
+                    "directional": true,
+                    "phase": [
+                        "実施設計"
+                    ],
+                    "confidence": "Explicit"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-REQ-MEP-ARCH-LOAD",
+                    "type": "ConstraintRequest",
+                    "dimension": "Interdiscipline",
+                    "source": "DISC-MEP-M",
+                    "target": "REQ-MEP-TO-ARCH-EARLYLOAD",
+                    "directional": true,
+                    "phase": [
+                        "企画設計",
+                        "基本設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit",
+                    "notes": "負荷計算に関連するものは早めて欲しい（設備→建築）"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-REQ-MEP-ARCH-AREA",
+                    "type": "ConstraintRequest",
+                    "dimension": "Interdiscipline",
+                    "source": "DISC-MEP-M",
+                    "target": "REQ-MEP-TO-ARCH-AREA",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit",
+                    "notes": "この辺りで面積の仮決定が出来ないか（設備→建築）"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-REQ-MEP-ARCHSTR-PIT",
+                    "type": "ConstraintRequest",
+                    "dimension": "Interdiscipline",
+                    "source": "DISC-MEP-M",
+                    "target": "REQ-MEP-TO-ARCHSTR-PIT",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "MEP",
+                    "confidence": "Explicit",
+                    "notes": "ピット計画の方針検討をしたい（設備→建築・構造）"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-REQ-STR-ARCH-GRID",
+                    "type": "ConstraintRequest",
+                    "dimension": "Interdiscipline",
+                    "source": "DISC-STR",
+                    "target": "REQ-STR-TO-ARCH-GRID",
+                    "directional": true,
+                    "phase": [
+                        "企画設計"
+                    ],
+                    "owner": "Structure",
+                    "confidence": "Explicit",
+                    "notes": "通り芯（構造→意匠への要望）"
+                }
+            },
+            {
+                "data": {
+                    "id": "R-REQ-STR-MEP-SLEEVE",
+                    "type": "ConstraintRequest",
+                    "dimension": "Interdiscipline",
+                    "source": "DISC-STR",
+                    "target": "REQ-STR-TO-MEP-SLEEVEDEC",
+                    "directional": true,
+                    "phase": [
+                        "基本設計"
+                    ],
+                    "owner": "Structure",
+                    "confidence": "Explicit",
+                    "notes": "スリーブor梁下通しを決定してもらいたい（構造→設備）"
+                }
+            }
+        ]
+    }
+}

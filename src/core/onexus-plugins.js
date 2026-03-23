@@ -283,7 +283,7 @@
 
         const ctx = {
             cy: window.cy,
-            state: window.__onexus_state || window.___onexus_state,
+            state: window.ONEXUS?.core?.getState?.(),
             meta: window.__onexus_meta || window.___onexus_meta,
             opts,
             util: { readFileHeadText, fileExt },
