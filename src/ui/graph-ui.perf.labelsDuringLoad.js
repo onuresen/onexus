@@ -59,7 +59,7 @@
     }
 
     function getCoreState() {
-        return window.__onexus_state || window.___onexus_state || null;
+        return window.ONEXUS?.core?.getState?.() ?? null;
     }
 
     function applyHideClassToAll() {
