@@ -93,7 +93,7 @@
                 const name = id.startsWith("L1:") || id.startsWith("L2:") || id.startsWith("L3:")
                     ? id.slice(3)
                     : id;
-                return { id, name };
+                return { id, name: String(n.name ?? id) };
             });
 
             const links = [];

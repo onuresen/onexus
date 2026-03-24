@@ -83,11 +83,10 @@
           <div class="onx-sankey-controls">
             <label>Group</label>
             <select id="onxSankeyGroupBy">
-            <option value="nodeType2">nodeType → nodeType</option>
-            <option value="category2">category → category</option>
+            <option value="nodeId_bipartite">node → node (bipartite)</option>
             <option value="srcType_relType_tgtType">src.nodeType → edge.type → tgt.nodeType</option>
-            <option value="srcType_dim_tgtType">src.nodeType → edge.dimension → tgt.nodeType</option>
-            <option value="srcCat_relType_tgtCat">src.category → edge.type → tgt.category</option>
+            <option value="nodeType2">nodeType → nodeType (coarse)</option>
+            <option value="category2">category → category (coarse)</option>
             </select>
             <label>Weight</label>
             <select id="onxSankeyWeight">
@@ -160,74 +159,139 @@
         const cy = window.cy;
         if (!cy) return { nodes: [], links: [], meta: {} };
 
-        const nodesById = new Map();
-        const linksByKey = new Map();
+        const f = filter || {};
+        const dimPick = f.dimension ? String(f.dimension) : null;
+        const typePick = f.type ? String(f.type) : null;
+        const phasePick = f.phase ? String(f.phase) : null;
 
+        // Node id -> display label (use ONEXUS displayLabel if present)
+        const labelById = new Map();
+        cy.nodes().forEach(n => {
+            const d = n.data();
+            labelById.set(n.id(), String(d.displayLabel ?? d.id ?? n.id()));
+        });
+
+        const nodesByKey = new Map();  // key -> index
+        const linksByKey = new Map();  // "src\ntrg" -> {value, edgeIds, nodeIds}
+
+        function normalizeConfidenceToWeight(conf) {
+            if (conf == null) return 1;
+            if (typeof conf === "number" && isFinite(conf)) return Math.max(0.05, Math.min(2, conf));
+            const s = String(conf).trim().toLowerCase();
+            if (!s) return 1;
+            if (s === "high") return 1.4;
+            if (s === "medium" || s === "med") return 1.0;
+            if (s === "low") return 0.6;
+            if (s === "inferred") return 0.4;
+            const n = parseFloat(s);
+            return isFinite(n) ? Math.max(0.05, Math.min(2, n)) : 1;
+        }
+
+        function ensureNode(key) {
+            const k = String(key ?? "").trim() || "(unknown)";
+            if (!nodesByKey.has(k)) nodesByKey.set(k, nodesByKey.size);
+            return nodesByKey.get(k);
+        }
+
+        function addLink(srcKey, tgtKey, w, edgeId, sNodeId, tNodeId) {
+            const s = String(srcKey ?? "(unknown)");
+            const t = String(tgtKey ?? "(unknown)");
+            ensureNode(s);
+            ensureNode(t);
+
+            const k = s + "\n" + t;
+            let rec = linksByKey.get(k);
+            if (!rec) rec = { sourceKey: s, targetKey: t, value: 0, edgeIds: new Set(), nodeIds: new Set() };
+            rec.value += (Number.isFinite(w) ? w : 1);
+            if (edgeId) rec.edgeIds.add(edgeId);
+            if (sNodeId) rec.nodeIds.add(sNodeId);
+            if (tNodeId) rec.nodeIds.add(tNodeId);
+            linksByKey.set(k, rec);
+        }
+
+        function nodeTypeOf(n) { return String(n.data("nodeType") ?? "Component"); }
+        function categoryOf(n) {
+            const d = n.data();
+            return String(d.category ?? d.revitCategory ?? "Uncategorized");
+        }
+        function edgeTypeOf(e) { return String(e.data("type") ?? "RelatedTo"); }
+
+        // Use only visible edges (respects filters/layers)
         const edges = cy.edges(":visible");
+
         edges.forEach(e => {
             const d = e.data();
 
-            // apply filter if you have it (dimension/type/phase) — keep your existing filter logic
+            // Optional filters
+            if (dimPick && String(d.dimension) !== dimPick) return;
+            if (typePick && String(d.type) !== typePick) return;
+            if (phasePick) {
+                const ph = d.phase ?? [];
+                const list = Array.isArray(ph)
+                    ? ph.map(String)
+                    : String(ph).split("\n").map(x => x.trim()).filter(Boolean);
+                if (!list.includes(String(phasePick))) return;
+            }
 
             const sNode = e.source();
             const tNode = e.target();
+            const w = (weightMode === "confidence") ? normalizeConfidenceToWeight(d.confidence) : 1;
 
-            const w = (weightMode === "confidence")
-                ? normalizeConfidenceToWeight(d.confidence)
-                : 1;
+            // ---------------------------------------------------
+            // ✅ NEW: node → node bipartite (dense like chord/default)
+            // Left nodes are separate IDs from right nodes to avoid cycles:
+            //   L:<nodeId>  -> R:<nodeId>
+            // ---------------------------------------------------
+            if (groupBy === "nodeId_bipartite") {
+                const sId = sNode.id();
+                const tId = tNode.id();
 
-            // -----------------------------
-            // ✅ 3-stage alluvial modes
-            // -----------------------------
+                const L = "L:" + sId;
+                const R = "R:" + tId;
+
+                addLink(L, R, w, d.id, sId, tId);
+                return;
+            }
+
+            // 3-stage alluvial (richer than coarse)
             if (groupBy === "srcType_relType_tgtType") {
                 const L1 = "L1:" + nodeTypeOf(sNode);
                 const L2 = "L2:" + edgeTypeOf(e);
                 const L3 = "L3:" + nodeTypeOf(tNode);
 
-                addAggLink(nodesById, linksByKey, L1, L2, w, e.id(), sNode.id(), tNode.id());
-                addAggLink(nodesById, linksByKey, L2, L3, w, e.id(), sNode.id(), tNode.id());
+                addLink(L1, L2, w, d.id, sNode.id(), tNode.id());
+                addLink(L2, L3, w, d.id, sNode.id(), tNode.id());
                 return;
             }
 
-            if (groupBy === "srcType_dim_tgtType") {
-                const L1 = "L1:" + nodeTypeOf(sNode);
-                const L2 = "L2:" + edgeDimOf(e);
-                const L3 = "L3:" + nodeTypeOf(tNode);
-
-                addAggLink(nodesById, linksByKey, L1, L2, w, e.id(), sNode.id(), tNode.id());
-                addAggLink(nodesById, linksByKey, L2, L3, w, e.id(), sNode.id(), tNode.id());
-                return;
-            }
-
-            if (groupBy === "srcCat_relType_tgtCat") {
-                const L1 = "L1:" + categoryOf(sNode);
-                const L2 = "L2:" + edgeTypeOf(e);
-                const L3 = "L3:" + categoryOf(tNode);
-
-                addAggLink(nodesById, linksByKey, L1, L2, w, e.id(), sNode.id(), tNode.id());
-                addAggLink(nodesById, linksByKey, L2, L3, w, e.id(), sNode.id(), tNode.id());
-                return;
-            }
-
-            // -----------------------------
-            // Existing 2-stage modes (keep)
-            // -----------------------------
+            // coarse fallbacks
             if (groupBy === "nodeType2") {
-                addAggLink(nodesById, linksByKey, nodeTypeOf(sNode), nodeTypeOf(tNode), w, e.id(), sNode.id(), tNode.id());
+                addLink(nodeTypeOf(sNode), nodeTypeOf(tNode), w, d.id, sNode.id(), tNode.id());
                 return;
             }
 
             if (groupBy === "category2") {
-                addAggLink(nodesById, linksByKey, categoryOf(sNode), categoryOf(tNode), w, e.id(), sNode.id(), tNode.id());
+                addLink(categoryOf(sNode), categoryOf(tNode), w, d.id, sNode.id(), tNode.id());
                 return;
             }
 
             // default fallback
-            addAggLink(nodesById, linksByKey, nodeTypeOf(sNode), nodeTypeOf(tNode), w, e.id(), sNode.id(), tNode.id());
+            addLink(nodeTypeOf(sNode), nodeTypeOf(tNode), w, d.id, sNode.id(), tNode.id());
         });
 
-        // finalize
-        const nodes = Array.from(nodesById.keys()).map(id => ({ id }));
+        // Build node list with display labels
+        const nodes = Array.from(nodesByKey.keys()).map(id => {
+            // Present clean label in UI:
+            // L:<id> => label of original node
+            // R:<id> => label of original node
+            let name = id;
+            if (id.startsWith("L:")) name = labelById.get(id.slice(2)) ?? id.slice(2);
+            else if (id.startsWith("R:")) name = labelById.get(id.slice(2)) ?? id.slice(2);
+            else if (id.startsWith("L1:") || id.startsWith("L2:") || id.startsWith("L3:")) name = id.slice(3);
+
+            return { id, name };
+        });
+
         const links = Array.from(linksByKey.values()).map(r => ({
             source: r.sourceKey,
             target: r.targetKey,
@@ -235,7 +299,8 @@
             edgeIds: Array.from(r.edgeIds),
             nodeIds: Array.from(r.nodeIds),
         }));
-        return { nodes, links, meta: { groupBy, weightMode, filter } };
+
+        return { nodes, links, meta: { groupBy, weightMode, filter: f } };
     }
 
     function nodeTypeOf(n) { return String(n?.data?.("nodeType") ?? n?.data?.().nodeType ?? "Component"); }
@@ -332,15 +397,26 @@
         }
 
         // sync UI controls
-        const uiCfg = getCurrentCfgForUi(metaCfg);
-        runtime.lastCfg = uiCfg;
-
-        const $g = $("onxSankeyGroupBy");
+        const $g = document.getElementById("onxSankeyGroupBy");
         const $w = $("onxSankeyWeight");
-        if ($g) $g.value = uiCfg.groupBy;
-        if ($w) $w.value = uiCfg.weight;
+        const uiCfg = getCurrentCfgForUi(metaCfg);
 
-        refreshSankey(uiCfg);
+        // Always force group dropdown to default to 'nodeId_bipartite' on load
+        if ($g) {
+            $g.value = "nodeId_bipartite";
+        }
+        if ($w) {
+            $w.value = uiCfg.weight;
+        }
+
+        // Always use the current dropdown values for initial render
+        const initialCfg = {
+            groupBy: $g ? $g.value : "nodeId_bipartite",
+            weight: $w ? $w.value : uiCfg.weight,
+            filter: uiCfg.filter
+        };
+        runtime.lastCfg = initialCfg;
+        refreshSankey(initialCfg);
     }
 
     function unmountSankey() {
