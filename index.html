@@ -254,6 +254,15 @@
         </svg>
       </button>
       <input id="fileImportGD" type="file" accept=".json" style="display:none">
+      <!-- Obsidian Import -->
+      <button class="icon-btn" id="btnObsidian" title="Import Obsidian Vault" aria-label="Import Obsidian Vault">
+        <!-- simple book icon for obsidian -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+      </button>
     </div>
 
     <button class="icon-btn" id="btnDepGraph" title="Dependency Graph (Shift+G)" aria-label="Dependency Graph">
@@ -514,6 +523,7 @@
   <script src="./src/ui/graph-ui.floatInspector.js"></script>
   <script src="./src/layouts/layout-leftRail.js"></script>
   <script src="./src/ui/graph-ui.leftDock.js"></script>
+  <script src="./src/layouts/layout-loadDirectory.js"></script>
   <script src=./src/ui/graph-ui.tour.js></script>
   <!-- Shared inline JS extracted -->
   <script src="./src/common/onexus-common.js"></script>

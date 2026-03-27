@@ -404,6 +404,23 @@
     }
   });
 
+  // ===============================  
+  // Obsidian Import (directory-based)
+  // ===============================
+  on("btnObsidian", "click", async () => {
+    try {
+      if (!window.ONEXUS?.plugins?.importFilesAs) {
+        alert("Plugin system not available. Check that onexus-plugins.js is loaded.");
+        return;
+      }
+      await window.ONEXUS.plugins.importFilesAs('obsidian-md', []);
+    } catch (err) {
+      const msg = String(err?.message ?? err).toLowerCase();
+      if (msg.includes("cancel")) return;
+      alert("Obsidian import failed: " + (err?.message ?? err));
+    }
+  });
+
   // ===============================
   // Animation controls (exist in both htmls)
   // ===============================
