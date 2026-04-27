@@ -170,6 +170,254 @@ namespace Onexus
             return graph;
         }
 
+        // ── Generic: Category → Type → Instance (works on any element collection) ─
+        //
+        // Source: any ICollection<ElementId> — typically the current selection, or
+        // the active-view collector when nothing is selected.
+        //
+        // Graph shape
+        //   Category node ──[InCategory]──► Type node ──[HasType]──► Instance node
+        //                                                               ├─[OnLevel]──► Level
+        //                                                               ├─[LocatedIn]──► Room (doors/windows)
+        //                                                               └─[SubComponentOf]──► Host (hosted families)
+        public static OnexusGraph BuildGenericElementGraph(Document doc, ICollection<ElementId> elementIds)
+        {
+            const int MaxInstances = 400;
+
+            var graph    = NewGraph(doc);
+            var nodeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var edgeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var referencedLevels = new HashSet<ElementId>();
+
+            // Pre-build a set of all incoming ElementId values so we can detect
+            // host→subcomponent relationships within the export set.
+            var inputIdSet = new HashSet<long>();
+            foreach (var eid in elementIds) inputIdSet.Add(eid.Value);
+
+            int instanceCount = 0;
+            bool truncated    = false;
+
+            foreach (var eid in elementIds)
+            {
+                if (instanceCount >= MaxInstances) { truncated = true; break; }
+
+                var el = doc.GetElement(eid);
+                if (el == null) continue;
+                if (el is ElementType) continue;       // skip type elements
+
+                var cat = el.Category;
+                if (cat == null) continue;             // skip elements with no user category
+
+                instanceCount++;
+                var catName   = cat.Name;
+                var catNodeId = $"CAT-{cat.Id.Value}";
+
+                // ── Category node ──────────────────────────────────────────────
+                if (nodeSeen.Add(catNodeId))
+                {
+                    graph.elements.nodes.Add(new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id           = catNodeId,
+                            nodeType     = "Category",
+                            category     = catName,
+                            label        = new Dictionary<string, string> { ["en"] = catName, ["jp"] = catName },
+                            revitCategory = catName
+                        }
+                    });
+                }
+
+                // ── Type node ──────────────────────────────────────────────────
+                string typeNodeId;
+                string typeLabel;
+                int    typeRevitId = 0;
+
+                if (el is FamilyInstance fiType && fiType.Symbol != null)
+                {
+                    typeNodeId  = $"TYP-{fiType.Symbol.Id.Value}";
+                    typeLabel   = $"{fiType.Symbol.FamilyName} : {fiType.Symbol.Name}";
+                    typeRevitId = (int)fiType.Symbol.Id.Value;
+                }
+                else
+                {
+                    var typeId = el.GetTypeId();
+                    if (typeId != null && typeId != ElementId.InvalidElementId)
+                    {
+                        var elType = doc.GetElement(typeId);
+                        typeNodeId  = $"TYP-{typeId.Value}";
+                        typeLabel   = elType?.Name ?? catName;
+                        typeRevitId = (int)typeId.Value;
+                    }
+                    else
+                    {
+                        typeNodeId = $"TYP-NOTYPE-{cat.Id.Value}";
+                        typeLabel  = catName;
+                    }
+                }
+
+                if (nodeSeen.Add(typeNodeId))
+                {
+                    graph.elements.nodes.Add(new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id            = typeNodeId,
+                            nodeType      = "FamilyType",
+                            category      = catName,
+                            label         = new Dictionary<string, string> { ["en"] = typeLabel, ["jp"] = typeLabel },
+                            revitCategory = catName,
+                            revitInstanceIds = typeRevitId > 0 ? new List<int> { typeRevitId } : null
+                        }
+                    });
+                }
+
+                // Type → Category
+                AddEdge(graph, edgeSeen, "InCategory", "Metadata", typeNodeId, catNodeId, directional: true);
+
+                // ── Instance node ──────────────────────────────────────────────
+                var instId    = el.UniqueId;
+                var instLabel = el is FamilyInstance fiLbl
+                    ? MakeElementLabel(fiLbl)
+                    : (el.Name ?? catName);
+                var lvl = TryGetLevel(el, doc);
+                if (lvl != null) referencedLevels.Add(lvl.Id);
+
+                if (nodeSeen.Add(instId))
+                {
+                    graph.elements.nodes.Add(new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id               = instId,
+                            nodeType         = "Element",
+                            category         = catName,
+                            label            = new Dictionary<string, string> { ["en"] = instLabel, ["jp"] = instLabel },
+                            revitCategory    = catName,
+                            level            = lvl?.Name,
+                            revitInstanceIds = new List<int>    { (int)el.Id.Value },
+                            revitInstanceUids = new List<string> { el.UniqueId }
+                        }
+                    });
+                }
+
+                // Instance → Type, Instance → Level
+                AddEdge(graph, edgeSeen, "HasType", "Metadata", instId, typeNodeId, directional: true);
+                if (lvl != null)
+                    AddEdge(graph, edgeSeen, "OnLevel", "Spatial", instId, lvl.UniqueId, directional: true);
+
+                // ── Room connections (FamilyInstance only) ─────────────────────
+                if (el is FamilyInstance fi)
+                {
+                    try
+                    {
+                        var isDoor   = cat.Id.Value == (long)BuiltInCategory.OST_Doors;
+                        var isWindow = cat.Id.Value == (long)BuiltInCategory.OST_Windows;
+
+                        if (isDoor || isWindow)
+                        {
+                            var fromRoom = fi.FromRoom;
+                            var toRoom   = fi.ToRoom;
+                            if (fromRoom != null && fromRoom.Area > 0)
+                            {
+                                EnsureRoomNode(graph, nodeSeen, fromRoom);
+                                AddEdge(graph, edgeSeen, "LocatedIn", "Spatial", instId, fromRoom.UniqueId, directional: true);
+                            }
+                            if (toRoom != null && toRoom.Area > 0)
+                            {
+                                EnsureRoomNode(graph, nodeSeen, toRoom);
+                                AddEdge(graph, edgeSeen, "LocatedIn", "Spatial", instId, toRoom.UniqueId, directional: true);
+                            }
+                        }
+                        else
+                        {
+                            var room = fi.Room;
+                            if (room != null && room.Area > 0)
+                            {
+                                EnsureRoomNode(graph, nodeSeen, room);
+                                AddEdge(graph, edgeSeen, "LocatedIn", "Spatial", instId, room.UniqueId, directional: true);
+                            }
+                        }
+                    }
+                    catch { /* room lookup optional — safe-fail */ }
+
+                    // ── SubComponentOf: host within the same export set ────────
+                    try
+                    {
+                        var host = fi.Host;
+                        if (host != null && inputIdSet.Contains(host.Id.Value))
+                            AddEdge(graph, edgeSeen, "SubComponentOf", "System", instId, host.UniqueId, directional: true);
+                    }
+                    catch { }
+                }
+            }
+
+            // ── Level nodes (only those referenced by instances) ───────────────
+            var allLevels = new FilteredElementCollector(doc)
+                .OfClass(typeof(Level))
+                .Cast<Level>()
+                .Where(l => referencedLevels.Contains(l.Id));
+
+            foreach (var lvl in allLevels)
+            {
+                var lvlId = lvl.UniqueId;
+                if (nodeSeen.Add(lvlId))
+                {
+                    var lbl = lvl.Name ?? "Level";
+                    graph.elements.nodes.Add(new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id               = lvlId,
+                            nodeType         = "Level",
+                            category         = "Level",
+                            label            = new Dictionary<string, string> { ["en"] = lbl, ["jp"] = lbl },
+                            revitCategory    = "Levels",
+                            level            = lbl,
+                            revitInstanceIds = new List<int>    { (int)lvl.Id.Value },
+                            revitInstanceUids = new List<string> { lvl.UniqueId }
+                        }
+                    });
+                }
+            }
+
+            if (truncated)
+            {
+                TaskDialog.Show("ONEXUS – Explore Elements",
+                    $"Only the first {MaxInstances} elements are shown.\n\n" +
+                    "Tip: select a smaller set of elements, or open a less-populated view " +
+                    "and run Explore Elements again.");
+            }
+
+            return graph;
+        }
+
+        // ── Ensures a Room node exists in the graph (helper for BuildGenericElementGraph) ─
+        private static void EnsureRoomNode(OnexusGraph graph, HashSet<string> nodeSeen, Room room)
+        {
+            var roomId = room.UniqueId;
+            if (!nodeSeen.Add(roomId)) return;
+
+            graph.elements.nodes.Add(new OnexusNode
+            {
+                data = new NodeData
+                {
+                    id               = roomId,
+                    nodeType         = "Space",
+                    category         = "Room",
+                    label            = new Dictionary<string, string>
+                    {
+                        ["en"] = MakeRoomLabel(room),
+                        ["jp"] = MakeRoomLabel(room)
+                    },
+                    revitCategory    = "Rooms",
+                    level            = room.Level?.Name,
+                    revitInstanceIds = new List<int>    { (int)room.Id.Value },
+                    revitInstanceUids = new List<string> { room.UniqueId }
+                }
+            });
+        }
+
         // Doors (type-level) + nested subcomponents (type-level) + System edges
         public static OnexusGraph BuildDoorTypeAndSubcomponentsGraph(Document doc, Func<FamilyInstance, bool> doorFilter = null)
         {

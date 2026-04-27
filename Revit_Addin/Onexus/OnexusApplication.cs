@@ -130,6 +130,18 @@ namespace Onexus
 
             graphPanel.AddSeparator();
 
+            // Explore Elements — generic, works on any Revit model
+            var exploreData = new PushButtonData(
+                "OnexusExploreElements", "Explore\nElements", asm,
+                "Onexus.ExploreElementsCommand")
+            {
+                ToolTip =
+                    "Build a Category → Type → Instance graph from the current selection.\n\n" +
+                    "If nothing is selected, all visible elements in the active view are used.\n" +
+                    "Works on any Revit model — no special families or MEP systems required."
+            };
+            graphPanel.AddItem(exploreData);
+
             // Spaces & Elements (spatial graph)
             var spacesData = new PushButtonData(
                 "OnexusSpaces", "Sync\nSpaces", asm,
