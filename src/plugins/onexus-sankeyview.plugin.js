@@ -141,20 +141,6 @@
         return {};
     }
 
-    function normalizeConfidenceToWeight(conf) {
-        // accepts number 0..1, or strings: high/med/low/inferred, or blanks
-        if (conf == null) return 1;
-        if (typeof conf === "number" && isFinite(conf)) return Math.max(0.05, Math.min(2, conf));
-        const s = String(conf).trim().toLowerCase();
-        if (!s) return 1;
-        if (s === "high") return 1.4;
-        if (s === "medium" || s === "med") return 1.0;
-        if (s === "low") return 0.6;
-        if (s === "inferred") return 0.4;
-        const n = parseFloat(s);
-        return isFinite(n) ? Math.max(0.05, Math.min(2, n)) : 1;
-    }
-
     function buildSankeyAggregate({ groupBy, weightMode, filter }) {
         const cy = window.cy;
         if (!cy) return { nodes: [], links: [], meta: {} };

@@ -62,6 +62,62 @@ npm run format:check    # Prettier — check without writing
 | `window.filterByCategory(cat)` | `src/core/graph-core.filters.js` | Apply category filter |
 | `window.ONEXUS_LOG` | `src/helpers/onexus-logger.js` | Debug logger — gated by `ONEXUS_DEBUG` flag |
 
+## Script load order
+
+Modules must load in this order (enforced by `index.html` `<script>` order):
+
+1. `src/helpers/onexus-ns.js` — ONEXUS namespace, `ONEXUS.util.escapeHtml`, event bus
+2. `src/helpers/onexus-compat.js` — compatibility shims
+3. `src/core/graph-core.state.js` — Cytoscape init, `window.cy`
+4. All other `src/core/` and `src/plugins/` modules
+
+Do **not** reorder these. Other modules assume `window.ONEXUS` and `window.cy` are already set.
+
+## URL flags
+
+| Flag | Effect |
+|------|--------|
+| `?debug=1` | Enable verbose `ONEXUS_LOG` output (same as `window.ONEXUS_DEBUG = true`) |
+| `?dev=1` | Load dev-only scripts from `src/dev/` (dep graph, audit, selftest) |
+| `?ci=1` | Load dev scripts in CI/headless mode |
+
+## HTML safety — escapeHtml
+
+**Always** escape user-controlled data before inserting into `innerHTML`.
+
+Single source of truth: `ONEXUS.util.escapeHtml(s)` in `src/helpers/onexus-ns.js`.
+
+```js
+const esc = window.ONEXUS?.util?.escapeHtml ?? (s => String(s ?? ""));
+el.innerHTML = `<div>${esc(node.data("displayLabel"))}</div>`;
+```
+
+Never fall back to bare `String(s)` — that is an XSS vector. Use `textContent` or `document.createElement` for single values.
+
+## CSS custom properties (theme tokens)
+
+Theme tokens used throughout `src/helpers/onexus-style.js` and inline styles:
+
+| Token | Usage |
+|-------|-------|
+| `--bg-main` | Main canvas/panel background |
+| `--bg-soft` | Slightly elevated background |
+| `--text-main` | Primary text |
+| `--text-muted` | Secondary/dimmed text |
+| `--stroke` | Border and divider color |
+| `--accent` | Highlight / focus colour |
+| `--btn-bg` | Button background |
+
+## Dev-only globals (available with `?dev=1`)
+
+These are loaded only in dev mode and must **not** be referenced in production code:
+
+| Global | File | Purpose |
+|--------|------|---------|
+| `window.ONEXUS_AUDIT` | `src/dev/onexus-audit.runtime.js` | Runtime global health checks |
+| `window.ONEXUS_HOOK_AUDIT` | `src/dev/onexus-audit.hooks.js` | Cytoscape/DOM hook usage report |
+| `window.ONEXUS_DEPGRAPH` | `src/dev/onexus-depgraph.js` | Visualise module dependency graph |
+
 ## Debug logging
 
 Set `window.ONEXUS_DEBUG = true` **before** loading the page (or append `?debug=1` to the URL) to enable verbose `ONEXUS_LOG.log()` and `ONEXUS_LOG.table()` output. `warn` and `error` are always active.
@@ -85,4 +141,18 @@ node server.js
 - Prefer small, well-scoped functions; avoid large new files.
 - New debug output must use `window.ONEXUS_LOG.log(...)` (gated), not `console.log`.
 - `console.warn` and `console.error` are fine for real user-visible signals.
-- Add Playwright tests in `tests/` for any new feature that affects the public API surface.
+- Add Playwright tests in `tests/` for any new feature that affects the **Key public APIs** table above.
+- **Safe-fail pattern:** `try { ... } catch { }` (empty catch) is the approved pattern for optional/plugin integrations where failure should not crash the page. It is intentional, not an oversight.
+- **Error handling at boundaries:** Wrap `JSON.parse`, `file.text()`, and external API calls in try-catch with a user-visible `alert` or `console.error`.
+
+## Key plugin APIs
+
+| Symbol | File | Purpose |
+|--------|------|---------|
+| `ONEXUS.registerPlugin(cfg)` | `src/common/onexus-common.js` | Register a plugin |
+| `api.registerImporter(cfg)` | (plugin register callback) | Add a file importer |
+| `ONEXUS.plugins.explanations` | Map | Plugin detail-panel templates (node/edge) |
+| `ONEXUS.bus.emit(type, detail)` | `src/helpers/onexus-ns.js` | Emit a named event |
+| `ONEXUS.bus.on(type, fn)` | `src/helpers/onexus-ns.js` | Subscribe to a named event |
+
+Key bus events: `graphWillLoad`, `graphLoaded`, `graphLoadFailed`, `layerModeChanged`, `languageChanged`, `explainRendered`.

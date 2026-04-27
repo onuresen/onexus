@@ -28,10 +28,10 @@
         } catch { }
     }
 
-    // ✅ canonical safe escape
     function escapeHtml(s) {
         const fn = window.ONEXUS?.util?.escapeHtml;
-        return (typeof fn === "function") ? fn(s) : String(s ?? "");
+        if (typeof fn === "function") return fn(s);
+        return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
     }
 
     function normalizeTplEntry(key, value) {

@@ -128,7 +128,8 @@
     return null;
   }
 
-  // Upstream/Downstream flood (N hops) with per-edge direction
+  // Upstream/Downstream flood (N hops) with per-edge direction.
+  // Uses node.connectedEdges() per frontier node — O(V+E) instead of O(V×E).
   function floodFrom(startId, depth, mode /* 'up'|'down' */) {
     const visNodes = visibleNodeIdsSet();
     const visited = new Set([startId]);
@@ -137,25 +138,20 @@
 
     for (let h = 0; h < steps; h++) {
       const next = [];
-      visibleEdges().forEach(e => {
-        const s = e.data('source'), t = e.data('target'), dir = !!e.data('directional');
-        // eligible traversals for this mode
-        // downstream: s -> t; if undirected: both ways
-        // upstream:   t -> s; if undirected: both ways
-        for (const u of frontier) {
+      for (const u of frontier) {
+        const uNode = cy.getElementById(u);
+        if (!uNode || !uNode.nonempty || !uNode.nonempty()) continue;
+        uNode.connectedEdges(':visible').forEach(e => {
+          const s = e.data('source'), t = e.data('target'), dir = !!e.data('directional');
           if (mode === 'down') {
-            if (u === s && visNodes.has(t)) { if (!visited.has(t)) { visited.add(t); next.push(t); } }
-            if (!dir) {
-              if (u === t && visNodes.has(s)) { if (!visited.has(s)) { visited.add(s); next.push(s); } }
-            }
+            if (u === s && visNodes.has(t) && !visited.has(t)) { visited.add(t); next.push(t); }
+            if (!dir && u === t && visNodes.has(s) && !visited.has(s)) { visited.add(s); next.push(s); }
           } else { // 'up'
-            if (u === t && visNodes.has(s)) { if (!visited.has(s)) { visited.add(s); next.push(s); } }
-            if (!dir) {
-              if (u === s && visNodes.has(t)) { if (!visited.has(t)) { visited.add(t); next.push(t); } }
-            }
+            if (u === t && visNodes.has(s) && !visited.has(s)) { visited.add(s); next.push(s); }
+            if (!dir && u === s && visNodes.has(t) && !visited.has(t)) { visited.add(t); next.push(t); }
           }
-        }
-      });
+        });
+      }
       frontier = next;
       if (!frontier.length) break;
     }
@@ -166,7 +162,8 @@
       const s = e.data('source'), t = e.data('target'), dir = !!e.data('directional');
       if (!visited.has(s) || !visited.has(t)) return false;
       if (!dir) return true;
-      return mode === 'down' ? true /* s->t usable */ : true /* t->s also inside visited; keep edge */;
+      // For directional edges: downstream keeps s→t edges, upstream keeps t→s edges.
+      return mode === 'down' ? visited.has(s) : visited.has(t);
     });
     return nodes.union(edges);
   }
