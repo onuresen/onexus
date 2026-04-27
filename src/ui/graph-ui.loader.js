@@ -226,7 +226,10 @@
   async function mergeJsonFiles(jsonFiles) {
     const files = [...jsonFiles].sort((a, b) => String(a.name).localeCompare(String(b.name)));
     const texts = await Promise.all(files.map((f) => f.text()));
-    const parsed = texts.map((t) => JSON.parse(t));
+    const parsed = texts.map((t, i) => {
+      try { return JSON.parse(t); }
+      catch (e) { throw new Error(`${files[i].name}: ${e.message}`); }
+    });
 
     const normFn = window.ONEXUS?.import?.normalizeGraph;
     const graphs = parsed.map((g) => {
