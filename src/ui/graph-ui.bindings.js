@@ -468,6 +468,45 @@
   });
   on("btnPhaseStop", "click", () => window.stopPhaseReveal?.());
 
+  // ===============================
+  // Keyboard: H — toggle N-hop focus on selected node (F is taken by fitView)
+  // ===============================
+  document.addEventListener("keydown", (e) => {
+    if (isEditingField(e)) return;
+    if (String(e.key || "").toLowerCase() !== "h") return;
+
+    const cy = window.cy;
+    if (!cy) return;
+
+    const selected = cy.nodes(":selected").first();
+    const state = window.__onexus_state;
+
+    if (!selected || !selected.length) {
+      if (state?.focusedNode) {
+        window.clearFocus?.();
+        window.showTransientMessage?.("Focus cleared");
+      }
+      return;
+    }
+
+    if (state?.focusedNode?.id?.() === selected.id()) {
+      window.clearFocus?.();
+      window.showTransientMessage?.("Focus cleared");
+    } else {
+      if (state) state.focusedNode = selected;
+      window.applyDepthFocus?.(selected);
+      window.showTransientMessage?.(`Focus applied (${state?.focusDepth ?? 1}-hop)`);
+    }
+  });
+
+  // ===============================
+  // graphLoadFailed — reset file input so user can retry same file
+  // ===============================
+  window.ONEXUS?.bus?.on?.("graphLoadFailed", () => {
+    const inp = document.getElementById("fileInput");
+    if (inp) inp.value = "";
+  });
+
   // Keep cy responsive on resize
   window.addEventListener("resize", () => window.cy?.resize?.());
 })();

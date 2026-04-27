@@ -156,3 +156,10 @@ node server.js
 | `ONEXUS.bus.on(type, fn)` | `src/helpers/onexus-ns.js` | Subscribe to a named event |
 
 Key bus events: `graphWillLoad`, `graphLoaded`, `graphLoadFailed`, `layerModeChanged`, `languageChanged`, `explainRendered`.
+
+## Known gaps / future work
+
+- **Playwright tests for Sankey and Chord views** — both views received recent fixes (commits 992ccac, 475e67d, a3581a2) but have zero automated coverage. Add cases to `tests/onexus-features.spec.js`:
+  - Sankey view opens without console errors when a flow-data sample is loaded.
+  - Chord view renders an SVG overlay; zoom controls work; exiting restores Cytoscape canvas.
+  See `src/plugins/onexus-sankeyview.plugin.js` and `src/plugins/onexus-chordview.plugin.js` for the APIs to drive from tests.

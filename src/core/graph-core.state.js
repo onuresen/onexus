@@ -389,6 +389,7 @@
   window.setLanguage = setLanguage;
   window.setFocusDepth = setFocusDepth;
   window.applyDepthFocus = applyDepthFocus;
+  window.clearFocus = clearFocus;
   window.setEdgeLabelVisibility = setEdgeLabelVisibility;
   window.setNodeLabelVisibility = setNodeLabelVisibility;
   window.fitView = fitView;

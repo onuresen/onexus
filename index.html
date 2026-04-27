@@ -126,6 +126,11 @@
       <label>Load</label>
       <input id="fileInput" type="file" multiple data-onx-accept=".json,.csv,.ifc,.ifczip">
     </div>
+    <div class="tool-group" id="onx-search-group" style="display:flex;align-items:center;gap:6px;">
+      <label>Search</label>
+      <input id="onxSearch" type="search" placeholder="Search nodes…" autocomplete="off" style="width:140px;">
+      <span id="onxSearchCount" style="font-size:11px;color:var(--text-muted);white-space:nowrap;min-width:52px;"></span>
+    </div>
 
     <div class="iconbar" aria-label="Actions">
       <button class="icon-btn" id="btnSaveServer" title="Save to server" aria-label="Save to server">
@@ -340,6 +345,9 @@
 
           <h3>Phase</h3>
           <select id="phaseFilter" multiple size="4" style="width:100%"></select>
+
+          <h3>Stats</h3>
+          <div id="onxStatsSummary" style="font-size:12px;color:var(--text-muted);">Load a graph to see stats.</div>
         </section>
 
         <!-- Style panel -->
@@ -477,8 +485,10 @@
         <h3 style="margin-top:0;">Shortcuts</h3>
         <pre style="font-size:12px;white-space:pre-wrap">
         F: Fit   C: Center   R: Reset
+        H: Toggle N-hop focus on selected node
         Undo: Ctrl/Cmd+Z
         Redo: Shift+Ctrl/Cmd+Z or Ctrl/Cmd+Y
+        Search: toolbar input (Enter cycles, Esc clears)
         ?: Toggle this help
         </pre>
         <button class="flat" onclick="this.closest('#help').style.display='none'">Close</button>
@@ -509,6 +519,8 @@
   <!-- UI bindings -->
   <script src=./src/ui/graph-ui.loader.js></script>
   <script src=./src/ui/graph-ui.bindings.js></script>
+  <script src="./src/ui/graph-ui.search.js"></script>
+  <script src="./src/ui/graph-ui.statsPanel.js"></script>
   <script src=./src/ui/graph-ui.safeMode.js></script>
   <script src="./src/ui/graph-ui.persistence.js"></script>
   <script src="./src/ui/graph-ui.toolbar.layout.js"></script>

@@ -159,7 +159,12 @@
 
   function compareFromFilePair(fileA, fileB) {
     Promise.all([fileA.text(), fileB.text()])
-      .then(([ta, tb]) => compareAB(JSON.parse(ta), JSON.parse(tb)))
+      .then(([ta, tb]) => {
+        let a, b;
+        try { a = JSON.parse(ta); } catch (e) { throw new Error(`${fileA.name}: ${e.message}`); }
+        try { b = JSON.parse(tb); } catch (e) { throw new Error(`${fileB.name}: ${e.message}`); }
+        compareAB(a, b);
+      })
       .catch(err => alert('Failed to load A/B: ' + err.message));
   }
 
