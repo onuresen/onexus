@@ -66,10 +66,14 @@ namespace ONES
         /// <summary>
         /// Serialises <paramref name="graph"/>, shows the docked panel, and
         /// injects the graph into the Onexus web app.
+        /// Also rebuilds the element-ID cache used by live delta tracking.
         /// </summary>
         public static void ShowGraph(UIApplication uiapp, OnexusGraph graph)
         {
             if (graph == null || _content == null) return;
+
+            // Rebuild delta cache before serialising so IDs are captured
+            try { _content.TrackGraph(graph); } catch { }
 
             var json = JsonConvert.SerializeObject(graph, Formatting.Indented);
             ShowGraph(uiapp, json,
@@ -126,6 +130,17 @@ namespace ONES
         public static void UpdateActiveDocument(UIDocument uidoc)
         {
             try { _content?.UpdateDocument(uidoc); } catch { }
+        }
+
+        // ── Delta sync (Phase 5) ───────────────────────────────────────────────
+
+        /// <summary>
+        /// Enqueues a document-change delta for processing on the next Idling tick.
+        /// Called from the DocumentChanged event handler in OnexusApplication.
+        /// </summary>
+        public static void EnqueueDelta(DeltaEntry entry)
+        {
+            try { _content?.EnqueueDelta(entry); } catch { }
         }
     }
 }

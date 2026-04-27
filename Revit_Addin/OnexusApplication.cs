@@ -51,6 +51,12 @@ namespace ONES
                               : null); }
                     catch { }
                 };
+
+                // 4. Subscribe to DocumentChanged for live delta sync (Phase 5).
+                //    This event fires after each committed transaction.  We collect
+                //    the changed IDs here (safe: read-only access) and defer any
+                //    Revit API work to the next Idling tick.
+                app.ControlledApplication.DocumentChanged += OnDocumentChanged;
             }
             catch (Exception ex)
             {
@@ -63,7 +69,39 @@ namespace ONES
 
         public Result OnShutdown(UIControlledApplication app)
         {
+            app.ControlledApplication.DocumentChanged -= OnDocumentChanged;
             return Result.Succeeded;
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  DocumentChanged — collect IDs and hand off to the pane (Phase 5)
+        // ══════════════════════════════════════════════════════════════════════
+
+        private static void OnDocumentChanged(
+            object sender,
+            Autodesk.Revit.DB.Events.DocumentChangedEventArgs e)
+        {
+            try
+            {
+                // Only forward deltas when the panel has been initialised and a
+                // full graph has been loaded (TrackGraph populates the cache).
+                if (!OnexusPaneManager.IsAvailable) return;
+
+                var added    = e.GetAddedElementIds()?.ToList()    ?? new System.Collections.Generic.List<ElementId>();
+                var modified = e.GetModifiedElementIds()?.ToList() ?? new System.Collections.Generic.List<ElementId>();
+                var deleted  = e.GetDeletedElementIds()?.ToList()  ?? new System.Collections.Generic.List<ElementId>();
+
+                if (added.Count + modified.Count + deleted.Count == 0) return;
+
+                OnexusPaneManager.EnqueueDelta(new DeltaEntry
+                {
+                    Doc      = e.GetDocument(),
+                    Added    = added,
+                    Modified = modified,
+                    Deleted  = deleted
+                });
+            }
+            catch { /* must not propagate — would crash Revit's transaction system */ }
         }
 
         // ══════════════════════════════════════════════════════════════════════
@@ -126,6 +164,34 @@ namespace ONES
                 ToolTip = "Export parameter bindings (scoped to selection when elements are selected)."
             };
             viewsPanel.AddItem(paramsData);
+
+            // ── Panel: MEP ─────────────────────────────────────────────────────
+            var mepPanel = app.CreateRibbonPanel(TabName, "MEP");
+
+            var mepData = new PushButtonData(
+                "OnexusMEP", "MEP\nSystems", asm,
+                "ONES.OnexusMEP")
+            {
+                ToolTip =
+                    "Export all MEP systems (Mechanical, Electrical, Piping) and their " +
+                    "connected equipment, terminals and fixtures to the ONEXUS panel.\n\n" +
+                    "Works best on MEP or combined models."
+            };
+            mepPanel.AddItem(mepData);
+
+            // ── Panel: Documentation ───────────────────────────────────────────
+            var docsPanel = app.CreateRibbonPanel(TabName, "Documentation");
+
+            var sheetsData = new PushButtonData(
+                "OnexusSheets", "Sheets\n& Views", asm,
+                "ONES.OnexusSheets")
+            {
+                ToolTip =
+                    "Export all drawing sheets, the views placed on them, and the rooms " +
+                    "visible in each floor-plan view.\n\n" +
+                    "Shows which sheets document which spaces."
+            };
+            docsPanel.AddItem(sheetsData);
 
             // ── Panel: Settings ───────────────────────────────────────────────
             var settingsPanel = app.CreateRibbonPanel(TabName, "Settings");

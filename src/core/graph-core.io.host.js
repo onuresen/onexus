@@ -287,6 +287,72 @@
     cy.fit(undefined, 50);
   }
 
+  // ── applyGraphDelta ────────────────────────────────────────────────────
+  //
+  //  Applies an incremental update without a full graph reload.
+  //  Called from the "graph-delta" WebView2 message and exposed as
+  //  window.onexusApplyDelta for Playwright tests.
+  //
+  //  payload:
+  //    nodes   — array of Onexus node wrappers to add or update
+  //    edges   — array of Onexus edge wrappers to add or update
+  //    removed — array of node UniqueIds to remove (with their incident edges)
+  // ─────────────────────────────────────────────────────────────────────────
+  function applyGraphDelta({ nodes = [], edges = [], removed = [] }) {
+    const c = window.cy;
+    if (!c) return;
+
+    // 1. Remove deleted elements (cy.remove also removes incident edges)
+    removed.forEach((id) => {
+      const el = c.getElementById(id);
+      if (el && el.nonempty && el.nonempty()) el.remove();
+    });
+
+    // 2. Upsert nodes — normalise before touching the graph
+    nodes.forEach((nWrap) => {
+      try {
+        const norm = normalizeNode(nWrap);
+        const existing = c.getElementById(norm.data.id);
+        if (existing.nonempty && existing.nonempty()) {
+          existing.data(norm.data); // update in place
+        } else {
+          c.add({ group: "nodes", data: norm.data });
+        }
+      } catch { /* skip malformed node */ }
+    });
+
+    // 3. Upsert edges — skip if source or target are not in the graph
+    edges.forEach((eWrap) => {
+      try {
+        const norm = normalizeEdge(eWrap);
+        const existing = c.getElementById(norm.data.id);
+        if (existing.nonempty && existing.nonempty()) {
+          existing.data(norm.data);
+        } else {
+          // Cytoscape throws if source/target nodes are missing
+          if (c.getElementById(norm.data.source).nonempty() &&
+              c.getElementById(norm.data.target).nonempty()) {
+            c.add({ group: "edges", data: norm.data });
+          }
+        }
+      } catch { /* skip malformed edge */ }
+    });
+
+    // 4. Refresh lightweight UI components — no full layout recalculation
+    try { window.buildCategoryFilter?.(); }    catch { }
+    try { window.buildRelationshipLegend?.(); } catch { }
+    try { window.updateMetrics?.(); }           catch { }
+
+    try {
+      window.ONEXUS?.bus?.emit?.("graphLoaded", {
+        delta: true,
+        counts: { nodes: c.nodes().length, edges: c.edges().length },
+      });
+    } catch { }
+  }
+
+  window.onexusApplyDelta = applyGraphDelta;
+
   // Host bridge (WebView2) ─────────────────────────────────────────────────
   //
   //  Inbound messages from Revit (C# → JS):
@@ -299,6 +365,12 @@
   //
   //    clear-highlight  {}
   //      Removes all .highlight classes.
+  //
+  //    graph-delta  { nodes, edges, removed }
+  //      Incremental update — adds/updates/removes nodes without a full reload.
+  //
+  //    graph-delta-overflow  { count }
+  //      Too many changes for delta — signals the JS side to show a hint.
   //
   //    onexus-graph  { graph: object }
   //      Loads a full graph object (legacy / direct-injection path).
@@ -347,6 +419,27 @@
       // ── Remove all highlights ────────────────────────────────────────────
       if (e.data.type === "clear-highlight") {
         cy.nodes().removeClass("highlight");
+        return;
+      }
+
+      // ── Incremental delta update ─────────────────────────────────────────
+      if (e.data.type === "graph-delta") {
+        applyGraphDelta({
+          nodes:   e.data.nodes   ?? [],
+          edges:   e.data.edges   ?? [],
+          removed: e.data.removed ?? [],
+        });
+        return;
+      }
+
+      // ── Delta overflow: too many elements changed — hint to resync ────────
+      if (e.data.type === "graph-delta-overflow") {
+        const count = e.data.count ?? "many";
+        console.warn(
+          `[ONEXUS] ${count} elements changed in one transaction — delta skipped. ` +
+          "Run a Sync command to refresh the graph."
+        );
+        try { window.ONEXUS?.bus?.emit?.("revitDeltaOverflow", { count }); } catch { }
         return;
       }
 

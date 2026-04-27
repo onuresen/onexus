@@ -12,6 +12,9 @@ using System.Text;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
+using Autodesk.Revit.DB.Electrical;
+using Autodesk.Revit.DB.Mechanical;
+using Autodesk.Revit.DB.Plumbing;
 using Autodesk.Revit.UI;
 using Newtonsoft.Json;
 using View = Autodesk.Revit.DB.View;
@@ -1296,6 +1299,543 @@ namespace ONES
             }
 
             return graph;
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  MEP Systems graph
+        //
+        //  Exports every MEPSystem (Mechanical / Electrical / Piping) in the
+        //  document as a system node, then connects:
+        //    • BaseEquipment  →  SuppliedBy  →  System  (AHU serves Supply Air)
+        //    • Terminal/Fixture →  ConnectedTo →  System  (diffuser on supply)
+        //
+        //  Distribution elements (ducts, pipes, cable trays) are intentionally
+        //  skipped — they produce enormous graphs without adding analytical value
+        //  at the system level.
+        // ══════════════════════════════════════════════════════════════════════
+        public static OnexusGraph BuildMEPSystemsGraph(Document doc)
+        {
+            var graph    = NewGraph(doc);
+            var nodeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var edgeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            var systems = new FilteredElementCollector(doc)
+                .OfClass(typeof(MEPSystem))
+                .Cast<MEPSystem>()
+                .ToList();
+
+            foreach (var sys in systems)
+            {
+                var sysNodeType = GetMEPSystemNodeType(sys);
+                if (sysNodeType == null) continue;                // skip unrecognised subtypes
+
+                var sysUid   = sys.UniqueId;
+                var sysLabel = !string.IsNullOrWhiteSpace(sys.Name) ? sys.Name : sysNodeType;
+
+                // ── System node ──────────────────────────────────────────────
+                if (nodeSeen.Add(sysUid))
+                {
+                    graph.elements.nodes.Add(new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id                = sysUid,
+                            nodeType          = sysNodeType,
+                            category          = sysNodeType,
+                            label             = MakeBilingualLabel(sysLabel),
+                            revitCategory     = "MEP Systems",
+                            revitInstanceIds  = new List<int>    { (int)sys.Id.Value },
+                            revitInstanceUids = new List<string> { sys.UniqueId }
+                        }
+                    });
+                }
+
+                // ── Base equipment (AHU, panel, pump…) ───────────────────────
+                try
+                {
+                    var equip = sys.BaseEquipment;
+                    if (equip != null)
+                    {
+                        EnsureMEPElementNode(graph, nodeSeen, equip);
+                        // Equipment ← SuppliedBy ← System (equipment supplies the system)
+                        AddEdge(graph, edgeSeen, "SuppliedBy", "MEP",
+                                sysUid, equip.UniqueId, directional: true, confidence: "Explicit");
+                    }
+                }
+                catch { /* some system types don't expose BaseEquipment */ }
+
+                // ── Terminals and fixtures connected to this system ──────────
+                try
+                {
+                    var baseEquipId = sys.BaseEquipment?.Id ?? ElementId.InvalidElementId;
+
+                    foreach (Element el in sys.Elements)
+                    {
+                        if (el == null) continue;
+                        if (el.Id == baseEquipId) continue;           // already handled above
+                        if (!IsMEPLeafElement(el)) continue;          // skip ducts, pipes, etc.
+
+                        EnsureMEPElementNode(graph, nodeSeen, el);
+                        // Leaf element → ConnectedTo → System
+                        AddEdge(graph, edgeSeen, "ConnectedTo", "MEP",
+                                el.UniqueId, sysUid, directional: true, confidence: "Explicit");
+                    }
+                }
+                catch { /* ElementSet iteration can fail on corrupt systems */ }
+            }
+
+            return graph;
+        }
+
+        // ── MEP helpers ───────────────────────────────────────────────────────
+
+        /// <summary>Maps an MEPSystem subclass to an Onexus nodeType string.</summary>
+        private static string GetMEPSystemNodeType(MEPSystem sys)
+        {
+            if (sys is MechanicalSystem) return "MechanicalSystem";
+            if (sys is ElectricalSystem) return "ElectricalSystem";
+            if (sys is PipingSystem)     return "PipingSystem";
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true for equipment, terminals, fixtures and devices that are
+        /// worth showing as individual nodes.  Returns false for distribution
+        /// elements (ducts, pipes, conduits, cable trays) which would balloon
+        /// the graph without adding system-level insight.
+        /// </summary>
+        private static bool IsMEPLeafElement(Element el)
+        {
+            if (el.Category == null) return false;
+            try
+            {
+                var bic = (BuiltInCategory)(int)el.Category.Id.Value;
+                switch (bic)
+                {
+                    case BuiltInCategory.OST_MechanicalEquipment:
+                    case BuiltInCategory.OST_ElectricalEquipment:
+                    case BuiltInCategory.OST_ElectricalFixtures:
+                    case BuiltInCategory.OST_PlumbingFixtures:
+                    case BuiltInCategory.OST_DuctTerminal:       // air terminals / diffusers
+                    case BuiltInCategory.OST_Sprinklers:
+                    case BuiltInCategory.OST_LightingFixtures:
+                    case BuiltInCategory.OST_LightingDevices:
+                    case BuiltInCategory.OST_FireAlarmDevices:
+                    case BuiltInCategory.OST_DataDevices:
+                    case BuiltInCategory.OST_CommunicationDevices:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            catch { return false; }
+        }
+
+        /// <summary>Maps an element's category to an Onexus nodeType string.</summary>
+        private static string GetMEPElementNodeType(Element el)
+        {
+            if (el.Category == null) return "MepElement";
+            try
+            {
+                var bic = (BuiltInCategory)(int)el.Category.Id.Value;
+                switch (bic)
+                {
+                    case BuiltInCategory.OST_MechanicalEquipment:
+                    case BuiltInCategory.OST_ElectricalEquipment:
+                        return "MepEquipment";
+                    case BuiltInCategory.OST_DuctTerminal:
+                        return "MepTerminal";
+                    case BuiltInCategory.OST_PlumbingFixtures:
+                    case BuiltInCategory.OST_Sprinklers:
+                        return "MepFixture";
+                    case BuiltInCategory.OST_LightingFixtures:
+                    case BuiltInCategory.OST_LightingDevices:
+                        return "MepLighting";
+                    case BuiltInCategory.OST_FireAlarmDevices:
+                    case BuiltInCategory.OST_DataDevices:
+                    case BuiltInCategory.OST_CommunicationDevices:
+                    case BuiltInCategory.OST_ElectricalFixtures:
+                        return "MepDevice";
+                    default:
+                        return "MepElement";
+                }
+            }
+            catch { return "MepElement"; }
+        }
+
+        /// <summary>
+        /// Adds a node for an MEP element if not already present.
+        /// </summary>
+        private static void EnsureMEPElementNode(
+            OnexusGraph graph,
+            HashSet<string> nodeSeen,
+            Element el)
+        {
+            var uid = el.UniqueId;
+            if (!nodeSeen.Add(uid)) return;
+
+            var cat      = el.Category?.Name ?? "MEP";
+            var nodeType = GetMEPElementNodeType(el);
+            var label    = MakeMEPLabel(el);
+
+            // Level — try LevelId first, then parameter fallback
+            string levelName = null;
+            try
+            {
+                if (el.LevelId != null && el.LevelId != ElementId.InvalidElementId)
+                    levelName = (el.Document.GetElement(el.LevelId) as Level)?.Name;
+            }
+            catch { }
+
+            graph.elements.nodes.Add(new OnexusNode
+            {
+                data = new NodeData
+                {
+                    id                = uid,
+                    nodeType          = nodeType,
+                    category          = cat,
+                    label             = MakeBilingualLabel(label),
+                    revitCategory     = cat,
+                    level             = levelName,
+                    familyName        = (el is FamilyInstance fi2) ? fi2.Symbol?.FamilyName : null,
+                    typeName          = (el is FamilyInstance fi3) ? (fi3.Symbol?.Name ?? fi3.Name) : el.Name,
+                    revitInstanceIds  = new List<int>    { (int)el.Id.Value },
+                    revitInstanceUids = new List<string> { uid }
+                }
+            });
+        }
+
+        /// <summary>Human-readable label for any MEP element.</summary>
+        private static string MakeMEPLabel(Element el)
+        {
+            if (el is FamilyInstance fi)
+            {
+                var fam = fi.Symbol?.FamilyName;
+                var typ = fi.Symbol?.Name ?? fi.Name;
+                if (!string.IsNullOrWhiteSpace(fam) && !string.IsNullOrWhiteSpace(typ))
+                    return $"{fam} : {typ}";
+                return fam ?? typ ?? fi.Name ?? "MEP";
+            }
+            return !string.IsNullOrWhiteSpace(el.Name) ? el.Name
+                 : (el.Category?.Name ?? "MEP");
+        }
+
+        /// <summary>Creates a {en, jp} label dictionary with the same text for both.</summary>
+        private static Dictionary<string, string> MakeBilingualLabel(string text) =>
+            new Dictionary<string, string> { ["en"] = text, ["jp"] = text };
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  Sheets & Views graph
+        //
+        //  Exports every drawing sheet, the views placed on each sheet, and
+        //  the rooms visible in each plan-type view.
+        //
+        //  Node types produced:
+        //    Sheet  (nodeType: "Sheet",  category: "Sheet")
+        //    View   (nodeType: "View",   category: view type name e.g. "FloorPlan")
+        //    Space  (nodeType: "Space",  category: "Room") — rooms in plan views
+        //
+        //  Edge types produced:
+        //    ContainedIn (View → Sheet, dimension: Documentation)
+        //      A view is placed on this sheet.
+        //    ShowsSpace  (View → Room,  dimension: Documentation)
+        //      A room appears in this floor-plan/ceiling-plan view.
+        //      Only produced for plan-type views (FloorPlan, CeilingPlan,
+        //      AreaPlan, EngineeringPlan) where room tags are meaningful.
+        // ══════════════════════════════════════════════════════════════════════
+        public static OnexusGraph BuildSheetsAndViewsGraph(Document doc)
+        {
+            var graph    = NewGraph(doc);
+            var nodeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var edgeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            var sheets = new FilteredElementCollector(doc)
+                .OfClass(typeof(ViewSheet))
+                .Cast<ViewSheet>()
+                .OrderBy(s => s.SheetNumber)
+                .ToList();
+
+            foreach (var sheet in sheets)
+            {
+                // ── Sheet node ───────────────────────────────────────────────
+                var sheetUid   = sheet.UniqueId;
+                var sheetLabel = string.IsNullOrWhiteSpace(sheet.SheetNumber)
+                    ? (sheet.Name ?? "Sheet")
+                    : $"{sheet.SheetNumber} — {sheet.Name}";
+
+                if (nodeSeen.Add(sheetUid))
+                {
+                    graph.elements.nodes.Add(new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id                = sheetUid,
+                            nodeType          = "Sheet",
+                            category          = "Sheet",
+                            label             = MakeBilingualLabel(sheetLabel),
+                            revitCategory     = "Sheets",
+                            revitInstanceIds  = new List<int>    { (int)sheet.Id.Value },
+                            revitInstanceUids = new List<string> { sheetUid }
+                        }
+                    });
+                }
+
+                // ── Views placed on this sheet ───────────────────────────────
+                ISet<ElementId> placedViewIds;
+                try   { placedViewIds = sheet.GetAllPlacedViews(); }
+                catch { continue; }
+
+                foreach (var viewId in placedViewIds)
+                {
+                    var view = doc.GetElement(viewId) as Autodesk.Revit.DB.View;
+                    if (view == null || view.IsTemplate) continue;
+
+                    var viewUid      = view.UniqueId;
+                    var viewTypeName = view.ViewType.ToString();  // "FloorPlan", "Section", etc.
+                    var viewLabel    = !string.IsNullOrWhiteSpace(view.Name)
+                        ? view.Name : viewTypeName;
+
+                    // ── View node ────────────────────────────────────────────
+                    if (nodeSeen.Add(viewUid))
+                    {
+                        graph.elements.nodes.Add(new OnexusNode
+                        {
+                            data = new NodeData
+                            {
+                                id                = viewUid,
+                                nodeType          = "View",
+                                category          = viewTypeName,
+                                label             = MakeBilingualLabel(viewLabel),
+                                revitCategory     = "Views",
+                                revitInstanceIds  = new List<int>    { (int)view.Id.Value },
+                                revitInstanceUids = new List<string> { viewUid }
+                            }
+                        });
+                    }
+
+                    // ── ContainedIn edge: View → Sheet ───────────────────────
+                    AddEdge(graph, edgeSeen,
+                            "ContainedIn", "Documentation",
+                            viewUid, sheetUid,
+                            directional: true, confidence: "Explicit");
+
+                    // ── ShowsSpace edges: plan-type views only ───────────────
+                    if (!IsPlanView(view.ViewType)) continue;
+
+                    try
+                    {
+                        var rooms = new FilteredElementCollector(doc, viewId)
+                            .OfCategory(BuiltInCategory.OST_Rooms)
+                            .WhereElementIsNotElementType()
+                            .Cast<Room>()
+                            .Where(r => r.Area > 0);
+
+                        foreach (var room in rooms)
+                        {
+                            var roomUid = room.UniqueId;
+
+                            // Add the room node if we haven't seen it yet
+                            // (it may already exist if a spatial graph was merged later,
+                            //  but this graph is standalone so we create it here)
+                            if (nodeSeen.Add(roomUid))
+                            {
+                                graph.elements.nodes.Add(new OnexusNode
+                                {
+                                    data = new NodeData
+                                    {
+                                        id                = roomUid,
+                                        nodeType          = "Space",
+                                        category          = "Room",
+                                        label             = MakeBilingualLabel(MakeRoomLabel(room)),
+                                        revitCategory     = "Rooms",
+                                        level             = room.Level?.Name,
+                                        revitInstanceIds  = new List<int>    { (int)room.Id.Value },
+                                        revitInstanceUids = new List<string> { roomUid }
+                                    }
+                                });
+                            }
+
+                            // View → ShowsSpace → Room
+                            AddEdge(graph, edgeSeen,
+                                    "ShowsSpace", "Documentation",
+                                    viewUid, roomUid,
+                                    directional: true, confidence: "Explicit");
+                        }
+                    }
+                    catch { /* view may not support element collection */ }
+                }
+            }
+
+            return graph;
+        }
+
+        /// <summary>
+        /// Returns true for view types where room tags are spatially meaningful —
+        /// used to decide whether to generate ShowsSpace edges.
+        /// </summary>
+        private static bool IsPlanView(ViewType vt)
+        {
+            switch (vt)
+            {
+                case ViewType.FloorPlan:
+                case ViewType.CeilingPlan:
+                case ViewType.AreaPlan:
+                case ViewType.EngineeringPlan:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  Delta sync — Phase 5
+        // ══════════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Builds a single <see cref="OnexusNode"/> for a changed/added element.
+        /// Returns <c>null</c> when the element type is not worth syncing
+        /// (e.g. annotation, dimension, view template).
+        ///
+        /// Called from <see cref="OnexusPaneContent.ProcessDeltaEntry"/> on the
+        /// Revit main thread inside an Idling callback, so all Revit API calls
+        /// are safe here.
+        /// </summary>
+        public static OnexusNode BuildDeltaNode(Document doc, ElementId id)
+        {
+            try
+            {
+                var el = doc.GetElement(id);
+                if (el == null || el.UniqueId == null) return null;
+
+                // ── Room ─────────────────────────────────────────────────────
+                if (el is Room room)
+                {
+                    if (room.Area <= 0) return null;    // unplaced room: skip
+                    var lvl = room.Level;
+                    return new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id                = room.UniqueId,
+                            nodeType          = "Space",
+                            category          = "Room",
+                            label             = MakeBilingualLabel(MakeRoomLabel(room)),
+                            revitCategory     = "Rooms",
+                            level             = lvl?.Name,
+                            revitInstanceIds  = new List<int>    { (int)room.Id.Value },
+                            revitInstanceUids = new List<string> { room.UniqueId }
+                        }
+                    };
+                }
+
+                // ── Level ────────────────────────────────────────────────────
+                if (el is Level level)
+                {
+                    var lbl = level.Name ?? "Level";
+                    return new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id                = level.UniqueId,
+                            nodeType          = "Level",
+                            category          = "Level",
+                            label             = MakeBilingualLabel(lbl),
+                            revitCategory     = "Levels",
+                            level             = lbl,
+                            revitInstanceIds  = new List<int>    { (int)level.Id.Value },
+                            revitInstanceUids = new List<string> { level.UniqueId }
+                        }
+                    };
+                }
+
+                // ── MEP system (Mechanical / Electrical / Piping) ─────────────
+                if (el is MEPSystem mep)
+                {
+                    var nodeType = GetMEPSystemNodeType(mep);
+                    return new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id                = mep.UniqueId,
+                            nodeType          = nodeType,
+                            category          = nodeType,
+                            label             = MakeBilingualLabel(mep.Name ?? nodeType),
+                            revitCategory     = mep.Category?.Name,
+                            revitInstanceIds  = new List<int>    { (int)mep.Id.Value },
+                            revitInstanceUids = new List<string> { mep.UniqueId }
+                        }
+                    };
+                }
+
+                // ── FamilyInstance (walls, doors, furniture, MEP equipment …) ─
+                if (el is FamilyInstance fi)
+                {
+                    var lvl = TryGetLevel(fi, doc);
+                    var cat = fi.Category?.Name ?? "Element";
+
+                    // Decide nodeType: MEP leaf → specific type, else generic Element
+                    var nodeType = IsMEPLeafElement(fi) ? GetMEPElementNodeType(fi) : "Element";
+
+                    return new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id                = fi.UniqueId,
+                            nodeType          = nodeType,
+                            category          = cat,
+                            label             = MakeBilingualLabel(MakeElementLabel(fi)),
+                            revitCategory     = cat,
+                            level             = lvl?.Name,
+                            familyName        = fi.Symbol?.FamilyName,
+                            typeName          = fi.Symbol?.Name ?? fi.Name,
+                            revitInstanceIds  = new List<int>    { (int)fi.Id.Value },
+                            revitInstanceUids = new List<string> { fi.UniqueId }
+                        }
+                    };
+                }
+
+                // ── ViewSheet ────────────────────────────────────────────────
+                if (el is ViewSheet sheet)
+                {
+                    var lbl = string.IsNullOrWhiteSpace(sheet.SheetNumber)
+                        ? (sheet.Name ?? "Sheet")
+                        : $"{sheet.SheetNumber} — {sheet.Name}";
+                    return new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id                = sheet.UniqueId,
+                            nodeType          = "Sheet",
+                            category          = "Sheet",
+                            label             = MakeBilingualLabel(lbl),
+                            revitCategory     = "Sheets",
+                            revitInstanceIds  = new List<int>    { (int)sheet.Id.Value },
+                            revitInstanceUids = new List<string> { sheet.UniqueId }
+                        }
+                    };
+                }
+
+                // ── Generic element (annotations, grids, etc.) ────────────────
+                //    Only include elements that Revit tracks with a UniqueId and
+                //    belong to a named category (skip internal workset elements).
+                var genCat = el.Category?.Name;
+                if (string.IsNullOrEmpty(genCat)) return null;
+
+                return new OnexusNode
+                {
+                    data = new NodeData
+                    {
+                        id                = el.UniqueId,
+                        nodeType          = "Element",
+                        category          = genCat,
+                        label             = MakeBilingualLabel(el.Name ?? genCat),
+                        revitCategory     = genCat,
+                        revitInstanceIds  = new List<int>    { (int)el.Id.Value },
+                        revitInstanceUids = new List<string> { el.UniqueId }
+                    }
+                };
+            }
+            catch { return null; }
         }
     }
 }
