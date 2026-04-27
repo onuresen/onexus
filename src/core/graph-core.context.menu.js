@@ -238,19 +238,30 @@
       { label: "Focus (1-hop)", action: () => { window.setFocusDepth?.(1); state.focusedNode = node; window.applyDepthFocus?.(node); } },
       { label: "Focus (2-hop)", action: () => { window.setFocusDepth?.(2); state.focusedNode = node; window.applyDepthFocus?.(node); } },
       { label: "Center on node", action: () => { if (node?.nonempty?.()) cy.center(node); } },
-      {
-        label: "Select (host)", action: () => {
-          if (window.chrome && window.chrome.webview) {
-            window.chrome.webview.postMessage({
-              type: "select-node",
-              id: node.id(),
-              revitInstanceIds: node.data("revitInstanceIds") ?? [],
-              revitInstanceUids: node.data("revitInstanceUids") ?? []
-            });
-          }
-        }
-      },
     ];
+
+    // Revit bridge actions — only shown when running inside the Revit dockable panel
+    if (window.chrome && window.chrome.webview) {
+      const _postBridge = (msg) => window.chrome.webview.postMessage(msg);
+      const _nodePayload = () => ({
+        id: node.id(),
+        revitInstanceIds: node.data("revitInstanceIds") ?? [],
+        revitInstanceUids: node.data("revitInstanceUids") ?? []
+      });
+
+      view.push(
+        // Select the element in Revit (no camera movement in Revit)
+        {
+          label: "⬡ Select in Revit",
+          action: () => _postBridge({ type: "select-node", ..._nodePayload() })
+        },
+        // Select and zoom the Revit 3D/plan view to the element
+        {
+          label: "⬡ Zoom to in Revit",
+          action: () => _postBridge({ type: "zoom-to-node", ..._nodePayload() })
+        }
+      );
+    }
 
     // ---- Group 3: Connect
     const connect = [];

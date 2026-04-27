@@ -18,7 +18,7 @@ namespace ONES
         {
             var uiapp = commandData.Application;
             var uidoc = uiapp.ActiveUIDocument;
-            var doc = uidoc.Document;
+            var doc   = uidoc.Document;
 
             var sw = new Stopwatch();
             sw.Start();
@@ -26,17 +26,13 @@ namespace ONES
             try
             {
                 var selIds = uidoc.Selection.GetElementIds();
-                var graph = OnexusExportCore.BuildRoomsAndElementsSpatialGraph(doc, selIds);
+                var graph  = OnexusExportCore.BuildRoomsAndElementsSpatialGraph(doc, selIds);
 
-                OnexusExportCore.SaveGraphWithDialog(
-                    graph,
-                    $"{System.IO.Path.GetFileNameWithoutExtension(doc.Title)}-onexus.json");
-
-                TaskDialog.Show("ONEXUS Export",
-                    $"Exported {graph.elements.nodes.Count} nodes and {graph.elements.edges.Count} edges.");
+                // Push to the docked panel (primary path)
+                OnexusPaneManager.ShowGraph(uiapp, graph);
 
                 sw.Stop();
-                UtilsMisc.ONESLogs(uidoc, ToString(), sw); // preserves your original logging
+                UtilsMisc.ONESLogs(uidoc, ToString(), sw);
                 return Result.Succeeded;
             }
             catch (System.Exception ex)

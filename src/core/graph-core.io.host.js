@@ -287,22 +287,70 @@
     cy.fit(undefined, 50);
   }
 
-  // Host bridge (WebView2)
+  // Host bridge (WebView2) ─────────────────────────────────────────────────
+  //
+  //  Inbound messages from Revit (C# → JS):
+  //    highlight-nodes  { ids: string[], fitView?: bool }
+  //      Highlights nodes whose id matches a Revit UniqueId.
+  //      fitView defaults to true; pass false to highlight without panning.
+  //
+  //    zoom-to-node  { id: string }
+  //      Highlights a single node and fits the camera to it.
+  //
+  //    clear-highlight  {}
+  //      Removes all .highlight classes.
+  //
+  //    onexus-graph  { graph: object }
+  //      Loads a full graph object (legacy / direct-injection path).
+  //
+  //    apply-layout  { positions: [{id, position}] }
+  //      Restores saved positions.
+  // ─────────────────────────────────────────────────────────────────────────
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener("message", (e) => {
       if (!e || !e.data) return;
 
-      if (e.data.type === "onexus-graph") { loadGraphObject(e.data.graph); return; }
-
-      if (e.data.type === "highlight-nodes") {
-        const ids = new Set(e.data.ids ?? []);
-        cy.nodes().removeClass("highlight");
-        const hits = cy.nodes().filter((n) => ids.has(n.id()));
-        hits.addClass("highlight");
-        if (hits.nonempty && hits.nonempty()) cy.fit(hits, 60);
+      // ── Full graph load ──────────────────────────────────────────────────
+      if (e.data.type === "onexus-graph") {
+        loadGraphObject(e.data.graph);
         return;
       }
 
+      // ── Highlight nodes from Revit selection ─────────────────────────────
+      if (e.data.type === "highlight-nodes") {
+        const ids     = new Set(e.data.ids ?? []);
+        const fitView = e.data.fitView !== false; // default true
+
+        cy.nodes().removeClass("highlight");
+        if (ids.size === 0) return;
+
+        const hits = cy.nodes().filter((n) => ids.has(n.id()));
+        hits.addClass("highlight");
+
+        if (fitView && hits.nonempty && hits.nonempty()) {
+          cy.animate({ fit: { eles: hits, padding: 60 }, duration: 300 });
+        }
+        return;
+      }
+
+      // ── Zoom camera to a single node (from "Zoom to in Revit" feedback) ─
+      if (e.data.type === "zoom-to-node") {
+        const node = cy.getElementById(e.data.id ?? "");
+        if (node && node.nonempty && node.nonempty()) {
+          cy.nodes().removeClass("highlight");
+          node.addClass("highlight");
+          cy.animate({ fit: { eles: node, padding: 80 }, duration: 300 });
+        }
+        return;
+      }
+
+      // ── Remove all highlights ────────────────────────────────────────────
+      if (e.data.type === "clear-highlight") {
+        cy.nodes().removeClass("highlight");
+        return;
+      }
+
+      // ── Layout restore ───────────────────────────────────────────────────
       if (e.data.type === "apply-layout") {
         const positions = e.data.positions ?? [];
         if (Array.isArray(positions) && positions.length) window.applyLayoutPositions(positions);

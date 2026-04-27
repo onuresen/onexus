@@ -6,12 +6,9 @@
 // (C) ONES — Selection-based Master Key Exporter
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Newtonsoft.Json;
 
 namespace ONES
 {
@@ -46,16 +43,8 @@ namespace ONES
 
                 var graph = OnexusExportCore.BuildMasterKeySelectionGraph(doc, activeViewId, sel, opt);
 
-                var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                var filePath = Path.Combine(desktop, "onexus_master_key.json");
-                File.WriteAllText(filePath, JsonConvert.SerializeObject(graph, Formatting.Indented));
-
-                TaskDialog.Show("ONEXUS Export",
-                  $"Master Key graph exported to:\n{filePath}\n\nNodes: {graph.elements.nodes.Count}, Edges: {graph.elements.edges.Count}");
-
-                // open in ONEXUS (same way as OnexusDoors)
-                string onexusFolder = @"D:\VS\onexus";
-                OnexusViewer.ShowFromFile(uiapp, onexusFolder, filePath);
+                // Push to the docked panel
+                OnexusPaneManager.ShowGraph(uiapp, graph);
                 return Result.Succeeded;
             }
             catch (Exception ex)

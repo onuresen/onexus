@@ -6,12 +6,9 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Newtonsoft.Json;
 
 namespace ONES
 {
@@ -42,21 +39,11 @@ namespace ONES
 
                 OnexusGraph graph = OnexusExportCore.BuildParameterBindingGraphScoped(doc, selection, opt);
 
-                var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                var suffix = doc.IsFamilyDocument ? "family_parameters" :
-                               (opt.OnlyAffectingSelection ? "sel_parameters" : "parameters");
-                var filePath = Path.Combine(desktop, $"onexus_{suffix}.json");
-
-                File.WriteAllText(filePath, JsonConvert.SerializeObject(graph, Formatting.Indented));
-
-                TaskDialog.Show("ONEXUS Export",
-                  $"Parameter graph exported to:\n{filePath}\n\nNodes: {graph.elements.nodes.Count}, Edges: {graph.elements.edges.Count}");
-
-                string onexusFolder = @"D:\VS\onexus";  // same as your Door command
-                OnexusViewer.ShowFromFile(uiapp, onexusFolder, filePath);
+                // Push to the docked panel
+                OnexusPaneManager.ShowGraph(uiapp, graph);
 
                 sw.Stop();
-                UtilsMisc.ONESLogs(uidoc, ToString(), sw); // your logger
+                UtilsMisc.ONESLogs(uidoc, ToString(), sw);
                 return Result.Succeeded;
             }
             catch (Exception ex)

@@ -57,10 +57,13 @@ namespace ONES
                             label = new Dictionary<string, string>
                             {
                                 ["en"] = MakeRoomLabel(room),
-                                ["jp"] = MakeRoomLabel(room) // keep same text unless you have JP
+                                ["jp"] = MakeRoomLabel(room)
                             },
                             revitCategory = "Rooms",
-                            level = level?.Name
+                            level = level?.Name,
+                            // Phase 2: populate so Onexus→Revit selection resolves the element
+                            revitInstanceIds = new List<int> { (int)room.Id.Value },
+                            revitInstanceUids = new List<string> { room.UniqueId }
                         }
                     });
 
@@ -99,7 +102,10 @@ namespace ONES
                                 ["jp"] = MakeElementLabel(fi)
                             },
                             revitCategory = cat,
-                            level = lvl?.Name
+                            level = lvl?.Name,
+                            // Phase 2: populate so Onexus→Revit selection resolves the element
+                            revitInstanceIds = new List<int> { (int)fi.Id.Value },
+                            revitInstanceUids = new List<string> { fi.UniqueId }
                         }
                     });
 
@@ -150,7 +156,9 @@ namespace ONES
                                 ["jp"] = label
                             },
                             revitCategory = "Levels",
-                            level = label
+                            level = label,
+                            revitInstanceIds = new List<int> { (int)lvl.Id.Value },
+                            revitInstanceUids = new List<string> { lvl.UniqueId }
                         }
                     });
                 }
