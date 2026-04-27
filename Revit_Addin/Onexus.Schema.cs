@@ -5,9 +5,36 @@
 // (C) Copyright 2020 by Onur Esen
 
 using System.Collections.Generic;
+using Autodesk.Revit.DB;
 
 namespace ONES
 {
+    // ── Delta sync (Phase 5) ──────────────────────────────────────────────────
+
+    /// <summary>
+    /// Payload produced by the DocumentChanged handler and consumed by Idling.
+    /// Deleted ids cannot be looked up after the transaction commits, so they
+    /// are kept as raw ElementIds; the pane resolves them via its cache.
+    /// </summary>
+    public class DeltaEntry
+    {
+        public Document        Doc      { get; set; }
+        public List<ElementId> Added    { get; set; } = new List<ElementId>();
+        public List<ElementId> Modified { get; set; } = new List<ElementId>();
+        public List<ElementId> Deleted  { get; set; } = new List<ElementId>();
+    }
+
+    /// <summary>
+    /// Wire format sent to the Onexus web app as a "graph-delta" message.
+    /// </summary>
+    public class OnexusGraphDelta
+    {
+        public List<OnexusNode> nodes   { get; set; } = new List<OnexusNode>();
+        public List<OnexusEdge> edges   { get; set; } = new List<OnexusEdge>();
+        public List<string>     removed { get; set; } = new List<string>(); // node UIDs to remove
+    }
+
+
     // Root graph container
     public class OnexusGraph
     {

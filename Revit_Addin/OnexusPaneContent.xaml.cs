@@ -51,6 +51,17 @@ namespace ONES
         private readonly ConcurrentQueue<PendingSelect> _pendingSelects =
             new ConcurrentQueue<PendingSelect>();
 
+        // ── Delta-sync state (Phase 5) ────────────────────────────────────────
+        // Maps ElementId.Value → UniqueId for every node in the last full graph.
+        // Populated by TrackGraph(); consulted when deletions arrive so we can
+        // send the right node id to the JS "removed" array.
+        private readonly Dictionary<long, string>   _elementIdCache = new Dictionary<long, string>();
+        private readonly object                     _cacheSync      = new object();
+        private readonly ConcurrentQueue<DeltaEntry> _pendingDeltas  = new ConcurrentQueue<DeltaEntry>();
+
+        // Maximum element-changes per delta before we ask for a full resync
+        private const int MaxDeltaElements = 200;
+
         // ── Constructor ────────────────────────────────────────────────────────
         public OnexusPaneContent()
         {
@@ -211,6 +222,123 @@ namespace ONES
             _lastSentUids = Array.Empty<string>();   // reset so next Idling fires fresh
         }
 
+        // ══════════════════════════════════════════════════════════════════════
+        //  Delta sync — Phase 5
+        // ══════════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Rebuilds the ElementId→UniqueId cache from a freshly exported graph.
+        /// Called by OnexusPaneManager.ShowGraph() so deletions can be resolved.
+        /// </summary>
+        public void TrackGraph(OnexusGraph graph)
+        {
+            if (graph?.elements?.nodes == null) return;
+            lock (_cacheSync)
+            {
+                _elementIdCache.Clear();
+                foreach (var node in graph.elements.nodes)
+                {
+                    var ids  = node.data?.revitInstanceIds;
+                    var uids = node.data?.revitInstanceUids;
+                    if (ids == null || uids == null) continue;
+                    int count = Math.Min(ids.Count, uids.Count);
+                    for (int i = 0; i < count; i++)
+                        _elementIdCache[(long)ids[i]] = uids[i];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Queues a document-change delta for processing on the next Idling tick.
+        /// Silently drops entries when the queue is deep (rapid-change guard).
+        /// </summary>
+        public void EnqueueDelta(DeltaEntry entry)
+        {
+            if (entry == null) return;
+            // Cap queue at 50 entries (~50 transactions) to avoid memory bloat
+            if (_pendingDeltas.Count < 50)
+                _pendingDeltas.Enqueue(entry);
+        }
+
+        /// <summary>
+        /// Processes one <see cref="DeltaEntry"/> inside an Idling callback
+        /// (valid Revit API context).  Builds or removes nodes and posts the
+        /// delta to the Onexus web app via WebView2.
+        /// </summary>
+        private void ProcessDeltaEntry(DeltaEntry entry)
+        {
+            try
+            {
+                var doc = entry?.Doc;
+                if (doc == null || Web?.CoreWebView2 == null) return;
+
+                // If the transaction touched too many elements, ask JS to trigger
+                // a full resync instead of flooding the bridge with hundreds of nodes.
+                int totalChanged = entry.Added.Count + entry.Modified.Count;
+                if (totalChanged > MaxDeltaElements)
+                {
+                    Web.CoreWebView2.PostWebMessageAsJson(
+                        new JObject { ["type"] = "graph-delta-overflow", ["count"] = totalChanged }
+                            .ToString(Formatting.None));
+                    return;
+                }
+
+                var graphDelta = new OnexusGraphDelta();
+
+                // Added + modified → build/update nodes and refresh cache
+                foreach (var id in entry.Added.Concat(entry.Modified))
+                {
+                    var node = OnexusExportCore.BuildDeltaNode(doc, id);
+                    if (node == null) continue;
+
+                    graphDelta.nodes.Add(node);
+
+                    // Keep cache current so future deletions can resolve the UID
+                    var uids = node.data?.revitInstanceUids;
+                    if (uids?.Count > 0)
+                        lock (_cacheSync) { _elementIdCache[(long)id.Value] = uids[0]; }
+                }
+
+                // Deleted → look up UID from cache (element is gone from doc)
+                foreach (var id in entry.Deleted)
+                {
+                    string uid;
+                    lock (_cacheSync) { _elementIdCache.TryGetValue((long)id.Value, out uid); }
+                    if (!string.IsNullOrEmpty(uid))
+                    {
+                        graphDelta.removed.Add(uid);
+                        lock (_cacheSync) { _elementIdCache.Remove((long)id.Value); }
+                    }
+                }
+
+                if (graphDelta.nodes.Count == 0 && graphDelta.removed.Count == 0) return;
+
+                PostDelta(graphDelta);
+            }
+            catch { /* delta errors must never surface to the user */ }
+        }
+
+        /// <summary>
+        /// Serialises a <see cref="OnexusGraphDelta"/> and pushes it to the
+        /// Onexus web app as a "graph-delta" message.
+        /// </summary>
+        private void PostDelta(OnexusGraphDelta delta)
+        {
+            try
+            {
+                if (Web?.CoreWebView2 == null) return;
+                var payload = new JObject
+                {
+                    ["type"]    = "graph-delta",
+                    ["nodes"]   = JArray.FromObject(delta.nodes),
+                    ["edges"]   = JArray.FromObject(delta.edges),
+                    ["removed"] = new JArray(delta.removed)
+                };
+                Web.CoreWebView2.PostWebMessageAsJson(payload.ToString(Formatting.None));
+            }
+            catch { }
+        }
+
         private void OnIdling(object sender, IdlingEventArgs e)
         {
             try
@@ -293,6 +421,13 @@ namespace ONES
                     _lastSentUids = uids;
                     _lastSentAt   = DateTime.Now;
                 }
+
+                // ── C) Process one pending document-change delta per Idling tick ─
+                //    Processing one at a time keeps Revit responsive even under
+                //    rapid model edits.  Larger bursts are naturally batched because
+                //    DocumentChanged coalesces within a single transaction.
+                if (_pendingDeltas.TryDequeue(out DeltaEntry delta))
+                    ProcessDeltaEntry(delta);
             }
             catch { /* Idling must never throw */ }
         }

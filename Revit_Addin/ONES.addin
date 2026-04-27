@@ -84,4 +84,24 @@
     <VendorDescription>Onur Esen — ONEXUS</VendorDescription>
   </ExternalCommand>
 
+  <!-- MEP systems graph (Phase 3) -->
+  <ExternalCommand>
+    <Name>ONEXUS — MEP Systems</Name>
+    <Assembly>C:\path\to\your\ONES.dll</Assembly>
+    <FullClassName>ONES.OnexusMEP</FullClassName>
+    <ClientId>A1000001-0000-0000-0000-000000000007</ClientId>
+    <VendorId>ONES</VendorId>
+    <VendorDescription>Onur Esen — ONEXUS</VendorDescription>
+  </ExternalCommand>
+
+  <!-- Sheets & views graph (Phase 4) -->
+  <ExternalCommand>
+    <Name>ONEXUS — Sheets &amp; Views</Name>
+    <Assembly>C:\path\to\your\ONES.dll</Assembly>
+    <FullClassName>ONES.OnexusSheets</FullClassName>
+    <ClientId>A1000001-0000-0000-0000-000000000008</ClientId>
+    <VendorId>ONES</VendorId>
+    <VendorDescription>Onur Esen — ONEXUS</VendorDescription>
+  </ExternalCommand>
+
 </RevitAddIns>
