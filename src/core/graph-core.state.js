@@ -115,7 +115,7 @@
       return;
     }
 
-    // 1) Host bridge selection (keep existing behavior)
+    // 1) Host bridge selection — notify Revit (select only, no camera zoom)
     const d = node.data();
     if (window.chrome && window.chrome.webview) {
       window.chrome.webview.postMessage({
@@ -125,6 +125,9 @@
         revitInstanceUids: d.revitInstanceUids ?? []
       });
     }
+
+    // 1b) Notify any plugins/extensions via the event bus
+    window.ONEXUS?.bus?.emit?.("nodeSelected", { id: d.id, data: d, node });
 
     // 2) Always update details on single click
     updateDetailsForNode(node);
