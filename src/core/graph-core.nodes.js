@@ -13,12 +13,14 @@
     return (typeof structuredClone === 'function') ? structuredClone(x) : JSON.parse(JSON.stringify(x));
   };
   const idSafe = U.idSafe || function (s) { return String(s ?? '').replace(/[^\w\-:.]+/g, '_'); };
+  const esc = U.escapeHtml || function (s) { return String(s ?? '').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); };
 
   // ---------- helpers ----------
+  let _nodeIdSeq = 0;
   function uniqueNodeId(base) {
-    let id = base || ('N_' + Math.random().toString(36).slice(2, 8));
+    let id = base || ('N_' + (++_nodeIdSeq) + '_' + (Date.now() % 100000));
     let k = 1;
-    while (exists(cy.getElementById(id))) id = `${base}-${++k}`;
+    while (exists(cy.getElementById(id))) id = `${base || id}-${++k}`;
     return id;
   }
 
@@ -181,37 +183,37 @@
     });
 
     panel.innerHTML = `
-      <div style="font-weight:600;margin-bottom:8px;">${title}</div>
+      <div style="font-weight:600;margin-bottom:8px;">${esc(title)}</div>
       <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:8px;">
         <label>Id
-          <input id="nw-id" type="text" placeholder="auto if blank" style="width:100%;margin-top:4px;" value="${mode === 'edit' ? idVal : ''}">
+          <input id="nw-id" type="text" placeholder="auto if blank" style="width:100%;margin-top:4px;" value="${mode === 'edit' ? esc(idVal) : ''}">
         </label>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <label>Type
             <select id="nw-type" style="width:100%;margin-top:4px;">
-              ${types.map(t => `<option value="${t}" ${t === typeVal ? 'selected' : ''}>${t}</option>`).join('')}
+              ${types.map(t => `<option value="${esc(t)}" ${t === typeVal ? 'selected' : ''}>${esc(t)}</option>`).join('')}
             </select>
           </label>
 
           <label>Category
             <select id="nw-cat" style="width:100%;margin-top:4px;">
-              ${cats.map(c => `<option value="${c}" ${c === catVal ? 'selected' : ''}>${c}</option>`).join('')}
+              ${cats.map(c => `<option value="${esc(c)}" ${c === catVal ? 'selected' : ''}>${esc(c)}</option>`).join('')}
             </select>
           </label>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <label>Label (en)
-            <input id="nw-lbl-en" type="text" style="width:100%;margin-top:4px;" value="${lblEN}">
+            <input id="nw-lbl-en" type="text" style="width:100%;margin-top:4px;" value="${esc(lblEN)}">
           </label>
           <label>Label (jp)
-            <input id="nw-lbl-jp" type="text" style="width:100%;margin-top:4px;" value="${lblJP}">
+            <input id="nw-lbl-jp" type="text" style="width:100%;margin-top:4px;" value="${esc(lblJP)}">
           </label>
         </div>
 
         <label>Level (optional)
-          <input id="nw-level" type="text" style="width:100%;margin-top:4px;" value="${level}">
+          <input id="nw-level" type="text" style="width:100%;margin-top:4px;" value="${esc(level)}">
         </label>
       </div>
 

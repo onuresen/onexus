@@ -94,9 +94,11 @@
     if (!Array.isArray(data.elements.nodes)) errors.push("`elements.nodes` must be an array.");
     if (!Array.isArray(data.elements.edges)) errors.push("`elements.edges` must be an array.");
 
+    const nodeIds = new Set();
     (data.elements.nodes ?? []).forEach((n, i) => {
       const d = n?.data ?? {};
       if (!d.id) errors.push(`nodes[${i}].data.id is required`);
+      else nodeIds.add(d.id);
       if (!d.nodeType) errors.push(`nodes[${i}].data.nodeType is required`);
       if (!d.category && !d.revitCategory) errors.push(`nodes[${i}].data.category or .revitCategory is required`);
       if (!(typeof d.label === "object" || typeof d.label === "string")) errors.push(`nodes[${i}].data.label must be an object or string`);
@@ -108,7 +110,9 @@
       if (!d.type) errors.push(`edges[${i}].data.type is required`);
       if (!d.dimension) errors.push(`edges[${i}].data.dimension is required`);
       if (!d.source) errors.push(`edges[${i}].data.source is required`);
+      else if (nodeIds.size && !nodeIds.has(d.source)) errors.push(`edges[${i}].data.source "${d.source}" references unknown node`);
       if (!d.target) errors.push(`edges[${i}].data.target is required`);
+      else if (nodeIds.size && !nodeIds.has(d.target)) errors.push(`edges[${i}].data.target "${d.target}" references unknown node`);
       if (typeof d.directional !== "boolean") errors.push(`edges[${i}].data.directional must be boolean`);
     });
 

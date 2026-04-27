@@ -105,13 +105,16 @@
             });
         }
 
+        // Build lookup map for O(1) node access
+        const nodeById = new Map(nodes.map(n => [n.data.id, n]));
+
         // 2. Parse content and create edges
         for (const { file, path } of mdFiles) {
             const text = await file.text();
             const srcId = idSafe(path.replace(/\.md$/i, ""));
             const parsed = parseMarkdown(text);
 
-            const node = nodes.find(n => n.data.id === srcId);
+            const node = nodeById.get(srcId);
             if (node) {
                 node.data.obsidian.tags = parsed.tags;
                 node.data.obsidian.aliases = parsed.aliases;
@@ -198,13 +201,13 @@
 
             const block = document.createElement("div");
             block.style.marginTop = "8px";
-            block.innerHTML = `
-        <a href="${uri}"
-           style="font-size:12px;font-weight:600;color:#2563eb;text-decoration:none;"
-           target="_blank">
-          🔗 Open in Obsidian
-        </a>
-      `;
+            const link = document.createElement("a");
+            link.href = uri;
+            link.style.cssText = "font-size:12px;font-weight:600;color:#2563eb;text-decoration:none;";
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "🔗 Open in Obsidian";
+            block.appendChild(link);
 
             container.appendChild(block);
         };

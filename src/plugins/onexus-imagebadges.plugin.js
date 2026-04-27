@@ -45,6 +45,7 @@
     let raf = 0;
     let lastPaintMs = 0;
     let dirty = true;
+    let needsResize = false;
 
     function isDark() {
         const k = window.getCurrentThemeKey?.() ?? window.currentTheme ?? "light";
@@ -279,14 +280,7 @@
         ensureCanvas();
         if (!canvas || !ctx) { raf = requestAnimationFrame(paint); return; }
 
-        // resize if needed
-        const host = cy.container();
-        if (host) {
-            const rect = host.getBoundingClientRect();
-            const w = Math.floor(rect.width * dpr);
-            const h = Math.floor(rect.height * dpr);
-            if (canvas.width !== w || canvas.height !== h) resizeCanvas();
-        }
+        if (needsResize) { needsResize = false; resizeCanvas(); dirty = true; }
 
         if (dirty) {
             clear();
@@ -304,7 +298,8 @@
         if (!cy || cy.__onxBadgesHooked) return;
         cy.__onxBadgesHooked = true;
 
-        cy.on("pan zoom resize", markDirty);
+        cy.on("pan zoom", markDirty);
+        cy.on("resize", () => { needsResize = true; markDirty(); });
         cy.on("add remove", markDirty);
 
         // graph load -> redraw
@@ -317,7 +312,7 @@
 
         window.addEventListener("resize", () => {
             if (!CFG.enabled) return;
-            resizeCanvas();
+            needsResize = true;
             markDirty();
         });
     }

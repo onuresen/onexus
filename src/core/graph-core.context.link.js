@@ -17,6 +17,7 @@
   };
   // Keep idSafe available (not used by default to avoid any behavior change in IDs)
   const idSafe = U.idSafe || function (s) { return String(s ?? "").replace(/[^\w\-:.]+/g, "_"); };
+  const esc = U.escapeHtml || function (s) { return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); };
 
   // --- internal drag-preview state
   const drag = {
@@ -406,20 +407,20 @@
 
     const title = mode === "edit" ? "Edit relation" : "Create relation";
     panel.innerHTML = `
-      <div style="font-weight:600;margin-bottom:8px;">${title}</div>
-      <div style="margin-bottom:6px;"><b>From:</b> ${sourceNode.data("displayLabel") ?? srcId}</div>
-      <div style="margin-bottom:10px;"><b>To:</b> ${targetNode.data("displayLabel") ?? tgtId}</div>
+      <div style="font-weight:600;margin-bottom:8px;">${esc(title)}</div>
+      <div style="margin-bottom:6px;"><b>From:</b> ${esc(sourceNode.data("displayLabel") ?? srcId)}</div>
+      <div style="margin-bottom:10px;"><b>To:</b> ${esc(targetNode.data("displayLabel") ?? tgtId)}</div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
         <label>Type
           <select id="rel-type" style="width:100%;margin-top:4px;">
-            ${typeOptions.map(t => `<option value="${t}">${t}</option>`).join("")}
+            ${typeOptions.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join("")}
           </select>
         </label>
 
         <label>Dimension
           <select id="rel-dim" style="width:100%;margin-top:4px;">
-            ${dimOptions.map(d => `<option value="${d}">${d}</option>`).join("")}
+            ${dimOptions.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join("")}
           </select>
         </label>
       </div>

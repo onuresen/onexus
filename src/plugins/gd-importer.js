@@ -215,7 +215,9 @@
     const file = event?.target?.files?.[0];
     if (!file) return;
     const text = await file.text();
-    const payload = JSON.parse(text);
+    let payload;
+    try { payload = JSON.parse(text); }
+    catch (err) { alert("Invalid JSON: " + err.message); return; }
     return importFromPayload(payload, { mode, optionId, sourceFiles: [file.name] });
   }
 

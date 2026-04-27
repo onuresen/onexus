@@ -44,6 +44,8 @@
   function getShowEmptyClickMessage() { return safeRead('onexus.showEmptyClickMessage', 'false') === 'true'; }
   window.setShowEmptyClickMessage = (enabled) => { safeWrite('onexus.showEmptyClickMessage', enabled ? 'true' : 'false'); };
 
+  const esc = (s) => window.ONEXUS?.util?.escapeHtml(s) ?? String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+
   const state = {
     language: "en",
     focusDepth: 1,
@@ -219,11 +221,11 @@
     let out = `<div style='margin-top:8px;font-size:13px;font-weight:700;'>Properties</div>`;
     out += `<div style='font-size:12px;color:var(--text-muted);max-height:280px;overflow:auto;border:1px solid var(--stroke);padding:6px;border-radius:8px;margin-top:6px;'>`;
     for (const [pset, props] of Object.entries(ifcProps)) {
-      out += `<div style='margin-bottom:8px;'><div style='font-weight:600;margin-bottom:4px;'>${pset}</div>`;
+      out += `<div style='margin-bottom:8px;'><div style='font-weight:600;margin-bottom:4px;'>${esc(pset)}</div>`;
       out += `<div style='font-size:12px;color:var(--text-main);margin-left:6px;'>`;
       for (const [k, v] of Object.entries(props)) {
-        const safeV = (v === null || v === undefined || v === "") ? "—" : String(v);
-        out += `<div style='display:flex;justify-content:space-between;gap:8px;padding:2px 0;border-bottom:1px dashed rgba(0,0,0,0.03)'><div style='flex:1;color:var(--text-muted)'>${k}</div><div style='flex:1;text-align:right'>${safeV}</div></div>`;
+        const safeV = (v === null || v === undefined || v === "") ? "—" : esc(String(v));
+        out += `<div style='display:flex;justify-content:space-between;gap:8px;padding:2px 0;border-bottom:1px dashed rgba(0,0,0,0.03)'><div style='flex:1;color:var(--text-muted)'>${esc(k)}</div><div style='flex:1;text-align:right'>${safeV}</div></div>`;
       }
       out += `</div></div>`;
     }
@@ -233,10 +235,10 @@
 
   function updateDetailsForNode(node) {
     const d = node.data();
-    let html = `<div style='font-size:14px;font-weight:800;margin-bottom:6px;'>${d.displayLabel ?? d.id}</div>`;
-    html += `<div style='font-size:13px;margin-bottom:6px;'>Type: ${d.nodeType ?? "-"}</div>`;
-    html += `<div style='font-size:13px;margin-bottom:6px;'>Category: ${d.category ?? d.revitCategory ?? "-"}</div>`;
-    html += `<div style='font-size:13px;margin-bottom:6px;'>Level: ${d.level ?? "-"}</div>`;
+    let html = `<div style='font-size:14px;font-weight:800;margin-bottom:6px;'>${esc(d.displayLabel ?? d.id)}</div>`;
+    html += `<div style='font-size:13px;margin-bottom:6px;'>Type: ${esc(d.nodeType ?? "-")}</div>`;
+    html += `<div style='font-size:13px;margin-bottom:6px;'>Category: ${esc(d.category ?? d.revitCategory ?? "-")}</div>`;
+    html += `<div style='font-size:13px;margin-bottom:6px;'>Level: ${esc(d.level ?? "-")}</div>`;
 
     // IFC properties (if present)
     if (d.ifcProperties) {
@@ -249,7 +251,7 @@
   }
   function updateDetailsForEdge(edge) {
     const d = edge.data();
-    setDetailsMessage(`<b>${d.displayType}</b><br>Dimension: ${d.dimension ?? "-"}<br>Phase: ${(d.phase ?? []).join(", ")}<br>Owner: ${d.owner ?? "-"}<br>Confidence: ${d.confidence ?? "-"}<br>Risk: ${d.risk ?? "-"}`);
+    setDetailsMessage(`<b>${esc(d.displayType)}</b><br>Dimension: ${esc(d.dimension ?? "-")}<br>Phase: ${esc((d.phase ?? []).join(", "))}<br>Owner: ${esc(d.owner ?? "-")}<br>Confidence: ${esc(d.confidence ?? "-")}<br>Risk: ${esc(d.risk ?? "-")}`);
   }
 
   // ---- nav
