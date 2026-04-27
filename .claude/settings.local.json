@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git -C \"C:/Users/onure/Documents/GitHub/onexus\" diff --stat)"
+      "Bash(git -C \"C:/Users/onure/Documents/GitHub/onexus\" diff --stat)",
+      "PowerShell(dotnet restore \"C:\\\\Users\\\\onure\\\\Documents\\\\GitHub\\\\onexus\\\\Revit_Addin\\\\Onexus\\\\Onexus.csproj\" 2>&1)",
+      "PowerShell(Get-Command msbuild -ErrorAction SilentlyContinue | Select-Object Source; Get-ChildItem \"$env:LOCALAPPDATA\\\\NuGet\" -ErrorAction SilentlyContinue | Select-Object Name)",
+      "PowerShell(& \"$env:TEMP\\\\nuget.exe\" restore \"C:\\\\Users\\\\onure\\\\Documents\\\\GitHub\\\\onexus\\\\Revit_Addin\\\\Onexus\\\\Onexus.csproj\" -PackagesDirectory \"C:\\\\Users\\\\onure\\\\Documents\\\\GitHub\\\\onexus\\\\Revit_Addin\\\\packages\" 2>&1)"
     ]
   }
 }
