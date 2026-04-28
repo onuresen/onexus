@@ -4,7 +4,7 @@
 library
 C#
 .cs
-C:\Users\onure\Documents\GitHub\onexus\Revit_Addin\Onexus\obj\Debug\
+D:\VS\onexus\Revit_Addin\Onexus\obj\Debug\
 Onexus
 none
 false
@@ -12,8 +12,8 @@ DEBUG;TRACE
 
 21502364879
 
-151170337190
-191593044602
+162036794450
+19-1999354186
 OnexusPaneContent.xaml;OnexusViewerWindow.xaml;
 
 False
