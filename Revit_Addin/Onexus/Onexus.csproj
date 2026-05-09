@@ -99,6 +99,11 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Assets\Onexus.png" />
+    <Resource Include="Assets\Onexus16.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(ProjectDir)*.addin" "$(ProgramData)\Autodesk\REVIT\Addins\2024"
