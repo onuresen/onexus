@@ -7,15 +7,15 @@
       "RelativeMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|solutionrelative:onexus\\onexusexploreelements.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|d:\\vs\\onexus\\revit_addin\\onexus\\onexusapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|D:\\VS\\onexus\\Revit_Addin\\onexus\\onexusapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|solutionrelative:onexus\\onexusapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|d:\\vs\\onexus\\revit_addin\\onexus\\onexus.addin||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|D:\\VS\\onexus\\Revit_Addin\\onexus\\onexus.addin||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|solutionrelative:onexus\\onexus.addin||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|d:\\vs\\onexus\\revit_addin\\onexus\\onexus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|D:\\VS\\onexus\\Revit_Addin\\onexus\\onexus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BFCC59A0-AB83-44BA-B790-0842431729A7}|Onexus\\Onexus.csproj|solutionrelative:onexus\\onexus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -59,8 +59,7 @@
               "RelativeToolTip": "Onexus\\OnexusApplication.cs",
               "ViewState": "AgIAAIMAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-27T23:56:00.305Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-27T23:56:00.305Z"
             },
             {
               "$type": "Document",
@@ -72,8 +71,7 @@
               "RelativeToolTip": "Onexus\\Onexus.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-27T23:49:00.009Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-27T23:49:00.009Z"
             },
             {
               "$type": "Document",
@@ -85,8 +83,7 @@
               "RelativeToolTip": "Onexus\\Onexus.addin",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000072|",
-              "WhenOpened": "2026-04-27T23:48:51.021Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-27T23:48:51.021Z"
             }
           ]
         }
