@@ -404,19 +404,25 @@
     }
   });
 
-  // ===============================  
+  // ===============================
   // Obsidian Import (directory-based)
   // ===============================
   on("btnObsidian", "click", async () => {
     try {
-      if (!window.ONEXUS?.plugins?.importFilesAs) {
-        alert("Plugin system not available. Check that onexus-plugins.js is loaded.");
+      // The Obsidian importer is directory-based: it calls showDirectoryPicker()
+      // internally and ignores the files array. We can't go through importFilesAs()
+      // because that bails immediately on an empty file list. Instead, find the
+      // registered importer and call its importFiles() directly.
+      const importers = window.ONEXUS?.plugins?.importers ?? [];
+      const imp = importers.find(i => i.id === 'obsidian-md');
+      if (!imp) {
+        alert("Obsidian importer not loaded. Check that onexus-obsidian.plugin.js is in manifest.json.");
         return;
       }
-      await window.ONEXUS.plugins.importFilesAs('obsidian-md', []);
+      await imp.importFiles([], {});
     } catch (err) {
       const msg = String(err?.message ?? err).toLowerCase();
-      if (msg.includes("cancel")) return;
+      if (msg.includes("cancel") || msg.includes("abort")) return;
       alert("Obsidian import failed: " + (err?.message ?? err));
     }
   });

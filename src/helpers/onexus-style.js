@@ -396,10 +396,29 @@ function buildStyle(themeKey) {
   const S = Number(window.__onexus_scale ?? currentScale ?? 1.0);
 
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
-  const nodeBase = (deg) => 40 + deg * 4;
-  const nodeSize = (deg) => Math.min(120 * S, nodeBase(deg) * S);
 
-  const fontNode = `${clamp(10 * S, 7, 18)}px`;
+  // √deg scaling: leaf nodes stay small, hubs grow large with clear visual separation.
+  // Old linear formula (40 + deg*4) had a 120px cap hit at deg≥20, making all hubs identical.
+  // New formula:  18 + √deg × 10  →  deg=0:18px  deg=5:40px  deg=20:63px  deg=100:118px
+  // Cap raised to 200px so true hubs (ONES Plugin, Concept nodes) visually dominate.
+  const nodeBase = (deg) => 18 + Math.sqrt(Math.max(0, deg)) * 10;
+  const nodeSize = (deg) => Math.min(200 * S, nodeBase(deg) * S);
+
+  // Category-aware size cap — overrides degree-based size for low-signal node types
+  const nodeSizeForEle = (ele) => {
+    const deg = ele.degree ? ele.degree() : 0;
+    const cat = ele.data ? (ele.data("category") ?? "") : "";
+    const base = nodeSize(deg);
+    // Daily notes are time-axis entries, not conceptual hubs — keep them small
+    if (cat === "Daily")          return Math.min(base, 28 * S);
+    // Project-Detail and Concept-Sub are sub-notes, constrain slightly
+    if (cat === "Project-Detail" || cat === "Concept-Sub") return Math.min(base, 55 * S);
+    // Navigation MOCs should stand out as landmarks
+    if (cat === "Navigation")     return Math.max(base, 48 * S);
+    return base;
+  };
+
+  const fontNode = `${clamp(9 * S, 6, 16)}px`;
   const fontEdge = `${clamp(9 * S, 7, 16)}px`;
 
   const textOutlineW = clamp(2 * Math.pow(S, 0.75), 1, 4);
@@ -447,8 +466,8 @@ function buildStyle(themeKey) {
         "text-outline-color": T.outline,
         "font-size": fontNode,
         "font-weight": "bold",
-        width: (ele) => nodeSize(ele.degree()),
-        height: (ele) => nodeSize(ele.degree()),
+        width:  (ele) => nodeSizeForEle(ele),
+        height: (ele) => nodeSizeForEle(ele),
         "text-valign": "center",
         "text-halign": "center",
       },
@@ -495,6 +514,45 @@ function buildStyle(themeKey) {
         "text-background-opacity": (ele) => (imgShowLabel(ele) ? 0.65 : 0),
         "text-background-color": (themeKey === "dark") ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.70)",
         "text-background-padding": `${clamp(2.5 * S, 2, 7)}px`,
+      },
+    },
+
+    // ── Vault / Knowledge graph overrides ─────────────────────────────────────
+    // Tag cluster nodes: tiny diamonds — connectors, not content.
+    // Their degree inflates their size via the base formula; override it here.
+    {
+      selector: 'node[nodeType = "Tag"]',
+      style: {
+        shape: "ellipse",
+        width:  clamp(14 * S, 8, 22),
+        height: clamp(14 * S, 8, 22),
+        "background-opacity": 0.35,
+        "border-width": clamp(1.5 * S, 1, 3),
+        "border-color": "#94a3b8",
+        "border-opacity": 0.6,
+        "font-size": `${clamp(7 * S, 5, 10)}px`,
+        "text-opacity": 0,
+        label: "",
+      },
+    },
+    // Wikilink edges: thinner + semi-transparent to reduce mesh effect
+    {
+      selector: 'edge[type = "LinksTo"]',
+      style: {
+        width: clamp(1.0 * Math.pow(S, 0.9), 0.6, 2.0),
+        opacity: 0.32,
+        "target-arrow-shape": (ele) => (ele.data("directional") ? "triangle" : "none"),
+        "arrow-scale": clamp(0.6 * Math.pow(S, 0.9), 0.4, 1.0),
+      },
+    },
+    // Tag edges: almost invisible — they are structural noise in crowded graphs
+    {
+      selector: 'edge[type = "Tagged"]',
+      style: {
+        width: clamp(0.7 * Math.pow(S, 0.9), 0.4, 1.2),
+        opacity: 0.10,
+        "line-style": "dotted",
+        "target-arrow-shape": "none",
       },
     },
 
@@ -650,7 +708,13 @@ function applyColorMode(mode) {
   if (cy?.style) cy.style(NEXUS_STYLE);
 
   window.buildRelationshipLegend?.();
-  try { window.ONEXUS?.style?.syncColorModeSelect?.(); } catch { /* noop */ }
+  try {
+    window.ONEXUS?.style?.syncColorModeSelect?.();
+    // Sync the dropdown's selected value to match the active mode.
+    // syncColorModeSelect adds the option if missing but never selects it.
+    const sel = document.getElementById("colorModeSelect");
+    if (sel && sel.value !== currentColorMode) sel.value = currentColorMode;
+  } catch { /* noop */ }
 }
 
 function applyTheme(themeKey) {

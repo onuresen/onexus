@@ -34,11 +34,16 @@
 
   function runLayout(opts, fitPad) {
     const pad = Number.isFinite(fitPad) ? fitPad : autoPadding();
-    cy.layout({ ...opts, animate: true, padding: pad }).run();
+    // Disable animation above threshold — large graphs (300+ nodes) animate poorly:
+    // nodes visibly fly from random positions, labels leak through the hide-during-load system,
+    // and the user waits longer for the graph to settle. Instant layout is faster and cleaner.
+    const n = nodeCount();
+    const shouldAnimate = n <= 300;
+    cy.layout({ ...opts, animate: shouldAnimate, padding: pad }).run();
     // Fit after layout settles (prevents huge empty space)
     setTimeout(() => {
       try { cy.fit(visible(), pad); } catch { }
-    }, 80);
+    }, shouldAnimate ? 80 : 10);
   }
 
   function topDegreeNodes(k = 3) {
