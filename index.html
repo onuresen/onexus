@@ -359,11 +359,12 @@
           </div>
 
           <h3>Colorize</h3>
-          <select id="colorModeSelect">
+          <select id="colorModeSelect" onchange="applyColorMode(this.value)">
             <option value="json_category">JSON / Category</option>
             <option value="nodeType">Node Type</option>
             <option value="degree">Degree (Hubs)</option>
             <option value="stableRandom">Stable Random</option>
+            <option value="vault_knowledge">Vault / Knowledge</option>
           </select>
         </section>
 
