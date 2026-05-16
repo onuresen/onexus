@@ -157,6 +157,35 @@ node server.js
 
 Key bus events: `graphWillLoad`, `graphLoaded`, `graphLoadFailed`, `layerModeChanged`, `languageChanged`, `explainRendered`.
 
+## ONEXUS MCP Server
+
+`onexus-mcp/` is a Python FastMCP server that exposes the vault graph as MCP tools and lets Claude control the live graph via WebSocket.
+
+### Setup
+```bash
+cd onexus-mcp
+pip install -r requirements.txt
+# Add to %APPDATA%\Claude\claude_desktop_config.json:
+# { "mcpServers": { "onexus": { "command": "python", "args": ["E:/GitHub/onexus/onexus-mcp/server.py"] } } }
+```
+
+### Architecture
+- `server.py` runs FastMCP (stdio) with an embedded WebSocket server on `:8765`
+- Both run in the **same asyncio event loop** via FastMCP's `lifespan` hook — no threads
+- `src/plugins/onexus-mcp-bridge.plugin.js` connects from the browser and dispatches commands to `window.cy`
+- A green dot in the bottom-right of ONEXUS shows the connection state
+
+### Critical rules for future edits
+- **Do not move WS server to a background thread** — cross-loop scheduling with `asyncio.run_coroutine_threadsafe` causes empty exceptions in FastMCP 3.x tool handlers
+- **Control tools must be `async def`** — FastMCP 3.x runs all handlers in its event loop; blocking calls deadlock
+- **Use `set.difference_update(other)` not `set -= other`** inside async functions — augmented assignment triggers Python's local-variable scoping rule and raises `UnboundLocalError`
+- **vault-graph.json is nested**: `{meta:{}, elements:{nodes:[], edges:[]}}` — unwrap with `raw.get("elements", raw)`
+- **Plugin uses `window.ONEXUS.registerPlugin()`** — not `window.ONX`
+
+### Known issues (2026-05-16)
+- Claude Code shows "Server disconnected" toast briefly on startup — FastMCP banner goes to stderr; `show_banner=False` mitigates but doesn't fully fix
+- Old server.py process can survive Claude Code restart and hold port `:8765` — `_free_port()` in lifespan startup kills it, but may race if restart is very fast
+
 ## Known gaps / future work
 
 - **Playwright tests for Sankey and Chord views** — both views received recent fixes (commits 992ccac, 475e67d, a3581a2) but have zero automated coverage. Add cases to `tests/onexus-features.spec.js`:
