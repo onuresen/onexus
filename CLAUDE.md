@@ -188,6 +188,8 @@ pip install -r requirements.txt
 
 ## Known gaps / future work
 
+- **IC Supply Chain Dependency Map sample dataset** — create `samples/ic-supply-chain.json` (ONEXUS 1.1 schema) modelling a realistic IC supply chain: `Supplier → Component → Process → Zone → Schedule` nodes with edges `supplies`, `requires`, `blocks`, `installed_in`, `drives`. Source the component data from Kit-of-Parts `advanced-kit.json` (parts already have `supply_risk`, `lead_time`, `sequence` fields). The goal is a concrete killer-use-case demo: "Supplier A delays 3 weeks — call `find_path(supplierA, M7_milestone)` via MCP to highlight everything at risk." Optionally add a thin `ic-supply-importer.plugin.js` for IC-specific node colours (suppliers = orange, schedule = blue, blocked = red). See esen-vault `projects/ONEXUS.md` → Positioning section for context.
+
 - **Playwright tests for Sankey and Chord views** — both views received recent fixes (commits 992ccac, 475e67d, a3581a2) but have zero automated coverage. Add cases to `tests/onexus-features.spec.js`:
   - Sankey view opens without console errors when a flow-data sample is loaded.
   - Chord view renders an SVG overlay; zoom controls work; exiting restores Cytoscape canvas.
