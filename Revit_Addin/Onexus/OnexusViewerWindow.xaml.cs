@@ -24,11 +24,13 @@ namespace Onexus
     public partial class OnexusViewerWindow : Window
     {
         private readonly string _indexHtmlPath;
-        private readonly string _graphJsonText;
+        private string _graphJsonText;
+        private bool _webReady;
 
         // Revit bridge fields
         private UIApplication _uiapp;
         private UIDocument _uidoc;
+        private bool _selectionBridgeEnabled;
         private string[] _lastSentUids = new string[0];
         private DateTime _lastSentAt = DateTime.MinValue;
 
@@ -44,6 +46,14 @@ namespace Onexus
 
             Loaded += OnLoaded;
             Closed += OnClosed;
+        }
+
+        public void LoadGraphJson(string graphJsonText)
+        {
+            _graphJsonText = string.IsNullOrWhiteSpace(graphJsonText) ? "{}" : graphJsonText;
+
+            if (_webReady && Web?.CoreWebView2 != null)
+                _ = InjectGraphAsync(_graphJsonText);
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -116,13 +126,8 @@ namespace Onexus
                 // Ensure bridge (in case this is the first place CoreWebView2 became available)
                 AttachWebBridgeHandlers();
 
-                // Validate JSON once on host
-                JToken.Parse(_graphJsonText);
-
-                // Send Base64 JSON to page; the boot script will apply it when ready
-                string b64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(_graphJsonText));
-                string js = "window.onexusReceiveGraph && window.onexusReceiveGraph('" + b64 + "');";
-                await Web.CoreWebView2.ExecuteScriptAsync(js);
+                await InjectGraphAsync(_graphJsonText);
+                _webReady = true;
 
                 // #if DEBUG
                 // Web.CoreWebView2.OpenDevToolsWindow();
@@ -135,6 +140,18 @@ namespace Onexus
             }
         }
 
+        private async Task InjectGraphAsync(string graphJsonText)
+        {
+            if (Web?.CoreWebView2 == null) return;
+
+            var json = string.IsNullOrWhiteSpace(graphJsonText) ? "{}" : graphJsonText;
+            JToken.Parse(json);
+
+            string b64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+            string js = "window.onexusReceiveGraph && window.onexusReceiveGraph('" + b64 + "');";
+            await Web.CoreWebView2.ExecuteScriptAsync(js);
+        }
+
         /// <summary>
         /// Enable two-way selection sync between page and Revit.
         /// </summary>
@@ -143,11 +160,24 @@ namespace Onexus
             _uiapp = uiapp ?? throw new ArgumentNullException(nameof(uiapp));
             _uidoc = _uiapp.ActiveUIDocument;
 
+            if (_selectionBridgeEnabled)
+            {
+                AttachWebBridgeHandlers();
+                return;
+            }
+
             // Revit -> Page, throttled in Idling (already in your code)
             _uiapp.Idling += Uiapp_Idling;
+            _selectionBridgeEnabled = true;
 
             // If WebView2 is already ready, attach immediately; otherwise OnLoaded/OnNavigationCompleted will attach.
             AttachWebBridgeHandlers();
+        }
+
+        public void UpdateDocument(UIDocument uidoc)
+        {
+            _uidoc = uidoc;
+            _lastSentUids = Array.Empty<string>();
         }
 
         private void Uiapp_Idling(object sender, IdlingEventArgs e)

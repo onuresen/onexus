@@ -25,7 +25,7 @@ namespace Onexus
                 var selIds = uidoc.Selection.GetElementIds();
                 var graph  = OnexusExportCore.BuildRoomsAndElementsSpatialGraph(doc, selIds);
 
-                // Push to the docked panel (primary path)
+                // Push to the standalone ONEXUS viewer window
                 OnexusPaneManager.ShowGraph(uiapp, graph);
 
                 return Result.Succeeded;

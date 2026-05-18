@@ -43,7 +43,7 @@ namespace Onexus
 
                 var graph = OnexusExportCore.BuildMasterKeySelectionGraph(doc, activeViewId, sel, opt);
 
-                // Push to the docked panel
+                // Push to the standalone ONEXUS viewer window
                 OnexusPaneManager.ShowGraph(uiapp, graph);
                 return Result.Succeeded;
             }

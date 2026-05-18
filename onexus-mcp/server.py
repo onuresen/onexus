@@ -22,6 +22,7 @@ import asyncio
 import json
 import os
 import sys
+import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
@@ -78,13 +79,22 @@ _load_graph()
 # WebSocket state (all accessed from FastMCP's single event loop)
 # ---------------------------------------------------------------------------
 _ws_clients: set = set()
+_pending_browser_requests: dict[str, asyncio.Future] = {}
 
 
 async def _ws_handler(ws) -> None:
     _ws_clients.add(ws)
     try:
         async for raw in ws:
-            pass  # control is fire-and-forget; no ACK needed
+            try:
+                msg = json.loads(raw)
+            except Exception:
+                continue
+            ack_id = msg.get("ack")
+            if ack_id:
+                fut = _pending_browser_requests.pop(str(ack_id), None)
+                if fut and not fut.done():
+                    fut.set_result(msg)
     except Exception:
         pass
     finally:
@@ -106,6 +116,34 @@ async def _broadcast(cmd: dict) -> dict:
     if not _ws_clients and dead:
         return {"ok": False, "reason": "All browser connections dropped while sending."}
     return {"ok": True, "sent_to": len(_ws_clients)}
+
+
+async def _request_browser(cmd: dict) -> dict:
+    """Send a command to the live browser graph and wait for its ACK payload."""
+    if not _ws_clients:
+        return {"ok": False, "reason": "ONEXUS browser tab not connected. Open ONEXUS and wait for the green dot."}
+
+    request_id = uuid.uuid4().hex
+    payload = {**cmd, "_id": request_id}
+    loop = asyncio.get_running_loop()
+    fut = loop.create_future()
+    _pending_browser_requests[request_id] = fut
+
+    client = next(iter(_ws_clients))
+    try:
+        await client.send(json.dumps(payload))
+        return await asyncio.wait_for(fut, timeout=CONTROL_TIMEOUT)
+    except asyncio.TimeoutError:
+        _pending_browser_requests.pop(request_id, None)
+        return {"ok": False, "reason": f"ONEXUS browser did not acknowledge '{cmd.get('cmd')}' within {CONTROL_TIMEOUT}s."}
+    except Exception as exc:
+        _pending_browser_requests.pop(request_id, None)
+        _ws_clients.discard(client)
+        return {"ok": False, "reason": f"Failed to send command to ONEXUS browser: {exc}"}
+
+
+def _dump(data: Any) -> str:
+    return json.dumps(data, indent=2)
 
 
 # ---------------------------------------------------------------------------
@@ -157,6 +195,7 @@ def get_server_info() -> str:
         "edge_count": len(_graph.get("edges", [])),
         "ws_port": WS_PORT,
         "browser_clients_connected": len(_ws_clients),
+        "pending_browser_requests": len(_pending_browser_requests),
     }, indent=2)
 
 
@@ -379,7 +418,7 @@ async def focus_node(node_id: str) -> str:
     Args:
         node_id: Node id (e.g. 'projects/ONEXUS.md').
     """
-    return json.dumps(await _broadcast({"cmd": "focus_node", "id": node_id}))
+    return _dump(await _request_browser({"cmd": "focus_node", "id": node_id}))
 
 
 @mcp.tool()
@@ -390,7 +429,7 @@ async def highlight_nodes(node_ids: list[str], color: str = "#f59e0b") -> str:
         node_ids: List of node ids.
         color: CSS color (default amber).
     """
-    return json.dumps(await _broadcast({"cmd": "highlight_nodes", "ids": node_ids, "color": color}))
+    return _dump(await _request_browser({"cmd": "highlight_nodes", "ids": node_ids, "color": color}))
 
 
 @mcp.tool()
@@ -400,13 +439,13 @@ async def filter_to_subgraph(node_ids: list[str]) -> str:
     Args:
         node_ids: Node ids to keep visible.
     """
-    return json.dumps(await _broadcast({"cmd": "filter_subgraph", "ids": node_ids}))
+    return _dump(await _request_browser({"cmd": "filter_subgraph", "ids": node_ids}))
 
 
 @mcp.tool()
 async def reset_view() -> str:
     """Clear all MCP highlights/filters and fit the full graph."""
-    return json.dumps(await _broadcast({"cmd": "reset_view"}))
+    return _dump(await _request_browser({"cmd": "reset_view"}))
 
 
 @mcp.tool()
@@ -424,7 +463,102 @@ async def set_layout(layout: str) -> str:
              "system", "spatial", "responsibility"}
     if layout not in valid:
         return json.dumps({"error": f"Unknown layout '{layout}'. Valid: {sorted(valid)}"})
-    return json.dumps(await _broadcast({"cmd": "set_layout", "layout": layout}))
+    return _dump(await _request_browser({"cmd": "set_layout", "layout": layout}))
+
+
+@mcp.tool()
+async def get_live_graph_summary() -> str:
+    """Summary of the graph currently loaded in the ONEXUS browser."""
+    return _dump(await _request_browser({"cmd": "get_live_graph_summary"}))
+
+
+@mcp.tool()
+async def search_live_nodes(query: str, limit: int = 20) -> str:
+    """Search nodes in the graph currently loaded in the ONEXUS browser.
+
+    Args:
+        query: Case-insensitive substring to match against id, label, category, status, or tags.
+        limit: Max results (default 20, max 100).
+    """
+    return _dump(await _request_browser({"cmd": "search_live_nodes", "query": query, "limit": limit}))
+
+
+@mcp.tool()
+async def get_live_node(node_id: str) -> str:
+    """Full data + live incoming/outgoing edge summaries for one browser node.
+
+    Args:
+        node_id: Cytoscape node id in the currently loaded ONEXUS graph.
+    """
+    return _dump(await _request_browser({"cmd": "get_live_node", "id": node_id}))
+
+
+@mcp.tool()
+async def get_live_neighbors(node_id: str, depth: int = 1, direction: str = "both") -> str:
+    """Live nodes reachable from a browser node within N hops.
+
+    Args:
+        node_id: Starting Cytoscape node id.
+        depth: Hops (1-3, default 1).
+        direction: 'outgoing', 'incoming', or 'both'.
+    """
+    return _dump(await _request_browser({
+        "cmd": "get_live_neighbors",
+        "id": node_id,
+        "depth": depth,
+        "direction": direction,
+    }))
+
+
+@mcp.tool()
+async def highlight_live_nodes_by_label(query: str, limit: int = 10, color: str = "#f59e0b", focus_first: bool = True) -> str:
+    """Search live node labels/ids and highlight matching nodes in ONEXUS.
+
+    Args:
+        query: Case-insensitive label/id/category search text.
+        limit: Max matches to highlight (default 10, max 50).
+        color: CSS color for highlights.
+        focus_first: Whether to fit the first matched node after highlighting.
+    """
+    return _dump(await _request_browser({
+        "cmd": "highlight_live_nodes_by_label",
+        "query": query,
+        "limit": limit,
+        "color": color,
+        "focus_first": focus_first,
+    }))
+
+
+@mcp.tool()
+async def load_focused_graph(nodes: list[dict], edges: list[dict], layout: str = "cose") -> str:
+    """Replace the ONEXUS browser canvas with a small custom graph built by the agent.
+
+    Use this to show a focused, purpose-built subgraph instead of the full vault.
+    The agent constructs nodes and edges from live data (Revit elements, vault decisions, etc.)
+    and pushes them directly into the browser.
+
+    Args:
+        nodes: Cytoscape node objects — each must have {data: {id, displayLabel, category, ...}}.
+        edges: Cytoscape edge objects — each must have {data: {id, source, target, type}}.
+        layout: Layout name to apply after load (default: cose).
+    """
+    return _dump(await _request_browser({
+        "cmd": "load_focused_graph",
+        "nodes": nodes,
+        "edges": edges,
+        "layout": layout,
+    }))
+
+
+@mcp.tool()
+async def select_random_live_nodes(count: int = 5, color: str = "#22c55e") -> str:
+    """Select and highlight random visible nodes in the currently loaded browser graph.
+
+    Args:
+        count: Number of visible nodes to select (default 5, max 50).
+        color: CSS color for highlights.
+    """
+    return _dump(await _request_browser({"cmd": "select_random_live_nodes", "count": count, "color": color}))
 
 
 # ---------------------------------------------------------------------------

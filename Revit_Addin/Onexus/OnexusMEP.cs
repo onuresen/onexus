@@ -14,8 +14,8 @@ namespace Onexus
     // ══════════════════════════════════════════════════════════════════════════
     //  OnexusMEP — Phase 3 command
     //
-    //  Exports all MEP systems in the active document to the ONEXUS docked
-    //  panel as a graph.
+    //  Exports all MEP systems in the active document to the standalone
+    //  ONEXUS viewer window as a graph.
     //
     //  Node types produced:
     //    MechanicalSystem, ElectricalSystem, PipingSystem

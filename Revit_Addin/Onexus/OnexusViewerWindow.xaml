@@ -4,10 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     Title="ONEXUS Viewer"
-    Width="1280"
-    Height="820"
-    ShowInTaskbar="False"
-    WindowStartupLocation="CenterOwner">
+    Width="1500"
+    Height="920"
+    MinWidth="900"
+    MinHeight="600"
+    ShowInTaskbar="True"
+    WindowStartupLocation="CenterScreen">
     <Grid>
         <wv2:WebView2 x:Name="Web" />
     </Grid>

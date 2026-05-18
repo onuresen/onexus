@@ -1,3 +1,6 @@
 <Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
   <Project Path="Onexus/Onexus.csproj" Id="bfcc59a0-ab83-44ba-b790-0842431729a7" />
 </Solution>
