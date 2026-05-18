@@ -5,7 +5,6 @@
         "ifc-importer.js",
         "gd-importer.js",
         "kanji.plugin.js",
-        "waterflow.plugin.js",
         "onexus-chordview.plugin.js",
         "onexus-sankeyview.plugin.js",
         "onexus-obsidian.plugin.js",
