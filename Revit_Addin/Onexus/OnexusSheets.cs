@@ -15,7 +15,7 @@ namespace Onexus
     //  OnexusSheets — Phase 4 command
     //
     //  Exports every drawing sheet, the views placed on each sheet, and the
-    //  rooms visible in plan-type views to the ONEXUS docked panel.
+    //  rooms visible in plan-type views to the standalone ONEXUS viewer window.
     //
     //  The resulting graph answers questions such as:
     //    • Which sheets show Room 101?       (Space → ShowsSpace ← View → ContainedIn → Sheet)

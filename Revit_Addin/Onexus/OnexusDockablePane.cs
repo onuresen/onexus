@@ -35,8 +35,10 @@ namespace Onexus
     // ══════════════════════════════════════════════════════════════════════════
     //  OnexusPaneManager — static façade used by all commands
     //
-    //  Commands call OnexusPaneManager.ShowGraph(uiapp, graph) and this class
-    //  takes care of wiring the bridge, showing the pane, and injecting the JSON.
+    //  Commands call OnexusPaneManager.ShowGraph(uiapp, graph). The primary
+    //  experience is now a standalone WebView2 WPF window so ONEXUS has enough
+    //  canvas space for graph navigation. The old dockable pane remains only as
+    //  a compatibility fallback for any older Revit sessions that ask for it.
     // ══════════════════════════════════════════════════════════════════════════
     public static class OnexusPaneManager
     {
@@ -45,6 +47,7 @@ namespace Onexus
             new DockablePaneId(new Guid("B9C7A6D5-E4F3-4210-9876-FEDCBA098765"));
 
         private static OnexusPaneContent _content;
+        private static OnexusViewerWindow _window;
 
         // ── Called by IDockablePaneProvider ────────────────────────────────────
 
@@ -61,19 +64,16 @@ namespace Onexus
 
         // ── Called by commands ─────────────────────────────────────────────────
 
-        public static bool IsAvailable => _content != null;
+        public static bool IsAvailable => _window != null || _content != null;
 
         /// <summary>
-        /// Serialises <paramref name="graph"/>, shows the docked panel, and
-        /// injects the graph into the Onexus web app.
+        /// Serialises <paramref name="graph"/>, shows the standalone viewer, and
+        /// injects the graph into the ONEXUS web app.
         /// Also rebuilds the element-ID cache used by live delta tracking.
         /// </summary>
         public static void ShowGraph(UIApplication uiapp, OnexusGraph graph)
         {
-            if (graph == null || _content == null) return;
-
-            // Rebuild delta cache before serialising so IDs are captured
-            try { _content.TrackGraph(graph); } catch { }
+            if (graph == null) return;
 
             var json = JsonConvert.SerializeObject(graph, Formatting.Indented);
             ShowGraph(uiapp, json,
@@ -82,7 +82,7 @@ namespace Onexus
         }
 
         /// <summary>
-        /// Shows the docked panel and injects pre-serialised JSON.
+        /// Shows the standalone viewer and injects pre-serialised JSON.
         /// </summary>
         public static void ShowGraph(
             UIApplication uiapp,
@@ -90,22 +90,36 @@ namespace Onexus
             int nodeCount = 0,
             int edgeCount = 0)
         {
-            if (_content == null || uiapp == null) return;
+            if (uiapp == null || string.IsNullOrWhiteSpace(json)) return;
 
-            // Wire the Revit↔JS bridge (idempotent)
-            _content.EnsureBridge(uiapp);
-
-            // Bring the pane into view
             try
             {
-                var pane = uiapp.GetDockablePane(PaneId);
-                if (pane != null && !pane.IsShown())
-                    pane.Show();
-            }
-            catch { /* non-fatal */ }
+                var folder = OnexusSettings.EnsureOnexusFolder();
+                if (folder == null) return;
 
-            // Push graph JSON into WebView2
-            _content.LoadGraph(json, nodeCount, edgeCount);
+                if (_window == null)
+                {
+                    _window = OnexusViewerWindow.CreateFromGraphJson(folder, json);
+                    _window.Closed += (s, e) => _window = null;
+                    _window.EnableRevitSelectionBridge(uiapp);
+                    _window.Show();
+                }
+                else
+                {
+                    _window.EnableRevitSelectionBridge(uiapp);
+                    _window.LoadGraphJson(json);
+                }
+
+                if (_window.WindowState == System.Windows.WindowState.Minimized)
+                    _window.WindowState = System.Windows.WindowState.Normal;
+
+                _window.Activate();
+                _window.Focus();
+            }
+            catch (Exception ex)
+            {
+                Autodesk.Revit.UI.TaskDialog.Show("ONEXUS", ex.Message);
+            }
         }
 
         /// <summary>
@@ -115,10 +129,22 @@ namespace Onexus
         {
             try
             {
-                var pane = uiapp.GetDockablePane(PaneId);
-                if (pane == null) return;
-                if (pane.IsShown()) pane.Hide();
-                else pane.Show();
+                var folder = OnexusSettings.EnsureOnexusFolder();
+                if (folder == null) return;
+
+                if (_window == null)
+                {
+                    _window = OnexusViewerWindow.CreateFromGraphJson(folder, "{}");
+                    _window.Closed += (s, e) => _window = null;
+                    _window.EnableRevitSelectionBridge(uiapp);
+                    _window.Show();
+                }
+
+                if (_window.WindowState == System.Windows.WindowState.Minimized)
+                    _window.WindowState = System.Windows.WindowState.Normal;
+
+                _window.Activate();
+                _window.Focus();
             }
             catch { }
         }
@@ -129,6 +155,7 @@ namespace Onexus
         /// </summary>
         public static void UpdateActiveDocument(UIDocument uidoc)
         {
+            try { _window?.UpdateDocument(uidoc); } catch { }
             try { _content?.UpdateDocument(uidoc); } catch { }
         }
 

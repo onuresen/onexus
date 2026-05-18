@@ -186,6 +186,24 @@ pip install -r requirements.txt
 - Claude Code shows "Server disconnected" toast briefly on startup — FastMCP banner goes to stderr; `show_banner=False` mitigates but doesn't fully fix
 - Old server.py process can survive Claude Code restart and hold port `:8765` — `_free_port()` in lifespan startup kills it, but may race if restart is very fast
 
+### Live graph tools (2026-05-18)
+- Snapshot tools (`search_nodes`, `find_path`, `get_graph_summary`, etc.) read the server-side vault graph file.
+- Live tools (`get_live_graph_summary`, `search_live_nodes`, `get_live_node`, `get_live_neighbors`, `highlight_live_nodes_by_label`, `select_random_live_nodes`) round-trip through the browser bridge and inspect the currently loaded `window.cy` graph.
+- Browser commands must wait for ACKs: the server assigns `_id`, the bridge replies with `{ack, ok, ...}`, and tools should report actual highlighted/missing nodes instead of only "sent".
+- Live controls use Cytoscape node IDs. For label-driven use, prefer `search_live_nodes` or `highlight_live_nodes_by_label`.
+
+## Revit Add-in
+
+`Revit_Addin/Onexus/` targets Revit 2026 on .NET 8:
+
+- `Onexus.csproj` is SDK-style `net8.0-windows`, `UseWPF=true`, `UseWindowsForms=true`, `PlatformTarget=x64`.
+- Revit references resolve from `C:\Program Files\Autodesk\Revit 2026\`.
+- `DeployToRevit` runs after build by default. It copies `Onexus.addin` to `C:\ProgramData\Autodesk\Revit\Addins\2026\` and copies the full output bundle to `C:\ProgramData\Autodesk\Revit\Addins\Onexus\Ver2026\`.
+- `Onexus.addin` points to `C:\ProgramData\Autodesk\Revit\Addins\Onexus\Ver2026\Onexus.dll` so WebView2/Newtonsoft dependencies travel with the add-in.
+- Visual Studio debug profiles start `C:\Program Files\Autodesk\Revit 2026\Revit.exe` (`Properties/launchSettings.json` and `Onexus.csproj.user`).
+- ONEXUS opens as a standalone WPF `OnexusViewerWindow` with WebView2, not as a Revit dockable pane. Keep graph commands routed through `OnexusPaneManager.ShowGraph(...)`; despite the legacy name, it now opens/reuses the standalone viewer window.
+- To compile without deploying, run `dotnet build Revit_Addin\Onexus\Onexus.csproj -c Debug -p:DeployToRevit=false`.
+
 ## Known gaps / future work
 
 - **IC Supply Chain Dependency Map sample dataset** — create `samples/ic-supply-chain.json` (ONEXUS 1.1 schema) modelling a realistic IC supply chain: `Supplier → Component → Process → Zone → Schedule` nodes with edges `supplies`, `requires`, `blocks`, `installed_in`, `drives`. Source the component data from Kit-of-Parts `advanced-kit.json` (parts already have `supply_risk`, `lead_time`, `sequence` fields). The goal is a concrete killer-use-case demo: "Supplier A delays 3 weeks — call `find_path(supplierA, M7_milestone)` via MCP to highlight everything at risk." Optionally add a thin `ic-supply-importer.plugin.js` for IC-specific node colours (suppliers = orange, schedule = blue, blocked = red). See esen-vault `projects/ONEXUS.md` → Positioning section for context.

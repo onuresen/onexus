@@ -1,0 +1,11 @@
+Revit_Addin/.vs/
+Revit_Addin/Onexus/bin/Debug/net8.0-windows/
+Revit_Addin/Onexus/bin/Release/
+Revit_Addin/Onexus/obj/Debug/net8.0-windows/
+Revit_Addin/Onexus/obj/Release/
+Revit_Addin/Onexus/obj/x64/
+Revit_Addin/Onexus/obj/*.nuget.dgspec.json
+Revit_Addin/Onexus/obj/*.nuget.g.props
+Revit_Addin/Onexus/obj/*.nuget.g.targets
+Revit_Addin/Onexus/obj/project.assets.json
+Revit_Addin/Onexus/obj/project.nuget.cache

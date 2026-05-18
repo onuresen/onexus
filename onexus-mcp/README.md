@@ -4,8 +4,8 @@ Gives Claude Code two superpowers over the ONEXUS graph tool:
 
 | Layer | What it does |
 |---|---|
-| **Query tools** | Read and reason over vault-graph.json without the browser open |
-| **Control tools** | Remotely pan/zoom/highlight/filter the live ONEXUS graph in your browser |
+| **Snapshot query tools** | Read and reason over vault-graph.json without the browser open |
+| **Live browser tools** | Query and control the graph currently loaded in ONEXUS |
 
 ---
 
@@ -22,8 +22,8 @@ Claude Code  ──stdio──►  server.py (FastMCP)
                          Cytoscape.js
 ```
 
-Query tools run even when the browser is closed.  
-Control tools require the browser tab to be open — they return a helpful error if not connected.
+Snapshot query tools run even when the browser is closed.
+Live browser tools require the ONEXUS tab to be open and the green bridge dot to be connected.
 
 ---
 
@@ -69,7 +69,7 @@ When ONEXUS loads, it automatically connects to `ws://localhost:8765`.
 
 ## Available Tools
 
-### Query tools (no browser needed)
+### Snapshot query tools (no browser needed)
 
 | Tool | Description |
 |---|---|
@@ -81,12 +81,25 @@ When ONEXUS loads, it automatically connects to `ws://localhost:8765`.
 | `get_by_category(category, limit)` | All nodes in a category |
 | `get_edge_types` | All edge types and their counts |
 
-### Control tools (browser must be open)
+### Live browser query tools (browser must be open)
+
+These tools inspect `window.cy`, so they work against whatever JSON/import is currently visible in ONEXUS.
+
+| Tool | Description |
+|---|---|
+| `get_live_graph_summary` | Node/edge counts, category breakdown, top hubs from the live graph |
+| `search_live_nodes(query, limit)` | Search live node ids, labels, categories, statuses, and tags |
+| `get_live_node(node_id)` | Full live node data + incoming/outgoing edge summaries |
+| `get_live_neighbors(node_id, depth, direction)` | Live neighbors within 1-3 hops |
+
+### Live browser control tools (browser must be open)
 
 | Tool | Description |
 |---|---|
 | `focus_node(node_id)` | Pan + zoom to a node, flash highlight ring |
-| `highlight_nodes(node_ids, color)` | Color overlay on a set of nodes |
+| `highlight_nodes(node_ids, color)` | Highlight exact Cytoscape node ids; returns actual highlighted/missing ids |
+| `highlight_live_nodes_by_label(query, limit, color, focus_first)` | Search the live graph by label/id/category and highlight matches |
+| `select_random_live_nodes(count, color)` | Select and highlight random visible nodes for connection tests |
 | `filter_to_subgraph(node_ids)` | Hide everything except the given nodes |
 | `reset_view` | Clear all highlights/filters, fit full graph |
 | `set_layout(layout)` | Apply any ONEXUS layout |
@@ -101,6 +114,15 @@ Valid layouts: `cose`, `tree_nested`, `degree_rings`, `category_lanes`,
 ```
 Which ONEXUS nodes are most connected to the MCP-Protocol concept?
 → search_nodes("MCP-Protocol") → get_neighbors(id, depth=2) → highlight_nodes(ids)
+
+What is currently open in ONEXUS?
+→ get_live_graph_summary()
+
+Highlight the Face Recognition Unit in the sample graph.
+→ highlight_live_nodes_by_label("Face Recognition Unit")
+
+Pick random visible nodes to test the live bridge.
+→ select_random_live_nodes(5)
 
 Show me the path between the VIKTOR project and BHoM.
 → find_path("projects/VIKTOR.md", "concepts/BHoM.md") → focus_node on each hop

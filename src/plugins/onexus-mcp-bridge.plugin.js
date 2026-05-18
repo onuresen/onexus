@@ -8,6 +8,13 @@
      filter_subgraph { cmd, ids }
      reset_view      { cmd }
      set_layout      { cmd, layout }
+     load_focused_graph { cmd, nodes, edges, layout }
+     get_live_graph_summary { cmd }
+     search_live_nodes { cmd, query, limit }
+     get_live_node { cmd, id }
+     get_live_neighbors { cmd, id, depth, direction }
+     highlight_live_nodes_by_label { cmd, query, limit, color, focus_first }
+     select_random_live_nodes { cmd, count, color }
 
    Each command is acknowledged with { ack: cmd._id, ok: true|false }.
 */
@@ -70,13 +77,122 @@
         }
       }
 
-      function getCy() { return window.cy; }
+      function getCy() {
+        return window.cy;
+      }
+
+      function getLabel(data) {
+        if (!data) return "";
+        const label = data.displayLabel ?? data.label ?? data.name ?? data.title;
+        if (typeof label === "string") return label;
+        if (label && typeof label === "object") return label.en ?? label.jp ?? Object.values(label)[0] ?? "";
+        return data.id ?? "";
+      }
+
+      function getTags(data) {
+        if (!data) return [];
+        return Array.isArray(data.tags) ? data.tags : [];
+      }
+
+      function nodeSummary(node) {
+        const data = node.data();
+        return {
+          id: node.id(),
+          label: getLabel(data),
+          category: data.category ?? "",
+          nodeType: data.nodeType ?? "",
+          status: data.status ?? "",
+          tags: getTags(data),
+          degree: node.degree(false),
+          visible: node.visible(),
+          selected: node.selected(),
+        };
+      }
+
+      function edgeSummary(edge) {
+        const data = edge.data();
+        return {
+          id: edge.id(),
+          source: edge.source().id(),
+          target: edge.target().id(),
+          type: data.type ?? data.label ?? "",
+          dimension: data.dimension ?? "",
+        };
+      }
+
+      function searchNodes(cy, query, limit) {
+        const q = String(query ?? "").toLowerCase();
+        const max = Math.min(Math.max(Number(limit) || 20, 1), 100);
+        const results = [];
+        cy.nodes().forEach(node => {
+          if (results.length >= max) return;
+          const data = node.data();
+          const haystack = [
+            node.id(),
+            getLabel(data),
+            data.category,
+            data.nodeType,
+            data.status,
+            ...getTags(data),
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          if (haystack.includes(q)) results.push(nodeSummary(node));
+        });
+        return results;
+      }
+
+      function clearMcpHighlights(cy) {
+        cy.nodes(".onx-mcp-hl")
+          .removeStyle("border-width border-color border-opacity background-color")
+          .removeClass("onx-mcp-hl");
+      }
+
+      function applyNodeHighlights(cy, ids, color) {
+        const highlighted = [];
+        const missing = [];
+        clearMcpHighlights(cy);
+        ids.forEach(nid => {
+          const n = cy.getElementById(nid);
+          if (n.length) {
+            n.addClass("onx-mcp-hl");
+            n.select();
+            n.style({
+              "border-width": 5,
+              "border-color": color,
+              "border-opacity": 0.95,
+              "background-color": color,
+            });
+            highlighted.push(nodeSummary(n));
+          } else {
+            missing.push(nid);
+          }
+        });
+        return { highlighted, missing };
+      }
+
+      function fitIfAny(cy, ids) {
+        let eles = cy.collection();
+        ids.forEach(id => {
+          const ele = cy.getElementById(id);
+          if (ele.length) eles = eles.union(ele);
+        });
+        if (eles.length) {
+          cy.animate({
+            fit: { eles, padding: 120 },
+            duration: 500,
+            easing: "ease-in-out-cubic",
+          });
+        }
+      }
 
       function handleCommand(msg) {
         const cy = getCy();
         const msgId = msg._id;
 
-        switch (msg.cmd) {
+        try {
+          switch (msg.cmd) {
 
           case "focus_node": {
             if (!cy) return ack(msgId, false, { reason: "cy not ready" });
@@ -96,7 +212,7 @@
             node.style({ "border-width": 6, "border-color": "#f59e0b", "border-opacity": 1 });
             setTimeout(() => node.removeStyle("border-width border-color border-opacity"), 2500);
 
-            ack(msgId, true);
+            ack(msgId, true, { node: nodeSummary(node) });
             break;
           }
 
@@ -105,20 +221,15 @@
             const color = msg.color ?? "#f59e0b";
             const ids = Array.isArray(msg.ids) ? msg.ids : [];
 
-            // Clear previous MCP highlights
-            cy.nodes(".onx-mcp-hl")
-              .removeStyle("border-width border-color border-opacity background-color")
-              .removeClass("onx-mcp-hl");
+            cy.elements().unselect();
+            const result = applyNodeHighlights(cy, ids, color);
 
-            ids.forEach(nid => {
-              const n = cy.getElementById(nid);
-              if (n.length) {
-                n.addClass("onx-mcp-hl");
-                n.style({ "border-width": 5, "border-color": color, "border-opacity": 0.95, "background-color": color });
-              }
+            ack(msgId, true, {
+              requested: ids.length,
+              highlighted_count: result.highlighted.length,
+              missing: result.missing,
+              nodes: result.highlighted,
             });
-
-            ack(msgId, true, { highlighted: ids.length });
             break;
           }
 
@@ -139,7 +250,7 @@
             });
 
             cy.style().selector(".onx-mcp-hide").style({ display: "none" }).update();
-            ack(msgId, true, { visible: ids.size });
+            ack(msgId, true, { requested: ids.size, visible_nodes: cy.nodes(":visible").length });
             break;
           }
 
@@ -174,8 +285,170 @@
             break;
           }
 
+          case "get_live_graph_summary": {
+            if (!cy) return ack(msgId, false, { reason: "cy not ready" });
+            const byCategory = {};
+            const byNodeType = {};
+            cy.nodes().forEach(node => {
+              const data = node.data();
+              const category = data.category || "?";
+              const nodeType = data.nodeType || "?";
+              byCategory[category] = (byCategory[category] || 0) + 1;
+              byNodeType[nodeType] = (byNodeType[nodeType] || 0) + 1;
+            });
+            const topHubs = cy
+              .nodes()
+              .map(nodeSummary)
+              .sort((a, b) => b.degree - a.degree)
+              .slice(0, 10);
+            ack(msgId, true, {
+              node_count: cy.nodes().length,
+              edge_count: cy.edges().length,
+              visible_node_count: cy.nodes(":visible").length,
+              selected_node_count: cy.nodes(":selected").length,
+              by_category: byCategory,
+              by_nodeType: byNodeType,
+              top_hubs: topHubs,
+            });
+            break;
+          }
+
+          case "search_live_nodes": {
+            if (!cy) return ack(msgId, false, { reason: "cy not ready" });
+            const nodes = searchNodes(cy, msg.query, msg.limit);
+            ack(msgId, true, { query: String(msg.query ?? ""), count: nodes.length, nodes });
+            break;
+          }
+
+          case "get_live_node": {
+            if (!cy) return ack(msgId, false, { reason: "cy not ready" });
+            const node = cy.getElementById(msg.id);
+            if (node.length === 0) return ack(msgId, false, { reason: `node '${msg.id}' not found` });
+            ack(msgId, true, {
+              node: { ...nodeSummary(node), data: node.data() },
+              outgoing_edges: node.outgoers("edge").map(edgeSummary),
+              incoming_edges: node.incomers("edge").map(edgeSummary),
+            });
+            break;
+          }
+
+          case "get_live_neighbors": {
+            if (!cy) return ack(msgId, false, { reason: "cy not ready" });
+            const start = cy.getElementById(msg.id);
+            if (start.length === 0) return ack(msgId, false, { reason: `node '${msg.id}' not found` });
+            const depth = Math.min(Math.max(Number(msg.depth) || 1, 1), 3);
+            const direction = ["outgoing", "incoming", "both"].includes(String(msg.direction).toLowerCase())
+              ? String(msg.direction).toLowerCase()
+              : "both";
+            const visited = new Set([start.id()]);
+            let frontier = [start];
+            const seenEdges = [];
+            for (let i = 0; i < depth; i += 1) {
+              const next = [];
+              frontier.forEach(node => {
+                const edgeSelector =
+                  direction === "outgoing" ? node.outgoers("edge")
+                    : direction === "incoming" ? node.incomers("edge")
+                      : node.connectedEdges();
+                edgeSelector.forEach(edge => {
+                  const candidates = [];
+                  if (direction === "outgoing" || direction === "both") candidates.push(edge.target());
+                  if (direction === "incoming" || direction === "both") candidates.push(edge.source());
+                  candidates.forEach(candidate => {
+                    if (candidate.id() !== node.id() && !visited.has(candidate.id())) {
+                      visited.add(candidate.id());
+                      next.push(candidate);
+                      seenEdges.push(edgeSummary(edge));
+                    }
+                  });
+                });
+              });
+              frontier = next;
+              if (!frontier.length) break;
+            }
+            const neighbors = Array.from(visited)
+              .filter(id => id !== start.id())
+              .map(id => nodeSummary(cy.getElementById(id)));
+            ack(msgId, true, {
+              origin: nodeSummary(start),
+              depth,
+              direction,
+              neighbor_count: neighbors.length,
+              neighbors,
+              edges: seenEdges,
+            });
+            break;
+          }
+
+          case "highlight_live_nodes_by_label": {
+            if (!cy) return ack(msgId, false, { reason: "cy not ready" });
+            const color = msg.color ?? "#f59e0b";
+            const limit = Math.min(Math.max(Number(msg.limit) || 10, 1), 50);
+            const matches = searchNodes(cy, msg.query, limit);
+            cy.elements().unselect();
+            const result = applyNodeHighlights(cy, matches.map(n => n.id), color);
+            if (msg.focus_first !== false && result.highlighted.length) fitIfAny(cy, [result.highlighted[0].id]);
+            ack(msgId, true, {
+              query: String(msg.query ?? ""),
+              matched_count: matches.length,
+              highlighted_count: result.highlighted.length,
+              nodes: result.highlighted,
+            });
+            break;
+          }
+
+          case "load_focused_graph": {
+            const nodes = Array.isArray(msg.nodes) ? msg.nodes : [];
+            const edges = Array.isArray(msg.edges) ? msg.edges : [];
+            try {
+              if (typeof window.onexusLoadGraph === "function") {
+                window.onexusLoadGraph({ elements: { nodes, edges } });
+              } else {
+                cy.elements().remove();
+                cy.add([...nodes, ...edges]);
+              }
+              setTimeout(() => {
+                const layout = msg.layout ?? "cose";
+                if (typeof window.applyLayout === "function") {
+                  try { window.applyLayout(layout); } catch { /* ignore */ }
+                } else {
+                  try { cy.layout({ name: layout }).run(); } catch { /* ignore */ }
+                }
+                cy.fit(cy.elements(), 80);
+              }, 150);
+              ack(msgId, true, { node_count: nodes.length, edge_count: edges.length });
+            } catch (err) {
+              ack(msgId, false, { reason: String(err?.message ?? err) });
+            }
+            break;
+          }
+
+          case "select_random_live_nodes": {
+            if (!cy) return ack(msgId, false, { reason: "cy not ready" });
+            const color = msg.color ?? "#22c55e";
+            const count = Math.min(Math.max(Number(msg.count) || 5, 1), 50);
+            const nodes = cy.nodes(":visible").map(node => node.id());
+            for (let i = nodes.length - 1; i > 0; i -= 1) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [nodes[i], nodes[j]] = [nodes[j], nodes[i]];
+            }
+            const ids = nodes.slice(0, count);
+            cy.elements().unselect();
+            const result = applyNodeHighlights(cy, ids, color);
+            fitIfAny(cy, ids);
+            ack(msgId, true, {
+              requested: count,
+              selected_count: result.highlighted.length,
+              nodes: result.highlighted,
+            });
+            break;
+          }
+
           default:
             ack(msgId, false, { reason: `unknown command '${msg.cmd}'` });
+          }
+        } catch (err) {
+          ack(msgId, false, { reason: String(err?.message ?? err) });
         }
       }
 

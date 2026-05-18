@@ -18,9 +18,8 @@ namespace Onexus
     //  OnexusApplication — IExternalApplication
     //
     //  Responsibilities:
-    //    • Register the dockable pane with Revit at startup
     //    • Build the ONEXUS ribbon tab with all command buttons
-    //    • Subscribe to document events for active-document tracking
+    //    • Keep the standalone ONEXUS viewer pointed at the active document
     // ══════════════════════════════════════════════════════════════════════════
     [Regeneration(RegenerationOption.Manual)]
     public class OnexusApplication : IExternalApplication
@@ -31,18 +30,10 @@ namespace Onexus
         {
             try
             {
-                // 1. Register the dockable pane
-                //    Revit calls SetupDockablePane() on our provider which creates
-                //    the OnexusPaneContent UserControl and stores it in PaneManager.
-                app.RegisterDockablePane(
-                    OnexusPaneManager.PaneId,
-                    "ONEXUS",
-                    new OnexusDockablePane());
-
-                // 2. Build the ribbon
+                // 1. Build the ribbon
                 CreateRibbon(app);
 
-                // 3. Track active document changes so selection sync stays correct.
+                // 2. Track active document changes so selection sync stays correct.
                 //    ViewActivated fires when the user switches views or documents, giving us
                 //    a fresh UIDocument to hand to the selection bridge.
                 app.ViewActivated += (s, e) =>
@@ -53,7 +44,7 @@ namespace Onexus
                     catch { }
                 };
 
-                // 4. Subscribe to DocumentChanged for live delta sync (Phase 5).
+                // 3. Subscribe to DocumentChanged for live delta sync (Phase 5).
                 //    This event fires after each committed transaction.  We collect
                 //    the changed IDs here (safe: read-only access) and defer any
                 //    Revit API work to the next Idling tick.
@@ -84,7 +75,7 @@ namespace Onexus
         {
             try
             {
-                // Only forward deltas when the panel has been initialised and a
+                // Only forward deltas when the viewer has been initialised and a
                 // full graph has been loaded (TrackGraph populates the cache).
                 if (!OnexusPaneManager.IsAvailable) return;
 
@@ -119,12 +110,12 @@ namespace Onexus
             // ── Panel: Graph ──────────────────────────────────────────────────
             var graphPanel = app.CreateRibbonPanel(TabName, "Graph");
 
-            // Toggle Panel button
+            // Open standalone viewer button
             var toggleData = new PushButtonData(
-                "OnexusTogglePanel", "Toggle\nPanel", asm,
+                "OnexusOpenWindow", "Open\nWindow", asm,
                 "Onexus.OnexusTogglePanel")
             {
-                ToolTip = "Show or hide the ONEXUS docked panel."
+                ToolTip = "Open the ONEXUS viewer in a separate WebView2 window."
             };
             graphPanel.AddItem(toggleData);
 
@@ -147,7 +138,7 @@ namespace Onexus
                 "OnexusSpaces", "Sync\nSpaces", asm,
                 "Onexus.Onexus")
             {
-                ToolTip = "Export rooms, elements, and levels to the ONEXUS panel."
+                ToolTip = "Export rooms, elements, and levels to the ONEXUS viewer window."
             };
             graphPanel.AddItem(spacesData);
 
@@ -187,7 +178,7 @@ namespace Onexus
             {
                 ToolTip =
                     "Export all MEP systems (Mechanical, Electrical, Piping) and their " +
-                    "connected equipment, terminals and fixtures to the ONEXUS panel.\n\n" +
+                    "connected equipment, terminals and fixtures to the ONEXUS viewer window.\n\n" +
                     "Works best on MEP or combined models."
             };
             mepPanel.AddItem(mepData);
@@ -220,7 +211,7 @@ namespace Onexus
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  OnexusTogglePanel — hides / shows the dockable pane
+    //  OnexusTogglePanel — opens or focuses the standalone viewer window
     // ══════════════════════════════════════════════════════════════════════════
     [Transaction(TransactionMode.ReadOnly)]
     public class OnexusTogglePanel : IExternalCommand
@@ -256,7 +247,7 @@ namespace Onexus
 
             TaskDialog.Show("ONEXUS",
                 $"Onexus folder set to:\n{folder}\n\n" +
-                "Run any graph command to reload the panel.");
+                "Run any graph command to reload the viewer window.");
             return Result.Succeeded;
         }
     }

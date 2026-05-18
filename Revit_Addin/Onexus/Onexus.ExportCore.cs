@@ -383,7 +383,7 @@ namespace Onexus
 
             if (truncated)
             {
-                TaskDialog.Show("ONEXUS – Explore Elements",
+                Autodesk.Revit.UI.TaskDialog.Show("ONEXUS – Explore Elements",
                     $"Only the first {MaxInstances} elements are shown.\n\n" +
                     "Tip: select a smaller set of elements, or open a less-populated view " +
                     "and run Explore Elements again.");

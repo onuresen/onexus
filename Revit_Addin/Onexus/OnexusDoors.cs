@@ -25,7 +25,7 @@ namespace Onexus
                 // Build graph: doors (type nodes) + subcomponents (type nodes) + PartOfSystem edges
                 var graph = OnexusExportCore.BuildDoorTypeAndSubcomponentsGraph(doc);
 
-                // Push to the docked panel
+                // Push to the standalone ONEXUS viewer window
                 OnexusPaneManager.ShowGraph(uiapp, graph);
 
                 return Result.Succeeded;
