@@ -64,8 +64,9 @@ namespace Onexus
                             },
                             revitCategory = "Rooms",
                             level = level?.Name,
-                            // Phase 2: populate so Onexus→Revit selection resolves the element
-                            revitInstanceIds = new List<int> { (int)room.Id.Value },
+                            area  = room.Area,
+                            mark  = room.get_Parameter(BuiltInParameter.ALL_MODEL_MARK)?.AsString(),
+                            revitInstanceIds = new List<long> { room.Id.Value },
                             revitInstanceUids = new List<string> { room.UniqueId }
                         }
                     });
@@ -107,7 +108,7 @@ namespace Onexus
                             revitCategory = cat,
                             level = lvl?.Name,
                             // Phase 2: populate so Onexus→Revit selection resolves the element
-                            revitInstanceIds = new List<int> { (int)fi.Id.Value },
+                            revitInstanceIds = new List<long> { fi.Id.Value },
                             revitInstanceUids = new List<string> { fi.UniqueId }
                         }
                     });
@@ -133,6 +134,68 @@ namespace Onexus
                     }
                 }
             }
+
+            // Room adjacency via doors/windows: Door.FromRoom ↔ Door.ToRoom
+            // Emits undirected AdjacentTo edges between rooms sharing an opening.
+            foreach (var fi in fis)
+            {
+                try
+                {
+                    var isDoor   = fi.Category?.Id.Value == (long)BuiltInCategory.OST_Doors;
+                    var isWindow = fi.Category?.Id.Value == (long)BuiltInCategory.OST_Windows;
+                    if (!isDoor && !isWindow) continue;
+
+                    var fr = fi.FromRoom;
+                    var tr = fi.ToRoom;
+                    if (fr != null && fr.Area > 0 && tr != null && tr.Area > 0)
+                        AddEdge(graph, edgeSeen, "AdjacentTo", "Spatial",
+                                fr.UniqueId, tr.UniqueId, directional: false, confidence: "Explicit");
+                }
+                catch { }
+            }
+
+            // MEP Spaces (only when present — architectural models typically have none)
+            try
+            {
+                var mepSpaces = new FilteredElementCollector(doc)
+                    .OfCategory(BuiltInCategory.OST_MEPSpaces)
+                    .WhereElementIsNotElementType()
+                    .Cast<Autodesk.Revit.DB.Mechanical.Space>()
+                    .Where(s => s.Area > 0)
+                    .ToList();
+
+                foreach (var space in mepSpaces)
+                {
+                    var spaceId = space.UniqueId;
+                    if (nodeSeen.Add(spaceId))
+                    {
+                        var lvl = space.Level;
+                        if (lvl != null) referencedLevels.Add(lvl.Id);
+                        var spaceLabel = (!string.IsNullOrWhiteSpace(space.Number) && !string.IsNullOrWhiteSpace(space.Name))
+                            ? $"{space.Number} {space.Name}" : (space.Name ?? space.Number ?? "Space");
+
+                        graph.elements.nodes.Add(new OnexusNode
+                        {
+                            data = new NodeData
+                            {
+                                id                = spaceId,
+                                nodeType          = "Space",
+                                category          = "MEPSpace",
+                                label             = MakeBilingualLabel(spaceLabel),
+                                revitCategory     = "Spaces",
+                                level             = lvl?.Name,
+                                area              = space.Area,
+                                revitInstanceIds  = new List<long>   { space.Id.Value },
+                                revitInstanceUids = new List<string> { spaceId }
+                            }
+                        });
+
+                        if (lvl != null)
+                            AddEdge(graph, edgeSeen, "OnLevel", "Spatial", spaceId, lvl.UniqueId, directional: true);
+                    }
+                }
+            }
+            catch { /* MEP Spaces not available in all model types — safe-fail */ }
 
             // Levels (only referenced)
             var levels = new FilteredElementCollector(doc)
@@ -160,7 +223,7 @@ namespace Onexus
                             },
                             revitCategory = "Levels",
                             level = label,
-                            revitInstanceIds = new List<int> { (int)lvl.Id.Value },
+                            revitInstanceIds = new List<long> { lvl.Id.Value },
                             revitInstanceUids = new List<string> { lvl.UniqueId }
                         }
                     });
@@ -231,13 +294,13 @@ namespace Onexus
                 // ── Type node ──────────────────────────────────────────────────
                 string typeNodeId;
                 string typeLabel;
-                int    typeRevitId = 0;
+                long   typeRevitId = 0;
 
                 if (el is FamilyInstance fiType && fiType.Symbol != null)
                 {
                     typeNodeId  = $"TYP-{fiType.Symbol.Id.Value}";
                     typeLabel   = $"{fiType.Symbol.FamilyName} : {fiType.Symbol.Name}";
-                    typeRevitId = (int)fiType.Symbol.Id.Value;
+                    typeRevitId = fiType.Symbol.Id.Value;
                 }
                 else
                 {
@@ -247,7 +310,7 @@ namespace Onexus
                         var elType = doc.GetElement(typeId);
                         typeNodeId  = $"TYP-{typeId.Value}";
                         typeLabel   = elType?.Name ?? catName;
-                        typeRevitId = (int)typeId.Value;
+                        typeRevitId = typeId.Value;
                     }
                     else
                     {
@@ -267,7 +330,7 @@ namespace Onexus
                             category      = catName,
                             label         = new Dictionary<string, string> { ["en"] = typeLabel, ["jp"] = typeLabel },
                             revitCategory = catName,
-                            revitInstanceIds = typeRevitId > 0 ? new List<int> { typeRevitId } : null
+                            revitInstanceIds = typeRevitId > 0 ? new List<long> { typeRevitId } : null
                         }
                     });
                 }
@@ -295,7 +358,7 @@ namespace Onexus
                             label            = new Dictionary<string, string> { ["en"] = instLabel, ["jp"] = instLabel },
                             revitCategory    = catName,
                             level            = lvl?.Name,
-                            revitInstanceIds = new List<int>    { (int)el.Id.Value },
+                            revitInstanceIds = new List<long>   { el.Id.Value },
                             revitInstanceUids = new List<string> { el.UniqueId }
                         }
                     });
@@ -374,7 +437,7 @@ namespace Onexus
                             label            = new Dictionary<string, string> { ["en"] = lbl, ["jp"] = lbl },
                             revitCategory    = "Levels",
                             level            = lbl,
-                            revitInstanceIds = new List<int>    { (int)lvl.Id.Value },
+                            revitInstanceIds = new List<long>   { lvl.Id.Value },
                             revitInstanceUids = new List<string> { lvl.UniqueId }
                         }
                     });
@@ -412,7 +475,7 @@ namespace Onexus
                     },
                     revitCategory    = "Rooms",
                     level            = room.Level?.Name,
-                    revitInstanceIds = new List<int>    { (int)room.Id.Value },
+                    revitInstanceIds = new List<long>   { room.Id.Value },
                     revitInstanceUids = new List<string> { room.UniqueId }
                 }
             });
@@ -1395,7 +1458,7 @@ namespace Onexus
                             level = lvl,
                             familyName = d.Symbol != null ? d.Symbol.FamilyName : null,
                             typeName = d.Symbol != null ? d.Symbol.Name : d.Name,
-                            revitInstanceIds = new List<int> { (Int32)d.Id.Value },
+                            revitInstanceIds = new List<long> { d.Id.Value },
                             revitInstanceUids = new List<string> { d.UniqueId }
                         }
                     });
@@ -1515,7 +1578,7 @@ namespace Onexus
                             revitCategory = "Detail Items",
                             familyName = dev.Symbol != null ? dev.Symbol.FamilyName : null,
                             typeName = dev.Symbol != null ? dev.Symbol.Name : dev.Name,
-                            revitInstanceIds = new List<int> { (Int32)dev.Id.Value },
+                            revitInstanceIds = new List<long> { dev.Id.Value },
                             revitInstanceUids = new List<string> { dev.UniqueId }
                         }
                     });
@@ -1592,7 +1655,7 @@ namespace Onexus
                             category          = sysNodeType,
                             label             = MakeBilingualLabel(sysLabel),
                             revitCategory     = "MEP Systems",
-                            revitInstanceIds  = new List<int>    { (int)sys.Id.Value },
+                            revitInstanceIds  = new List<long>   { sys.Id.Value },
                             revitInstanceUids = new List<string> { sys.UniqueId }
                         }
                     });
@@ -1747,7 +1810,7 @@ namespace Onexus
                     level             = levelName,
                     familyName        = (el is FamilyInstance fi2) ? fi2.Symbol?.FamilyName : null,
                     typeName          = (el is FamilyInstance fi3) ? (fi3.Symbol?.Name ?? fi3.Name) : el.Name,
-                    revitInstanceIds  = new List<int>    { (int)el.Id.Value },
+                    revitInstanceIds  = new List<long>   { el.Id.Value },
                     revitInstanceUids = new List<string> { uid }
                 }
             });
@@ -1822,7 +1885,7 @@ namespace Onexus
                             category          = "Sheet",
                             label             = MakeBilingualLabel(sheetLabel),
                             revitCategory     = "Sheets",
-                            revitInstanceIds  = new List<int>    { (int)sheet.Id.Value },
+                            revitInstanceIds  = new List<long>   { sheet.Id.Value },
                             revitInstanceUids = new List<string> { sheetUid }
                         }
                     });
@@ -1855,7 +1918,7 @@ namespace Onexus
                                 category          = viewTypeName,
                                 label             = MakeBilingualLabel(viewLabel),
                                 revitCategory     = "Views",
-                                revitInstanceIds  = new List<int>    { (int)view.Id.Value },
+                                revitInstanceIds  = new List<long>   { view.Id.Value },
                                 revitInstanceUids = new List<string> { viewUid }
                             }
                         });
@@ -1897,7 +1960,7 @@ namespace Onexus
                                         label             = MakeBilingualLabel(MakeRoomLabel(room)),
                                         revitCategory     = "Rooms",
                                         level             = room.Level?.Name,
-                                        revitInstanceIds  = new List<int>    { (int)room.Id.Value },
+                                        revitInstanceIds  = new List<long>   { room.Id.Value },
                                         revitInstanceUids = new List<string> { roomUid }
                                     }
                                 });
@@ -1970,7 +2033,7 @@ namespace Onexus
                             label             = MakeBilingualLabel(MakeRoomLabel(room)),
                             revitCategory     = "Rooms",
                             level             = lvl?.Name,
-                            revitInstanceIds  = new List<int>    { (int)room.Id.Value },
+                            revitInstanceIds  = new List<long>   { room.Id.Value },
                             revitInstanceUids = new List<string> { room.UniqueId }
                         }
                     };
@@ -1990,7 +2053,7 @@ namespace Onexus
                             label             = MakeBilingualLabel(lbl),
                             revitCategory     = "Levels",
                             level             = lbl,
-                            revitInstanceIds  = new List<int>    { (int)level.Id.Value },
+                            revitInstanceIds  = new List<long>   { level.Id.Value },
                             revitInstanceUids = new List<string> { level.UniqueId }
                         }
                     };
@@ -2009,7 +2072,7 @@ namespace Onexus
                             category          = nodeType,
                             label             = MakeBilingualLabel(mep.Name ?? nodeType),
                             revitCategory     = mep.Category?.Name,
-                            revitInstanceIds  = new List<int>    { (int)mep.Id.Value },
+                            revitInstanceIds  = new List<long>   { mep.Id.Value },
                             revitInstanceUids = new List<string> { mep.UniqueId }
                         }
                     };
@@ -2036,7 +2099,7 @@ namespace Onexus
                             level             = lvl?.Name,
                             familyName        = fi.Symbol?.FamilyName,
                             typeName          = fi.Symbol?.Name ?? fi.Name,
-                            revitInstanceIds  = new List<int>    { (int)fi.Id.Value },
+                            revitInstanceIds  = new List<long>   { fi.Id.Value },
                             revitInstanceUids = new List<string> { fi.UniqueId }
                         }
                     };
@@ -2057,7 +2120,7 @@ namespace Onexus
                             category          = "Sheet",
                             label             = MakeBilingualLabel(lbl),
                             revitCategory     = "Sheets",
-                            revitInstanceIds  = new List<int>    { (int)sheet.Id.Value },
+                            revitInstanceIds  = new List<long>   { sheet.Id.Value },
                             revitInstanceUids = new List<string> { sheet.UniqueId }
                         }
                     };
@@ -2078,12 +2141,199 @@ namespace Onexus
                         category          = genCat,
                         label             = MakeBilingualLabel(el.Name ?? genCat),
                         revitCategory     = genCat,
-                        revitInstanceIds  = new List<int>    { (int)el.Id.Value },
+                        revitInstanceIds  = new List<long>   { el.Id.Value },
                         revitInstanceUids = new List<string> { el.UniqueId }
                     }
                 };
             }
             catch { return null; }
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  Element Parameter Value Graph
+        //
+        //  Enumerates element.Parameters on each selected element to expose ALL
+        //  parameters (built-in + shared + project).  Unlike BuildParameterBindingGraphScoped,
+        //  this shows real values rather than just the schema binding map.
+        //
+        //  Graph shape:
+        //    Element ──HasType──► FamilyType
+        //    Element ──HasParameter──► Parameter (name: value)
+        //    Parameter ──InGroup──► ParameterGroup
+        // ══════════════════════════════════════════════════════════════════════
+
+        public static OnexusGraph BuildElementParameterValueGraph(
+            Document doc,
+            ICollection<ElementId> elementIds,
+            ParamExportOptions opt = null)
+        {
+            if (opt == null) opt = new ParamExportOptions();
+
+            var graph    = NewGraph(doc);
+            var nodeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var edgeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            // Regex filters
+            System.Text.RegularExpressions.Regex reInclude = null, reExclude = null;
+            if (!string.IsNullOrWhiteSpace(opt.IncludeNameRegex))
+                reInclude = new System.Text.RegularExpressions.Regex(opt.IncludeNameRegex, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (!string.IsNullOrWhiteSpace(opt.ExcludeNameRegex))
+                reExclude = new System.Text.RegularExpressions.Regex(opt.ExcludeNameRegex, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+            var elements = elementIds == null
+                ? new List<Element>()
+                : elementIds.Select(id => doc.GetElement(id)).Where(e => e != null).ToList();
+
+            if (elements.Count == 0) return graph;
+
+            int paramCount = 0;
+
+            foreach (var el in elements)
+            {
+                // ── Element/Instance node ───────────────────────────────────────
+                var elUid   = el.UniqueId;
+                var cat     = el.Category?.Name ?? "Element";
+                var lvl     = TryGetLevel(el, doc);
+
+                string elLabel;
+                if (el is Room r)            elLabel = MakeRoomLabel(r);
+                else if (el is FamilyInstance fi) elLabel = MakeElementLabel(fi);
+                else                         elLabel = el.Name ?? cat;
+
+                if (nodeSeen.Add(elUid))
+                {
+                    graph.elements.nodes.Add(new OnexusNode
+                    {
+                        data = new NodeData
+                        {
+                            id                = elUid,
+                            nodeType          = (el is Room) ? "Space" : "Element",
+                            category          = (el is Room) ? "Room"  : cat,
+                            label             = MakeBilingualLabel(elLabel),
+                            revitCategory     = cat,
+                            level             = lvl?.Name,
+                            revitInstanceIds  = new List<long>   { el.Id.Value },
+                            revitInstanceUids = new List<string> { elUid }
+                        }
+                    });
+                }
+
+                // ── FamilyType node ─────────────────────────────────────────────
+                string typeNodeId = null;
+                if (el is FamilyInstance fi2 && fi2.Symbol != null)
+                {
+                    typeNodeId  = $"TYP-{fi2.Symbol.Id.Value}";
+                    var typeLbl = $"{fi2.Symbol.FamilyName} : {fi2.Symbol.Name}";
+                    if (nodeSeen.Add(typeNodeId))
+                    {
+                        graph.elements.nodes.Add(new OnexusNode
+                        {
+                            data = new NodeData
+                            {
+                                id               = typeNodeId,
+                                nodeType         = "FamilyType",
+                                category         = cat,
+                                label            = MakeBilingualLabel(typeLbl),
+                                revitCategory    = cat,
+                                revitInstanceIds = new List<long> { fi2.Symbol.Id.Value }
+                            }
+                        });
+                    }
+                    AddEdge(graph, edgeSeen, "HasType", "Metadata", elUid, typeNodeId, directional: true);
+                }
+
+                // ── Parameters ──────────────────────────────────────────────────
+                foreach (Parameter p in el.Parameters)
+                {
+                    try
+                    {
+                        if (p == null || p.Definition == null) continue;
+                        var defName = p.Definition.Name;
+                        if (string.IsNullOrEmpty(defName)) continue;
+                        if (reInclude != null && !reInclude.IsMatch(defName)) continue;
+                        if (reExclude != null && reExclude.IsMatch(defName))  continue;
+                        if (paramCount >= opt.MaxParameters) break;
+
+                        // ── Parameter group ───────────────────────────────────
+                        string grpName = "Other";
+                        try
+                        {
+                            var gtid = p.Definition.GetGroupTypeId();
+                            if (gtid != null) grpName = LabelUtils.GetLabelForGroup(gtid);
+                        }
+                        catch { }
+
+                        var grpId = $"PG-{San(grpName)}";
+                        if (nodeSeen.Add(grpId))
+                        {
+                            graph.elements.nodes.Add(new OnexusNode
+                            {
+                                data = new NodeData
+                                {
+                                    id       = grpId,
+                                    nodeType = "ParameterGroup",
+                                    category = "ParameterGroup",
+                                    label    = MakeBilingualLabel(grpName)
+                                }
+                            });
+                        }
+
+                        // ── Stringify value ───────────────────────────────────
+                        string rawValue = null;
+                        string storageTypeName = p.StorageType.ToString();
+                        try
+                        {
+                            switch (p.StorageType)
+                            {
+                                case StorageType.String:
+                                    rawValue = p.AsString();
+                                    break;
+                                case StorageType.Double:
+                                    rawValue = p.AsValueString() ?? p.AsDouble().ToString("G6");
+                                    break;
+                                case StorageType.Integer:
+                                    rawValue = p.AsInteger().ToString();
+                                    break;
+                                case StorageType.ElementId:
+                                    var refEl = doc.GetElement(p.AsElementId());
+                                    rawValue = refEl?.Name ?? p.AsElementId().Value.ToString();
+                                    break;
+                            }
+                        }
+                        catch { }
+
+                        var displayValue = rawValue ?? "(no value)";
+
+                        // ── Parameter node (one per unique param name+group combo) ──
+                        // Keyed per element so multiple selected elements can show
+                        // different values for the same parameter name.
+                        var paramId = $"PAR-{San(elUid)}-{San(defName)}";
+                        if (nodeSeen.Add(paramId))
+                        {
+                            graph.elements.nodes.Add(new OnexusNode
+                            {
+                                data = new NodeData
+                                {
+                                    id              = paramId,
+                                    nodeType        = "Parameter",
+                                    category        = storageTypeName,
+                                    label           = MakeBilingualLabel($"{defName}: {displayValue}"),
+                                    paramValue      = displayValue,
+                                    paramStorageType = storageTypeName,
+                                    paramGroup      = grpName
+                                }
+                            });
+                            paramCount++;
+                        }
+
+                        AddEdge(graph, edgeSeen, "HasParameter", "Metadata", elUid, paramId, directional: true);
+                        AddEdge(graph, edgeSeen, "InGroup",      "Metadata", paramId, grpId,  directional: true);
+                    }
+                    catch { /* safe-fail per parameter */ }
+                }
+            }
+
+            return graph;
         }
     }
 }
