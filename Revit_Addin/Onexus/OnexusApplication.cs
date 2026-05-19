@@ -133,12 +133,14 @@ namespace Onexus
             };
             graphPanel.AddItem(exploreData);
 
-            // Spaces & Elements (spatial graph)
+            // Rooms & Elements (spatial graph)
             var spacesData = new PushButtonData(
-                "OnexusSpaces", "Sync\nSpaces", asm,
+                "OnexusSpaces", "Sync\nRooms", asm,
                 "Onexus.Onexus")
             {
-                ToolTip = "Export rooms, elements, and levels to the ONEXUS viewer window."
+                ToolTip =
+                    "Export architectural rooms, placed family instances, and levels to the ONEXUS viewer.\n\n" +
+                    "Select elements first to limit to a subset. Also exports MEP Spaces when present."
             };
             graphPanel.AddItem(spacesData);
 
