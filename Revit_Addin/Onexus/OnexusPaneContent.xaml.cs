@@ -178,8 +178,8 @@ namespace Onexus
                         {
                             NodeId     = (string)root["id"],
                             ElementIds = idsJ  != null
-                                ? idsJ.Select(x => (int)x).ToArray()
-                                : Array.Empty<int>(),
+                                ? idsJ.Select(x => (long)x).ToArray()
+                                : Array.Empty<long>(),
                             UniqueIds  = uidsJ != null
                                 ? uidsJ.Select(x => (string)x)
                                        .Where(u => !string.IsNullOrEmpty(u))
@@ -353,7 +353,7 @@ namespace Onexus
                 {
                     var toSelect = new List<ElementId>();
 
-                    // 1) Prefer integer ElementIds — fastest lookup
+                    // 1) Prefer ElementIds — fastest lookup (long for Revit 2024+)
                     if (pending.ElementIds != null && pending.ElementIds.Length > 0)
                     {
                         foreach (var i in pending.ElementIds)
@@ -531,7 +531,7 @@ namespace Onexus
         private class PendingSelect
         {
             public string   NodeId     { get; set; }
-            public int[]    ElementIds { get; set; }
+            public long[]   ElementIds { get; set; }
             public string[] UniqueIds  { get; set; }
             /// <summary>
             /// True for zoom-to-node (right-click menu) — calls ShowElements.

@@ -196,7 +196,7 @@ namespace Onexus
 
                     var toSelect = new List<ElementId>();
 
-                    // 1) Prefer ElementIds for speed
+                    // 1) Prefer ElementIds for speed (long for Revit 2024+)
                     if (pending.ElementIds != null && pending.ElementIds.Length > 0)
                     {
                         foreach (var i in pending.ElementIds)
@@ -206,7 +206,8 @@ namespace Onexus
                                 toSelect.Add(id);
                         }
                     }
-                    // 2) Fallback to UniqueIds if no ElementIds
+
+                    // 2) Fallback to explicit UniqueIds
                     if (toSelect.Count == 0 && pending.UniqueIds != null && pending.UniqueIds.Length > 0)
                     {
                         foreach (var uid in pending.UniqueIds)
@@ -216,10 +217,23 @@ namespace Onexus
                         }
                     }
 
+                    // 3) Last resort: treat Onexus node id itself as a Revit UniqueId
+                    //    (spatial graph nodes use UniqueId directly as their node id)
+                    if (toSelect.Count == 0 && !string.IsNullOrEmpty(pending.NodeId))
+                    {
+                        try
+                        {
+                            var el = _uidoc.Document.GetElement(pending.NodeId);
+                            if (el != null) toSelect.Add(el.Id);
+                        }
+                        catch { }
+                    }
+
                     if (toSelect.Count > 0)
                     {
                         _uidoc.Selection.SetElementIds(toSelect);
-                        _uidoc.ShowElements(toSelect);
+                        if (pending.ShouldZoom)
+                            _uidoc.ShowElements(toSelect);
                         anySelectionChanged = true;
                     }
                 }
@@ -290,7 +304,7 @@ namespace Onexus
             if (_webBridgeAttached) return;
             if (Web == null || Web.CoreWebView2 == null) return;
 
-            // Page -> Revit: handle node clicks (select-node)
+            // Page -> Revit: handle select-node and zoom-to-node messages
             Web.CoreWebView2.WebMessageReceived += (s, args) =>
             {
                 try
@@ -301,18 +315,26 @@ namespace Onexus
 
                     var root = JObject.Parse(json);
                     var type = (string)root["type"];
-                    if (!string.Equals(type, "select-node", StringComparison.OrdinalIgnoreCase)) return;
 
-                    var nodeId = (string)root["id"];
-                    var idsJ = root["revitInstanceIds"] as JArray;
-                    var uidsJ = root["revitInstanceUids"] as JArray;
+                    if (!string.Equals(type, "select-node",  StringComparison.OrdinalIgnoreCase) &&
+                        !string.Equals(type, "zoom-to-node", StringComparison.OrdinalIgnoreCase))
+                        return;
+
+                    var shouldZoom = string.Equals(type, "zoom-to-node", StringComparison.OrdinalIgnoreCase);
+                    var nodeId     = (string)root["id"];
+                    var idsJ       = root["revitInstanceIds"]  as JArray;
+                    var uidsJ      = root["revitInstanceUids"] as JArray;
 
                     var model = new PendingSelect
                     {
-                        NodeId = nodeId,
-                        ElementIds = idsJ != null ? idsJ.Select(x => (int)x).ToArray() : Array.Empty<int>(),
-                        UniqueIds = uidsJ != null ? uidsJ.Select(x => (string)x).Where(st => !string.IsNullOrEmpty(st)).ToArray()
-                                                   : Array.Empty<string>()
+                        NodeId     = nodeId,
+                        ElementIds = idsJ  != null ? idsJ.Select(x  => (long)x).ToArray()
+                                                   : Array.Empty<long>(),
+                        UniqueIds  = uidsJ != null ? uidsJ.Select(x => (string)x)
+                                                          .Where(st => !string.IsNullOrEmpty(st))
+                                                          .ToArray()
+                                                   : Array.Empty<string>(),
+                        ShouldZoom = shouldZoom
                     };
                     _pendingNodeSelect.Enqueue(model);
                 }
@@ -324,9 +346,14 @@ namespace Onexus
 
         class PendingSelect
         {
-            public string NodeId { get; set; }
-            public int[] ElementIds { get; set; }
-            public string[] UniqueIds { get; set; }
+            public string   NodeId     { get; set; }
+            public long[]   ElementIds { get; set; }
+            public string[] UniqueIds  { get; set; }
+            /// <summary>
+            /// True for zoom-to-node — calls ShowElements to move the Revit camera.
+            /// False for select-node — highlights in Properties only.
+            /// </summary>
+            public bool     ShouldZoom { get; set; }
         }
 
         private readonly ConcurrentQueue<PendingSelect> _pendingNodeSelect = new ConcurrentQueue<PendingSelect>();
