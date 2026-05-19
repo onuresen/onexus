@@ -33,7 +33,23 @@ namespace Onexus
                     MaxParameters = 800
                 };
 
-                OnexusGraph graph = OnexusExportCore.BuildParameterBindingGraphScoped(doc, selection, opt);
+                OnexusGraph graph;
+
+                if (selection != null && selection.Count > 0)
+                {
+                    // Elements selected: show actual parameter values on those elements
+                    // (includes built-in parameters, shared params, and project params)
+                    graph = OnexusExportCore.BuildElementParameterValueGraph(doc, selection, opt);
+                }
+                else
+                {
+                    // Nothing selected: show the project-level parameter binding schema
+                    TaskDialog.Show("ONEXUS — Parameters",
+                        "No elements selected.\n\n" +
+                        "Select one or more elements first to see their actual parameter values.\n\n" +
+                        "Showing project-level parameter schema instead.");
+                    graph = OnexusExportCore.BuildParameterBindingGraphScoped(doc, selection, opt);
+                }
 
                 OnexusPaneManager.ShowGraph(uiapp, graph);
 
