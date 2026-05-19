@@ -1,6 +1,8 @@
 <Solution>
   <Configurations>
-    <Platform Name="x64" />
+    <Platform Name="Revit 2026" />
   </Configurations>
-  <Project Path="Onexus/Onexus.csproj" Id="bfcc59a0-ab83-44ba-b790-0842431729a7" />
+  <Project Path="Onexus/Onexus.csproj" Id="bfcc59a0-ab83-44ba-b790-0842431729a7">
+    <Platform Solution="Debug|*" Project="x64" />
+  </Project>
 </Solution>
