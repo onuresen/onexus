@@ -79,8 +79,17 @@ namespace Onexus
         public string typeName { get; set; }
 
         // NEW: instance references (optional)
-        public List<int> revitInstanceIds { get; set; }     // quick selection (ElementId)
+        public List<long> revitInstanceIds { get; set; }    // quick selection (ElementId, long for Revit 2024+)
         public List<string> revitInstanceUids { get; set; } // robust across sessions (UniqueId)
+
+        // Parameter node extras (null on non-parameter nodes)
+        public string paramValue       { get; set; }
+        public string paramStorageType { get; set; }
+        public string paramGroup       { get; set; }
+
+        // Enrichment fields (null when not applicable)
+        public double? area { get; set; }  // Revit internal sq-ft; set for Room/Space nodes
+        public string  mark { get; set; }  // Mark parameter value
     }
 
     // Cytoscape edge wrapper

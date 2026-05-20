@@ -2,9 +2,9 @@
   "type": "onexus/generative-design",
   "version": "1.0",
   "project": {
-    "id": "OBY-HQ",
-    "name": "Obayashi HQ Upgrade",
-    "modelId": "Revit:RVT-2026-OBY-HQ"
+    "id": "ACME-HQ",
+    "name": "Acme HQ Upgrade",
+    "modelId": "Revit:RVT-2026-ACME-HQ"
   },
   "problem": {
     "id": "GD-Lobby-Circulation-01",
