@@ -1,217 +1,204 @@
-# ONEXUS – Relationship Layer (Revit Add‑in Companion Viewer)
+# ONEXUS — Graph Intelligence Layer
+
 ![ONEXUS Banner](assets/banner.png)
+
+<div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![Cytoscape.js](https://img.shields.io/badge/Cytoscape.js-3.23-blue)
-![Revit Add‑in](https://img.shields.io/badge/Revit-Add--in-orange)
-![Made for BIM](https://img.shields.io/badge/BIM-NEXUS-blueviolet)
+![MCP](https://img.shields.io/badge/MCP-FastMCP-7c3aed)
+![Python](https://img.shields.io/badge/Python-3.10+-yellow)
+![Obsidian](https://img.shields.io/badge/Obsidian-Plugin-483699)
 [![CI](https://github.com/onuresen/onexus/actions/workflows/onexus-smoke.yml/badge.svg)](https://github.com/onuresen/onexus/actions/workflows/onexus-smoke.yml)
 
+*Browser-based relationship graph with live AI/MCP control — for BIM, Obsidian vaults, and beyond.*
+
+</div>
+
 ---
 
-## 🌐 Overview
+## What is ONEXUS?
 
-**ONEXUS** is a lightweight, browser‑based visualization layer that reveals **relationships between BIM elements, systems, spaces, and organizations**. It runs entirely in the browser (no build step) and is designed to make “what relates to what — and why?” easy to inspect and iterate.
-It was originally built as a companion viewer for a Revit add-in, but it works independently.
+ONEXUS turns any structured dataset — a BIM model, an Obsidian vault, a COBie export — into a live, queryable knowledge graph. What makes it different: **you can ask Claude to explore it**. Tell Claude to trace the dependency path between two systems, highlight every high-risk node, or push a custom graph live into the browser — and it happens in real time.
 
-ONEXUS answers a simple but powerful question:
+> **"What is related to what — and *why*?"**
 
-> **“What is related to what — and *why*?”**
+It does **not** replace any CDE or existing tool. It exposes the hidden, implicit relationships that live in your data and makes them visible, explorable, and explainable.
 
-It does **not** replace any CDE or tool. Instead, it exposes hidden or implicit relationships in a clean, powerful visual map.
+Works standalone (open `index.html`, drag-and-drop your data) or wired to Claude via the MCP server.
 
-The goal is simple:
-
-> **Make implicit BIM relationships visible, explorable, and explainable.**
 ---
 
-## Key Concepts
+## Use Cases
 
-- **Nodes** represent BIM entities (components, systems, spaces, organizations, vendors, options, etc.)
-- **Edges** represent relationships (system, spatial, responsibility, lifecycle, risk, dependency, etc.)
-- The **same graph** can be viewed through multiple semantic perspectives using *Layer Modes*
+### BIM / Revit
+Load an IFC or COBie export and instantly see system, spatial, and responsibility relationships. Use the Revit add-in to push live model data directly from Revit 2026 into the browser viewer. Ask Claude:
 
-## ✨ Features
+```
+Which mechanical components are in Zone B and have a risk flag?
+→ search_live_nodes("Zone B") → filter_to_subgraph → highlight_nodes
+```
 
-### 🔹 Interactive Graph Engine
-- Smooth pan / zoom with minimap
-- Multiple layout presets (organic, tree, swimlanes, dependency flow, etc.)
-- Path tracing (upstream / downstream / shortest path)
-- A/B graph comparison
+### Obsidian Vault
+Drop your vault folder onto ONEXUS — every note becomes a node, every `[[wikilink]]` becomes an edge. Folder structure auto-maps to node categories (projects/, concepts/, daily/, etc.). Ask Claude:
 
-### 🔹 Layers (Semantic Views)
-- **Relationship** — default semantic relationship view
-- **Lifecycle** — phase‑aware visualization with timeline controls
-- **Risk** — highlight risk and confidence signals
-- **Option** — explore design or generative‑design alternatives
+```
+Show me the path between the VIKTOR project and BHoM.
+→ find_path("projects/VIKTOR.md", "concepts/BHoM.md") → focus_node on each hop
+```
 
-> One graph, multiple perspectives.
+### Project Risk Tracing
+Import any custom JSON with `risk` and `phase` metadata. Switch to the **Risk** layer to surface high-confidence risk edges. Ask Claude to isolate the blast radius of a delay:
 
-### 🔹 Interactive Editing
-- Create and delete nodes and relationships
-- Context menus for quick actions
-- Full **Undo / Redo** support for graph mutations
+```
+Filter to only the risk-flagged nodes and apply dependency flow layout.
+→ get_by_category("Risk") → filter_to_subgraph(ids) → set_layout("dependency_flow")
+```
 
-### 🔹 Multiple Layout Modes
-- **Free / Organic** (COSE)
-- **System Atlas** (systems as roots)
-- **Responsibility Atlas** (organizations as roots)
-- **Spatial Stack** (spaces as roots)
-- Additional presets (e.g., Tree/Nested, Swimlanes, Degree Rings, Dependency Flow)
-
-### 🔹 Multi-Language Support
-- English (`en`)
-- Japanese (`jp`)
-
-### 🔹 Filtering & Lenses
-- Category filter
-- Relationship dimension lens
-- Phase filter (works with Lifecycle layer)
-- Node search (auto-fit)
-- Focus depth (1-hop / 2-hop / 3-hop)
-- Drag-and-drop loading
-
-### 🔹 Theming
-- Light & Dark theme
-- Automatic recoloring of nodes/edges
-- Auto-updating legend
-
-### 🔹 Importers (Plugin‑based)
-- ONEXUS JSON (native graph format)
-- Edges CSV
-- COBie CSV (multi‑file)
-- IFC / IFCZIP (via web‑ifc)
-- Generative Design (GD) JSON (overlay or materialize options)
-
-### 🔹 Animation Lab
-- Node animation modes: **Bounce**, **Orbit**, **Black Hole**, **Breath**
-- Edge animation: **Edge Flow** with dimension filtering and pattern controls
-- Per-mode controls: intensity, speed, scope, and follow-layout toggle
-
-### 🔹 Export
-- PNG / SVG (visual output)
-- JSON / CSV (data)
-- Layout JSON (positions + structure)
 ---
 
-## 🧭 Layer Modes (How to Use)
+## MCP / AI Integration
 
-### ✅ Relationship (default)
-Best for: exploring “what relates to what” using semantic dimensions and types.
+ONEXUS ships a Python MCP server that gives Claude two capabilities over any loaded graph: querying the vault graph file (no browser needed) and directly controlling the live graph in the browser.
 
-**Typical workflow**
-1. Use **Lens** (dimension) to focus System/Spatial/Responsibility/Vendor edges.
+### Architecture
+
+```
+Claude Code  ──stdio──►  server.py (FastMCP)
+                              │
+                         WebSocket :8765
+                              │
+                    ONEXUS browser tab
+                 (onexus-mcp-bridge.plugin.js)
+                              │
+                         Cytoscape.js
+```
+
+### Quick Setup
+
+**1. Install Python dependencies**
+```bash
+cd onexus-mcp
+pip install -r requirements.txt
+```
+
+**2. Register with Claude Code / Claude Desktop**
+
+Add to `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
+```json
+{
+  "mcpServers": {
+    "onexus": {
+      "command": "python",
+      "args": ["/path/to/onexus/onexus-mcp/server.py"]
+    }
+  }
+}
+```
+
+**3. Open ONEXUS in your browser** — a green dot appears in the bottom-right corner when the bridge is connected.
+
+### Available Tools
+
+| Layer | Tools |
+|---|---|
+| **Snapshot** (no browser needed) | `get_graph_summary`, `search_nodes`, `get_node`, `get_neighbors`, `find_path`, `get_by_category`, `get_edge_types` |
+| **Live query** (browser open) | `get_live_graph_summary`, `search_live_nodes`, `get_live_node`, `get_live_neighbors` |
+| **Live control** (browser open) | `focus_node`, `highlight_nodes`, `highlight_live_nodes_by_label`, `filter_to_subgraph`, `reset_view`, `set_layout`, `load_focused_graph` |
+
+Full tool reference: [`onexus-mcp/README.md`](onexus-mcp/README.md)
+
+---
+
+## Features
+
+| Category | What you get |
+|---|---|
+| **Graph engine** | Pan/zoom, minimap, path tracing, A/B comparison, undo/redo |
+| **Importers** | ONEXUS JSON, IFC/IFCZIP, COBie CSV, Edges CSV, Obsidian vault, Generative Design JSON |
+| **Layer modes** | Relationship, Lifecycle (phase timeline + playback), Risk, Option |
+| **Layouts** | 10+ presets: cose, tree, swimlanes, degree rings, dependency flow, system/spatial/responsibility atlases |
+| **Filtering** | Category filter, relationship lens, phase filter, focus depth (1–3 hops), node search |
+| **Theming** | Light / Dark, auto-updating legend, multilingual (EN / JP) |
+| **Export** | PNG, SVG, JSON, CSV, Layout JSON |
+| **Plugins** | Register importers, edge types, UI extensions via `src/plugins/manifest.json` |
+
+<details>
+<summary>Layer Modes — detailed guide</summary>
+
+### Relationship (default)
+Best for exploring "what relates to what" using semantic dimensions and types.
+1. Use **Lens** (dimension) to focus System / Spatial / Responsibility / Vendor edges.
 2. Click **Legend** items to toggle relationship-type filtering.
 3. Use **Focus depth** to isolate local neighborhoods.
 
-### ✅ Lifecycle (phase-aware workflow)
-Best for: understanding how relationships appear/solidify across project phases.
+### Lifecycle (phase-aware)
+Best for understanding how relationships appear/solidify across project phases.
+- Edge data should include `"phase": ["BasicDesign", "DetailedDesign"]`
+- Optional: `meta.phases` defines the ordered phase timeline
+- Lifecycle controls appear as a floating panel (bottom-left) opened via **Layer Widget → Quick Actions**
+- Supports: Exact / Cumulative reveal, hide isolated nodes, show unphased edges, timeline playback
 
-**Requirements**
-- Edge data should include `phase` as an array (or string), e.g. `"phase": ["BasicDesign", "DetailedDesign"]`
-- Optional: `meta.phases` defines the **ordered phase timeline**.
+### Risk
+Best for highlighting risk/confidence signals. Switch to Risk layer, use quick actions to filter inferred-only or high-risk edges, use legend/metrics to validate what's visible.
 
-**Controls**
-- Lifecycle controls appear as a **floating panel (bottom-left)**.
-- The panel is opened/closed via **Layer Widget → Quick Actions** (“Lifecycle panel”).
-- Supports:
-  - **Exact** phase view
-  - **Cumulative** reveal (show phases up to the current one)
-  - Hide isolated nodes
-  - Show unphased edges
-  - Play through phases (timeline playback)
+### Option
+Best for exploring design options and GD-driven variants. Import a GD payload (Overlay to attach metrics to existing nodes, or Materialize to create Option nodes + Optimizes edges), then switch to Option layer.
 
-> Safety: If no phases exist in the loaded graph, Lifecycle automatically falls back to Relationship.
-
-### ✅ Risk
-Best for: highlighting risk/confidence signals (data-driven styling and filtering).
-
-**Typical workflow**
-- Switch to **Risk** layer
-- Use quick actions to filter inferred-only or high-risk edges (when present)
-- Use legend/metrics to validate what is visible
-
-### ✅ Option
-Best for: exploring design options and GD-driven variants.
-
-**Typical workflow**
-- Import GD payload:
-  - **Overlay**: attach GD metrics to existing nodes/edges
-  - **Materialize**: create Option nodes + Optimizes edges
-- Switch to **Option** layer to focus option roots and neighborhoods
+</details>
 
 ---
 
-## 📁 Directory Structure
+## Revit Add-in
 
-```text
-index.html                # Main entry page
-src/
-  core/                   # Graph core (state, layouts, filters, layers, undo, path)
-  plugins/                # Plugin scripts + manifest
-  ui/                     # UI bindings and widgets
-  helpers/                # Utilities and styling
-  common/                 # Shared css/js
-samples/                  # Example datasets and raw exports (json, COBie, IFC, etc.)
-assets/                   # Images, WASM and miscellaneous media
-Versions/                 # Archived snapshots / historical builds
-```
+The `Revit_Addin/` folder contains a .NET 8 WPF host window with WebView2 that embeds the ONEXUS browser viewer directly inside Revit 2026. The add-in pushes live model data from Revit into the graph viewer via `window.onexusLoadGraph(data)`.
+
+- Solution: `Revit_Addin/Onexus/Onexus.csproj` — targets `net8.0-windows`, Revit 2026
+- Build without deploying: `dotnet build Revit_Addin\Onexus\Onexus.csproj -c Debug -p:DeployToRevit=false`
 
 ---
 
-## 📦 Installation & Usage
-This project runs entirely in the browser — there is no build step. Follow one of the simple options below.
+## Getting Started
 
-Option A — Open directly (quickest)
-- On Windows: double-click index.html or right-click and choose "Open with" → pick Chrome/Edge/Firefox.
-- Note: some browsers restrict loading local files (especially .ifc). If a file won't load, use Option B.
+This project runs entirely in the browser — no build step required.
 
-Option B — Run a local static server (recommended)
-- With Node (no install required if you have Node):
+**Option A — Open directly (quickest)**
+- Double-click `index.html` or open it in Chrome / Edge / Firefox.
+- Note: some browsers restrict local file access (especially `.ifc`). Use Option B if a file won't load.
+
+**Option B — Local static server (recommended)**
 ```bash
 npx http-server -p 4173 .
+# then open http://localhost:4173
 ```
-- Or with Python 3:
-```bash
-python -m http.server 4173
-```
-- Then open:
-```text
-http://localhost:4173
-```
+Or with Python: `python -m http.server 4173`
 
-Loading data (beginner steps)
-- Use the `Load` file selector in the toolbar or drag-and-drop files onto the page.
-- Start with the included sample JSON: `samples/json/onexus_sample.json` to see a working graph.
-- Supported file types: `.json` (ONEXUS graph), `.csv` (tabular imports), `.ifc` (IFC model imports). Multiple files are allowed.
+**Load your first graph**
+- Drag-and-drop any supported file onto the page, or use the `Load` button in the toolbar.
+- Try `samples/json/onexus_sample.json` to see a working graph immediately.
 
-Basic controls
-- Language: switch UI language (English / Japanese)
-- Layer: switch layer mode (Relationship/Lifecycle/Risk/Option)
-- Layout: pick a layout preset to rearrange the graph with smooth animations
-- Theme: Light / Dark mode toggle
-- Pan/zoom: drag to pan, mouse wheel to zoom; minimap to jump around
+<details>
+<summary>Keyboard shortcuts</summary>
 
-Keyboard shortcuts
-- F = Fit view
-- C = Center
-- R = Reset layout
-- Delete = Remove selected node(s)
-- Alt+D = Duplicate selected node(s)
-- Ctrl/Cmd+Z = Undo
-- Shift+Ctrl/Cmd+Z or Ctrl/Cmd+Y = Redo
-- Ctrl+Shift+R = Reset ONEXUS preferences (clears cached settings, no page reload)
-- Shift+Drag on canvas = Box-select nodes and edges
-- Shift+Ctrl/Cmd+Drag = Additive box-select (keeps existing selection)
+| Key | Action |
+|---|---|
+| `F` | Fit view |
+| `C` | Center |
+| `R` | Reset layout |
+| `Delete` | Remove selected node(s) |
+| `Alt+D` | Duplicate selected node(s) |
+| `Ctrl/Cmd+Z` | Undo |
+| `Shift+Ctrl/Cmd+Z` or `Ctrl/Cmd+Y` | Redo |
+| `Ctrl+Shift+R` | Reset preferences (clears cached settings) |
+| `Shift+Drag` | Box-select nodes and edges |
+| `Shift+Ctrl/Cmd+Drag` | Additive box-select |
 
-Exporting
-- Use the export buttons in the toolbar to save the current view or data as PNG, SVG, JSON (layout + metadata) or CSV.
-- Exported layouts can be re-imported to restore the exact graph structure and positions.
+</details>
 
 ---
 
-## 🧩 JSON Schema Summary
+## JSON Schema
 
 Each ONEXUS data file follows this minimal structure:
 
@@ -241,58 +228,68 @@ Each ONEXUS data file follows this minimal structure:
         "dimension": "System",
         "directional": true,
         "phase": ["Design", "Construction"],
-        "owner": "Electrical",
         "risk": "High",
-        "confidence": "Explicit",
-        "notes": "Why this relationship exists"
+        "confidence": "Explicit"
       } }
     ]
   }
 }
 ```
 
-Notes:
-- `label` supports multi‑language keys (commonly `{ en, jp }`)
+- `label` supports multi-language keys (`{ en, jp }`)
 - Extra fields are preserved and may be used by plugins
-- Lifecycle layer works best when `meta.phases` is defined
+- The `load_focused_graph` MCP tool accepts the same schema — Claude can construct and push a custom graph into the live viewer programmatically
 
 ---
 
-## Plugin Architecture
+## Directory Structure
 
-ONEXUS is intentionally extensible.
-
-Plugins can:
-- Register importers
-- Add edge‑type labels (i18n)
-- Add explanations or trace behaviors
-- Extend UI behavior without modifying core code
-
-Plugins are loaded via `src/plugins/manifest.json`.
-
----
-
-## Dev & Diagnostics (Optional)
-
-Some tooling is query‑gated:
-
-- `?dev=1` — enables dev overlays, audits, and self‑tests
-- `?ci=1` — enables checks suitable for CI‑like runs
-
-This helps keep the default UI clean while retaining deep introspection tools.
+```text
+index.html              # Main entry page
+src/
+  core/                 # Graph engine (state, layouts, filters, layers, undo, path)
+  plugins/              # Plugin scripts + manifest.json
+  ui/                   # UI bindings and widgets
+  helpers/              # Utilities and styling
+  common/               # Shared CSS/JS and boot check
+onexus-mcp/             # Python MCP server (FastMCP + WebSocket bridge)
+onexus-backend/         # Optional Express.js graph storage server
+Revit_Addin/            # .NET 8 WPF Revit 2026 add-in
+samples/                # Example datasets (JSON, COBie, IFC)
+assets/                 # Images, WASM, and media
+tests/                  # Playwright end-to-end tests
+```
 
 ---
 
-## 📝 Contributing
+## Dev & Diagnostics
 
-PRs, issue reports, and enhancements are welcome! Please:
-- Keep code changes focused and well-commented
-- Test with multiple sample datasets
-- Update the README if you add major features or change workflows
-- Reference any issues or feature requests in your PR description
+<details>
+<summary>URL flags for development</summary>
+
+| Flag | Effect |
+|---|---|
+| `?debug=1` | Verbose `ONEXUS_LOG` output |
+| `?dev=1` | Load dev overlays: dep graph, audit, self-tests |
+| `?ci=1` | Dev checks in CI/headless mode |
+
+Run tests: `npm run test:smoke` (requires `npx playwright install --with-deps chromium` and a running server).
+
+</details>
 
 ---
 
-## 📜 License
+## Contributing
+
+PRs, issue reports, and enhancements are welcome. Please:
+- Keep changes focused; test with multiple sample datasets
+- Update this README if you add major features or change workflows
+- Add Playwright tests in `tests/` for anything that affects the public API
+
+For AI-assisted development, see [`CLAUDE.md`](CLAUDE.md) for project conventions and key APIs.
+
+---
+
+## License
 
 [MIT License](LICENSE) — freely usable and modifiable for any purpose.
