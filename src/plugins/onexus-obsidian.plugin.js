@@ -574,7 +574,7 @@
         "Concept":        "#d97706",   // amber       — cross-cutting ideas
         "Concept-Sub":    "#fbbf24",   // light amber
         "Industry":       "#059669",   // emerald     — domain knowledge
-        "Work":           "#0d9488",   // teal        — Obayashi context
+        "Work":           "#0d9488",   // teal        — work / professional context
         "Daily":          "#64748b",   // slate       — time-dimension logs
         "Navigation":     "#475569",   // blue-grey   — MOC / index notes
         "Personal":       "#e11d48",   // rose
