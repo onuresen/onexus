@@ -1,6 +1,12 @@
 {
     "samples": [
         {
+            "id": "showcase",
+            "label": "Smart Building Security Hub",
+            "path": "./samples/json/onexus_showcase.json",
+            "description": "Showcase — 25 nodes, 4 systems, risk signals, lifecycle phases"
+        },
+        {
             "id": "door-basic",
             "label": "Door (basic)",
             "path": "./samples/json/onexus_doors.json",
@@ -8,7 +14,7 @@
         },
         {
             "id": "security-system",
-            "label": "Security System (demo)",
+            "label": "Security System (mini)",
             "path": "./samples/json/onexus_sample.json",
             "description": "System + spatial + vendor"
         }
