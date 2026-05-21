@@ -81,7 +81,7 @@
     function wrapSelectRow(title, el) {
         const row = document.createElement("div");
         row.style.display = "grid";
-        row.style.gridTemplateColumns = "92px 1fr";
+        row.style.gridTemplateColumns = "80px 1fr";
         row.style.alignItems = "center";
         row.style.gap = "10px";
         row.style.marginBottom = "8px";
@@ -93,6 +93,69 @@
         row.appendChild(lab);
         row.appendChild(el);
         return row;
+    }
+
+    // Create a proxy checkbox row for a hidden label-visibility checkbox
+    function wrapCheckboxRow(title, originalCb) {
+        const row = document.createElement("label");
+        row.className = "onx-label-toggle";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = originalCb.checked;
+        // Sync both ways
+        if (!originalCb.__onxMobileProxy) {
+            originalCb.__onxMobileProxy = true;
+            originalCb.addEventListener("change", () => { cb.checked = originalCb.checked; });
+        }
+        cb.addEventListener("change", () => {
+            originalCb.checked = cb.checked;
+            originalCb.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+        const txt = document.createTextNode(title);
+        row.appendChild(cb);
+        row.appendChild(txt);
+        return row;
+    }
+
+    // Inject a collapse chip into #legendOverlay so the large edge-type list
+    // doesn't eat graph space on mobile. Defaults to collapsed.
+    function ensureLegendToggle() {
+        if (!isMobile()) return;
+        const overlay = document.getElementById("legendOverlay");
+        if (!overlay || overlay.__onxLegendChipHooked) return;
+        overlay.__onxLegendChipHooked = true;
+
+        const chip = document.createElement("button");
+        chip.id = "onx-legend-chip";
+        chip.type = "button";
+        chip.setAttribute("aria-label", "Toggle legend");
+
+        function update() {
+            const collapsed = overlay.classList.contains("onx-collapsed");
+            chip.textContent = collapsed ? "Legend ▾" : "Legend ▴";
+        }
+
+        chip.addEventListener("click", () => {
+            overlay.classList.toggle("onx-collapsed");
+            update();
+        });
+
+        overlay.insertBefore(chip, overlay.firstChild);
+        overlay.classList.add("onx-collapsed");
+        update();
+    }
+
+    // Pre-create the samples slot inside the More popover so that graph-ui.samples.js
+    // (which loads immediately after this script) renders directly into the popover
+    // rather than the hidden toolbar actions row.
+    function ensureSamplesSlot() {
+        const samplesHost = $("onx-toolbar-more-samples");
+        if (!samplesHost || samplesHost.__onxSamplesStub) return;
+        samplesHost.__onxSamplesStub = true;
+        samplesHost.innerHTML = `
+          <div style="font-size:11px;font-weight:900;color:var(--text-muted);margin-bottom:8px;">Samples</div>
+          <div id="onx-samples-slot"></div>
+        `;
     }
 
     function ensureMobileToolbar() {
@@ -127,8 +190,9 @@
         if (!toolbar.contains(loadBtn)) toolbar.appendChild(loadBtn);
         if (!toolbar.contains(moreBtn)) toolbar.appendChild(moreBtn);
 
-        // Build popover once
+        // Build popover + pre-create samples slot so samples.js finds it at render time
         ensureMorePopover();
+        ensureSamplesSlot();
     }
 
     function buildMoreContent() {
@@ -139,12 +203,27 @@
         hostPrimary.innerHTML = "";
         hostIcons.innerHTML = "";
 
-        // Move View + Theme selects into popover (mobile only)
+        // Move all selects into popover (mobile only)
+        const langSel = $("languageSelect");
+        const layerSel = $("layerModeSelect");
         const layoutSel = $("layoutSelect");
         const themeSel = $("themeSelect");
 
+        if (langSel) hostPrimary.appendChild(wrapSelectRow("Language", langSel));
+        if (layerSel) hostPrimary.appendChild(wrapSelectRow("Layer", layerSel));
         if (layoutSel) hostPrimary.appendChild(wrapSelectRow("View", layoutSel));
         if (themeSel) hostPrimary.appendChild(wrapSelectRow("Theme", themeSel));
+
+        // Label visibility toggles (mirror the hidden #legendControls checkboxes)
+        const edgeCb = $("toggleEdgeLabels");
+        const nodeCb = $("toggleNodeLabels");
+        if (edgeCb || nodeCb) {
+            const labSection = document.createElement("div");
+            labSection.style.marginTop = "6px";
+            if (edgeCb) labSection.appendChild(wrapCheckboxRow("Edge labels", edgeCb));
+            if (nodeCb) labSection.appendChild(wrapCheckboxRow("Node labels", nodeCb));
+            hostPrimary.appendChild(labSection);
+        }
 
         // Clone iconbar buttons into grid (keep original handlers by dispatching clicks)
         const iconbar = document.querySelector(".iconbar");
@@ -162,15 +241,9 @@
             });
         }
 
-        // Samples block is filled by graph-ui.samples.js (if loaded)
-        const samplesHost = pop.querySelector("#onx-toolbar-more-samples");
-        if (samplesHost && !samplesHost.__onxSamplesStub) {
-            samplesHost.__onxSamplesStub = true;
-            samplesHost.innerHTML = `
-        <div style="font-size:11px;font-weight:900;color:var(--text-muted);margin-bottom:8px;">Samples</div>
-        <div id="onx-samples-slot"></div>
-      `;
-        }
+        // Samples block: pre-built by ensureSamplesSlot() at boot; graph-ui.samples.js
+        // renders into #onx-samples-slot automatically.
+        ensureSamplesSlot();
     }
 
     function boot() {
@@ -179,13 +252,22 @@
         setTimeout(ensureMobileToolbar, 120);
         setTimeout(ensureMobileToolbar, 450);
 
+        // Legend chip: retry after legendControls.js and legendOverlay are rendered
+        setTimeout(ensureLegendToggle, 200);
+        setTimeout(ensureLegendToggle, 600);
+
         // Rebuild on resize/orientation
         window.addEventListener("resize", () => {
             if (!isMobile()) return;
             ensureMobileToolbar();
+            ensureLegendToggle();
         });
         window.addEventListener("orientationchange", () => {
-            setTimeout(() => { if (isMobile()) ensureMobileToolbar(); }, 120);
+            setTimeout(() => {
+                if (!isMobile()) return;
+                ensureMobileToolbar();
+                ensureLegendToggle();
+            }, 120);
         });
     }
 
