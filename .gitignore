@@ -1,3 +1,19 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets & private data
+*.env
+*key.txt
+
+# Client/project sample data — never re-add
+samples/json/onexus_master_key.json
+samples/wip/onexus_parameters.json
+samples/wip/onexus_sel_parameters.json
+assets/misc/onexus_doors_noEdgeNodeLabel.png
+samples/wip/
+
+# Revit Addin build artifacts
 Revit_Addin/.vs/
 Revit_Addin/Onexus/bin/Debug/net8.0-windows/
 Revit_Addin/Onexus/bin/Release/
