@@ -5,23 +5,26 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ONEXUS — Graph Intelligence Layer</title>
-  <meta name="description" content="Browser-based graph visualization tool for the AEC industry. Load any JSON graph or IFC file and let Claude navigate, highlight, and filter it live via MCP.">
+  <meta name="description"
+    content="Browser-based graph visualization tool for the AEC industry. Load any JSON graph or IFC file and let Claude navigate, highlight, and filter it live via MCP.">
 
   <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d1117'/><text y='.9em' font-size='62' x='50%25' text-anchor='middle' dominant-baseline='hanging' dy='8'>◈</text></svg>">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
   <!-- Open Graph -->
-  <meta property="og:type"        content="website">
-  <meta property="og:url"         content="https://onuresen.github.io/onexus/">
-  <meta property="og:title"       content="ONEXUS — Graph Intelligence Layer">
-  <meta property="og:description" content="A graph viewer that Claude can query and control live. Load IFC, JSON, or CSV — then ask an AI agent to navigate, highlight, and filter the graph in real time.">
-  <meta property="og:image"       content="https://onuresen.github.io/Kit-of-Parts/og-preview.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://onuresen.github.io/onexus/">
+  <meta property="og:title" content="ONEXUS — Graph Intelligence Layer">
+  <meta property="og:description"
+    content="A graph viewer that Claude can query and control live. Load IFC, JSON, or CSV — then ask an AI agent to navigate, highlight, and filter the graph in real time.">
+  <meta property="og:image" content="https://onuresen.github.io/Kit-of-Parts/og-preview.png">
 
   <!-- Twitter / X -->
-  <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:title"       content="ONEXUS — Graph Intelligence Layer">
-  <meta name="twitter:description" content="A graph viewer that Claude can query and control live via MCP. Built for AEC — IFC, JSON, CSV supported.">
-  <meta name="twitter:image"       content="https://onuresen.github.io/Kit-of-Parts/og-preview.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ONEXUS — Graph Intelligence Layer">
+  <meta name="twitter:description"
+    content="A graph viewer that Claude can query and control live via MCP. Built for AEC — IFC, JSON, CSV supported.">
+  <meta name="twitter:image" content="https://onuresen.github.io/Kit-of-Parts/og-preview.png">
 
   <!-- Libraries -->
   <link rel="stylesheet" href="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape.js-navigator.css">
@@ -146,7 +149,8 @@
     <div class="tool-group" id="onx-search-group" style="display:flex;align-items:center;gap:6px;">
       <label>Search</label>
       <input id="onxSearch" type="search" placeholder="Search nodes…" autocomplete="off" style="width:140px;">
-      <span id="onxSearchCount" style="font-size:11px;color:var(--text-muted);white-space:nowrap;min-width:52px;"></span>
+      <span id="onxSearchCount"
+        style="font-size:11px;color:var(--text-muted);white-space:nowrap;min-width:52px;"></span>
     </div>
 
     <div class="iconbar" aria-label="Actions">
