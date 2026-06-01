@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
@@ -110,12 +111,12 @@ namespace Onexus
             // ── Panel: Graph ──────────────────────────────────────────────────
             var graphPanel = app.CreateRibbonPanel(TabName, "Graph");
 
-            // Open standalone viewer button
+            // Load a saved graph file into the viewer
             var toggleData = new PushButtonData(
-                "OnexusOpenWindow", "Open\nWindow", asm,
-                "Onexus.OnexusTogglePanel")
+                "OnexusOpenFile", "Open\nFile", asm,
+                "Onexus.OnexusOpenFile")
             {
-                ToolTip = "Open the ONEXUS viewer in a separate WebView2 window."
+                ToolTip = "Open a previously saved ONEXUS graph (*.json) from disk."
             };
             graphPanel.AddItem(toggleData);
 
@@ -135,7 +136,7 @@ namespace Onexus
 
             // Rooms & Elements (spatial graph)
             var spacesData = new PushButtonData(
-                "OnexusSpaces", "Sync\nRooms", asm,
+                "OnexusSpaces", "Room\nGraph", asm,
                 "Onexus.Onexus")
             {
                 ToolTip =
@@ -155,13 +156,13 @@ namespace Onexus
             };
             viewsPanel.AddItem(doorsData);
 
-            var masterKeyData = new PushButtonData(
-                "OnexusMasterKey", "Master\nKey", asm,
-                "Onexus.OnexusMasterKey")
+            var proximityLinksData = new PushButtonData(
+                "OnexusProximityLinks", "Proximity\nLinks", asm,
+                "Onexus.OnexusProximityLinks")
             {
-                ToolTip = "Export selected doors, access devices, and key numbers."
+                ToolTip = "Find elements near the selected elements of the same category and show proximity relationships.\n\nWorks on any element type — select any elements and run."
             };
-            viewsPanel.AddItem(masterKeyData);
+            viewsPanel.AddItem(proximityLinksData);
 
             var paramsData = new PushButtonData(
                 "OnexusParameters", "Param-\neters", asm,
@@ -213,17 +214,28 @@ namespace Onexus
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  OnexusTogglePanel — opens or focuses the standalone viewer window
+    //  OnexusOpenFile — loads a saved ONEXUS graph JSON file into the viewer
     // ══════════════════════════════════════════════════════════════════════════
     [Transaction(TransactionMode.ReadOnly)]
-    public class OnexusTogglePanel : IExternalCommand
+    public class OnexusOpenFile : IExternalCommand
     {
         public Result Execute(
             ExternalCommandData commandData,
             ref string message,
             ElementSet elements)
         {
-            OnexusPaneManager.Toggle(commandData.Application);
+            var folder = OnexusSettings.EnsureOnexusFolder();
+            if (folder == null) return Result.Cancelled;
+
+            var dlg = new OpenFileDialog
+            {
+                Title = "Open ONEXUS Graph",
+                Filter = "ONEXUS JSON (*.json)|*.json|All files (*.*)|*.*",
+                CheckFileExists = true
+            };
+            if (dlg.ShowDialog() != DialogResult.OK) return Result.Cancelled;
+
+            OnexusViewer.ShowFromFile(commandData.Application, folder, dlg.FileName);
             return Result.Succeeded;
         }
     }

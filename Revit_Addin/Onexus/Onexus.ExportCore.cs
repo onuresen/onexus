@@ -489,11 +489,10 @@ namespace Onexus
             var nodesByKey = new Dictionary<string, OnexusNode>(StringComparer.OrdinalIgnoreCase);
             var edgeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            // default door filter keeps family names starting with "_", matching the original command
+            // accept all doors by default; caller may pass a custom filter to narrow the set
             bool DefaultDoorFilter(FamilyInstance fi) =>
                 fi.Symbol != null &&
-                fi.Category?.Id.Value == (int)BuiltInCategory.OST_Doors &&
-                fi.Symbol.FamilyName.StartsWith("_", StringComparison.Ordinal);
+                fi.Category?.Id.Value == (int)BuiltInCategory.OST_Doors;
 
             var filter = doorFilter ?? DefaultDoorFilter;
 
@@ -1318,294 +1317,175 @@ namespace Onexus
         }
 
         // =======================
-        // Master Key (selection-based) — options
+        // Proximity Links — options
         // =======================
-        public class MasterKeyOptions
+        public class ProximityLinksOptions
         {
-            public bool InferDeviceLinks { get; set; } = true; // default ON
-            public double ProximityMM { get; set; } = 500.0;   // 500 mm
-            public bool IncludeVendors { get; set; } = true;
+            public double ProximityMM { get; set; } = 500.0;
             public bool IncludeRooms { get; set; } = true;
         }
 
         // =======================
-        // Master Key (selection-based) — builder
+        // Proximity Links — builder
+        //
+        // For each selected element, finds other elements of the same Revit category
+        // within ProximityMM and emits a "NearBy" edge.  Works on any element type.
         // =======================
-        public static OnexusGraph BuildMasterKeySelectionGraph(
+        public static OnexusGraph BuildProximityLinksGraph(
             Document doc,
             ElementId activeViewId,
-            ICollection<ElementId> selection,
-            MasterKeyOptions opt)
+            IList<Element> primaryElements,
+            ProximityLinksOptions opt)
         {
-            if (opt == null) opt = new MasterKeyOptions();
+            if (opt == null) opt = new ProximityLinksOptions();
+            double proxFeet = opt.ProximityMM / 304.8;
 
             var graph = NewGraph(doc);
             var nodeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var edgeSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var referencedLevels = new HashSet<ElementId>();
 
-            // --- unit helper ---
-            double FeetFromMM(double mm) { return mm / 304.8; }
-            var proxFeet = FeetFromMM(opt.ProximityMM);
-
-            // --- param helpers (instance string lookup by possible names) ---
-            string ReadParamString(Element e, params string[] names)
-            {
-                foreach (var n in names)
-                {
-                    var p = e.LookupParameter(n);
-                    if (p != null && p.StorageType == StorageType.String)
-                    {
-                        var v = p.AsString();
-                        if (!string.IsNullOrWhiteSpace(v)) return v.Trim();
-                    }
-                }
-                return null;
-            }
-
-            // --- small geom helpers ---
-            XYZ CenterOfBBox(BoundingBoxXYZ bb)
-            {
-                if (bb == null) return null;
-                return (bb.Min + bb.Max) * 0.5;
-            }
-            XYZ ElementPoint(Element e, View vForViewBBox)
+            // --- geometry helpers ---
+            XYZ ElementPoint(Element e)
             {
                 try
                 {
-                    var lp = e.Location as LocationPoint;
-                    if (lp != null) return lp.Point;
-
-                    var lc = e.Location as LocationCurve;
-                    if (lc != null) return lc.Curve.Evaluate(0.5, true);
-
-                    // doors: model bbox; detail items: view bbox
-                    var bb = (vForViewBBox != null) ? e.get_BoundingBox(vForViewBBox) : e.get_BoundingBox(null);
-                    var c = CenterOfBBox(bb);
-                    if (c != null) return c;
+                    if (e.Location is LocationPoint lp) return lp.Point;
+                    if (e.Location is LocationCurve lc) return lc.Curve.Evaluate(0.5, true);
+                    var bb = e.get_BoundingBox(null);
+                    if (bb != null) return (bb.Min + bb.Max) * 0.5;
                 }
                 catch { }
-                return XYZ.Zero;
-            }
-            double Dist(XYZ a, XYZ b) => (a - b).GetLength();
-
-            // --- caches ---
-            var vendorNodes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); // vendorName -> nodeId
-            var keyNodes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); // keyStr -> nodeId
-
-            // --- Door selection (instances only) ---
-            var doors = selection
-                .Select(id => doc.GetElement(id))
-                .OfType<FamilyInstance>()
-                .Where(fi => fi.Category != null && fi.Category.Id.Value == (int)BuiltInCategory.OST_Doors)
-                .ToList();
-
-            if (doors.Count == 0) return graph;
-
-            // --- collect devices (Detail Items / Ditem_認証機) in active view only ---
-            var devices = new List<FamilyInstance>();
-            if (activeViewId != ElementId.InvalidElementId)
-            {
-                var viewFilter = new FilteredElementCollector(doc, activeViewId)
-                    .OfCategory(BuiltInCategory.OST_DetailComponents)
-                    .WhereElementIsNotElementType()
-                    .OfClass(typeof(FamilyInstance))
-                    .Cast<FamilyInstance>()
-                    .Where(fi => fi.Symbol != null && string.Equals(fi.Symbol.FamilyName, "Ditem_認証機", StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-                devices.AddRange(viewFilter);
-            }
-            else
-            {
-                // fallback: all views
-                var all = new FilteredElementCollector(doc)
-                    .OfCategory(BuiltInCategory.OST_DetailComponents)
-                    .WhereElementIsNotElementType()
-                    .OfClass(typeof(FamilyInstance))
-                    .Cast<FamilyInstance>()
-                    .Where(fi => fi.Symbol != null && string.Equals(fi.Symbol.FamilyName, "Ditem_認証機", StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-                devices.AddRange(all);
+                return null;
             }
 
-            var viewObj = (activeViewId != ElementId.InvalidElementId) ? doc.GetElement(activeViewId) as View : null;
-
-            // --- build nodes: doors
-            foreach (var d in doors)
+            // --- node factory (reads only BuiltInParameters — no hardcoded names) ---
+            void AddElementNode(Element e)
             {
-                var id = d.UniqueId;
-                if (nodeSeen.Add(id))
+                var uid = e.UniqueId;
+                if (!nodeSeen.Add(uid)) return;
+
+                var fi = e as FamilyInstance;
+                var catName = e.Category?.Name ?? "Element";
+                var label = fi != null ? MakeElementLabel(fi) : (e.Name ?? catName);
+
+                var markParam = e.get_Parameter(BuiltInParameter.ALL_MODEL_MARK);
+                if (markParam?.StorageType == StorageType.String)
                 {
-                    var mark = ReadParamString(d, "Mark", "番号", "Door Number");
-                    var doorTypeTag = d.Symbol != null ? d.Symbol.Name : d.Name;
-                    var keyNumber = ReadParamString(d, "鍵番号", "KeyNumber", "Key No", "KEY_NO");
-                    var pull = ReadParamString(d, "鋼前_引き側", "PullSide", "引き");
-                    var push = ReadParamString(d, "鋼前_押し側", "PushSide", "押し");
-                    var zone = ReadParamString(d, "区画", "Zone");
-                    var vendor = ReadParamString(d, "製作会社", "Manufacturer");
+                    var mark = markParam.AsString();
+                    if (!string.IsNullOrWhiteSpace(mark)) label = $"{mark.Trim()} — {label}";
+                }
 
-                    var label = (mark != null ? mark + " " : "") + (doorTypeTag ?? "Door");
-                    var lvl = TryGetLevel(d, doc)?.Name;
+                var lvl = TryGetLevel(e, doc);
+                if (lvl != null) referencedLevels.Add(lvl.Id);
 
-                    graph.elements.nodes.Add(new OnexusNode
+                graph.elements.nodes.Add(new OnexusNode
+                {
+                    data = new NodeData
                     {
-                        data = new NodeData
-                        {
-                            id = id,
-                            nodeType = "Door",
-                            category = "SecurityDoor",
-                            label = new Dictionary<string, string> { ["en"] = label, ["jp"] = label },
-                            revitCategory = "Doors",
-                            level = lvl,
-                            familyName = d.Symbol != null ? d.Symbol.FamilyName : null,
-                            typeName = d.Symbol != null ? d.Symbol.Name : d.Name,
-                            revitInstanceIds = new List<long> { d.Id.Value },
-                            revitInstanceUids = new List<string> { d.UniqueId }
-                        }
-                    });
-
-                    // KeyNumber node + edge
-                    if (!string.IsNullOrWhiteSpace(keyNumber))
-                    {
-                        string keyId;
-                        if (!keyNodes.TryGetValue(keyNumber, out keyId))
-                        {
-                            keyId = "KEY-" + San(keyNumber);
-                            keyNodes[keyNumber] = keyId;
-                            graph.elements.nodes.Add(new OnexusNode
-                            {
-                                data = new NodeData
-                                {
-                                    id = keyId,
-                                    nodeType = "KeyNumber",
-                                    category = "KeyNumber",
-                                    label = new Dictionary<string, string> { ["en"] = keyNumber, ["jp"] = keyNumber }
-                                }
-                            });
-                            nodeSeen.Add(keyId);
-                        }
-                        AddEdge(graph, edgeSeen, "KeyedBy", "Security", id, keyId, true, "Explicit");
+                        id               = uid,
+                        nodeType         = "Element",
+                        category         = catName,
+                        label            = new Dictionary<string, string> { ["en"] = label },
+                        revitCategory    = catName,
+                        level            = lvl?.Name,
+                        familyName       = fi?.Symbol?.FamilyName,
+                        typeName         = fi != null ? (fi.Symbol?.Name ?? e.Name) : e.Name,
+                        revitInstanceIds  = new List<long>   { e.Id.Value },
+                        revitInstanceUids = new List<string> { uid }
                     }
+                });
 
-                    // Vendor node + edge
-                    if (opt.IncludeVendors && !string.IsNullOrWhiteSpace(vendor))
+                if (lvl != null)
+                    AddEdge(graph, edgeSeen, "OnLevel", "Spatial", uid, lvl.UniqueId, directional: true);
+
+                if (opt.IncludeRooms && fi != null)
+                {
+                    try
                     {
-                        string vId;
-                        if (!vendorNodes.TryGetValue(vendor, out vId))
+                        var catId = e.Category?.Id.Value;
+                        var isDoor   = catId == (long)BuiltInCategory.OST_Doors;
+                        var isWindow = catId == (long)BuiltInCategory.OST_Windows;
+                        if (isDoor || isWindow)
                         {
-                            vId = "VENDOR-" + San(vendor);
-                            vendorNodes[vendor] = vId;
-                            graph.elements.nodes.Add(new OnexusNode
-                            {
-                                data = new NodeData
-                                {
-                                    id = vId,
-                                    nodeType = "Vendor",
-                                    category = "SecurityVendor",
-                                    label = new Dictionary<string, string> { ["en"] = vendor, ["jp"] = vendor }
-                                }
-                            });
-                            nodeSeen.Add(vId);
+                            var fr = fi.FromRoom;
+                            var tr = fi.ToRoom;
+                            if (fr != null && fr.Area > 0) { EnsureRoomNode(graph, nodeSeen, fr); AddEdge(graph, edgeSeen, "LocatedIn", "Spatial", uid, fr.UniqueId, directional: true); }
+                            if (tr != null && tr.Area > 0) { EnsureRoomNode(graph, nodeSeen, tr); AddEdge(graph, edgeSeen, "LocatedIn", "Spatial", uid, tr.UniqueId, directional: true); }
                         }
-                        AddEdge(graph, edgeSeen, "ProvidedBy", "Vendor", id, vId, true, "Explicit");
+                        else
+                        {
+                            var room = fi.Room;
+                            if (room != null && room.Area > 0) { EnsureRoomNode(graph, nodeSeen, room); AddEdge(graph, edgeSeen, "LocatedIn", "Spatial", uid, room.UniqueId, directional: true); }
+                        }
                     }
+                    catch { /* room lookup is optional */ }
+                }
+            }
 
-                    // Rooms (both sides if present)
-                    if (opt.IncludeRooms)
+            // --- group primaries by category ---
+            var primaryByCategory = primaryElements
+                .Where(e => e?.Category != null)
+                .GroupBy(e => e.Category.Id.Value)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (var kvp in primaryByCategory)
+            {
+                var catId    = kvp.Key;
+                var primaries = kvp.Value;
+                var primaryUids = new HashSet<string>(primaries.Select(e => e.UniqueId));
+
+                // Candidate pool: all FamilyInstances of the same category, excluding primaries
+                var candidates = new FilteredElementCollector(doc)
+                    .WhereElementIsNotElementType()
+                    .OfClass(typeof(FamilyInstance))
+                    .Cast<FamilyInstance>()
+                    .Where(fi => fi.Category?.Id.Value == catId && !primaryUids.Contains(fi.UniqueId))
+                    .ToList();
+
+                foreach (var primary in primaries)
+                {
+                    AddElementNode(primary);
+
+                    var pp = ElementPoint(primary);
+                    if (pp == null) continue;
+
+                    foreach (var cand in candidates)
                     {
-                        var fr = d.FromRoom;
-                        var tr = d.ToRoom;
-                        if (fr != null && fr.Area > 0)
-                        {
-                            var rid = fr.UniqueId;
-                            if (nodeSeen.Add(rid))
-                            {
-                                var rlabel = MakeRoomLabel(fr);
-                                graph.elements.nodes.Add(new OnexusNode
-                                {
-                                    data = new NodeData
-                                    {
-                                        id = rid,
-                                        nodeType = "Space",
-                                        category = "Room",
-                                        label = new Dictionary<string, string> { ["en"] = rlabel, ["jp"] = rlabel },
-                                        revitCategory = "Rooms",
-                                        level = fr.Level != null ? fr.Level.Name : null
-                                    }
-                                });
-                            }
-                            AddEdge(graph, edgeSeen, "LocatedIn", "Spatial", id, rid, true, "Explicit");
-                        }
-                        if (tr != null && tr.Area > 0)
-                        {
-                            var rid = tr.UniqueId;
-                            if (nodeSeen.Add(rid))
-                            {
-                                var rlabel = MakeRoomLabel(tr);
-                                graph.elements.nodes.Add(new OnexusNode
-                                {
-                                    data = new NodeData
-                                    {
-                                        id = rid,
-                                        nodeType = "Space",
-                                        category = "Room",
-                                        label = new Dictionary<string, string> { ["en"] = rlabel, ["jp"] = rlabel },
-                                        revitCategory = "Rooms",
-                                        level = tr.Level != null ? tr.Level.Name : null
-                                    }
-                                });
-                            }
-                            AddEdge(graph, edgeSeen, "LocatedIn", "Spatial", id, rid, true, "Explicit");
-                        }
+                        var cp = ElementPoint(cand);
+                        if (cp == null) continue;
+                        if ((pp - cp).GetLength() > proxFeet) continue;
+
+                        AddElementNode(cand);
+                        AddEdge(graph, edgeSeen, "NearBy", "Spatial", primary.UniqueId, cand.UniqueId, directional: false, confidence: "Inferred");
                     }
                 }
             }
 
-            // --- device nodes + inferred Controls edges
-            foreach (var dev in devices)
+            // --- Level nodes for all referenced levels ---
+            foreach (var level in new FilteredElementCollector(doc)
+                .OfClass(typeof(Level))
+                .Cast<Level>()
+                .Where(l => referencedLevels.Contains(l.Id)))
             {
-                var did = dev.UniqueId;
-                if (nodeSeen.Add(did))
+                var lvlId = level.UniqueId;
+                if (nodeSeen.Add(lvlId))
                 {
-                    var dlabel = "認証機";
+                    var lbl = level.Name ?? "Level";
                     graph.elements.nodes.Add(new OnexusNode
                     {
                         data = new NodeData
                         {
-                            id = did,
-                            nodeType = "AccessDevice",
-                            category = "FaceRecognition",
-                            label = new Dictionary<string, string> { ["en"] = dlabel, ["jp"] = dlabel },
-                            revitCategory = "Detail Items",
-                            familyName = dev.Symbol != null ? dev.Symbol.FamilyName : null,
-                            typeName = dev.Symbol != null ? dev.Symbol.Name : dev.Name,
-                            revitInstanceIds = new List<long> { dev.Id.Value },
-                            revitInstanceUids = new List<string> { dev.UniqueId }
+                            id               = lvlId,
+                            nodeType         = "Level",
+                            category         = "Level",
+                            label            = new Dictionary<string, string> { ["en"] = lbl },
+                            revitCategory    = "Levels",
+                            level            = lbl,
+                            revitInstanceIds  = new List<long>   { level.Id.Value },
+                            revitInstanceUids = new List<string> { lvlId }
                         }
                     });
-                }
-
-                if (opt.InferDeviceLinks)
-                {
-                    var dv = ElementPoint(dev, viewObj);
-                    FamilyInstance nearest = null;
-                    double best = double.MaxValue;
-
-                    foreach (var door in doors)
-                    {
-                        var dp = ElementPoint(door, null);
-                        var dist = Dist(dv, dp);
-                        if (dist < best)
-                        {
-                            best = dist;
-                            nearest = door;
-                        }
-                    }
-
-                    if (nearest != null && best <= proxFeet)
-                    {
-                        AddEdge(graph, edgeSeen, "Controls", "Security", did, nearest.UniqueId, true, "Inferred");
-                    }
-                    // else: exported as unlinked device (visible data gap)
                 }
             }
 
