@@ -130,7 +130,7 @@
 #onx-nodevis-fab:hover{ background: var(--btn-bg-hover); }
 :root.theme-dark #onx-nodevis-fab:hover{ background: rgba(255,255,255,0.08); }
 #onx-nodevis-fab .dot{ width:12px;height:12px;border-radius:999px;background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.18); }
-#onx-nodevis-fab .txt{ font-size:12px;font-weight:900;color:var(--text-main); }
+#onx-nodevis-fab .txt{ font-size:12px;font-weight:700;color:var(--text-main); }
 
 #onx-nodevis-pop{
   width: 300px;
