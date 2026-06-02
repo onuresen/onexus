@@ -307,4 +307,42 @@
         accent-color: #2563eb;
         flex-shrink: 0;
     }
+
+    /* ---- Bottom-left pill stack: compact so it doesn't dominate the canvas ---- */
+    #onx-float-left-stack {
+        gap: 6px !important;
+        max-height: calc(100dvh - 220px);
+        flex-wrap: wrap;
+    }
+
+    /* Shrink every floating pill (Filter/Style/Anim/Tool/Layer/Nodes) uniformly */
+    #onx-float-left-stack .rail-btn,
+    #onx-float-left-stack #onx-layer-fab,
+    #onx-float-left-stack #onx-nodevis-fab {
+        height: 30px !important;
+        padding: 0 10px !important;
+        gap: 6px !important;
+        border-radius: 999px !important;
+    }
+
+    #onx-float-left-stack .rail-btn span:last-child,
+    #onx-float-left-stack .onx-layer-fab-text,
+    #onx-float-left-stack #onx-nodevis-fab .txt {
+        font-size: 11px !important;
+    }
+
+    /* Smaller colour dots to match the shorter pills */
+    #onx-float-left-stack .rail-btn span:first-child,
+    #onx-float-left-stack .onx-layer-dot,
+    #onx-float-left-stack #onx-nodevis-fab .dot {
+        width: 9px !important;
+        height: 9px !important;
+    }
+
+    /* On phones the minimap overlaps the pills and adds little value — drop it */
+    @media (max-width: 560px) {
+        #minimap {
+            display: none !important;
+        }
+    }
 }

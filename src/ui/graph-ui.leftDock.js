@@ -130,7 +130,7 @@
           background:${cfg.dot};
           box-shadow:0 0 0 3px rgba(0,0,0,0.08);
           display:inline-block;"></span>
-        <span style="font-weight:900;font-size:12px;">${cfg.text}</span>
+        <span style="font-weight:700;font-size:12px;">${cfg.text}</span>
       `;
 
             Object.assign(btn.style, {
