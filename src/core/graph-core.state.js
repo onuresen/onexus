@@ -358,6 +358,9 @@
     state.layerMode = next;
     if (persist) safeWrite(LAYER_PREF_KEY, next);
 
+    // Reflect active layer onto <html> so CSS can sign the UI chrome (--onx-layer-accent)
+    try { document.documentElement.setAttribute("data-onx-layer", next); } catch { }
+
     // enter hook (best-effort)
     try { nextCfg?.onEnter?.({ cy, state, prev, next }); } catch (e) { console.warn("Layer onEnter failed:", e); }
 
@@ -386,6 +389,9 @@
   // expose
   window.getLayerMode = getLayerMode;
   window.setLayerMode = setLayerMode;
+
+  // Seed the initial layer attribute for CSS accent signing
+  try { document.documentElement.setAttribute("data-onx-layer", normalizeLayerKey(state.layerMode)); } catch { }
   window.registerLayerMode = registerLayerMode;
 
   // ---- expose

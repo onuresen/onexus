@@ -68,6 +68,20 @@
         const colors = { connected: "#22c55e", disconnected: "#6b7280", error: "#ef4444" };
         indicator.style.background = colors[state] ?? colors.disconnected;
         indicator.title = `ONEXUS MCP Bridge: ${state}`;
+        // Live "breathing" glow only while connected
+        indicator.classList.toggle("onx-mcp-live", state === "connected");
+      }
+
+      // Brief flash when a live command arrives from Claude
+      function pulseIndicator() {
+        if (!indicator) return;
+        indicator.classList.remove("onx-mcp-pulse");
+        // force reflow so the animation can restart on rapid commands
+        void indicator.offsetWidth;
+        indicator.classList.add("onx-mcp-pulse");
+        // remove after the flash so the connected "breathe" glow resumes
+        clearTimeout(pulseIndicator._t);
+        pulseIndicator._t = setTimeout(() => indicator?.classList.remove("onx-mcp-pulse"), 550);
       }
 
       // ── Command dispatcher ────────────────────────────────────────────────
@@ -190,6 +204,7 @@
       function handleCommand(msg) {
         const cy = getCy();
         const msgId = msg._id;
+        pulseIndicator();
 
         try {
           switch (msg.cmd) {

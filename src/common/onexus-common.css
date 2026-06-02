@@ -15,10 +15,40 @@
     --icon-color: #111827;
     --btn-bg: #ffffff;
     --btn-bg-hover: #eef2ff;
-    --radius: 10px;
+
+    /* Radius scale */
+    --r-sm: 7px;
+    --r-md: 10px;
+    --r-lg: 14px;
+    --r-pill: 999px;
+    --radius: var(--r-md);
+
     --gap: 12px;
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    /* Typography */
+    --font-display: "Archivo", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", "Menlo", monospace;
+
+    /* Layer-semantic accent (overridden per layer mode below) */
+    --onx-layer-accent: #2563eb;
+    --accent: var(--onx-layer-accent);
+
+    /* Canvas grid (theme-aware; overridden in .theme-dark) */
+    --grid-dot: rgba(17, 24, 39, 0.06);
+    --grid-size: 26px;
+}
+
+/* Layer-semantic accent system — each layer mode signs the UI chrome */
+:root[data-onx-layer="relationship"] { --onx-layer-accent: #2563eb; }
+:root[data-onx-layer="lifecycle"]    { --onx-layer-accent: #0d9488; }
+:root[data-onx-layer="risk"]         { --onx-layer-accent: #e0a423; }
+:root[data-onx-layer="option"]       { --onx-layer-accent: #7c3aed; }
+
+:root.theme-dark {
+    --grid-dot: rgba(230, 233, 238, 0.06);
 }
 
 * {
@@ -32,9 +62,26 @@ body {
     gap: var(--gap);
     padding: var(--gap);
     background: var(--bg-main);
-    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, "Noto Sans JP", sans-serif;
+    font-family: var(--font-body);
     color: var(--text-main);
+}
+
+/* Display face for headings / titles / badge */
+h3,
+.onx-layer-title,
+.onx-layer-sec-title,
+.onx-metrics-title,
+.badge,
+#toolbar .onx-samples-btn {
+    font-family: var(--font-display);
+}
+
+/* Mono for data: IDs, counts, metric values — tabular for alignment */
+#onxSearchCount,
+#legend .legend-count,
+#metrics .onx-metrics-row .v {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
 }
 
 /* ---- Toolbar (single surface) ---- */
@@ -72,6 +119,56 @@ input[type="file"] {
     color: var(--text-main);
 }
 
+/* Toolbar selectors styled to match the custom chrome */
+#toolbar .tool-group select,
+#toolbar .tool-group input[type="search"] {
+    height: 32px;
+    padding: 0 28px 0 10px;
+    border: 1px solid var(--stroke);
+    border-radius: var(--r-sm);
+    background: var(--btn-bg);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+        linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+    background-position:
+        calc(100% - 14px) 14px,
+        calc(100% - 9px) 14px;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+#toolbar .tool-group input[type="search"] {
+    background-image: none;
+    padding-right: 10px;
+    cursor: text;
+}
+
+#toolbar .tool-group select:hover,
+#toolbar .tool-group input[type="search"]:hover {
+    border-color: var(--accent);
+}
+
+#toolbar .tool-group select:focus,
+#toolbar .tool-group input[type="search"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* Promote the primary Layer control — accent-tinted, signs the active mode */
+#toolbar .tool-group.onx-primary select {
+    border-color: var(--accent);
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 var(--accent);
+    padding-left: 12px;
+}
+
 .badge {
     margin-left: auto;
     font-size: 11px;
@@ -98,12 +195,18 @@ input[type="file"] {
     padding: 0;
     background: var(--btn-bg);
     border: 1px solid var(--stroke);
-    border-radius: 7px;
+    border-radius: var(--r-sm);
     cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
 }
 
 .icon-btn:hover {
     background: var(--btn-bg-hover);
+    border-color: var(--accent);
+}
+
+.icon-btn:active {
+    transform: translateY(1px);
 }
 
 .icon-btn svg {
@@ -115,7 +218,7 @@ input[type="file"] {
 .divider {
     width: 1px;
     height: 22px;
-    background: #e5e7eb;
+    background: var(--stroke);
     margin: 0 6px;
 }
 
@@ -129,9 +232,39 @@ input[type="file"] {
     overflow: hidden;
 }
 
+/* Blueprint dot-grid layer (sits behind the transparent cytoscape canvas) */
+#canvas-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    background-position: -1px -1px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Inner vignette so the graph reads as sitting in a viewport */
+#canvas-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.06);
+    border-radius: inherit;
+}
+
+:root.theme-dark #canvas-wrap::after {
+    box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.45);
+}
+
 #cy {
     position: absolute;
     inset: 0;
+    z-index: 1;
+    /* transparent so the dot-grid shows through; JS sets an opaque container bg otherwise */
+    background: transparent !important;
 }
 
 /* Minimap overlay */
@@ -589,6 +722,70 @@ button.flat:hover {
     height: 100%;
     border-radius: 999px;
     width: 0%;
+    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================================
+   Motion: FAB / popover transitions + MCP live signal
+========================================================= */
+#onx-layer-fab {
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease;
+}
+
+#onx-layer-fab:hover {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+#onx-layer-pop,
+#onx-lifecycle-panel {
+    animation: onx-pop-in 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes onx-pop-in {
+    from { opacity: 0; transform: translateY(6px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Graph fade-in on load (class toggled by graphLoaded listener) */
+#cy.onx-graph-enter {
+    animation: onx-graph-fade 0.45s ease both;
+}
+
+@keyframes onx-graph-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* MCP bridge indicator — breathing glow while connected, flash on command */
+#onx-mcp-indicator.onx-mcp-live {
+    animation: onx-mcp-breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes onx-mcp-breathe {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+    50%      { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
+}
+
+#onx-mcp-indicator.onx-mcp-pulse {
+    animation: onx-mcp-flash 0.5s ease;
+}
+
+@keyframes onx-mcp-flash {
+    0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+    40%  { transform: scale(1.8); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+    100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #onx-layer-pop,
+    #onx-lifecycle-panel,
+    #cy.onx-graph-enter,
+    #onx-mcp-indicator.onx-mcp-live,
+    #onx-mcp-indicator.onx-mcp-pulse {
+        animation: none !important;
+    }
+
+    #metrics .onx-meter>span { transition: none; }
 }
 
 #metrics .onx-metrics-muted {

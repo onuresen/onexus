@@ -26,6 +26,13 @@
     content="A graph viewer that Claude can query and control live via MCP. Built for AEC — IFC, JSON, CSV supported.">
   <meta name="twitter:image" content="https://onuresen.github.io/Kit-of-Parts/og-preview.png">
 
+  <!-- Fonts: Archivo (display) + IBM Plex Sans/Mono (body + data) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
   <!-- Libraries -->
   <link rel="stylesheet" href="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape.js-navigator.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
@@ -111,7 +118,7 @@
         <option value="tr">Türkçe</option>
       </select>
     </div>
-    <div class="tool-group">
+    <div class="tool-group onx-primary">
       <label>Layer</label>
       <select id="layerModeSelect">
         <option value="relationship">Relationship</option>
@@ -124,7 +131,7 @@
       <label>View</label>
       <select id="layoutSelect" onchange="applyLayout(this.value)">
         <option value="default">Free (Auto)</option>
-        <option value="tree_nested">Hierarchy (Nested) (Nested)</option>
+        <option value="tree_nested">Hierarchy (Nested)</option>
         <option value="system">Domain Focus: System</option>
         <option value="responsibility">Domain Focus: Responsibility</option>
         <option value="spatial">Domain Focus: Spatial </option>
@@ -170,6 +177,8 @@
         </svg>
       </button>
 
+      <span class="divider" aria-hidden="true"></span>
+
       <!-- Navigation -->
       <button class="icon-btn" onclick="fitView()" title="Fit (F)" aria-label="Fit">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
@@ -193,6 +202,8 @@
           <path d="M20 7a8 8 0 1 0 2 5" />
         </svg>
       </button>
+
+      <span class="divider" aria-hidden="true"></span>
 
       <!-- NEW: Undo / Redo -->
       <button class="icon-btn" id="btnUndo" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">
