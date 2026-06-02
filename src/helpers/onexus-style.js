@@ -760,4 +760,15 @@ window.currentColorMode = () => currentColorMode;
 window.applyTheme = applyTheme;
 window.applyScale = applyScale;
 window.getCurrentThemeKey = getCurrentThemeKey;
+
+// Graph fade-in: replay the enter animation whenever a graph finishes loading
+try {
+  window.ONEXUS?.bus?.on?.("graphLoaded", () => {
+    const el = document.getElementById("cy");
+    if (!el) return;
+    el.classList.remove("onx-graph-enter");
+    void el.offsetWidth; // force reflow so the animation restarts
+    el.classList.add("onx-graph-enter");
+  });
+} catch { /* optional motion */ }
 window.getCurrentScale = getCurrentScale;

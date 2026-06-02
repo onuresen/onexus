@@ -118,7 +118,7 @@
         <option value="tr">Türkçe</option>
       </select>
     </div>
-    <div class="tool-group">
+    <div class="tool-group onx-primary">
       <label>Layer</label>
       <select id="layerModeSelect">
         <option value="relationship">Relationship</option>
@@ -131,7 +131,7 @@
       <label>View</label>
       <select id="layoutSelect" onchange="applyLayout(this.value)">
         <option value="default">Free (Auto)</option>
-        <option value="tree_nested">Hierarchy (Nested) (Nested)</option>
+        <option value="tree_nested">Hierarchy (Nested)</option>
         <option value="system">Domain Focus: System</option>
         <option value="responsibility">Domain Focus: Responsibility</option>
         <option value="spatial">Domain Focus: Spatial </option>
@@ -177,6 +177,8 @@
         </svg>
       </button>
 
+      <span class="divider" aria-hidden="true"></span>
+
       <!-- Navigation -->
       <button class="icon-btn" onclick="fitView()" title="Fit (F)" aria-label="Fit">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
@@ -200,6 +202,8 @@
           <path d="M20 7a8 8 0 1 0 2 5" />
         </svg>
       </button>
+
+      <span class="divider" aria-hidden="true"></span>
 
       <!-- NEW: Undo / Redo -->
       <button class="icon-btn" id="btnUndo" title="Undo (Ctrl/Cmd+Z)" aria-label="Undo">
