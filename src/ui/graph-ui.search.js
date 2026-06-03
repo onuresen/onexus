@@ -46,8 +46,11 @@
 
         if (!matches.length) return;
 
-        cy.nodes().not(matches).addClass("search-dim");
-        matches.addClass("search-match");
+        // Coalesce the dim/match class swaps into one render pass.
+        cy.batch(() => {
+            cy.nodes().not(matches).addClass("search-dim");
+            matches.addClass("search-match");
+        });
         cy.fit(matches, 60);
     }
 

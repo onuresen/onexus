@@ -306,22 +306,30 @@
     sep.style.height = "6px";
     container.appendChild(sep);
 
-    // Collect types from full set
-    const types = new Set();
+    // Single pass over the full edge set: collect types + a sample edge each.
+    // (Previously this ran a full :visible[type=...] query AND a full filter()
+    //  per type — O(types × edges); now it's O(edges).)
+    const sampleByType = new Map();
     edgesAll.forEach((e) => {
       const t = e.data("type");
-      if (t) types.add(t);
+      if (t && !sampleByType.has(t)) sampleByType.set(t, e);
+    });
+
+    // Single pass over visible edges to tally counts per type.
+    const visibleCountByType = new Map();
+    cy.edges(":visible").forEach((e) => {
+      const t = e.data("type");
+      if (t) visibleCountByType.set(t, (visibleCountByType.get(t) ?? 0) + 1);
     });
 
     // Sort for stable UI
-    const sorted = [...types].sort((a, b) => String(a).localeCompare(String(b)));
+    const sorted = [...sampleByType.keys()].sort((a, b) => String(a).localeCompare(String(b)));
 
     sorted.forEach((type) => {
-      // Count visible edges of this type (so user sees effect)
-      const visibleCount = cy.edges(`:visible[type = "${type}"]`).length;
+      const visibleCount = visibleCountByType.get(type) ?? 0;
 
-      // Derive a stable color by taking any edge of that type (even if hidden)
-      const sample = edgesAll.filter((e) => e.data("type") === type)[0];
+      // Stable color from a sample edge of that type (even if hidden)
+      const sample = sampleByType.get(type);
       const color = sample ? sample.style("line-color") : "#999";
 
       // Use displayType if available
