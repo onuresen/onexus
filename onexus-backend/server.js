@@ -55,9 +55,36 @@ function filePathFor(id) {
     return path.join(STORAGE_DIR, `${id}.json`);
 }
 
+// Reads + parses a JSON file. Throws a tagged error so callers can map it to
+// the right HTTP status (ENOENT -> 404, parse failure -> 500 "corrupted").
 function readJson(filePath) {
-    const txt = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(txt);
+    let txt;
+    try {
+        txt = fs.readFileSync(filePath, "utf-8");
+    } catch (e) {
+        if (e && e.code === "ENOENT") { e.onexus = "missing"; }
+        throw e;
+    }
+    try {
+        return JSON.parse(txt);
+    } catch (e) {
+        e.onexus = "corrupted";
+        throw e;
+    }
+}
+
+// Maps a readJson() error to an Express response. Returns true if handled.
+function handleReadError(e, res) {
+    if (e && (e.onexus === "missing" || e.code === "ENOENT")) {
+        res.status(404).json({ ok: false, error: "not found" });
+        return true;
+    }
+    if (e && e.onexus === "corrupted") {
+        console.error(`[ONEXUS storage] corrupted graph file:`, e.message);
+        res.status(500).json({ ok: false, error: "stored graph is corrupted and could not be read" });
+        return true;
+    }
+    return false;
 }
 
 function writeJsonAtomic(filePath, obj) {
@@ -66,13 +93,29 @@ function writeJsonAtomic(filePath, obj) {
     fs.renameSync(tmp, filePath);
 }
 
+// Upper bound on element count — guards against accidental/malicious huge payloads
+// even within the 25mb body limit. Override with ONEXUS_MAX_ELEMENTS.
+const MAX_ELEMENTS = Number(process.env.ONEXUS_MAX_ELEMENTS) || 200000;
+
 function validateGraphShape(graph) {
     // Minimal shape validation (backend stays dumb)
     // ONEXUS already validates in frontend (validateOnexusJson) but we do a tiny check here.
     if (!graph || typeof graph !== "object") return "graph must be an object";
     if (!graph.elements || typeof graph.elements !== "object") return "graph.elements missing";
-    if (!Array.isArray(graph.elements.nodes)) return "graph.elements.nodes must be array";
-    if (!Array.isArray(graph.elements.edges)) return "graph.elements.edges must be array";
+    const { nodes, edges } = graph.elements;
+    if (!Array.isArray(nodes)) return "graph.elements.nodes must be array";
+    if (!Array.isArray(edges)) return "graph.elements.edges must be array";
+    if (nodes.length + edges.length > MAX_ELEMENTS) {
+        return `graph too large: ${nodes.length + edges.length} elements exceeds limit of ${MAX_ELEMENTS}`;
+    }
+    // Duplicate node-id detection — silently overlapping ids corrupt the graph downstream.
+    const seen = new Set();
+    for (const n of nodes) {
+        const id = n?.data?.id;
+        if (id == null) continue; // frontend normalizer fills ids; don't hard-reject here
+        if (seen.has(id)) return `duplicate node id: ${id}`;
+        seen.add(id);
+    }
     return null;
 }
 
@@ -95,8 +138,9 @@ function listAllGraphs() {
                     edges: data?.graph?.elements?.edges?.length ?? 0
                 }
             });
-        } catch {
-            // ignore broken files
+        } catch (e) {
+            // Skip broken files but surface which one, so corruption isn't invisible.
+            console.warn(`[ONEXUS storage] skipping unreadable file ${f}: ${e.message}`);
         }
     }
     items.sort((a, b) => String(b.updatedAt ?? b.createdAt).localeCompare(String(a.updatedAt ?? a.createdAt)));
@@ -143,10 +187,14 @@ app.get("/graphs/:id", (req, res) => {
     const id = String(req.params.id ?? "").trim();
     if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
-    const p = filePathFor(id);
-    if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });
-
-    const record = readJson(p);
+    // Read directly and map errors (no existsSync race; handles missing/corrupted).
+    let record;
+    try {
+        record = readJson(filePathFor(id));
+    } catch (e) {
+        if (handleReadError(e, res)) return;
+        throw e;
+    }
     res.json({ ok: true, ...record });
 });
 
@@ -156,9 +204,14 @@ app.put("/graphs/:id", (req, res) => {
     if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
     const p = filePathFor(id);
-    if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });
 
-    const existing = readJson(p);
+    let existing;
+    try {
+        existing = readJson(p);
+    } catch (e) {
+        if (handleReadError(e, res)) return;
+        throw e;
+    }
 
     const name = safeName(req.body?.name ?? existing.name);
     const graph = req.body?.graph ?? existing.graph;
@@ -182,11 +235,30 @@ app.delete("/graphs/:id", (req, res) => {
     const id = String(req.params.id ?? "").trim();
     if (!isValidId(id)) return res.status(400).json({ ok: false, error: "invalid id" });
 
-    const p = filePathFor(id);
-    if (!fs.existsSync(p)) return res.status(404).json({ ok: false, error: "not found" });
-
-    fs.unlinkSync(p);
+    // Unlink directly; map a missing file to 404 (no existsSync race).
+    try {
+        fs.unlinkSync(filePathFor(id));
+    } catch (e) {
+        if (e && e.code === "ENOENT") return res.status(404).json({ ok: false, error: "not found" });
+        throw e;
+    }
     res.json({ ok: true, id });
+});
+
+// ===============================
+// Error handler (always respond with JSON, never an HTML stack trace)
+// ===============================
+// eslint-disable-next-line no-unused-vars
+app.use((err, _req, res, _next) => {
+    // Body too large (express.json limit) or malformed JSON body.
+    if (err?.type === "entity.too.large") {
+        return res.status(413).json({ ok: false, error: "payload too large" });
+    }
+    if (err?.type === "entity.parse.failed") {
+        return res.status(400).json({ ok: false, error: "invalid JSON body" });
+    }
+    console.error("[ONEXUS storage] unhandled error:", err?.message ?? err);
+    res.status(500).json({ ok: false, error: "internal error" });
 });
 
 // ===============================
