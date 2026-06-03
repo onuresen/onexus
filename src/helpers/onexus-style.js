@@ -421,6 +421,20 @@ function buildStyle(themeKey) {
   const fontNode = `${clamp(9 * S, 6, 16)}px`;
   const fontEdge = `${clamp(9 * S, 7, 16)}px`;
 
+  // Size-proportional labels: the old code used a CONSTANT font + 90px wrap
+  // width for every node, so tiny leaves got the same oversized label block as
+  // big hubs (labels spilled past the node and collided). Derive both from the
+  // node's actual diameter, clamped to stay readable — hubs get a slightly
+  // larger, wider label; leaves get a compact one that fits the node.
+  const nodeFontFor = (ele) => {
+    const d = nodeSizeForEle(ele);
+    return `${clamp(d * 0.26, 7.5, 15)}px`;
+  };
+  const nodeTextMaxFor = (ele) => {
+    const d = nodeSizeForEle(ele);
+    return `${clamp(d * 1.7, 64, 168)}px`;
+  };
+
   const textOutlineW = clamp(2 * Math.pow(S, 0.75), 1, 4);
   const textBgPad = `${clamp(3 * S, 2, 8)}px`;
 
@@ -461,10 +475,10 @@ function buildStyle(themeKey) {
 
         color: T.text,
         "text-wrap": "wrap",
-        "text-max-width": `${clamp(90 * S, 60, 160)}px`,
+        "text-max-width": (ele) => nodeTextMaxFor(ele),
         "text-outline-width": textOutlineW,
         "text-outline-color": T.outline,
-        "font-size": fontNode,
+        "font-size": (ele) => nodeFontFor(ele),
         "font-weight": "bold",
         width:  (ele) => nodeSizeForEle(ele),
         height: (ele) => nodeSizeForEle(ele),
