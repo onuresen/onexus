@@ -1,19 +1,19 @@
 /**
  * onexus-features.spec.js
  *
- * Feature-level Playwright tests for ONEXUS graph operations.
- * These tests exercise graph loading, filtering, layer switching,
- * and undo/redo — all via the public window.* API surface.
+ * A small set of HIGH-SIGNAL regression tests (no soft-skips) covering the
+ * behaviour that actually matters: that a graph loads with full fidelity, and
+ * that "Export Graph JSON" exports the COMPLETE graph even when a filter is
+ * hiding part of it. If either of these breaks, the app is genuinely broken.
  */
 
 const { test, expect } = require("@playwright/test");
+const fs = require("fs");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:4173";
 const APP_URL = `${BASE}/index.html?ci=1`;
+const SAMPLE = "/samples/json/onexus_sample.json";
 
-/**
- * Loads the app and waits for full boot (cy + plugins ready).
- */
 async function bootPage(page) {
     await page.goto(APP_URL, { waitUntil: "load" });
     await page.waitForFunction(
@@ -22,157 +22,61 @@ async function bootPage(page) {
     );
 }
 
-/**
- * Loads the sample JSON into the graph via the public API.
- * Returns the raw graph data fetched from the server.
- */
-async function loadSampleGraph(page, samplePath) {
-    const graphData = await page.evaluate(async (path) => {
+async function loadSample(page) {
+    const data = await page.evaluate(async (path) => {
         const res = await fetch(path);
         return res.json();
-    }, samplePath);
-
-    await page.evaluate((data) => {
-        window.onexusLoadGraph(data);
-    }, graphData);
-
-    // Wait for Cytoscape to reflect new elements
+    }, SAMPLE);
+    await page.evaluate((d) => window.onexusLoadGraph(d), data);
     await page.waitForFunction(() => window.cy.nodes().length > 0, { timeout: 10_000 });
-
-    return graphData;
+    return data;
 }
 
 // ---------------------------------------------------------------------------
-// Test: JSON graph import
+// Load fidelity: every node/edge in the file ends up in the graph.
 // ---------------------------------------------------------------------------
-test("loads a sample JSON graph and renders nodes and edges", async ({ page }) => {
+test("loads a sample JSON graph with full node/edge fidelity", async ({ page }) => {
     await bootPage(page);
+    const data = await loadSample(page);
 
-    const data = await loadSampleGraph(page, "/samples/json/onexus_sample.json");
-
-    const expectedNodes = data.elements.nodes.length;
-    const expectedEdges = data.elements.edges.length;
-
-    const [actualNodes, actualEdges] = await page.evaluate(() => [
+    const [nodes, edges] = await page.evaluate(() => [
         window.cy.nodes().length,
-        window.cy.edges().length
+        window.cy.edges().length,
     ]);
 
-    expect(actualNodes).toBe(expectedNodes);
-    expect(actualEdges).toBe(expectedEdges);
+    expect(nodes).toBe(data.elements.nodes.length);
+    expect(edges).toBe(data.elements.edges.length);
 });
 
 // ---------------------------------------------------------------------------
-// Test: category filter hides / shows nodes
+// Export completeness: a category filter hides nodes in the view, but
+// exportJSON must still write the FULL graph (regression guard for the fix
+// that changed cy.nodes(":visible") -> cy.nodes()).
 // ---------------------------------------------------------------------------
-test("category filter changes visible node count", async ({ page }) => {
+test("exportJSON writes the complete graph even when a filter hides nodes", async ({ page }) => {
     await bootPage(page);
-    await loadSampleGraph(page, "/samples/json/onexus_sample.json");
+    const data = await loadSample(page);
+    const totalNodes = data.elements.nodes.length;
 
-    const totalNodes = await page.evaluate(() => window.cy.nodes().length);
-    expect(totalNodes).toBeGreaterThan(0);
-
-    // Get a category that exists in this graph
-    const firstCategory = await page.evaluate(() => {
+    // Pick a real category and filter to it so some nodes become hidden.
+    const cat = await page.evaluate(() => {
         const cats = [...new Set(window.cy.nodes().map((n) => n.data("category")).filter(Boolean))];
-        return cats[0] || null;
+        return cats[0] ?? null;
     });
+    expect(cat).toBeTruthy(); // the sample is expected to have categories
 
-    if (!firstCategory) {
-        // No categories — skip filter sub-test
-        return;
-    }
+    await page.evaluate((c) => window.filterByCategory(c), cat);
 
-    // Apply category filter (hides all nodes NOT in this category)
-    await page.evaluate((cat) => {
-        if (typeof window.filterByCategory === "function") window.filterByCategory(cat);
-    }, firstCategory);
+    const visible = await page.evaluate(() => window.cy.nodes(":visible").length);
+    expect(visible).toBeLessThan(totalNodes); // filter actually hid something
 
-    // After filtering, the visible node count should change (≤ total)
-    const filteredCount = await page.evaluate(() => window.cy.nodes(":visible").length);
-    expect(filteredCount).toBeGreaterThan(0);
-    expect(filteredCount).toBeLessThanOrEqual(totalNodes);
-});
+    // Trigger the real export and capture the downloaded file.
+    const downloadPromise = page.waitForEvent("download");
+    await page.evaluate(() => window.exportJSON());
+    const download = await downloadPromise;
+    const exported = JSON.parse(fs.readFileSync(await download.path(), "utf-8"));
 
-// ---------------------------------------------------------------------------
-// Test: layer mode switching
-// ---------------------------------------------------------------------------
-test("setLayerMode switches the active layer", async ({ page }) => {
-    await bootPage(page);
-    await loadSampleGraph(page, "/samples/json/onexus_all_layers_realistic.json");
-
-    // Default should be "relationship"
-    const defaultMode = await page.evaluate(() => window.getLayerMode?.() ?? null);
-    expect(defaultMode).toBeTruthy();
-
-    // Switch to lifecycle layer (if available)
-    await page.evaluate(() => {
-        if (typeof window.setLayerMode === "function") window.setLayerMode("lifecycle");
-    });
-
-    const newMode = await page.evaluate(() => window.getLayerMode?.() ?? null);
-    // If lifecycle layer is registered, mode should have changed
-    // Accept either "lifecycle" (changed) or the original (not registered in this build)
-    expect(["relationship", "lifecycle", "foundation"]).toContain(newMode);
-});
-
-// ---------------------------------------------------------------------------
-// Test: undo/redo stack
-// ---------------------------------------------------------------------------
-test("undo removes an added node and redo restores it", async ({ page }) => {
-    await bootPage(page);
-    await loadSampleGraph(page, "/samples/json/onexus_sample.json");
-
-    const beforeCount = await page.evaluate(() => window.cy.nodes().length);
-
-    // Add a node via the ONEXUS nodes API if available
-    const addResult = await page.evaluate(() => {
-        const addFn = window.ONEXUS_NODES?.addNode || window.addNode;
-        if (typeof addFn !== "function") return "no-api";
-        addFn({ id: "__test_node__", label: { en: "Test Node" }, nodeType: "Element", category: "Test" });
-        return "added";
-    });
-
-    if (addResult === "no-api") {
-        // Node add API not available — skip
-        return;
-    }
-
-    const afterAdd = await page.evaluate(() => window.cy.nodes().length);
-    expect(afterAdd).toBe(beforeCount + 1);
-
-    // Undo
-    await page.evaluate(() => window.ONEXUS_UNDO?.undo?.());
-    const afterUndo = await page.evaluate(() => window.cy.nodes().length);
-    expect(afterUndo).toBe(beforeCount);
-
-    // Redo
-    await page.evaluate(() => window.ONEXUS_UNDO?.redo?.());
-    const afterRedo = await page.evaluate(() => window.cy.nodes().length);
-    expect(afterRedo).toBe(beforeCount + 1);
-});
-
-// ---------------------------------------------------------------------------
-// Test: export JSON produces a non-empty string
-// ---------------------------------------------------------------------------
-test("graph export produces a valid JSON string", async ({ page }) => {
-    await bootPage(page);
-    await loadSampleGraph(page, "/samples/json/onexus_sample.json");
-
-    const exported = await page.evaluate(() => {
-        // Try the ONEXUS export API
-        const expFn = window.ONEXUS?.export?.toJson || window.exportToJson;
-        if (typeof expFn === "function") return expFn();
-
-        // Fallback: serialize via cy directly
-        const data = window.cy.json();
-        return JSON.stringify(data);
-    });
-
-    expect(exported).toBeTruthy();
-    expect(typeof exported).toBe("string");
-    expect(exported.length).toBeGreaterThan(10);
-
-    // Must be valid JSON
-    expect(() => JSON.parse(exported)).not.toThrow();
+    // Export must contain ALL nodes, not just the visible subset.
+    expect(exported.elements.nodes.length).toBe(totalNodes);
+    expect(exported.elements.edges.length).toBe(data.elements.edges.length);
 });

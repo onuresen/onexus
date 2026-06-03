@@ -33,13 +33,26 @@ from fastmcp import FastMCP
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-WS_PORT = 8765
-CONTROL_TIMEOUT = 8
+WS_PORT = int(os.environ.get("ONEXUS_WS_PORT", "8765"))
+CONTROL_TIMEOUT = int(os.environ.get("ONEXUS_CONTROL_TIMEOUT", "8"))
+# Max inbound WebSocket frame (bytes) — guards against a buggy/malicious client
+# sending an oversized message. Default 16 MiB; override with ONEXUS_WS_MAX_SIZE.
+WS_MAX_SIZE = int(os.environ.get("ONEXUS_WS_MAX_SIZE", str(16 * 1024 * 1024)))
 
+
+def _log(*args: Any) -> None:
+    """Log to stderr — stdout is reserved for the MCP stdio transport."""
+    print("[onexus-mcp]", *args, file=sys.stderr, flush=True)
+
+
+# Resolve the vault graph path. ONEXUS_VAULT_GRAPH (env) takes precedence so the
+# server is portable across machines/OSes; the rest are best-effort fallbacks.
 _GRAPH_SEARCH_PATHS = [
-    Path(r"E:\GitHub\esen-vault\vault-graph.json"),
-    Path(__file__).parent.parent.parent / "esen-vault" / "vault-graph.json",
-    Path(__file__).parent / "vault-graph.json",
+    p for p in [
+        Path(os.environ["ONEXUS_VAULT_GRAPH"]) if os.environ.get("ONEXUS_VAULT_GRAPH") else None,
+        Path(__file__).parent.parent.parent / "esen-vault" / "vault-graph.json",
+        Path(__file__).parent / "vault-graph.json",
+    ] if p is not None
 ]
 
 # ---------------------------------------------------------------------------
@@ -59,15 +72,18 @@ def _load_graph() -> str:
                     raw = json.load(f)
                 # Support both flat {nodes,edges} and nested {elements:{nodes,edges}}
                 _graph = raw.get("elements", raw)
+                # Tolerate nodes missing data/id rather than crashing the whole load.
                 _nodes_by_id = {
-                    n["data"]["id"]: n["data"]
+                    nid: data
                     for n in _graph.get("nodes", [])
+                    if isinstance(data := n.get("data", {}), dict) and (nid := data.get("id"))
                 }
                 _graph_path_used = str(candidate)
                 n = len(_graph.get("nodes", []))
                 e = len(_graph.get("edges", []))
                 return f"Loaded {n} nodes, {e} edges from {candidate}"
         except Exception as exc:
+            _log(f"failed to load graph from {candidate}: {exc!r}")
             continue
     _graph_path_used = "(not found)"
     return f"vault-graph.json not found. Searched: {[str(p) for p in _GRAPH_SEARCH_PATHS]}"
@@ -84,14 +100,17 @@ _pending_browser_requests: dict[str, asyncio.Future] = {}
 
 async def _ws_handler(ws) -> None:
     _ws_clients.add(ws)
+    _log(f"browser connected ({len(_ws_clients)} client(s))")
     try:
         async for raw in ws:
             try:
                 msg = json.loads(raw)
             except Exception:
                 continue
+            if not isinstance(msg, dict):
+                continue
             ack_id = msg.get("ack")
-            if ack_id:
+            if ack_id is not None:
                 fut = _pending_browser_requests.pop(str(ack_id), None)
                 if fut and not fut.done():
                     fut.set_result(msg)
@@ -99,6 +118,14 @@ async def _ws_handler(ws) -> None:
         pass
     finally:
         _ws_clients.discard(ws)
+        # If the last browser just disconnected, don't leave in-flight requests
+        # hanging for the full timeout — fail them now so tools return promptly.
+        if not _ws_clients and _pending_browser_requests:
+            for rid, fut in list(_pending_browser_requests.items()):
+                if not fut.done():
+                    fut.set_result({"ok": False, "reason": "ONEXUS browser disconnected before acknowledging."})
+                _pending_browser_requests.pop(rid, None)
+        _log(f"browser disconnected ({len(_ws_clients)} client(s) left)")
 
 
 async def _broadcast(cmd: dict) -> dict:
@@ -124,22 +151,31 @@ async def _request_browser(cmd: dict) -> dict:
         return {"ok": False, "reason": "ONEXUS browser tab not connected. Open ONEXUS and wait for the green dot."}
 
     request_id = uuid.uuid4().hex
-    payload = {**cmd, "_id": request_id}
+    payload = json.dumps({**cmd, "_id": request_id})
     loop = asyncio.get_running_loop()
     fut = loop.create_future()
     _pending_browser_requests[request_id] = fut
 
-    client = next(iter(_ws_clients))
+    # Try clients until one accepts the send; drop any that fail mid-send.
+    sent = False
+    last_exc: Exception | None = None
+    for client in list(_ws_clients):
+        try:
+            await client.send(payload)
+            sent = True
+            break
+        except Exception as exc:
+            last_exc = exc
+            _ws_clients.discard(client)
+    if not sent:
+        _pending_browser_requests.pop(request_id, None)
+        return {"ok": False, "reason": f"Failed to send command to ONEXUS browser: {last_exc}"}
+
     try:
-        await client.send(json.dumps(payload))
         return await asyncio.wait_for(fut, timeout=CONTROL_TIMEOUT)
     except asyncio.TimeoutError:
         _pending_browser_requests.pop(request_id, None)
         return {"ok": False, "reason": f"ONEXUS browser did not acknowledge '{cmd.get('cmd')}' within {CONTROL_TIMEOUT}s."}
-    except Exception as exc:
-        _pending_browser_requests.pop(request_id, None)
-        _ws_clients.discard(client)
-        return {"ok": False, "reason": f"Failed to send command to ONEXUS browser: {exc}"}
 
 
 def _dump(data: Any) -> str:
@@ -173,10 +209,17 @@ async def lifespan(server):
     _free_port(WS_PORT)
     await asyncio.sleep(0.3)
     try:
-        async with websockets.serve(_ws_handler, "localhost", WS_PORT):
+        async with websockets.serve(
+            _ws_handler, "localhost", WS_PORT,
+            max_size=WS_MAX_SIZE,   # cap inbound frame size (DoS guard)
+            ping_interval=20,       # detect dead connections
+            ping_timeout=20,
+        ):
+            _log(f"WebSocket bridge listening on ws://localhost:{WS_PORT}")
             yield
-    except OSError:
+    except OSError as exc:
         # Port still in use — run without WebSocket (query tools still work)
+        _log(f"WebSocket bridge could not bind port {WS_PORT}: {exc}. Live control tools disabled.")
         yield
 
 
@@ -357,24 +400,42 @@ def find_path(source_id: str, target_id: str) -> str:
         adj.setdefault(s, []).append((t, et))
         adj.setdefault(t, []).append((s, et))
     from collections import deque
-    q: deque = deque([(source_id, [source_id], [])])
+    # Parent-pointer BFS: O(V+E) and O(V) memory, so no artificial node cap is
+    # needed (the previous 5000 limit silently returned "not found" on big graphs).
+    parent: dict[str, tuple[str, str]] = {}  # node -> (prev_node, edge_type)
     visited: set[str] = {source_id}
-    while q:
-        cur, path, etypes = q.popleft()
+    q: deque = deque([source_id])
+    found = False
+    while q and not found:
+        cur = q.popleft()
         for nb, et in adj.get(cur, []):
+            if nb in visited:
+                continue
+            visited.add(nb)
+            parent[nb] = (cur, et)
             if nb == target_id:
-                fp = path + [nb]
-                return json.dumps({
-                    "found": True, "length": len(fp) - 1, "path": fp,
-                    "edge_types": etypes + [et],
-                    "labeled_path": [_nodes_by_id.get(n, {}).get("displayLabel", n) for n in fp],
-                }, indent=2)
-            if nb not in visited:
-                visited.add(nb)
-                if len(visited) < 5000:
-                    q.append((nb, path + [nb], etypes + [et]))
-    return json.dumps({"found": False,
-                       "message": f"No path between '{source_id}' and '{target_id}'."})
+                found = True
+                break
+            q.append(nb)
+    if not found:
+        return json.dumps({"found": False,
+                           "message": f"No path between '{source_id}' and '{target_id}'."})
+    # Reconstruct path from target back to source.
+    fp: list[str] = [target_id]
+    etypes: list[str] = []
+    cur = target_id
+    while cur != source_id:
+        prev, et = parent[cur]
+        etypes.append(et)
+        fp.append(prev)
+        cur = prev
+    fp.reverse()
+    etypes.reverse()
+    return json.dumps({
+        "found": True, "length": len(fp) - 1, "path": fp,
+        "edge_types": etypes,
+        "labeled_path": [_nodes_by_id.get(n, {}).get("displayLabel", n) for n in fp],
+    }, indent=2)
 
 
 @mcp.tool()
