@@ -401,7 +401,7 @@ function buildStyle(themeKey) {
   // Old linear formula (40 + deg*4) had a 120px cap hit at deg≥20, making all hubs identical.
   // New formula:  18 + √deg × 10  →  deg=0:18px  deg=5:40px  deg=20:63px  deg=100:118px
   // Cap raised to 200px so true hubs (ONES Plugin, Concept nodes) visually dominate.
-  const nodeBase = (deg) => 18 + Math.sqrt(Math.max(0, deg)) * 10;
+  const nodeBase = (deg) => 30 + Math.sqrt(Math.max(0, deg)) * 10;
   const nodeSize = (deg) => Math.min(200 * S, nodeBase(deg) * S);
 
   // Category-aware size cap — overrides degree-based size for low-signal node types
@@ -432,7 +432,7 @@ function buildStyle(themeKey) {
   };
   const nodeTextMaxFor = (ele) => {
     const d = nodeSizeForEle(ele);
-    return `${clamp(d * 2.1, 72, 190)}px`;
+    return `${clamp(d * 1.9, 80, 170)}px`;
   };
 
   const textOutlineW = clamp(2 * Math.pow(S, 0.75), 1, 4);
@@ -482,8 +482,9 @@ function buildStyle(themeKey) {
         "font-weight": "bold",
         width:  (ele) => nodeSizeForEle(ele),
         height: (ele) => nodeSizeForEle(ele),
-        "text-valign": "center",
+        "text-valign": "bottom",
         "text-halign": "center",
+        "text-margin-y": clamp(3 * S, 2, 7),
       },
     },
 
