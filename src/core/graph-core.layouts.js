@@ -310,7 +310,27 @@
       case "compact_grid":
         return runLayout({ name: "grid", avoidOverlap: true, avoidOverlapPadding: 14 }, 55);
       default:
-        layout = { name: "cose", padding: autoPadding() };
+        // Spacing derived from actual node sizes so labels get room to breathe.
+        // Core cose can't include label boxes in node dimensions, so we widen
+        // ideal edge length and repulsion in proportion to the endpoint sizes:
+        // big (high-degree) nodes — which also carry the biggest labels — are
+        // pushed further apart, while leaf clusters stay compact.
+        layout = {
+          name: "cose",
+          padding: autoPadding(),
+          nodeOverlap: 24,
+          idealEdgeLength: (edge) => {
+            const sw = edge.source().width() || 30;
+            const tw = edge.target().width() || 30;
+            return 60 + (sw + tw) * 0.7;
+          },
+          nodeRepulsion: (node) => 6000 + (node.width() || 30) * 350,
+          edgeElasticity: 90,
+          gravity: 0.3,
+          componentSpacing: 80,
+          nestingFactor: 1.1,
+          randomize: false,
+        };
     }
 
     runLayout(layout, autoPadding());
