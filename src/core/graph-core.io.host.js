@@ -236,6 +236,27 @@
         return;
       }
 
+      // Pre-load sanity: surface empty results and guard against graphs large
+      // enough to stall the browser (Cytoscape renders ~10k elements smoothly).
+      const nodeCount = g.elements?.nodes?.length ?? 0;
+      const edgeCount = g.elements?.edges?.length ?? 0;
+      if (nodeCount === 0) {
+        const msg = "Loaded 0 nodes — the file may be empty, unsupported, or failed to parse.";
+        if (typeof window.showTransientMessage === "function") window.showTransientMessage(msg, 4000);
+        else console.warn("[ONEXUS]", msg);
+      }
+      const LARGE_GRAPH = 10000;
+      if (nodeCount + edgeCount > LARGE_GRAPH) {
+        const proceed = window.confirm(
+          `This graph has ${nodeCount.toLocaleString()} nodes and ${edgeCount.toLocaleString()} edges ` +
+          `(${(nodeCount + edgeCount).toLocaleString()} elements). Rendering may be slow or unresponsive.\n\nLoad anyway?`
+        );
+        if (!proceed) {
+          try { window.ONEXUS?.bus?.emit?.("graphLoadFailed", { graph: g, errors: ["Load cancelled by user (large graph)"] }); } catch { }
+          return;
+        }
+      }
+
       window.__onexus_meta = g.meta ?? {};
       window.___onexus_meta = window.___onexus_meta || window.__onexus_meta;
 

@@ -10,21 +10,43 @@
   const lc = s => norm(s).toLowerCase();
   const idSafe = s => norm(s).replace(/[^\w\-:.]+/g, "_");
 
-  function detectDelimiter(firstLine) {
-    const c = (firstLine.match(/,/g) || []).length;
-    const s = (firstLine.match(/;/g) || []).length;
-    const t = (firstLine.match(/\t/g) || []).length;
-    if (t >= c && t >= s) return "\t";
-    if (c >= s) return ",";
-    return ";";
+  // Count a delimiter's occurrences in a line, ignoring anything inside quotes.
+  function countOutsideQuotes(line, delim) {
+    let n = 0, inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') inQ = !inQ;
+      else if (ch === delim && !inQ) n++;
+    }
+    return n;
+  }
+
+  // Pick the delimiter that splits the sampled lines most *consistently*
+  // (same column count per line), not just the one with the most raw chars —
+  // that avoids garbling on near-ties (e.g. 50 commas vs 51 semicolons).
+  function detectDelimiter(lines) {
+    const candidates = [",", ";", "\t"];
+    let best = ",", bestScore = -Infinity;
+    for (const d of candidates) {
+      const counts = lines.map((l) => countOutsideQuotes(l, d)).filter((_, i) => lines[i] !== "");
+      const total = counts.reduce((a, b) => a + b, 0);
+      if (total === 0) continue; // delimiter not present at all
+      // consistency: how many lines share the modal count
+      const freq = {};
+      counts.forEach((c) => { freq[c] = (freq[c] || 0) + 1; });
+      const consistency = Math.max(...Object.values(freq)) / counts.length;
+      // favour consistency, then total count; comma wins exact ties (loop order)
+      const score = consistency * 1000 + total;
+      if (score > bestScore) { bestScore = score; best = d; }
+    }
+    return best;
   }
 
   function parseCSV(text) {
     if (!text) return [];
     text = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
-    const firstNL = text.indexOf("\n");
-    const headLine = firstNL >= 0 ? text.slice(0, firstNL) : text;
-    const DELIM = detectDelimiter(headLine);
+    const sample = text.split("\n").filter((l) => l.trim() !== "").slice(0, 8);
+    const DELIM = detectDelimiter(sample.length ? sample : [text]);
 
     const rows = [];
     let i = 0, cur = "", row = [], inQuotes = false;

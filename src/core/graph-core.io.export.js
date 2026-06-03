@@ -46,8 +46,10 @@
   }
 
   function exportJSON() {
-    const nodes = cy.nodes(":visible").map((n) => ({ data: n.data() }));
-    const edges = cy.edges(":visible").map((e) => ({ data: e.data() }));
+    // Export the complete graph, not just the current view — filters/layers
+    // hide elements transiently and "Export Graph JSON" should be lossless.
+    const nodes = cy.nodes().map((n) => ({ data: n.data() }));
+    const edges = cy.edges().map((e) => ({ data: e.data() }));
 
     const payload = {
       elements: { nodes, edges },
