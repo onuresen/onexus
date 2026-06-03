@@ -71,7 +71,7 @@
   function initNavigator() {
     const host = document.querySelector("#minimap");
     if (!host || typeof cy.navigator !== "function") return;
-    try { cy.navigator({ container: "#minimap", viewLiveFramerate: 0, thumbnailEventFramerate: 30, thumbnailLiveFramerate: false, dblClickDelay: 200 }); } catch { /* noop */ }
+    try { cy.navigator({ container: "#minimap", viewLiveFramerate: 0, thumbnailEventFramerate: 15, thumbnailLiveFramerate: false, dblClickDelay: 200 }); } catch { /* noop */ }
   }
   initNavigator();
 
@@ -180,9 +180,9 @@
   }
 
   // ---- label visibility
-  function applyEdgeLabelVisibility() { const o = state.showEdgeLabels ? 1 : 0; cy.edges().forEach(e => e.style("text-opacity", o)); }
+  function applyEdgeLabelVisibility() { const o = state.showEdgeLabels ? 1 : 0; cy.edges().style("text-opacity", o); }
   function setEdgeLabelVisibility(show) { state.showEdgeLabels = !!show; applyEdgeLabelVisibility(); }
-  function applyNodeLabelVisibility() { const o = state.showNodeLabels ? 1 : 0; cy.nodes().forEach(n => n.style("text-opacity", o)); }
+  function applyNodeLabelVisibility() { const o = state.showNodeLabels ? 1 : 0; cy.nodes().style("text-opacity", o); }
   function setNodeLabelVisibility(show) { state.showNodeLabels = !!show; applyNodeLabelVisibility(); }
 
   // ---- focus (N-hop)
@@ -271,11 +271,12 @@
     if (level === state.lodLevel) return;
     state.lodLevel = level;
 
-    cy.nodes().removeClass("lod-low lod-mid lod-high");
-    cy.edges().removeClass("lod-low lod-mid lod-high");
     const clazz = `lod-${level}`;
-    cy.nodes().addClass(clazz);
-    cy.edges().addClass(clazz);
+    // Coalesce the class swaps into a single render pass.
+    cy.batch(() => {
+      cy.nodes().removeClass("lod-low lod-mid lod-high").addClass(clazz);
+      cy.edges().removeClass("lod-low lod-mid lod-high").addClass(clazz);
+    });
   }
   cy.on("zoom", debounce(applyLOD, 50));
   // initialize once
