@@ -28,17 +28,18 @@
         return out;
     }
 
-    function isEdgesCsvHeader(firstLineLower) {
-        return firstLineLower.includes("id,type,dimension,directional,source,target");
+    // An edges CSV is identified by having the essential columns present —
+    // column order doesn't matter, since values are read via a header index map.
+    function isEdgesCsvHeader(headerCols) {
+        return headerCols.includes("source") && headerCols.includes("target");
     }
 
     function parseEdgesCsvToGraph(csvText, { keepExistingNodes = true } = {}) {
         const lines = String(csvText ?? "").split(/\r?\n/).filter(Boolean);
         const headerLine = lines.shift() ?? "";
-        const headerLower = headerLine.toLowerCase();
-        if (!isEdgesCsvHeader(headerLower)) throw new Error("Not an ONEXUS edges CSV (header mismatch).");
-
         const header = headerLine.split(",").map(h => h.trim().toLowerCase());
+        if (!isEdgesCsvHeader(header)) throw new Error("Not an ONEXUS edges CSV (needs 'source' and 'target' columns).");
+
         const idx = Object.fromEntries(header.map((h, i) => [h, i]));
 
         const edges = [];
