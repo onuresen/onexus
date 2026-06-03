@@ -428,11 +428,11 @@ function buildStyle(themeKey) {
   // larger, wider label; leaves get a compact one that fits the node.
   const nodeFontFor = (ele) => {
     const d = nodeSizeForEle(ele);
-    return `${clamp(d * 0.26, 7.5, 15)}px`;
+    return `${clamp(d * 0.22, 7, 14)}px`;
   };
   const nodeTextMaxFor = (ele) => {
     const d = nodeSizeForEle(ele);
-    return `${clamp(d * 1.7, 64, 168)}px`;
+    return `${clamp(d * 2.1, 72, 190)}px`;
   };
 
   const textOutlineW = clamp(2 * Math.pow(S, 0.75), 1, 4);
