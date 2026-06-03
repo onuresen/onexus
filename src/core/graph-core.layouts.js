@@ -322,9 +322,9 @@
           idealEdgeLength: (edge) => {
             const sw = edge.source().width() || 30;
             const tw = edge.target().width() || 30;
-            return 60 + (sw + tw) * 0.7;
+            return 90 + (sw + tw) * 0.9;
           },
-          nodeRepulsion: (node) => 6000 + (node.width() || 30) * 350,
+          nodeRepulsion: (node) => 9000 + (node.width() || 30) * 450,
           edgeElasticity: 90,
           gravity: 0.3,
           componentSpacing: 80,
