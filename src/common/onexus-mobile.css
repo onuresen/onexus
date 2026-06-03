@@ -196,18 +196,35 @@
         margin-top: 0;
     }
 
-    /* Put toolbar icon buttons into a compact grid */
+    /* Labeled action grid — icon + caption so each tool is legible on touch */
     #onx-toolbar-more .icongrid {
         display: grid;
-        grid-template-columns: repeat(6, 44px);
-        gap: 10px;
-        justify-content: start;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px 8px;
+    }
+
+    #onx-toolbar-more .onx-icon-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        text-align: center;
     }
 
     #onx-toolbar-more .icongrid .icon-btn {
         width: 44px;
         height: 44px;
         border-radius: 12px;
+        flex: 0 0 auto;
+    }
+
+    #onx-toolbar-more .onx-icon-cap {
+        font-size: 10px;
+        line-height: 1.2;
+        font-weight: 600;
+        color: var(--text-muted);
+        max-width: 100%;
+        overflow-wrap: anywhere;
     }
 
     /* Keep popovers sane */
@@ -272,16 +289,21 @@
         border-color: rgba(255, 255, 255, 0.14);
     }
 
-    /* More popover: full-width selects inside */
+    /* More popover: compact full-width selects inside */
     #onx-toolbar-more select {
         width: 100%;
-        height: 38px;
+        height: 34px;
         padding: 0 10px;
-        border-radius: 10px;
+        border-radius: 8px;
         border: 1px solid var(--stroke);
         background: var(--btn-bg);
         color: var(--text-main);
         font-size: 13px;
+    }
+
+    /* Tighter rows for the Language/Layer/View/Theme selectors */
+    #onx-toolbar-more-primary > div[style*="grid"] {
+        margin-bottom: 6px !important;
     }
 
     /* Label toggle rows inside More popover */

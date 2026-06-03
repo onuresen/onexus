@@ -14,6 +14,12 @@
 
     function $(id) { return document.getElementById(id); }
 
+    // Short caption for an icon button — strips trailing "(shortcut)" hints
+    function captionFor(btn) {
+        const raw = btn.getAttribute("aria-label") || btn.getAttribute("title") || "";
+        return raw.replace(/\s*\([^)]*\)\s*$/, "").trim();
+    }
+
     function ensureBtn(id, text) {
         let b = $(id);
         if (b) return b;
@@ -225,11 +231,12 @@
             hostPrimary.appendChild(labSection);
         }
 
-        // Clone iconbar buttons into grid (keep original handlers by dispatching clicks)
+        // Clone iconbar buttons into a labeled grid (no hover tooltips on touch,
+        // so each tile gets a caption derived from the button's aria-label/title)
         const iconbar = document.querySelector(".iconbar");
         if (iconbar) {
             const buttons = Array.from(iconbar.querySelectorAll("button.icon-btn"));
-            buttons.forEach((btn, idx) => {
+            buttons.forEach((btn) => {
                 const proxy = btn.cloneNode(true);
                 proxy.id = ""; // avoid duplicate IDs
                 proxy.addEventListener("click", (e) => {
@@ -237,7 +244,15 @@
                     e.stopPropagation();
                     btn.click();         // run original handler
                 });
-                hostIcons.appendChild(proxy);
+
+                const tile = document.createElement("div");
+                tile.className = "onx-icon-tile";
+                const cap = document.createElement("span");
+                cap.className = "onx-icon-cap";
+                cap.textContent = captionFor(btn);
+                tile.appendChild(proxy);
+                tile.appendChild(cap);
+                hostIcons.appendChild(tile);
             });
         }
 
