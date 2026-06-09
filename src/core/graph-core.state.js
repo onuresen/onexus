@@ -62,7 +62,7 @@
   const cy = cytoscape({
     container: document.getElementById("cy"),
     elements: [],
-    style: NEXUS_STYLE, // from onexus-style.js
+    style: window.NEXUS_STYLE, // from onexus-style.js
     minZoom: 0.2, maxZoom: 10, wheelSensitivity: 0.2,
   });
   window.cy = cy;

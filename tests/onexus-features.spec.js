@@ -7,7 +7,7 @@
  * hiding part of it. If either of these breaks, the app is genuinely broken.
  */
 
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("playwright/test");
 const fs = require("fs");
 
 const BASE = process.env.BASE_URL || "http://127.0.0.1:4173";
@@ -79,4 +79,48 @@ test("exportJSON writes the complete graph even when a filter hides nodes", asyn
     // Export must contain ALL nodes, not just the visible subset.
     expect(exported.elements.nodes.length).toBe(totalNodes);
     expect(exported.elements.edges.length).toBe(data.elements.edges.length);
+});
+
+// ---------------------------------------------------------------------------
+// Security: untrusted graph values rendered into the details panel must be
+// escaped, not interpreted as HTML.
+// ---------------------------------------------------------------------------
+test("details panel escapes untrusted graph text", async ({ page }) => {
+    await bootPage(page);
+
+    const payload = `<img src=x onerror="window.__onexusXss = 1">`;
+    await page.evaluate((maliciousText) => {
+        window.__onexusXss = 0;
+        window.onexusLoadGraph({
+            meta: { schema: "onexus-1.1", project: "XSS regression" },
+            elements: {
+                nodes: [{
+                    data: {
+                        id: "xss-node",
+                        displayLabel: maliciousText,
+                        nodeType: maliciousText,
+                        category: maliciousText,
+                        level: maliciousText,
+                        ifcProperties: {
+                            [maliciousText]: { [maliciousText]: maliciousText },
+                        },
+                    },
+                }],
+                edges: [],
+            },
+        });
+        window.cy.getElementById("xss-node").emit("tap");
+    }, payload);
+
+    await page.waitForTimeout(100);
+
+    const result = await page.evaluate(() => ({
+        executed: window.__onexusXss,
+        injectedImages: document.querySelectorAll("#onxFloatDetailsBody img").length,
+        detailsText: document.querySelector("#onxFloatDetailsBody")?.textContent ?? "",
+    }));
+
+    expect(result.executed).toBe(0);
+    expect(result.injectedImages).toBe(0);
+    expect(result.detailsText).toContain(payload);
 });

@@ -2,6 +2,18 @@
 .DS_Store
 Thumbs.db
 
+# Dependency folders
+node_modules/
+onexus-backend/node_modules/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Test / report output
+playwright-report/
+test-results/
+
 # Secrets & private data
 *.env
 *key.txt
@@ -15,9 +27,10 @@ samples/wip/
 
 # Revit Addin build artifacts
 Revit_Addin/.vs/
-Revit_Addin/Onexus/bin/Debug/net8.0-windows/
+Revit_Addin/packages/
+Revit_Addin/Onexus/bin/
 Revit_Addin/Onexus/bin/Release/
-Revit_Addin/Onexus/obj/Debug/net8.0-windows/
+Revit_Addin/Onexus/obj/
 Revit_Addin/Onexus/obj/Release/
 Revit_Addin/Onexus/obj/x64/
 Revit_Addin/Onexus/obj/*.nuget.dgspec.json

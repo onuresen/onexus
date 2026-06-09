@@ -280,6 +280,7 @@
       spacingFactor: autoSpacingFactor(),
       grid: true,
     });
+    let layout;
 
     switch (type) {
       case "system": {

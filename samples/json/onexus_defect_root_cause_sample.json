@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "Construction Defect Root Cause",
+    "description": "A defect graph linking issue, location, trade, material, inspection, and prior decision. Demo question: what earlier decision contributed to this defect?",
+    "languageDefault": "en",
+    "phases": ["Install", "Inspect", "Investigate", "Correct"],
+    "recommendedLayout": "dependency_flow",
+    "demoQuestion": "What earlier decision contributed to this defect?"
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "DEF-042", "nodeType": "Defect", "category": "Defect", "label": { "en": "Water ingress at facade joint" }, "status": "open", "risk": "High" } },
+      { "data": { "id": "LOC-L5-EAST", "nodeType": "Location", "category": "Zone", "label": { "en": "Level 5 East Facade" } } },
+      { "data": { "id": "TRADE-FACADE", "nodeType": "Organization", "category": "Trade", "label": { "en": "Facade Installer" }, "risk": "Medium" } },
+      { "data": { "id": "MAT-SEALANT-A", "nodeType": "Material", "category": "Material", "label": { "en": "Sealant Type A" }, "batch": "SA-2026-04", "risk": "Medium" } },
+      { "data": { "id": "INS-117", "nodeType": "Inspection", "category": "Inspection", "label": { "en": "Facade joint inspection INS-117" }, "status": "failed", "risk": "High" } },
+      { "data": { "id": "DEC-SEALANT-SWAP", "nodeType": "Decision", "category": "Decision", "label": { "en": "Decision: approve sealant substitution" }, "status": "approved", "risk": "High" } },
+      { "data": { "id": "SPEC-FACADE-09", "nodeType": "Document", "category": "Specification", "label": { "en": "Facade Specification FS-09" }, "status": "superseded" } },
+      { "data": { "id": "ACTION-RESEAL", "nodeType": "CorrectiveAction", "category": "Action", "label": { "en": "Reseal affected joints" }, "status": "planned", "risk": "Medium" } },
+      { "data": { "id": "RISK-RAIN", "nodeType": "Risk", "category": "Risk", "label": { "en": "Rain exposure before cure" }, "risk": "High" } }
+    ],
+    "edges": [
+      { "data": { "id": "DEF-001", "type": "located_at", "dimension": "Spatial", "source": "DEF-042", "target": "LOC-L5-EAST", "directional": true, "phase": ["Inspect"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "DEF-002", "type": "installed_by", "dimension": "Responsibility", "source": "MAT-SEALANT-A", "target": "TRADE-FACADE", "directional": true, "phase": ["Install"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "DEF-003", "type": "found_by", "dimension": "Inspection", "source": "DEF-042", "target": "INS-117", "directional": true, "phase": ["Inspect"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "DEF-004", "type": "uses_material", "dimension": "Material", "source": "DEF-042", "target": "MAT-SEALANT-A", "directional": true, "phase": ["Investigate"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "DEF-005", "type": "approved_by_decision", "dimension": "Decision", "source": "MAT-SEALANT-A", "target": "DEC-SEALANT-SWAP", "directional": true, "phase": ["Investigate"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "DEF-006", "type": "supersedes", "dimension": "Document", "source": "DEC-SEALANT-SWAP", "target": "SPEC-FACADE-09", "directional": true, "phase": ["Install"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "DEF-007", "type": "creates_risk", "dimension": "Risk", "source": "DEC-SEALANT-SWAP", "target": "RISK-RAIN", "directional": true, "phase": ["Install"], "risk": "High", "confidence": "Inferred", "notes": "Substitute sealant had longer cure time during a rainy installation window." } },
+      { "data": { "id": "DEF-008", "type": "contributes_to", "dimension": "Risk", "source": "RISK-RAIN", "target": "DEF-042", "directional": true, "phase": ["Investigate"], "risk": "High", "confidence": "Inferred" } },
+      { "data": { "id": "DEF-009", "type": "resolved_by", "dimension": "Action", "source": "DEF-042", "target": "ACTION-RESEAL", "directional": true, "phase": ["Correct"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "DEF-010", "type": "assigned_to", "dimension": "Responsibility", "source": "ACTION-RESEAL", "target": "TRADE-FACADE", "directional": true, "phase": ["Correct"], "risk": "Medium", "confidence": "Explicit" } }
+    ]
+  }
+}

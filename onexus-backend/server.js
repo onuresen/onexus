@@ -12,6 +12,7 @@ const __dirname = path.dirname(__filename);
 // Config
 // ===============================
 const PORT = process.env.PORT || 8787;
+const HOST = process.env.HOST || process.env.ONEXUS_HOST || "127.0.0.1";
 const STORAGE_DIR = process.env.ONEXUS_STORAGE_DIR
     ? path.resolve(process.env.ONEXUS_STORAGE_DIR)
     : path.join(__dirname, "storage");
@@ -264,7 +265,14 @@ app.use((err, _req, res, _next) => {
 // ===============================
 // Start
 // ===============================
-app.listen(PORT, () => {
-    console.log(`[ONEXUS storage] listening on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+    const publicHost = !["127.0.0.1", "localhost", "::1"].includes(String(HOST).toLowerCase());
+    console.log(`[ONEXUS storage] listening on http://${HOST}:${PORT}`);
     console.log(`[ONEXUS storage] storage dir: ${STORAGE_DIR}`);
+    if (ALLOWED_ORIGIN === "*") {
+        console.warn("[ONEXUS storage] WARNING: ONEXUS_ALLOWED_ORIGIN='*' allows any browser origin. Use only on trusted local networks.");
+    }
+    if (publicHost) {
+        console.warn("[ONEXUS storage] WARNING: backend is not bound to localhost. This service has no authentication by design.");
+    }
 });

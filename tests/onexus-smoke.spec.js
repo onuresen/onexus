@@ -1,4 +1,4 @@
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("playwright/test");
 
 test("ONEXUS boots, loads plugins, passes audit + selftest", async ({ page }) => {
     const base = process.env.BASE_URL || "http://127.0.0.1:4173";

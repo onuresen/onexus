@@ -38,6 +38,7 @@ CONTROL_TIMEOUT = int(os.environ.get("ONEXUS_CONTROL_TIMEOUT", "8"))
 # Max inbound WebSocket frame (bytes) — guards against a buggy/malicious client
 # sending an oversized message. Default 16 MiB; override with ONEXUS_WS_MAX_SIZE.
 WS_MAX_SIZE = int(os.environ.get("ONEXUS_WS_MAX_SIZE", str(16 * 1024 * 1024)))
+FREE_PORT_ON_START = os.environ.get("ONEXUS_FREE_PORT", "").lower() in {"1", "true", "yes"}
 
 
 def _log(*args: Any) -> None:
@@ -206,8 +207,11 @@ def _free_port(port: int) -> None:
 
 @asynccontextmanager
 async def lifespan(server):
-    _free_port(WS_PORT)
-    await asyncio.sleep(0.3)
+    if FREE_PORT_ON_START:
+        _free_port(WS_PORT)
+        await asyncio.sleep(0.3)
+    else:
+        _log(f"port cleanup disabled; set ONEXUS_FREE_PORT=1 to kill a stale listener on {WS_PORT}")
     try:
         async with websockets.serve(
             _ws_handler, "localhost", WS_PORT,

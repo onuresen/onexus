@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "Stakeholder Responsibility Map",
+    "description": "A responsibility graph showing who owns, approves, reviews, and blocks project deliverables. Demo question: where is the approval bottleneck?",
+    "languageDefault": "en",
+    "phases": ["Design", "Review", "Approval", "Issue"],
+    "recommendedLayout": "responsibility",
+    "demoQuestion": "Which stakeholder is the bottleneck for approvals?"
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "ORG-CLIENT", "nodeType": "Organization", "category": "Client", "label": { "en": "Client Representative" }, "risk": "Medium" } },
+      { "data": { "id": "ORG-PM", "nodeType": "Organization", "category": "ProjectManagement", "label": { "en": "Project Manager" }, "risk": "Medium" } },
+      { "data": { "id": "ORG-ARCH", "nodeType": "Organization", "category": "DesignTeam", "label": { "en": "Architecture Lead" } } },
+      { "data": { "id": "ORG-STRUCT", "nodeType": "Organization", "category": "DesignTeam", "label": { "en": "Structural Lead" } } },
+      { "data": { "id": "ORG-MEP", "nodeType": "Organization", "category": "DesignTeam", "label": { "en": "MEP Lead" } } },
+      { "data": { "id": "ORG-FIRE", "nodeType": "Organization", "category": "Reviewer", "label": { "en": "Fire Authority Reviewer" }, "risk": "High" } },
+      { "data": { "id": "PKG-FACADE", "nodeType": "Deliverable", "category": "DesignPackage", "label": { "en": "Facade Design Package" }, "status": "review" } },
+      { "data": { "id": "PKG-FIRE", "nodeType": "Deliverable", "category": "ApprovalPackage", "label": { "en": "Fire Strategy Submission" }, "status": "approval", "risk": "High" } },
+      { "data": { "id": "PKG-MEP", "nodeType": "Deliverable", "category": "DesignPackage", "label": { "en": "MEP Coordination Package" }, "status": "design" } },
+      { "data": { "id": "DEC-ESCALATE", "nodeType": "Decision", "category": "Decision", "label": { "en": "Escalate fire review dependency" }, "status": "pending", "risk": "High" } },
+      { "data": { "id": "ISSUE-WAITING", "nodeType": "Issue", "category": "CoordinationIssue", "label": { "en": "Facade package waiting for fire approval" }, "status": "open", "risk": "High" } }
+    ],
+    "edges": [
+      { "data": { "id": "RESP-001", "type": "owns", "dimension": "Responsibility", "source": "PKG-FACADE", "target": "ORG-ARCH", "directional": true, "phase": ["Design"], "confidence": "Explicit" } },
+      { "data": { "id": "RESP-002", "type": "owns", "dimension": "Responsibility", "source": "PKG-MEP", "target": "ORG-MEP", "directional": true, "phase": ["Design"], "confidence": "Explicit" } },
+      { "data": { "id": "RESP-003", "type": "owns", "dimension": "Responsibility", "source": "PKG-FIRE", "target": "ORG-FIRE", "directional": true, "phase": ["Review", "Approval"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "RESP-004", "type": "approves", "dimension": "Responsibility", "source": "ORG-CLIENT", "target": "PKG-FACADE", "directional": true, "phase": ["Approval"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "RESP-005", "type": "approves", "dimension": "Responsibility", "source": "ORG-FIRE", "target": "PKG-FIRE", "directional": true, "phase": ["Approval"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "RESP-006", "type": "coordinates", "dimension": "Responsibility", "source": "ORG-PM", "target": "ORG-ARCH", "directional": true, "phase": ["Review"], "confidence": "Explicit" } },
+      { "data": { "id": "RESP-007", "type": "coordinates", "dimension": "Responsibility", "source": "ORG-PM", "target": "ORG-MEP", "directional": true, "phase": ["Review"], "confidence": "Explicit" } },
+      { "data": { "id": "RESP-008", "type": "reviewed_by", "dimension": "Responsibility", "source": "PKG-FACADE", "target": "ORG-STRUCT", "directional": true, "phase": ["Review"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "RESP-009", "type": "blocks", "dimension": "Issue", "source": "PKG-FIRE", "target": "PKG-FACADE", "directional": true, "phase": ["Approval"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "RESP-010", "type": "creates_risk", "dimension": "Issue", "source": "PKG-FIRE", "target": "ISSUE-WAITING", "directional": true, "phase": ["Issue"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "RESP-011", "type": "requires", "dimension": "Decision", "source": "DEC-ESCALATE", "target": "ISSUE-WAITING", "directional": true, "phase": ["Issue"], "risk": "High", "confidence": "Explicit" } }
+    ]
+  }
+}

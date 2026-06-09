@@ -35,6 +35,14 @@ module.exports = [
     },
   },
   {
+    files: ["tests/**/*.js"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
     // Dev-only tools may use looser patterns
     files: ["src/dev/**/*.js"],
     rules: { "no-unused-vars": "off" },

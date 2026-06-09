@@ -1,6 +1,66 @@
 {
     "samples": [
         {
+            "id": "ic-supply-chain-delay",
+            "label": "IC Supply Chain Delay",
+            "path": "./samples/json/onexus_ic_supply_chain_sample.json",
+            "description": "Use case — supplier delay cascade across components, processes, zones, and milestones"
+        },
+        {
+            "id": "rod-decision-traceability",
+            "label": "ROD Decision Traceability",
+            "path": "./samples/json/onexus_rod_decision_traceability_sample.json",
+            "description": "Use case — decision record plus relation graph for downstream impact tracing"
+        },
+        {
+            "id": "bim-coordination-impact",
+            "label": "BIM Coordination Impact",
+            "path": "./samples/json/onexus_bim_coordination_impact_sample.json",
+            "description": "Use case — wall movement impact across rooms, doors, MEP, fire zone, drawings, and issues"
+        },
+        {
+            "id": "vault-mini-graph",
+            "label": "Vault Mini Graph",
+            "path": "./samples/json/onexus_vault_mini_graph_sample.json",
+            "description": "Use case — vault notes showing an idea evolving into a project, sample, and publishing artifact"
+        },
+        {
+            "id": "kit-of-parts-assembly-risk",
+            "label": "Kit-of-Parts Assembly Risk",
+            "path": "./samples/json/onexus_kit_of_parts_assembly_risk_sample.json",
+            "description": "Use case — modular parts, variants, suppliers, compliance rules, and assembly sequence risk"
+        },
+        {
+            "id": "stakeholder-responsibility",
+            "label": "Stakeholder Responsibility",
+            "path": "./samples/json/onexus_stakeholder_responsibility_sample.json",
+            "description": "Use case — ownership, approvals, reviewers, and bottlenecks across project deliverables"
+        },
+        {
+            "id": "design-option-comparison",
+            "label": "Design Option Comparison",
+            "path": "./samples/json/onexus_design_option_comparison_sample.json",
+            "description": "Use case — compare options across cost, carbon, schedule, risk, and compliance"
+        },
+        {
+            "id": "permit-approval-dependency",
+            "label": "Permit Approval Dependency",
+            "path": "./samples/json/onexus_permit_approval_dependency_sample.json",
+            "description": "Use case — submission prerequisites, reviewers, approval gates, and blocked permits"
+        },
+        {
+            "id": "defect-root-cause",
+            "label": "Defect Root Cause",
+            "path": "./samples/json/onexus_defect_root_cause_sample.json",
+            "description": "Use case — trace a construction defect to material, inspection, trade, and prior decision"
+        },
+        {
+            "id": "ai-workflow-validation",
+            "label": "AI Workflow Validation",
+            "path": "./samples/json/onexus_ai_workflow_validation_sample.json",
+            "description": "Use case — AI output, validation checks, evidence gaps, and accept/reject decisions"
+        },
+        {
             "id": "showcase",
             "label": "Smart Building Security Hub",
             "path": "./samples/json/onexus_showcase.json",

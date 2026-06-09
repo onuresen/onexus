@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "IC Supply Chain Delay",
+    "description": "A compact industrialized-construction supply chain graph. Demo question: Steel Fabricator A is delayed 3 weeks; what downstream work and milestones are at risk?",
+    "languageDefault": "en",
+    "phases": ["Procurement", "Fabrication", "Installation", "Milestone"],
+    "recommendedLayout": "dependency_flow",
+    "demoQuestion": "Steel Fabricator A is delayed 3 weeks. What milestones are at risk?"
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "SUP-STEEL-A", "nodeType": "Supplier", "category": "Supplier", "label": { "en": "Steel Fabricator A" }, "supply_risk": "high", "lead_time_days": 84, "delay_days": 21 } },
+      { "data": { "id": "SUP-MEP-B", "nodeType": "Supplier", "category": "Supplier", "label": { "en": "MEP Module Supplier B" }, "supply_risk": "medium", "lead_time_days": 56 } },
+      { "data": { "id": "SUP-FACADE-C", "nodeType": "Supplier", "category": "Supplier", "label": { "en": "Facade Panel Supplier C" }, "supply_risk": "medium", "lead_time_days": 49 } },
+      { "data": { "id": "LOG-CRANE", "nodeType": "Resource", "category": "SiteLogistics", "label": { "en": "Tower Crane Slot" }, "supply_risk": "medium" } },
+
+      { "data": { "id": "COMP-STRUCT-FRAME", "nodeType": "Component", "category": "Structure", "label": { "en": "Structural Frame Package" }, "supply_risk": "high", "lead_time_days": 84 } },
+      { "data": { "id": "COMP-MEP-RACK", "nodeType": "Component", "category": "MEP", "label": { "en": "Prefabricated MEP Rack" }, "supply_risk": "medium", "lead_time_days": 56 } },
+      { "data": { "id": "COMP-FACADE-PANEL", "nodeType": "Component", "category": "Facade", "label": { "en": "Unitized Facade Panel" }, "supply_risk": "medium", "lead_time_days": 49 } },
+
+      { "data": { "id": "PROC-STEEL-ERECTION", "nodeType": "Process", "category": "Installation", "label": { "en": "Steel Erection" }, "sequence": 10 } },
+      { "data": { "id": "PROC-MEP-ROUGHIN", "nodeType": "Process", "category": "Installation", "label": { "en": "MEP Rough-in" }, "sequence": 20 } },
+      { "data": { "id": "PROC-FACADE-INSTALL", "nodeType": "Process", "category": "Installation", "label": { "en": "Facade Installation" }, "sequence": 30 } },
+
+      { "data": { "id": "ZONE-TOWER-A", "nodeType": "Zone", "category": "Zone", "label": { "en": "Tower A - Levels 4-8" } } },
+      { "data": { "id": "SCHED-M5-FRAME", "nodeType": "Schedule", "category": "Milestone", "label": { "en": "M5 Frame Complete" }, "target_date": "2026-09-14", "risk": "High" } },
+      { "data": { "id": "SCHED-M7-DRYIN", "nodeType": "Schedule", "category": "Milestone", "label": { "en": "M7 Weather-tight Dry-in" }, "target_date": "2026-10-19", "risk": "High" } }
+    ],
+    "edges": [
+      { "data": { "id": "IC-001", "type": "supplies", "dimension": "Supply", "source": "SUP-STEEL-A", "target": "COMP-STRUCT-FRAME", "directional": true, "phase": ["Procurement", "Fabrication"], "risk": "High", "confidence": "Explicit", "notes": "Delayed supplier feeds the critical structural frame package." } },
+      { "data": { "id": "IC-002", "type": "supplies", "dimension": "Supply", "source": "SUP-MEP-B", "target": "COMP-MEP-RACK", "directional": true, "phase": ["Procurement", "Fabrication"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "IC-003", "type": "supplies", "dimension": "Supply", "source": "SUP-FACADE-C", "target": "COMP-FACADE-PANEL", "directional": true, "phase": ["Procurement", "Fabrication"], "risk": "Medium", "confidence": "Explicit" } },
+
+      { "data": { "id": "IC-004", "type": "requires", "dimension": "Dependency", "source": "PROC-STEEL-ERECTION", "target": "COMP-STRUCT-FRAME", "directional": true, "phase": ["Installation"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "IC-005", "type": "requires", "dimension": "Dependency", "source": "PROC-MEP-ROUGHIN", "target": "COMP-MEP-RACK", "directional": true, "phase": ["Installation"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "IC-006", "type": "requires", "dimension": "Dependency", "source": "PROC-FACADE-INSTALL", "target": "COMP-FACADE-PANEL", "directional": true, "phase": ["Installation"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "IC-007", "type": "requires", "dimension": "Dependency", "source": "PROC-STEEL-ERECTION", "target": "LOG-CRANE", "directional": true, "phase": ["Installation"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "IC-008", "type": "requires", "dimension": "Dependency", "source": "PROC-FACADE-INSTALL", "target": "LOG-CRANE", "directional": true, "phase": ["Installation"], "risk": "Medium", "confidence": "Inferred", "notes": "Facade installation competes for crane time after frame delay." } },
+
+      { "data": { "id": "IC-009", "type": "blocks", "dimension": "Dependency", "source": "PROC-STEEL-ERECTION", "target": "PROC-MEP-ROUGHIN", "directional": true, "phase": ["Installation"], "risk": "High", "confidence": "Explicit", "notes": "MEP rough-in cannot start until the frame is stable and released." } },
+      { "data": { "id": "IC-010", "type": "blocks", "dimension": "Dependency", "source": "PROC-MEP-ROUGHIN", "target": "PROC-FACADE-INSTALL", "directional": true, "phase": ["Installation"], "risk": "High", "confidence": "Explicit", "notes": "Facade close-up depends on MEP rough-in access." } },
+
+      { "data": { "id": "IC-011", "type": "installed_in", "dimension": "Spatial", "source": "PROC-STEEL-ERECTION", "target": "ZONE-TOWER-A", "directional": true, "phase": ["Installation"], "confidence": "Explicit" } },
+      { "data": { "id": "IC-012", "type": "installed_in", "dimension": "Spatial", "source": "PROC-MEP-ROUGHIN", "target": "ZONE-TOWER-A", "directional": true, "phase": ["Installation"], "confidence": "Explicit" } },
+      { "data": { "id": "IC-013", "type": "installed_in", "dimension": "Spatial", "source": "PROC-FACADE-INSTALL", "target": "ZONE-TOWER-A", "directional": true, "phase": ["Installation"], "confidence": "Explicit" } },
+
+      { "data": { "id": "IC-014", "type": "drives", "dimension": "Schedule", "source": "PROC-STEEL-ERECTION", "target": "SCHED-M5-FRAME", "directional": true, "phase": ["Milestone"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "IC-015", "type": "drives", "dimension": "Schedule", "source": "PROC-FACADE-INSTALL", "target": "SCHED-M7-DRYIN", "directional": true, "phase": ["Milestone"], "risk": "High", "confidence": "Explicit" } }
+    ]
+  }
+}

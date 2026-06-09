@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "Design Option Comparison",
+    "description": "A graph comparing design options against cost, carbon, schedule, risk, and compliance criteria. Demo question: which option is lowest risk without losing the carbon target?",
+    "languageDefault": "en",
+    "phases": ["Concept", "Evaluation", "Decision"],
+    "recommendedLayout": "category_lanes",
+    "demoQuestion": "Which option keeps carbon low without creating schedule risk?"
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "OPT-A", "nodeType": "Option", "category": "DesignOption", "label": { "en": "Option A - Steel Frame" }, "cost_index": 1.0, "carbon_index": 1.35, "schedule_weeks": 28, "risk": "Medium" } },
+      { "data": { "id": "OPT-B", "nodeType": "Option", "category": "DesignOption", "label": { "en": "Option B - Hybrid Timber" }, "cost_index": 1.12, "carbon_index": 0.78, "schedule_weeks": 31, "risk": "Medium" } },
+      { "data": { "id": "OPT-C", "nodeType": "Option", "category": "DesignOption", "label": { "en": "Option C - Precast Concrete" }, "cost_index": 0.94, "carbon_index": 1.18, "schedule_weeks": 25, "risk": "High" } },
+      { "data": { "id": "CRIT-COST", "nodeType": "Criterion", "category": "Metric", "label": { "en": "Capital Cost" } } },
+      { "data": { "id": "CRIT-CARBON", "nodeType": "Criterion", "category": "Metric", "label": { "en": "Embodied Carbon" }, "target": "low" } },
+      { "data": { "id": "CRIT-SCHEDULE", "nodeType": "Criterion", "category": "Metric", "label": { "en": "Programme Duration" } } },
+      { "data": { "id": "CRIT-SEISMIC", "nodeType": "Criterion", "category": "Compliance", "label": { "en": "Seismic Compliance" }, "risk": "High" } },
+      { "data": { "id": "RISK-SUPPLY", "nodeType": "Risk", "category": "Risk", "label": { "en": "Supplier Capacity Risk" }, "risk": "High" } },
+      { "data": { "id": "DEC-PREFERRED", "nodeType": "Decision", "category": "Decision", "label": { "en": "Preferred option recommendation" }, "status": "pending" } }
+    ],
+    "edges": [
+      { "data": { "id": "OPT-001", "type": "scores_against", "dimension": "Option", "source": "OPT-A", "target": "CRIT-COST", "directional": true, "phase": ["Evaluation"], "risk": "Low", "confidence": "Explicit", "notes": "Baseline cost." } },
+      { "data": { "id": "OPT-002", "type": "scores_against", "dimension": "Option", "source": "OPT-B", "target": "CRIT-CARBON", "directional": true, "phase": ["Evaluation"], "risk": "Low", "confidence": "Explicit", "notes": "Best carbon performance." } },
+      { "data": { "id": "OPT-003", "type": "scores_against", "dimension": "Option", "source": "OPT-C", "target": "CRIT-SCHEDULE", "directional": true, "phase": ["Evaluation"], "risk": "Low", "confidence": "Explicit", "notes": "Shortest schedule." } },
+      { "data": { "id": "OPT-004", "type": "creates_risk", "dimension": "Risk", "source": "OPT-B", "target": "RISK-SUPPLY", "directional": true, "phase": ["Evaluation"], "risk": "Medium", "confidence": "Inferred", "notes": "Hybrid timber supplier capacity is limited." } },
+      { "data": { "id": "OPT-005", "type": "creates_risk", "dimension": "Risk", "source": "OPT-C", "target": "RISK-SUPPLY", "directional": true, "phase": ["Evaluation"], "risk": "High", "confidence": "Explicit", "notes": "Precast yard availability conflicts with target start date." } },
+      { "data": { "id": "OPT-006", "type": "constrained_by", "dimension": "Compliance", "source": "OPT-A", "target": "CRIT-SEISMIC", "directional": true, "phase": ["Evaluation"], "risk": "Low", "confidence": "Explicit" } },
+      { "data": { "id": "OPT-007", "type": "constrained_by", "dimension": "Compliance", "source": "OPT-B", "target": "CRIT-SEISMIC", "directional": true, "phase": ["Evaluation"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "OPT-008", "type": "constrained_by", "dimension": "Compliance", "source": "OPT-C", "target": "CRIT-SEISMIC", "directional": true, "phase": ["Evaluation"], "risk": "High", "confidence": "Inferred" } },
+      { "data": { "id": "OPT-009", "type": "recommends", "dimension": "Decision", "source": "OPT-B", "target": "DEC-PREFERRED", "directional": true, "phase": ["Decision"], "risk": "Medium", "confidence": "Inferred", "notes": "Best carbon score, acceptable cost, manageable supply risk." } },
+      { "data": { "id": "OPT-010", "type": "alternative_to", "dimension": "Option", "source": "OPT-A", "target": "OPT-B", "directional": false, "phase": ["Concept"], "confidence": "Explicit" } },
+      { "data": { "id": "OPT-011", "type": "alternative_to", "dimension": "Option", "source": "OPT-B", "target": "OPT-C", "directional": false, "phase": ["Concept"], "confidence": "Explicit" } }
+    ]
+  }
+}

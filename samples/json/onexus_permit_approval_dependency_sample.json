@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "Permit Approval Dependency Map",
+    "description": "A permit graph showing submissions, reviewers, prerequisites, and approval gates. Demo question: which missing prerequisite blocks permit approval?",
+    "languageDefault": "en",
+    "phases": ["Prepare", "Submit", "Review", "Approval"],
+    "recommendedLayout": "dependency_flow",
+    "demoQuestion": "Which missing prerequisite blocks permit approval?"
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "PERMIT-BUILDING", "nodeType": "ApprovalGate", "category": "Permit", "label": { "en": "Building Permit Approval" }, "status": "blocked", "risk": "High" } },
+      { "data": { "id": "SUB-ARCH", "nodeType": "Submission", "category": "SubmissionPackage", "label": { "en": "Architectural Drawing Set" }, "status": "submitted" } },
+      { "data": { "id": "SUB-STRUCT", "nodeType": "Submission", "category": "SubmissionPackage", "label": { "en": "Structural Calculation Package" }, "status": "submitted" } },
+      { "data": { "id": "SUB-FIRE", "nodeType": "Submission", "category": "SubmissionPackage", "label": { "en": "Fire Strategy Report" }, "status": "missing", "risk": "High" } },
+      { "data": { "id": "SUB-ENERGY", "nodeType": "Submission", "category": "SubmissionPackage", "label": { "en": "Energy Compliance Report" }, "status": "draft", "risk": "Medium" } },
+      { "data": { "id": "REV-CITY", "nodeType": "Organization", "category": "Reviewer", "label": { "en": "City Building Department" } } },
+      { "data": { "id": "REV-FIRE", "nodeType": "Organization", "category": "Reviewer", "label": { "en": "Fire Department Reviewer" }, "risk": "High" } },
+      { "data": { "id": "REQ-EGRESS", "nodeType": "Requirement", "category": "Requirement", "label": { "en": "Egress Width Check" }, "status": "open", "risk": "High" } },
+      { "data": { "id": "REQ-SEISMIC", "nodeType": "Requirement", "category": "Requirement", "label": { "en": "Seismic Design Confirmation" }, "status": "closed" } },
+      { "data": { "id": "ISSUE-FIRE-MISSING", "nodeType": "Issue", "category": "PermitIssue", "label": { "en": "Fire report missing from permit package" }, "status": "open", "risk": "High" } }
+    ],
+    "edges": [
+      { "data": { "id": "PERM-001", "type": "requires", "dimension": "Dependency", "source": "PERMIT-BUILDING", "target": "SUB-ARCH", "directional": true, "phase": ["Submit"], "confidence": "Explicit" } },
+      { "data": { "id": "PERM-002", "type": "requires", "dimension": "Dependency", "source": "PERMIT-BUILDING", "target": "SUB-STRUCT", "directional": true, "phase": ["Submit"], "confidence": "Explicit" } },
+      { "data": { "id": "PERM-003", "type": "requires", "dimension": "Dependency", "source": "PERMIT-BUILDING", "target": "SUB-FIRE", "directional": true, "phase": ["Submit"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "PERM-004", "type": "requires", "dimension": "Dependency", "source": "PERMIT-BUILDING", "target": "SUB-ENERGY", "directional": true, "phase": ["Submit"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "PERM-005", "type": "reviewed_by", "dimension": "Responsibility", "source": "SUB-ARCH", "target": "REV-CITY", "directional": true, "phase": ["Review"], "confidence": "Explicit" } },
+      { "data": { "id": "PERM-006", "type": "reviewed_by", "dimension": "Responsibility", "source": "SUB-STRUCT", "target": "REV-CITY", "directional": true, "phase": ["Review"], "confidence": "Explicit" } },
+      { "data": { "id": "PERM-007", "type": "reviewed_by", "dimension": "Responsibility", "source": "SUB-FIRE", "target": "REV-FIRE", "directional": true, "phase": ["Review"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "PERM-008", "type": "validates", "dimension": "Compliance", "source": "SUB-FIRE", "target": "REQ-EGRESS", "directional": true, "phase": ["Prepare"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "PERM-009", "type": "validates", "dimension": "Compliance", "source": "SUB-STRUCT", "target": "REQ-SEISMIC", "directional": true, "phase": ["Prepare"], "confidence": "Explicit" } },
+      { "data": { "id": "PERM-010", "type": "blocks", "dimension": "Issue", "source": "ISSUE-FIRE-MISSING", "target": "PERMIT-BUILDING", "directional": true, "phase": ["Approval"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "PERM-011", "type": "caused_by", "dimension": "Issue", "source": "ISSUE-FIRE-MISSING", "target": "SUB-FIRE", "directional": true, "phase": ["Review"], "risk": "High", "confidence": "Explicit" } }
+    ]
+  }
+}

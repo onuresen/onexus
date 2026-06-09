@@ -53,7 +53,7 @@ namespace Onexus
             }
             catch (Exception ex)
             {
-                TaskDialog.Show("ONEXUS Startup Error", ex.Message);
+                Autodesk.Revit.UI.TaskDialog.Show("ONEXUS Startup Error", ex.Message);
                 return Result.Failed;
             }
 
@@ -259,7 +259,7 @@ namespace Onexus
             if (folder == null)
                 return Result.Cancelled;
 
-            TaskDialog.Show("ONEXUS",
+            Autodesk.Revit.UI.TaskDialog.Show("ONEXUS",
                 $"Onexus folder set to:\n{folder}\n\n" +
                 "Run any graph command to reload the viewer window.");
             return Result.Succeeded;

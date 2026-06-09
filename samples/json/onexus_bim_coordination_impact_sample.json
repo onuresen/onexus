@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "BIM Coordination Impact Chain",
+    "description": "A compact BIM coordination graph. Demo question: Wall W-204 moved; which rooms, doors, systems, drawings, and open issues should be checked?",
+    "languageDefault": "en",
+    "phases": ["Design", "Coordination", "Construction"],
+    "recommendedLayout": "dependency_flow",
+    "demoQuestion": "Wall W-204 moved. What should be checked before issuing the model?"
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "WALL-W204", "nodeType": "Element", "category": "Wall", "label": { "en": "Wall W-204" }, "revitCategory": "Walls", "level": "Level 03", "risk": "High" } },
+      { "data": { "id": "ROOM-MEETING-301", "nodeType": "Space", "category": "Room", "label": { "en": "Meeting Room 301" }, "level": "Level 03" } },
+      { "data": { "id": "ROOM-CORRIDOR-3A", "nodeType": "Space", "category": "Room", "label": { "en": "Corridor 3A" }, "level": "Level 03" } },
+      { "data": { "id": "DOOR-D301", "nodeType": "Element", "category": "Door", "label": { "en": "Door D-301" }, "revitCategory": "Doors", "level": "Level 03", "risk": "Medium" } },
+      { "data": { "id": "MEP-DUCT-M3", "nodeType": "Element", "category": "MEPRoute", "label": { "en": "Supply Duct M3" }, "revitCategory": "Ducts", "level": "Level 03", "risk": "High" } },
+      { "data": { "id": "FIRE-ZONE-F3", "nodeType": "Zone", "category": "FireZone", "label": { "en": "Fire Compartment F3" }, "risk": "High" } },
+      { "data": { "id": "DRAW-A301", "nodeType": "Document", "category": "Drawing", "label": { "en": "A-301 Floor Plan" }, "status": "to_update" } },
+      { "data": { "id": "DRAW-M312", "nodeType": "Document", "category": "Drawing", "label": { "en": "M-312 Duct Coordination" }, "status": "to_update" } },
+      { "data": { "id": "ISSUE-078", "nodeType": "Issue", "category": "CoordinationIssue", "label": { "en": "Duct clearance reduced at W-204" }, "status": "open", "risk": "High" } },
+      { "data": { "id": "ISSUE-081", "nodeType": "Issue", "category": "CoordinationIssue", "label": { "en": "Door D-301 clear width recheck" }, "status": "open", "risk": "Medium" } },
+      { "data": { "id": "ORG-ARCH", "nodeType": "Organization", "category": "DesignTeam", "label": { "en": "Architecture Team" } } },
+      { "data": { "id": "ORG-MEP", "nodeType": "Organization", "category": "DesignTeam", "label": { "en": "MEP Team" } } }
+    ],
+    "edges": [
+      { "data": { "id": "BIM-001", "type": "bounds", "dimension": "Spatial", "source": "WALL-W204", "target": "ROOM-MEETING-301", "directional": true, "phase": ["Design"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "BIM-002", "type": "bounds", "dimension": "Spatial", "source": "WALL-W204", "target": "ROOM-CORRIDOR-3A", "directional": true, "phase": ["Design"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "BIM-003", "type": "hosts", "dimension": "Model", "source": "WALL-W204", "target": "DOOR-D301", "directional": true, "phase": ["Design"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "BIM-004", "type": "penetrates", "dimension": "System", "source": "MEP-DUCT-M3", "target": "WALL-W204", "directional": true, "phase": ["Coordination"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "BIM-005", "type": "requires_clearance", "dimension": "System", "source": "MEP-DUCT-M3", "target": "ROOM-CORRIDOR-3A", "directional": true, "phase": ["Coordination"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "BIM-006", "type": "defines", "dimension": "Compliance", "source": "WALL-W204", "target": "FIRE-ZONE-F3", "directional": true, "phase": ["Coordination"], "risk": "High", "confidence": "Explicit" } },
+
+      { "data": { "id": "BIM-007", "type": "violates", "dimension": "Issue", "source": "MEP-DUCT-M3", "target": "ISSUE-078", "directional": true, "phase": ["Coordination"], "risk": "High", "confidence": "Explicit", "notes": "Wall movement reduces duct clearance below the coordination allowance." } },
+      { "data": { "id": "BIM-008", "type": "creates_risk", "dimension": "Issue", "source": "WALL-W204", "target": "ISSUE-081", "directional": true, "phase": ["Coordination"], "risk": "Medium", "confidence": "Inferred", "notes": "Door clear width must be rechecked after wall location changes." } },
+
+      { "data": { "id": "BIM-009", "type": "documented_in", "dimension": "Document", "source": "WALL-W204", "target": "DRAW-A301", "directional": true, "phase": ["Design", "Coordination"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "BIM-010", "type": "documented_in", "dimension": "Document", "source": "DOOR-D301", "target": "DRAW-A301", "directional": true, "phase": ["Design", "Coordination"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "BIM-011", "type": "documented_in", "dimension": "Document", "source": "MEP-DUCT-M3", "target": "DRAW-M312", "directional": true, "phase": ["Coordination"], "risk": "High", "confidence": "Explicit" } },
+
+      { "data": { "id": "BIM-012", "type": "owned_by", "dimension": "Responsibility", "source": "WALL-W204", "target": "ORG-ARCH", "directional": true, "phase": ["Design"], "confidence": "Explicit" } },
+      { "data": { "id": "BIM-013", "type": "owned_by", "dimension": "Responsibility", "source": "DOOR-D301", "target": "ORG-ARCH", "directional": true, "phase": ["Design"], "confidence": "Explicit" } },
+      { "data": { "id": "BIM-014", "type": "owned_by", "dimension": "Responsibility", "source": "MEP-DUCT-M3", "target": "ORG-MEP", "directional": true, "phase": ["Coordination"], "confidence": "Explicit" } },
+      { "data": { "id": "BIM-015", "type": "assigned_to", "dimension": "Responsibility", "source": "ISSUE-078", "target": "ORG-MEP", "directional": true, "phase": ["Coordination"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "BIM-016", "type": "assigned_to", "dimension": "Responsibility", "source": "ISSUE-081", "target": "ORG-ARCH", "directional": true, "phase": ["Coordination"], "risk": "Medium", "confidence": "Explicit" } }
+    ]
+  }
+}

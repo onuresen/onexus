@@ -22,18 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.Web.WebView2.Core">
-      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2739.15\lib_manual\netcoreapp3.0\Microsoft.Web.WebView2.Core.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="Microsoft.Web.WebView2.Wpf">
-      <HintPath>..\packages\Microsoft.Web.WebView2.1.0.2739.15\lib_manual\netcoreapp3.0\Microsoft.Web.WebView2.Wpf.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net6.0\Newtonsoft.Json.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2739.15" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <Reference Include="RevitAPI">
       <HintPath>$(RevitInstallDir)RevitAPI.dll</HintPath>
       <Private>false</Private>

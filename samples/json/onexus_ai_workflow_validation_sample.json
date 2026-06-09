@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "AI Workflow Validation Loop",
+    "description": "A graph showing an AI workflow where requirements produce AI outputs, checkers validate them, evidence supports acceptance, and decisions approve or reject results.",
+    "languageDefault": "en",
+    "phases": ["Request", "Generate", "Validate", "Decide"],
+    "recommendedLayout": "dependency_flow",
+    "demoQuestion": "Which AI output is not yet backed by evidence?"
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "REQ-ROOM-CHECK", "nodeType": "Requirement", "category": "Requirement", "label": { "en": "Check rooms against area brief" }, "status": "active" } },
+      { "data": { "id": "AI-AREA-REPORT", "nodeType": "AIOutput", "category": "AIOutput", "label": { "en": "AI Room Area Report" }, "status": "generated", "risk": "Medium" } },
+      { "data": { "id": "CHECK-SCHEMA", "nodeType": "Checker", "category": "Validation", "label": { "en": "Schema Validator" }, "status": "passed" } },
+      { "data": { "id": "CHECK-MODEL", "nodeType": "Checker", "category": "Validation", "label": { "en": "Model Evidence Check" }, "status": "failed", "risk": "High" } },
+      { "data": { "id": "EVD-REVIT-SNAPSHOT", "nodeType": "Evidence", "category": "Evidence", "label": { "en": "Revit Room Snapshot" }, "status": "current" } },
+      { "data": { "id": "EVD-BRIEF", "nodeType": "Evidence", "category": "Evidence", "label": { "en": "Area Brief Table" }, "status": "current" } },
+      { "data": { "id": "GAP-MISSING-ROOM", "nodeType": "EvidenceGap", "category": "EvidenceGap", "label": { "en": "Room R-203 missing from snapshot" }, "status": "open", "risk": "High" } },
+      { "data": { "id": "DEC-ACCEPT", "nodeType": "Decision", "category": "Decision", "label": { "en": "Accept AI report for design review" }, "status": "blocked", "risk": "High" } },
+      { "data": { "id": "ACTION-REFRESH", "nodeType": "Action", "category": "Action", "label": { "en": "Refresh Revit snapshot and rerun check" }, "status": "planned" } },
+      { "data": { "id": "MCP-ROOM-TOOL", "nodeType": "Tool", "category": "MCPTool", "label": { "en": "get_active_document_rooms" }, "status": "available" } }
+    ],
+    "edges": [
+      { "data": { "id": "AI-001", "type": "produces", "dimension": "Workflow", "source": "REQ-ROOM-CHECK", "target": "AI-AREA-REPORT", "directional": true, "phase": ["Generate"], "confidence": "Explicit" } },
+      { "data": { "id": "AI-002", "type": "validated_by", "dimension": "Validation", "source": "AI-AREA-REPORT", "target": "CHECK-SCHEMA", "directional": true, "phase": ["Validate"], "risk": "Low", "confidence": "Explicit" } },
+      { "data": { "id": "AI-003", "type": "validated_by", "dimension": "Validation", "source": "AI-AREA-REPORT", "target": "CHECK-MODEL", "directional": true, "phase": ["Validate"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "AI-004", "type": "requires_evidence", "dimension": "Evidence", "source": "CHECK-MODEL", "target": "EVD-REVIT-SNAPSHOT", "directional": true, "phase": ["Validate"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "AI-005", "type": "requires_evidence", "dimension": "Evidence", "source": "CHECK-MODEL", "target": "EVD-BRIEF", "directional": true, "phase": ["Validate"], "confidence": "Explicit" } },
+      { "data": { "id": "AI-006", "type": "found_gap", "dimension": "Evidence", "source": "CHECK-MODEL", "target": "GAP-MISSING-ROOM", "directional": true, "phase": ["Validate"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "AI-007", "type": "blocks", "dimension": "Decision", "source": "GAP-MISSING-ROOM", "target": "DEC-ACCEPT", "directional": true, "phase": ["Decide"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "AI-008", "type": "resolved_by", "dimension": "Action", "source": "GAP-MISSING-ROOM", "target": "ACTION-REFRESH", "directional": true, "phase": ["Decide"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "AI-009", "type": "uses_tool", "dimension": "MCP", "source": "ACTION-REFRESH", "target": "MCP-ROOM-TOOL", "directional": true, "phase": ["Request"], "confidence": "Explicit" } },
+      { "data": { "id": "AI-010", "type": "supports", "dimension": "Evidence", "source": "EVD-BRIEF", "target": "DEC-ACCEPT", "directional": true, "phase": ["Decide"], "risk": "Low", "confidence": "Explicit" } }
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "schema": "onexus-1.1",
+    "project": "ROD Decision Traceability",
+    "description": "A Record and Relation of Decisions sample. Demo question: if the retail/circulation boundary decision changes, what elements, issues, and later decisions are affected?",
+    "languageDefault": "en",
+    "phases": ["Concept", "Design", "Coordination", "Construction"],
+    "recommendedLayout": "dependency_flow",
+    "demoQuestion": "If we change this boundary decision, what downstream decisions and issues light up?"
+  },
+  "elements": {
+    "nodes": [
+      { "data": { "id": "DEC-BOUNDARY-001", "nodeType": "Decision", "category": "Decision", "label": { "en": "Set retail/circulation boundary at grid B" }, "status": "approved", "risk": "High" } },
+      { "data": { "id": "DEC-FACADE-002", "nodeType": "Decision", "category": "Decision", "label": { "en": "Align facade module break to boundary wall" }, "status": "dependent", "risk": "Medium" } },
+      { "data": { "id": "DEC-FIRE-003", "nodeType": "Decision", "category": "Decision", "label": { "en": "Use wall W-104 as fire compartment line" }, "status": "dependent", "risk": "High" } },
+      { "data": { "id": "ALT-BOUNDARY-A", "nodeType": "Alternative", "category": "Alternative", "label": { "en": "Alternative: shift boundary 1200 mm east" }, "status": "rejected" } },
+
+      { "data": { "id": "EVD-LEASE-PLAN", "nodeType": "Evidence", "category": "Evidence", "label": { "en": "Tenant lease plan v12" }, "status": "current" } },
+      { "data": { "id": "EVD-FIRE-MEMO", "nodeType": "Evidence", "category": "Evidence", "label": { "en": "Fire strategy memo FS-07" }, "status": "current" } },
+
+      { "data": { "id": "BIM-WALL-W104", "nodeType": "Element", "category": "Wall", "label": { "en": "Wall W-104" }, "revitCategory": "Walls", "level": "Level 02", "risk": "High" } },
+      { "data": { "id": "BIM-ROOM-RETAIL", "nodeType": "Space", "category": "Room", "label": { "en": "Retail Unit R2" }, "level": "Level 02" } },
+      { "data": { "id": "BIM-CIRC-CORRIDOR", "nodeType": "Space", "category": "Room", "label": { "en": "Public Circulation Corridor" }, "level": "Level 02" } },
+
+      { "data": { "id": "ISSUE-CLASH-021", "nodeType": "Issue", "category": "CoordinationIssue", "label": { "en": "Door swing conflicts with corridor clear width" }, "status": "open", "risk": "High" } },
+      { "data": { "id": "STAKE-ARCH", "nodeType": "Organization", "category": "DesignTeam", "label": { "en": "Architecture Lead" } } },
+      { "data": { "id": "STAKE-FIRE", "nodeType": "Organization", "category": "Reviewer", "label": { "en": "Fire Safety Reviewer" } } }
+    ],
+    "edges": [
+      { "data": { "id": "ROD-001", "type": "based_on", "dimension": "Evidence", "source": "DEC-BOUNDARY-001", "target": "EVD-LEASE-PLAN", "directional": true, "phase": ["Concept", "Design"], "confidence": "Explicit" } },
+      { "data": { "id": "ROD-002", "type": "rejects", "dimension": "Decision", "source": "DEC-BOUNDARY-001", "target": "ALT-BOUNDARY-A", "directional": true, "phase": ["Design"], "confidence": "Explicit", "notes": "Rejected because it reduced corridor width below target." } },
+      { "data": { "id": "ROD-003", "type": "affects", "dimension": "Model", "source": "DEC-BOUNDARY-001", "target": "BIM-WALL-W104", "directional": true, "phase": ["Design"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "ROD-004", "type": "bounds", "dimension": "Spatial", "source": "BIM-WALL-W104", "target": "BIM-ROOM-RETAIL", "directional": true, "phase": ["Design"], "confidence": "Explicit" } },
+      { "data": { "id": "ROD-005", "type": "bounds", "dimension": "Spatial", "source": "BIM-WALL-W104", "target": "BIM-CIRC-CORRIDOR", "directional": true, "phase": ["Design"], "confidence": "Explicit" } },
+
+      { "data": { "id": "ROD-006", "type": "depends_on", "dimension": "Decision", "source": "DEC-FACADE-002", "target": "DEC-BOUNDARY-001", "directional": true, "phase": ["Design"], "risk": "Medium", "confidence": "Explicit" } },
+      { "data": { "id": "ROD-007", "type": "depends_on", "dimension": "Decision", "source": "DEC-FIRE-003", "target": "DEC-BOUNDARY-001", "directional": true, "phase": ["Design", "Coordination"], "risk": "High", "confidence": "Explicit" } },
+      { "data": { "id": "ROD-008", "type": "based_on", "dimension": "Evidence", "source": "DEC-FIRE-003", "target": "EVD-FIRE-MEMO", "directional": true, "phase": ["Coordination"], "confidence": "Explicit" } },
+      { "data": { "id": "ROD-009", "type": "affects", "dimension": "Model", "source": "DEC-FIRE-003", "target": "BIM-WALL-W104", "directional": true, "phase": ["Coordination"], "risk": "High", "confidence": "Explicit" } },
+
+      { "data": { "id": "ROD-010", "type": "creates_risk", "dimension": "Issue", "source": "DEC-BOUNDARY-001", "target": "ISSUE-CLASH-021", "directional": true, "phase": ["Coordination"], "risk": "High", "confidence": "Inferred", "notes": "The boundary fixes the corridor edge; door swing issue is downstream of that geometry." } },
+      { "data": { "id": "ROD-011", "type": "owned_by", "dimension": "Responsibility", "source": "DEC-BOUNDARY-001", "target": "STAKE-ARCH", "directional": true, "phase": ["Design"], "confidence": "Explicit" } },
+      { "data": { "id": "ROD-012", "type": "reviewed_by", "dimension": "Responsibility", "source": "DEC-FIRE-003", "target": "STAKE-FIRE", "directional": true, "phase": ["Coordination"], "confidence": "Explicit" } }
+    ]
+  }
+}
