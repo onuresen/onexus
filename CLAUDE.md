@@ -322,3 +322,18 @@ UI/UX + hardening pass (branch `claude/amazing-galileo-gg446`):
   minimap 30→15fps.
 - **Graph scaling**: size-proportional labels + layout spacing; labels below
   nodes (see "Graph node / label / layout scaling").
+
+---
+
+## Decision Log Convention
+<!-- decision-schema v1 · canonical: esen-vault/work/playbook/Decision Schema (Canonical).md -->
+When a non-obvious choice is made (a tradeoff, "why this over that", a convention to
+follow or avoid), record it — in this repo's decision log / CLAUDE.md "Key decisions"
+/ commit body — using these fields:
+- **Decision:** what was chosen
+- **Why:** the reasoning (the cause behind the effect)
+- **Alternative:** what was rejected, and why
+- **Revisit when:** the condition that would reopen this *(optional)*
+- **Confidence:** low / med / high
+
+Only for decisions that are hard to reverse or likely to recur. Skip mechanical changes.
