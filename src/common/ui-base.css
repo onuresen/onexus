@@ -1,0 +1,297 @@
+/* =============================================================================
+   ui-base.css — Shared Tier-A base for the maker-layer tools
+   Canonical reference: esen-vault › concepts/Shared-UI-System.md
+
+   WHAT THIS IS
+   The portable skeleton every "Tier A — Full" tool imports: the token contract,
+   the radius/z-index scales, and the shared UI primitives (.btn / .card / .input
+   / .label / .empty-state / .ui-modal / .ui-section / .ui-row hover-bar).
+
+   HOW TO USE
+   1. Load fonts in the host page (do NOT @import here — it blocks render):
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+   2. Link this file, THEN a palette block that overrides the palette tokens
+      (pick one off the shelf in Shared-UI-System.md — Lime-Editorial,
+      Layer-Semantic, Executive/Boardroom, Catppuccin, Slate).
+   3. Style values, keep names. Restyle the skin, never rename the contract.
+
+   The skin is the only thing a tool overrides. The skeleton is shared.
+   ============================================================================= */
+
+:root {
+  /* ---- Palette (SKIN — override these per tool, neutral light default) ---- */
+  --bg:        #f6f7f9;
+  --surface:   #ffffff;
+  --surface2:  #eef1f5;
+  --surface3:  #e3e8ef;
+
+  --border:    #dde3ea;
+  --border2:   #c4ccd6;
+
+  --text:      #14181f;   /* primary content */
+  --text2:     #44505f;   /* meaningful secondary */
+  --text3:     #7c8aa0;   /* metadata / hints ONLY — never status or instructions */
+
+  --accent:    #2563eb;   /* the one color a tool must set */
+  --on-accent: #ffffff;   /* text/icons on accent fills */
+
+  --accent2:      #b07d2b;   /* optional warm/secondary signal — use sparingly */
+  --accent2-dim:  #f3e9d6;
+  --accent2-text: #7a5519;
+
+  /* ---- Accent tints (DERIVED — set --accent and these follow) ---- */
+  --accent-dim:  color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-glow: color-mix(in srgb, var(--accent) 24%, transparent);
+
+  /* ---- Fonts (pool defaults — override --font-display per tool) ---- */
+  --font-display: 'DM Sans', system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-body:    'DM Sans', system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ---- Radius scale (SKELETON — shared) ---- */
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-pill: 999px;
+
+  /* ---- Spacing / shadow / motion ---- */
+  --gap: 12px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.10);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ---- Z-index scale (SKELETON — shared; replaces raw ints) ---- */
+  --z-base:    1;
+  --z-sticky:  100;
+  --z-popover: 500;
+  --z-overlay: 800;
+  --z-modal:   900;
+  --z-tooltip: 950;
+  --z-toast:   9999;
+}
+
+/* =============================================================================
+   Reset
+   ============================================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* =============================================================================
+   Buttons — .btn / .btn-primary / .btn-ghost / .btn-danger
+   ============================================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background 0.15s var(--ease), border-color 0.15s var(--ease),
+              box-shadow 0.2s var(--ease), transform 0.12s var(--ease);
+}
+.btn:hover  { border-color: var(--accent); background: var(--accent-dim); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.btn-primary {
+  color: var(--on-accent);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: var(--accent); filter: brightness(0.94); }
+
+.btn-ghost {
+  color: var(--text2);
+  background: transparent;
+  border-color: var(--border2);
+}
+.btn-ghost:hover { background: var(--surface2); border-color: var(--accent); }
+
+.btn-danger {
+  color: #b3261e;
+  background: color-mix(in srgb, #e8455a 12%, transparent);
+  border-color: color-mix(in srgb, #e8455a 32%, transparent);
+}
+
+/* =============================================================================
+   Card
+   ============================================================================= */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+}
+
+/* =============================================================================
+   Form fields — .input / .select / .textarea + .label
+   ============================================================================= */
+.input, .select, .textarea {
+  width: 100%;
+  padding: 8px 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.textarea { resize: vertical; min-height: 72px; }
+
+.label {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+/* =============================================================================
+   Section header — .ui-section-header / -title / -line / -action
+   ============================================================================= */
+.ui-section-header { display: flex; align-items: center; gap: 10px; }
+.ui-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text3);
+  white-space: nowrap;
+}
+.ui-section-line { flex: 1; height: 1px; background: var(--border); }
+.ui-section-action {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  padding: 3px 8px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s;
+}
+.ui-section-action:hover { color: var(--accent); background: var(--accent-dim); }
+
+/* =============================================================================
+   Empty state
+   ============================================================================= */
+.empty-state { text-align: center; color: var(--text3); padding: 40px 20px; }
+.empty-state .e-icon  { display: block; font-size: 32px; margin-bottom: 10px; opacity: 0.5; }
+.empty-state .e-title { font-size: 14px; font-weight: 500; color: var(--text2); margin-bottom: 4px; }
+.empty-state .e-sub   { font-size: 12px; color: var(--text3); }
+
+/* =============================================================================
+   Modal — .ui-modal-overlay / .ui-modal  (no position:fixed needed by caller)
+   ============================================================================= */
+.ui-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s var(--ease);
+}
+.ui-modal-overlay.is-open { opacity: 1; pointer-events: auto; }
+.ui-modal {
+  width: 100%;
+  max-width: 500px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.18s var(--ease);
+}
+.ui-modal-overlay.is-open .ui-modal { transform: translateY(0) scale(1); }
+
+/* =============================================================================
+   Signature — left accent-bar reveal on row hover. Opt in with class .ui-row.
+   (Tools may also apply it to their own row selectors, e.g. .legend-item.)
+   ============================================================================= */
+.ui-row { position: relative; }
+.ui-row::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 9px; bottom: 9px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;   /* single-sided: only the open edge is rounded */
+  background: var(--accent);
+  opacity: 0;
+  transform: translateX(-3px);
+  transition: opacity 0.18s var(--ease), transform 0.18s var(--ease);
+  pointer-events: none;
+}
+.ui-row:hover::after { opacity: 1; transform: translateX(0); }
+
+/* =============================================================================
+   Toast — .ui-toast (+ .is-visible, --success / --error)
+   ============================================================================= */
+.ui-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: var(--z-toast);
+  padding: 9px 18px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-md);
+  transform: translateX(-50%) translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.ui-toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+.ui-toast--success { border-color: var(--accent-glow); color: var(--accent); }
+.ui-toast--error   { border-color: color-mix(in srgb, #e8455a 40%, transparent); color: #e8455a; }
+
+/* =============================================================================
+   Scrollbar + focus ring
+   ============================================================================= */
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus:not(:focus-visible) { outline: none; }
+
+/* =============================================================================
+   Micro-motion — opt-in classes
+   ============================================================================= */
+@keyframes ui-card-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.card-enter { animation: ui-card-enter 0.22s var(--ease) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card-enter, .ui-row::after, .ui-modal, .ui-toast { animation: none !important; transition: none !important; }
+}
