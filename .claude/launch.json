@@ -18,6 +18,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "4175", "--directory", "E:/GitHub/Thinking-Hub"],
       "port": 4175
+    },
+    {
+      "name": "vibecoding",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4176", "--directory", "E:/GitHub/Vibe_Coding"],
+      "port": 4176
     }
   ]
 }
