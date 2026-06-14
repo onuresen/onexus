@@ -24,6 +24,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "4176", "--directory", "E:/GitHub/Vibe_Coding"],
       "port": 4176
+    },
+    {
+      "name": "onebridge",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4177", "--directory", "E:/GitHub/OneBridge/dashboard"],
+      "port": 4177
     }
   ]
 }
