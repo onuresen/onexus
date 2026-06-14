@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "onexus",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4173"],
+      "port": 4173
+    }
+  ]
+}

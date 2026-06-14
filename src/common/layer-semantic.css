@@ -1,0 +1,28 @@
+/* =============================================================================
+   Layer-Semantic palette — ONEXUS  ·  ui-system v1.0.0
+   Light "blueprint". The accent is LAYER-SEMANTIC: it re-tints per active layer
+   (relationship→blue, lifecycle→teal, risk→amber, option→violet). Do NOT pin
+   --accent to a fixed color — it reads from --onx-layer-accent, which ONEXUS
+   updates via [data-onx-layer] on <html>. (See Shared-UI-System.md divergences.)
+   Load AFTER ui-base.css, BEFORE onexus-common.css.
+   ============================================================================= */
+:root {
+  --bg:        #ffffff;
+  --surface:   #f8f9fb;   /* ONEXUS panel */
+  --surface2:  #f3f4f6;   /* ONEXUS soft */
+  --surface3:  #e9ebf0;   /* new elevated tier (popovers/modals) */
+
+  --border:    #e5e7eb;   /* mirrors ONEXUS --stroke */
+  --border2:   #d4d8e0;
+
+  --text:      #111827;
+  --text2:     #374151;   /* new meaningful-secondary tier */
+  --text3:     #6b7280;   /* mirrors ONEXUS --text-muted */
+
+  --accent:    var(--onx-layer-accent, #2563eb);   /* layer-semantic — re-tints per layer */
+  --on-accent: #ffffff;
+
+  --font-display: 'Archivo', system-ui, sans-serif;
+  --font-body:    'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, monospace;
+}

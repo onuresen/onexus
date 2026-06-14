@@ -1,9 +1,15 @@
 /* =============================================================================
    ui-base.css — Shared Tier-A base for the maker-layer tools
-   Canonical reference: esen-vault › concepts/Shared-UI-System.md
+   VERSION 1.0.0   ·   CANONICAL SOURCE — edit ONLY here.
+
+   Canonical home:   github.com/onuresen/Vibe_Coding › ui-system/ui-base.css
+   Design reference: esen-vault › concepts/Shared-UI-System.md
+
+   ⚠ Do NOT edit downstream copies. This file is the single source of truth;
+     all tools consume this version. Bump VERSION (semver) on any change here.
 
    WHAT THIS IS
-   The portable skeleton every "Tier A — Full" tool imports: the token contract,
+   The portable skeleton every "Tier A — Full" tool uses: the token contract,
    the radius/z-index scales, and the shared UI primitives (.btn / .card / .input
    / .label / .empty-state / .ui-modal / .ui-section / .ui-row hover-bar).
 
@@ -11,16 +17,14 @@
    1. Load fonts in the host page (do NOT @import here — it blocks render):
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-   2. Link this file, THEN a palette block that overrides the palette tokens
-      (pick one off the shelf in Shared-UI-System.md — Lime-Editorial,
-      Layer-Semantic, Executive/Boardroom, Catppuccin, Slate).
+   2. Load this file, THEN a palette block from ui-system/palettes/ that overrides
+      the palette tokens (Lime-Editorial, Layer-Semantic, Executive, Catppuccin,
+      Slate). Skeleton shared, skin per tool.
    3. Style values, keep names. Restyle the skin, never rename the contract.
-
-   The skin is the only thing a tool overrides. The skeleton is shared.
    ============================================================================= */
 
 :root {
-  /* ---- Palette (SKIN — override these per tool, neutral light default) ---- */
+  /* ---- Palette (SKIN — override via a ui-system/palettes/*.css block) ---- */
   --bg:        #f6f7f9;
   --surface:   #ffffff;
   --surface2:  #eef1f5;
@@ -199,7 +203,7 @@
 .empty-state .e-sub   { font-size: 12px; color: var(--text3); }
 
 /* =============================================================================
-   Modal — .ui-modal-overlay / .ui-modal  (no position:fixed needed by caller)
+   Modal — .ui-modal-overlay / .ui-modal
    ============================================================================= */
 .ui-modal-overlay {
   position: fixed;
@@ -232,7 +236,6 @@
 
 /* =============================================================================
    Signature — left accent-bar reveal on row hover. Opt in with class .ui-row.
-   (Tools may also apply it to their own row selectors, e.g. .legend-item.)
    ============================================================================= */
 .ui-row { position: relative; }
 .ui-row::after {

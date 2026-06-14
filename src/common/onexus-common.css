@@ -61,7 +61,13 @@ body {
     height: 100vh;
     gap: var(--gap);
     padding: var(--gap);
-    background: var(--bg-main);
+    background-color: var(--bg-main);
+    /* Accent-tinted atmosphere — two faint corner washes that re-tint per layer */
+    background-image:
+        radial-gradient(85% 60% at 0% 0%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 60%),
+        radial-gradient(75% 55% at 100% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 55%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     font-family: var(--font-body);
     color: var(--text-main);
 }
@@ -92,8 +98,10 @@ h3,
     align-items: center;
     padding: 10px 14px;
     background: var(--bg-panel);
+    border: 1px solid var(--stroke);
     border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
+    /* layer-signed: a thin accent edge along the top of the chrome */
+    box-shadow: var(--shadow-sm), inset 0 2px 0 color-mix(in srgb, var(--accent) 70%, transparent);
     color: var(--text-main);
 }
 
@@ -201,12 +209,18 @@ input[type="file"] {
 }
 
 .icon-btn:hover {
-    background: var(--btn-bg-hover);
+    background: var(--accent-dim);
     border-color: var(--accent);
 }
 
 .icon-btn:active {
     transform: translateY(1px);
+}
+
+.icon-btn:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 .icon-btn svg {
@@ -226,7 +240,9 @@ input[type="file"] {
 #canvas-wrap {
     grid-area: canvas;
     position: relative;
-    background: var(--bg-canvas);
+    background-color: var(--bg-canvas);
+    /* faint accent glow at the top — the graph reads as sitting in a layer-tinted viewport */
+    background-image: radial-gradient(120% 80% at 50% -10%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 55%);
     border-radius: var(--radius);
     box-shadow: var(--shadow-md);
     overflow: hidden;
@@ -340,6 +356,31 @@ button.flat:hover {
     background: var(--bg-soft);
     border-radius: 4px;
     padding: 2px 4px;
+}
+
+/* Tier-1: shared hover accent-bar signature (ui-system .ui-row), layer-aware via --accent */
+.legend-item {
+    position: relative;
+}
+
+.legend-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    bottom: 3px;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    background: var(--accent);
+    opacity: 0;
+    transform: translateX(-3px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    pointer-events: none;
+}
+
+.legend-item:hover::after {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* Details panel (shared styles) */
@@ -876,6 +917,18 @@ button.flat:hover {
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease;
+}
+
+#toolbar #onx-samples-wrap .onx-samples-btn:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+}
+
+#toolbar #onx-samples-wrap .onx-samples-btn:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 /* Remove any description label in toolbar by default (we will toast it instead) */
