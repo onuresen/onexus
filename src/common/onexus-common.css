@@ -313,21 +313,65 @@ select {
     width: 100%;
 }
 
-/* Flat buttons (kept for lens) */
+/* Flat buttons (panels/lens) — aligned to the shared button look */
 button.flat {
     width: 100%;
-    padding: 6px 10px;
+    padding: 7px 10px;
     margin: 4px 0;
     font-size: 12px;
-    background: var(--bg-soft);
+    font-weight: 500;
+    background: var(--btn-bg);
     color: var(--text-main);
-    border: none;
-    border-radius: 6px;
+    border: 1px solid var(--stroke);
+    border-radius: var(--r-sm);
     cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease;
 }
 
 button.flat:hover {
-    background: #e5e7eb;
+    background: var(--accent-dim);
+    border-color: var(--accent);
+}
+
+button.flat:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* Native file input replaced by a styled label button (toolbar consistency) */
+.onx-file-input {
+    display: none;
+}
+
+#toolbar .onx-file-btn {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-main);
+    background: var(--btn-bg);
+    border: 1px solid var(--stroke);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease;
+}
+
+#toolbar .onx-file-btn:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+}
+
+#toolbar .onx-file-btn:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 /* Legend */
