@@ -136,7 +136,64 @@ const RELATIONSHIP_COLORS = {
   ConnectsTo: "#10B981",
   PortOf: "#14B8A6",
   FillsOpeningIn: "#F59E0B",
+
+  // Semantic relationship vocabulary (IC supply chain, ROD/OneRoot decision graphs).
+  // Grouped by what the relationship *means*, not just a unique hue per type:
+  // red family = blocking/risk, green family = supports/derives-from,
+  // blue/indigo family = structural dependency, amber = governance/ownership.
+  blocks: "#EF4444",
+  contradicts: "#EF4444",
+  creates_risk: "#EF4444",
+  rejects: "#F87171",
+
+  depends_on: "#3B82F6",
+  requires: "#3B82F6",
+  requires_approval_from: "#2563EB",
+  supplies: "#0EA5E9",
+  delivers_to: "#0EA5E9",
+  installed_in: "#06B6D4",
+  drives: "#6366F1",
+
+  based_on: "#10B981",
+  validates: "#10B981",
+  is_evidence_for: "#10B981",
+  affects: "#22C55E",
+  bounds: "#84CC16",
+  enables: "#10B981",
+
+  supersedes: "#F59E0B",
+  implements: "#F59E0B",
+  reuses: "#F59E0B",
+  creates_standard_for: "#D97706",
+  owned_by: "#A855F7",
+  reviewed_by: "#A855F7",
+  requires_approval_from_lc: "#A855F7",
 };
+
+// Semantic edge *categories* drive line-style + arrow shape so the relationship
+// kind is legible even without color (accessibility, print, colorblind-safe) —
+// not just "what color is this edge" but "what shape of relationship is this".
+const RELATIONSHIP_LINE_STYLE = {
+  blocking: { lineStyle: "dashed", arrow: "tee" },      // blocks/contradicts/rejects/creates_risk
+  dependency: { lineStyle: "solid", arrow: "triangle" }, // depends_on/requires/supplies/delivers_to/installed_in/drives
+  support: { lineStyle: "dotted", arrow: "circle" },     // based_on/validates/affects/bounds/enables/is_evidence_for
+  governance: { lineStyle: "dashed", arrow: "diamond" }, // owned_by/reviewed_by/supersedes/implements/reuses/creates_standard_for
+};
+
+const EDGE_TYPE_CATEGORY = {
+  blocks: "blocking", contradicts: "blocking", creates_risk: "blocking", rejects: "blocking",
+  depends_on: "dependency", requires: "dependency", supplies: "dependency",
+  delivers_to: "dependency", installed_in: "dependency", drives: "dependency",
+  based_on: "support", validates: "support", is_evidence_for: "support",
+  affects: "support", bounds: "support", enables: "support",
+  supersedes: "governance", implements: "governance", reuses: "governance",
+  creates_standard_for: "governance", owned_by: "governance", reviewed_by: "governance",
+  requires_approval_from: "governance",
+};
+
+function edgeCategoryFor(type) {
+  return EDGE_TYPE_CATEGORY[type] ?? null;
+}
 
 const COLOR_PALETTE = [
   "#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6",
@@ -385,7 +442,11 @@ function nodeColorByMode(ele) {
 
 function edgeColorByType(ele) {
   const t = ele.data?.("type") ?? ele.data?.()?.type ?? "";
-  return RELATIONSHIP_COLORS[t] ?? "#999";
+  if (!t) return "#999";
+  // Curated semantic color wins; otherwise hash to a stable palette color
+  // (matches node behavior) so any new/unknown edge type still gets a
+  // distinct, consistent color instead of collapsing into flat gray.
+  return RELATIONSHIP_COLORS[t] ?? colorFromKey(t);
 }
 
 // =====================================================
@@ -606,7 +667,15 @@ function buildStyle(themeKey) {
           catch { return base; }
         },
 
-        "target-arrow-shape": (ele) => (ele.data("directional") ? "triangle" : "none"),
+        "target-arrow-shape": (ele) => {
+          if (!ele.data("directional")) return "none";
+          const cat = edgeCategoryFor(ele.data("type"));
+          return cat ? RELATIONSHIP_LINE_STYLE[cat].arrow : "triangle";
+        },
+        "line-style": (ele) => {
+          const cat = edgeCategoryFor(ele.data("type"));
+          return cat ? RELATIONSHIP_LINE_STYLE[cat].lineStyle : "solid";
+        },
         "arrow-scale": arrowScale,
         "curve-style": "bezier",
         width: edgeW,
@@ -660,7 +729,18 @@ function buildStyle(themeKey) {
     { selector: "node.lod-low", style: { label: "", "text-opacity": 0 } },
     { selector: "node.lod-mid", style: { label: "data(displayLabel)", "text-opacity": 1 } },
     { selector: "edge.lod-mid", style: { label: "", "curve-style": "straight", "target-arrow-shape": "none" } },
-    { selector: "edge.lod-high", style: { label: "data(displayType)", "curve-style": "bezier", "target-arrow-shape": (ele) => (ele.data("directional") ? "triangle" : "none") } },
+    {
+      selector: "edge.lod-high",
+      style: {
+        label: "data(displayType)",
+        "curve-style": "bezier",
+        "target-arrow-shape": (ele) => {
+          if (!ele.data("directional")) return "none";
+          const cat = edgeCategoryFor(ele.data("type"));
+          return cat ? RELATIONSHIP_LINE_STYLE[cat].arrow : "triangle";
+        },
+      },
+    },
 
     // Tree nested (existing)
     { selector: "edge.nestEdge", style: { "line-color": "#607D8B", width: clamp(4 * Math.pow(S, 0.9), 2, 7) } },

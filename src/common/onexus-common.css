@@ -549,10 +549,14 @@ input[type="checkbox"]:focus-visible {
     margin-bottom: 6px;
 }
 
+.legend-line-wrap {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
 .legend-line {
-    width: 18px;
-    height: 3px;
-    border-radius: 2px;
+    display: block;
 }
 
 .legend-item.active {

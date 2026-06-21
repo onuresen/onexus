@@ -124,3 +124,79 @@ test("details panel escapes untrusted graph text", async ({ page }) => {
     expect(result.injectedImages).toBe(0);
     expect(result.detailsText).toContain(payload);
 });
+
+// ---------------------------------------------------------------------------
+// Edge-type styling: different relationship types must render with visibly
+// distinct colors (blocking vs dependency vs supply), not collapse to the
+// same flat gray. Regression guard for edgeColorByType's hash fallback.
+// ---------------------------------------------------------------------------
+test("edges with different relationship types get distinct line colors", async ({ page }) => {
+    await bootPage(page);
+    const data = await page.evaluate(async (path) => {
+        const res = await fetch(path);
+        return res.json();
+    }, "/samples/json/onexus_ic_supply_chain_sample.json");
+    await page.evaluate((d) => window.onexusLoadGraph(d), data);
+    await page.waitForFunction(() => window.cy.edges().length > 0, { timeout: 10_000 });
+
+    const colorsByType = await page.evaluate(() => {
+        const out = {};
+        window.cy.edges().forEach((e) => {
+            const t = e.data("type");
+            if (t && !(t in out)) out[t] = e.style("line-color");
+        });
+        return out;
+    });
+
+    // The sample mixes "blocks" (must read as risk/blocking) with structural
+    // types like "supplies"/"requires" — they must not share a color.
+    expect(colorsByType.blocks).toBeTruthy();
+    expect(colorsByType.supplies).toBeTruthy();
+    expect(colorsByType.blocks).not.toBe(colorsByType.supplies);
+    expect(colorsByType.blocks).not.toBe("rgb(153,153,153)"); // not the old flat-gray fallback
+
+    const distinctColors = new Set(Object.values(colorsByType));
+    expect(distinctColors.size).toBe(Object.keys(colorsByType).length); // every type is visually distinguishable
+});
+
+// ---------------------------------------------------------------------------
+// Edge-type arrow shape must hold at every LOD tier. The "edge.lod-high"
+// class (applied at high zoom — see applyLOD) has its own target-arrow-shape
+// rule; it previously hardcoded directional-only "triangle", silently
+// overriding the category-aware arrow (tee/triangle/circle/diamond) the
+// instant a graph zoomed in. Guard both tiers explicitly.
+// ---------------------------------------------------------------------------
+test("blocking edges render a distinct arrow shape, including at high LOD", async ({ page }) => {
+    await bootPage(page);
+    const data = await page.evaluate(async (path) => {
+        const res = await fetch(path);
+        return res.json();
+    }, "/samples/json/onexus_ic_supply_chain_sample.json");
+    await page.evaluate((d) => window.onexusLoadGraph(d), data);
+    await page.waitForFunction(() => window.cy.edges().length > 0, { timeout: 10_000 });
+
+    const arrowsByType = await page.evaluate(() => {
+        const out = {};
+        window.cy.edges().forEach((e) => {
+            const t = e.data("type");
+            if (t && !(t in out)) out[t] = e.style("target-arrow-shape");
+        });
+        return out;
+    });
+
+    // "blocks" is the blocking category (tee); "supplies"/"requires" are the
+    // dependency category (triangle) — they must read as different shapes.
+    expect(arrowsByType.blocks).toBe("tee");
+    expect(arrowsByType.supplies).toBe("triangle");
+
+    // Force the high-LOD class on, the way applyLOD would at close zoom, and
+    // confirm the category-aware arrow survives (this is the regression the
+    // bug above would have broken).
+    await page.evaluate(() => {
+        window.cy.edges().addClass("lod-high");
+    });
+    const blocksArrowAtHighLod = await page.evaluate(() =>
+        window.cy.edges('[type = "blocks"]').first().style("target-arrow-shape")
+    );
+    expect(blocksArrowAtHighLod).toBe("tee");
+});

@@ -258,16 +258,43 @@
   // =========================================================
   function clearLegend(container) { container.innerHTML = ""; }
 
-  function mkLegendItem({ color, label, count, active, onClick }) {
+  // Dash pattern per Cytoscape line-style, scaled for the small 18px swatch.
+  const DASH_PATTERNS = { dashed: "4,3", dotted: "1.5,2", solid: "" };
+
+  // Small arrowhead glyph matching the edge's actual target-arrow-shape, so
+  // the legend teaches both the color AND the relationship "shape"
+  // (blocking=tee, dependency=triangle, support=circle, governance=diamond).
+  function arrowGlyphSvg(arrow, color) {
+    const c = color ?? "#999";
+    switch (arrow) {
+      case "triangle": return `<path d="M14,1.5 L20,5 L14,8.5 Z" fill="${c}"/>`;
+      case "tee": return `<path d="M17,1 L17,9" stroke="${c}" stroke-width="2"/>`;
+      case "circle": return `<circle cx="17" cy="5" r="2.5" fill="${c}"/>`;
+      case "diamond": return `<path d="M17,1 L20,5 L17,9 L14,5 Z" fill="${c}"/>`;
+      default: return "";
+    }
+  }
+
+  function legendSwatchSvg(color, lineStyle, arrow) {
+    const c = color ?? "#999";
+    const dash = DASH_PATTERNS[lineStyle] ?? "";
+    const dashAttr = dash ? ` stroke-dasharray="${dash}"` : "";
+    return `<svg class="legend-line" width="22" height="10" viewBox="0 0 22 10">
+      <line x1="0" y1="5" x2="14" y2="5" stroke="${c}" stroke-width="2.5"${dashAttr}/>
+      ${arrowGlyphSvg(arrow, c)}
+    </svg>`;
+  }
+
+  function mkLegendItem({ color, label, count, active, onClick, lineStyle, arrow }) {
     const item = document.createElement("div");
     item.className = "legend-item";
     if (active) item.classList.add("active");
-    const line = document.createElement("div");
-    line.className = "legend-line";
-    line.style.backgroundColor = color ?? "#999";
+    const lineWrap = document.createElement("span");
+    lineWrap.className = "legend-line-wrap";
+    lineWrap.innerHTML = legendSwatchSvg(color, lineStyle, arrow);
     const text = document.createElement("span");
     text.textContent = label ?? "";
-    item.appendChild(line);
+    item.appendChild(lineWrap);
     item.appendChild(text);
     if (typeof count === "number") {
       const badge = document.createElement("span");
@@ -328,9 +355,11 @@
     sorted.forEach((type) => {
       const visibleCount = visibleCountByType.get(type) ?? 0;
 
-      // Stable color from a sample edge of that type (even if hidden)
+      // Stable color/line-style/arrow from a sample edge of that type (even if hidden)
       const sample = sampleByType.get(type);
       const color = sample ? sample.style("line-color") : "#999";
+      const lineStyle = sample ? sample.style("line-style") : "solid";
+      const arrow = sample ? sample.style("target-arrow-shape") : "none";
 
       // Use displayType if available
       const displayType = sample?.data("displayType") ?? type;
@@ -338,6 +367,8 @@
       container.appendChild(
         mkLegendItem({
           color,
+          lineStyle,
+          arrow,
           label: displayType,
           count: visibleCount,
           active: relationshipFilter === type,
