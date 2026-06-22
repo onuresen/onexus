@@ -9,6 +9,7 @@
         "onexus-sankeyview.plugin.js",
         "onexus-obsidian.plugin.js",
         "onexus-imagebadges.plugin.js",
-        "onexus-mcp-bridge.plugin.js"
+        "onexus-mcp-bridge.plugin.js",
+        "onexus-ai.plugin.js"
     ]
 }

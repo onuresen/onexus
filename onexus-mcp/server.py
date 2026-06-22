@@ -462,6 +462,92 @@ def get_by_category(category: str, limit: int = 50) -> str:
 
 
 @mcp.tool()
+def what_if(node_id: str, edge_types: list[str] | None = None, direction: str = "both", max_depth: int = 5) -> str:
+    """Downstream impact analysis: walk the graph from node_id and return
+    everything reachable, optionally restricted to specific edge types
+    (e.g. ["blocks"] to trace only blocking dependencies).
+
+    Direction matters and is NOT inferred automatically: a "supplies" edge
+    (supplier -> component) means impact flows source->target (outgoing),
+    but a "requires" edge (process -> component) means impact flows the
+    OTHER way — if the component is late, the process (the edge's source)
+    is what's affected, so you need incoming traversal for that type. When
+    mixing edge types with opposite impact-direction conventions, leave
+    direction="both" (the default) so nothing is silently missed, then use
+    your judgment about which hops are causally meaningful when narrating.
+
+    This tool only returns structured data (affected nodes, their depth,
+    and which edge connected them) — it does not generate prose. Narrate
+    the result yourself using this data as grounding, e.g. for IC supply
+    chain delay analysis or ROD/OneRoot decision-impact questions.
+
+    Args:
+        node_id: Starting node id (the thing that changed/delayed/failed).
+        edge_types: Edge types to follow (e.g. ["blocks", "depends_on"]).
+            Omit to follow every edge type.
+        direction: 'outgoing' (source->target only), 'incoming' (target->source
+            only), or 'both' (default — safest when edge types mix direction
+            conventions).
+        max_depth: Max hops to traverse (1-10, default 5).
+    """
+    if node_id not in _nodes_by_id:
+        return json.dumps({"error": f"Node '{node_id}' not found."})
+    max_depth = min(max(1, max_depth), 10)
+    direction = direction.lower() if direction.lower() in ("outgoing", "incoming", "both") else "both"
+    edge_type_filter = set(edge_types) if edge_types else None
+
+    # adj[node] = list of (neighbor, edge_type, hop_direction) reachable per
+    # the requested direction(s) — built once, then walked with plain BFS.
+    adj: dict[str, list[tuple[str, str, str]]] = {}
+    for e in _graph.get("edges", []):
+        ed = e.get("data", {})
+        s, t, et = ed.get("source", ""), ed.get("target", ""), ed.get("type", "")
+        if not s or not t:
+            continue
+        if edge_type_filter and et not in edge_type_filter:
+            continue
+        if direction in ("outgoing", "both"):
+            adj.setdefault(s, []).append((t, et, "outgoing"))
+        if direction in ("incoming", "both"):
+            adj.setdefault(t, []).append((s, et, "incoming"))
+
+    from collections import deque
+    visited: set[str] = {node_id}
+    frontier: deque = deque([(node_id, 0)])
+    affected: list[dict] = []
+
+    while frontier:
+        cur, depth = frontier.popleft()
+        if depth >= max_depth:
+            continue
+        for nb, et, hop_dir in adj.get(cur, []):
+            if nb in visited:
+                continue
+            visited.add(nb)
+            d = _nodes_by_id.get(nb, {})
+            affected.append({
+                "id": nb,
+                "label": d.get("displayLabel", nb),
+                "category": d.get("category"),
+                "depth": depth + 1,
+                "via_edge_type": et,
+                "via_direction": hop_dir,
+                "via_node": cur,
+            })
+            frontier.append((nb, depth + 1))
+
+    return json.dumps({
+        "origin": node_id,
+        "origin_label": _nodes_by_id.get(node_id, {}).get("displayLabel", node_id),
+        "edge_types_followed": sorted(edge_type_filter) if edge_type_filter else "all",
+        "direction": direction,
+        "max_depth": max_depth,
+        "affected_count": len(affected),
+        "affected": affected,
+    }, indent=2)
+
+
+@mcp.tool()
 def get_edge_types() -> str:
     """All distinct edge types and their counts."""
     counts: dict[str, int] = {}

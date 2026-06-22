@@ -78,6 +78,7 @@ When ONEXUS loads, it automatically connects to `ws://localhost:8765`.
 | `get_node(node_id)` | Full data + incoming/outgoing edges for one node |
 | `get_neighbors(node_id, depth, direction)` | All nodes within N hops |
 | `find_path(source_id, target_id)` | Shortest path between two nodes |
+| `what_if(node_id, edge_types, direction, max_depth)` | Downstream impact analysis — what's reachable from a node, optionally restricted to specific edge types (e.g. `["blocks"]`). Returns structured data only; the calling agent narrates the result |
 | `get_by_category(category, limit)` | All nodes in a category |
 | `get_edge_types` | All edge types and their counts |
 
@@ -126,6 +127,11 @@ Pick random visible nodes to test the live bridge.
 
 Show me the path between the VIKTOR project and BHoM.
 → find_path("projects/VIKTOR.md", "concepts/BHoM.md") → focus_node on each hop
+
+Steel Fabricator A is delayed 3 weeks — what's at risk?
+→ what_if("SUP-STEEL-A") → narrate the affected chain using the returned
+  depth/via_edge_type/via_direction fields (loaded sample:
+  samples/json/onexus_ic_supply_chain_sample.json)
 
 Filter the graph to only show Project and Concept nodes.
 → get_by_category("Project") + get_by_category("Concept") → filter_to_subgraph(ids)
