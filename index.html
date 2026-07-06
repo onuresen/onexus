@@ -578,14 +578,11 @@
   <!-- Shared inline JS extracted -->
   <script src="./src/common/onexus-common.js"></script>
   <script src="./src/common/onexus-bootcheck.js"></script>
-  <!-- Dev -->
+  <!-- Dev — devloader is query-gated (?dev=1 / ?ci=1) and injects the dev-only
+       scripts itself. Do NOT statically link those scripts here too: it defeats
+       the gate and ships dev tooling (depgraph, exporters, devtools) to every
+       production load. The devloader's list is the single source of truth. -->
   <script src="./src/dev/onexus-devloader.js"></script>
-  <script src="./src/dev/onexus-devgraph.common.js"></script>
-  <script src="./src/dev/onexus-depgraph.js"></script>
-  <script src="./src/dev/onexus-devgraph.combine.js"></script>
-  <script src="./src/dev/onexus-dev.exportSrcTree.js"></script>
-  <script src="./src/dev/onexus-dev.exportSnapshot.js"></script>
-  <script src="./src/dev/onexus-devtools.bindDepGraphButton.js"></script>
 
 </body>
 
