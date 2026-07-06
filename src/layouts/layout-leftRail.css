@@ -193,6 +193,25 @@ body {
     align-items: flex-end;
 }
 
+/* Desktop: a long category legend must not grow down into the metrics panel +
+   minimap that share the bottom-right corner. Box the overlay between the top
+   offset and the metrics zone (metrics sits ~170px off the bottom and is ~135px
+   tall, so reserve 315px) and let the list scroll. Bounding by bottom (not
+   100vh math) keeps it correct regardless of toolbar height, since the overlay
+   is positioned inside canvas-wrap. Mobile collapses the legend to a chip, so
+   this only applies to fine-pointer desktops wider than the mobile breakpoint. */
+@media (min-width: 821px) {
+    #legendOverlay {
+        bottom: 315px;
+    }
+
+    #legendOverlay #legend {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+    }
+}
+
 #metricsOverlay {
     right: 12px;
     /* position metrics above the minimap: minimap height (150px) + 8px gap */
