@@ -38,3 +38,4 @@ Revit_Addin/Onexus/obj/*.nuget.g.props
 Revit_Addin/Onexus/obj/*.nuget.g.targets
 Revit_Addin/Onexus/obj/project.assets.json
 Revit_Addin/Onexus/obj/project.nuget.cache
+.gstack/
