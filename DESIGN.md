@@ -10,16 +10,39 @@ data dense but readable. Landing-page moves (hero blocks, decorative gradients,
 
 ## Where the theme lives
 
+ONEXUS's theme is split between an **upstream shared system** (synced in, don't edit
+locally) and **ONEXUS-native code** (owns runtime theming + dark mode).
+
+### Upstream — the shared UI system (do NOT edit the local copies)
+
+Canonical home: `Vibe_Coding/ui-system/`. A `sync.ps1` copies these into ONEXUS's
+`src/common/` per `targets.json` (ONEXUS is an onboarded Tier-A target,
+`palette: layer-semantic`). **Edit upstream, bump `ui-system/VERSION`, re-sync —
+never touch the local copies, they get overwritten.**
+
+| Local copy | Upstream source | What it is |
+|------------|-----------------|-----------|
+| `src/common/ui-base.css` | `ui-system/ui-base.css` | Shared primitives (`.btn/.card/.input/.ui-modal`) + `--z-*` scale on the `--surface`/`--text`/`--accent` contract. Consumed by 7 tools. |
+| `src/common/layer-semantic.css` | `ui-system/palettes/layer-semantic.css` | **ONEXUS's palette of record.** Maps the shared contract to ONEXUS colours (`--surface`, `--text`, `--accent` = layer-semantic). **Light only — the "blueprint" palette carries no dark values.** |
+
+### ONEXUS-native — runtime theming, dark mode, graph chrome
+
 | Concern | File | Notes |
 |---------|------|-------|
-| Palette engine (light + dark) | `src/helpers/onexus-style.js` → `THEMES` + `applyTheme()` | JS sets `--bg-*`, `--stroke`, `--text-*`, `--btn-*` on `:root` per theme. **Edit palette values here.** |
+| Palette engine (light **+ dark**) | `src/helpers/onexus-style.js` → `THEMES` + `applyTheme()` | JS sets `--bg-*`, `--stroke`, `--text-*`, `--btn-*` on `:root` per theme. **This is the only place dark mode exists.** Edit runtime palette values here. |
 | Light defaults + non-palette tokens | `src/common/onexus-common.css` `:root` | Radius, fonts, layer accents, grid, shadows. Light values double as the CSS fallback. |
-| Layer-semantic accent | `src/common/layer-semantic.css` + `onexus-common.css` | `data-onx-layer` on `<html>` drives `--onx-layer-accent`. |
-| Shared UI primitives | `src/common/ui-base.css` | **Canonical cross-tool file — do not edit here.** Its home is `Vibe_Coding › ui-system/ui-base.css`; it ships `.btn/.card/.input/.ui-modal` and a `--z-*` scale on a *separate* token contract (`--surface`, `--text`, `--accent`). |
+| Layer-semantic accent | `onexus-common.css` (+ upstream `layer-semantic.css`) | `data-onx-layer` on `<html>` drives `--onx-layer-accent`; `--accent` aliases it. |
+| Layout / corner overlays | `src/layouts/layout-*.css` | Not synced, ONEXUS-only. |
 
-Two token contracts coexist: ONEXUS-native graph chrome (`--bg-main`, `--bg-soft`,
-`--text-main`, `--stroke`) and the shared `ui-base` skin (`--surface`, `--text`).
-Don't cross them — style graph chrome with the native tokens.
+### The divergence (why the minimap dark bug was possible)
+
+Two token contracts coexist: the upstream palette (`--surface`, `--text`, light
+only) and the ONEXUS-native set (`--bg-main`, `--bg-soft`, `--text-main`,
+`--stroke`, **light + dark**). The graph chrome runs on the native set, so **dark
+mode lives only in `onexus-style.js`, not in the shared palette.** Style graph
+chrome with the native tokens; anything that must flip light↔dark has to reference
+a native token (e.g. `var(--bg-soft)`), because the shared palette can't theme it.
+Don't cross the two contracts.
 
 ## Typography
 
