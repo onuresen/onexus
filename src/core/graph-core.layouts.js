@@ -34,11 +34,13 @@
 
   function runLayout(opts, fitPad) {
     const pad = Number.isFinite(fitPad) ? fitPad : autoPadding();
-    // Disable animation above threshold — large graphs (300+ nodes) animate poorly:
-    // nodes visibly fly from random positions, labels leak through the hide-during-load system,
-    // and the user waits longer for the graph to settle. Instant layout is faster and cleaner.
+    // Disable animation above threshold — animation RENDERS every layout iteration,
+    // so it dominates cost on medium+ graphs (a 190-node cose animates in ~3-5s vs
+    // ~0.4s instant) and reads poorly (nodes fly from random positions, labels leak
+    // through the hide-during-load system). Only animate small graphs, where the
+    // settle effect is cheap and legible.
     const n = nodeCount();
-    const shouldAnimate = n <= 300;
+    const shouldAnimate = n <= 80;
     cy.layout({ ...opts, animate: shouldAnimate, padding: pad }).run();
     // Fit after layout settles (prevents huge empty space)
     setTimeout(() => {
@@ -330,6 +332,10 @@
           gravity: 0.3,
           componentSpacing: 80,
           nestingFactor: 1.1,
+          // cose's default 1000 iterations scales the cost linearly and is overkill
+          // on larger graphs; a force layout is visually settled well before then.
+          // Cap iterations above ~100 nodes to keep load snappy (≈2-3x faster).
+          numIter: nodeCount() > 100 ? 350 : 1000,
           randomize: false,
         };
     }
