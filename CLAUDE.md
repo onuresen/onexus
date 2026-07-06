@@ -160,6 +160,27 @@ self-balancing** — don't hardcode constant font/wrap sizes again:
 
 These four multipliers (`0.22`, `1.9`, `0.9`, `450`) are the tuning knobs.
 
+### Corner overlays must not collide (layout invariant)
+
+The canvas floats overlays in the corners of `#canvas-wrap`: `#legendOverlay`
+(top-right, z 22, grows **down** one row per relationship type), `#metricsOverlay`
+(bottom-right above the minimap, z 12), and `#minimap` (bottom-right, z 10). The
+legend length is data-driven, so on short viewports it used to overrun the metrics
+panel and render on top of it. **Invariant:** the desktop legend is boxed above
+the metrics zone (`#legendOverlay { bottom: 315px }` under `@media (min-width: 821px)`)
+and the list scrolls. If you add/move a bottom-right overlay, re-verify legend →
+metrics → minimap stack with ≥12px gaps at 1280×720. Mobile collapses the legend
+to a chip, so the cap is media-scoped.
+
+### Themed chrome uses tokens, never hardcoded colors
+
+Any surface that should flip between light/dark must reference a palette token
+(`var(--bg-soft)`, `var(--stroke)`, …) set by `applyTheme()` in
+`onexus-style.js` — not a literal hex. `#minimap` shipped `background: #ffffff`
+and became a white box in dark mode (now `var(--bg-soft)`). See **DESIGN.md** for
+the full token contract, palettes, and layout invariants — treat it as the design
+source of truth and calibrate visual changes against it.
+
 ## Dev-only globals (available with `?dev=1`)
 
 These are loaded only in dev mode and must **not** be referenced in production code:

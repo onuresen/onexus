@@ -15,7 +15,12 @@
  - Image rendering policy + preference toggle
 ========================================================= */
 
-/* Theme palettes */
+/* Theme palettes.
+ * These feed applyTheme(), which sets --bg-main/--bg-panel/--bg-soft/--stroke/
+ * --text-main/--text-muted/--btn-* on :root. Any DOM chrome that must flip
+ * between light and dark MUST consume those tokens (e.g. var(--bg-soft)) rather
+ * than a hardcoded hex — otherwise it won't re-theme (see #minimap history).
+ * Full contract + layout invariants: DESIGN.md. */
 const THEMES = {
   light: {
     canvas: "#F5F7FA",
