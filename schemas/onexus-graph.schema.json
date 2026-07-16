@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onexus.local/schemas/onexus-graph.schema.json",
+  "title": "ONEXUS Graph Data",
+  "description": "Data format accepted by ONEXUS (https://github.com/) for loading a graph — a network of nodes (elements: components, spaces, organizations, vendors, systems...) connected by typed, directional edges (relationships). Give this schema to an AI assistant along with your own data (a spreadsheet, a list, a database export, anything) and ask it to convert your data into a JSON file that validates against this schema. Only `elements` is strictly required; everything else has sensible defaults or is optional metadata. Fields not described here are still allowed and preserved — ONEXUS plugins may read extra fields you add.",
+  "type": "object",
+  "required": ["elements"],
+  "additionalProperties": true,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Optional project-level metadata. Not required to load, but recommended.",
+      "additionalProperties": true,
+      "properties": {
+        "schema": {
+          "type": "string",
+          "description": "Version tag for this data format. Use \"onexus-1.1\" unless told otherwise.",
+          "examples": ["onexus-1.1"]
+        },
+        "project": {
+          "type": "string",
+          "description": "Human-readable name of the project or dataset this graph represents."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this data was generated or exported, ISO 8601."
+        },
+        "phases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ordered list of lifecycle phase names used anywhere in this graph's edges (e.g. project stages, workflow steps). Free-form — invent names that fit your domain."
+        },
+        "languageDefault": {
+          "type": "string",
+          "enum": ["en", "jp"],
+          "description": "Which language of each node's `label` to display by default. Only \"en\" and \"jp\" are actually rendered by ONEXUS today."
+        }
+      }
+    },
+
+    "elements": {
+      "type": "object",
+      "description": "The graph itself: a list of nodes and a list of edges connecting them.",
+      "required": ["nodes", "edges"],
+      "additionalProperties": true,
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "description": "Every entity in the graph — a physical component, a space, an organization, a vendor, a system, anything you want to model as a 'thing'.",
+          "items": { "$ref": "#/$defs/node" }
+        },
+        "edges": {
+          "type": "array",
+          "description": "Every relationship between two nodes, referenced by their `id`.",
+          "items": { "$ref": "#/$defs/edge" }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "label": {
+      "type": "object",
+      "description": "Display name of a node, keyed by language. Only `en` and `jp` are stored and rendered by ONEXUS — other language keys you add will be dropped when the file is loaded.",
+      "required": ["en"],
+      "additionalProperties": false,
+      "properties": {
+        "en": { "type": "string", "description": "English display name. Required." },
+        "jp": { "type": "string", "description": "Japanese display name. Optional — falls back to `en` if omitted." }
+      }
+    },
+
+    "node": {
+      "type": "object",
+      "description": "One graph node, wrapped in a `data` object (this mirrors the Cytoscape.js element format ONEXUS is built on).",
+      "required": ["data"],
+      "additionalProperties": true,
+      "properties": {
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["id", "nodeType", "label"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier for this node within the graph. Referenced by edges' `source`/`target`. Must be unique across all nodes."
+            },
+            "nodeType": {
+              "type": "string",
+              "description": "Broad kind of thing this node represents. Free-form, but these values get distinct icons/styling in ONEXUS: \"Component\" (the default if omitted or unrecognized), \"System\", \"Space\", \"Organization\", \"Vendor\", \"ComponentType\", \"PropertySet\", \"Port\", \"Option\", \"Tag\". Any other value is accepted and just renders as a generic node.",
+              "examples": ["Component", "System", "Space", "Organization", "Vendor"]
+            },
+            "category": {
+              "type": "string",
+              "description": "Finer-grained classification within `nodeType`, used for coloring/grouping and the legend (e.g. \"Door\", \"SecurityDevice\", \"DesignTeam\"). Free-form — invent categories that fit your domain. Either `category` or `revitCategory` must be present."
+            },
+            "revitCategory": {
+              "type": "string",
+              "description": "Autodesk Revit category name, if this node originated from a Revit model (e.g. \"Doors\", \"Electrical Equipment\"). Used as a fallback for `category` when `category` is omitted. Either `category` or `revitCategory` must be present."
+            },
+            "label": {
+              "$ref": "#/$defs/label"
+            },
+            "level": {
+              "type": "string",
+              "description": "Optional building level / floor this node belongs to (e.g. \"Level 1\"). Purely descriptive metadata."
+            }
+          },
+          "anyOf": [
+            { "required": ["category"] },
+            { "required": ["revitCategory"] }
+          ]
+        }
+      }
+    },
+
+    "edge": {
+      "type": "object",
+      "description": "One directed or undirected relationship between two nodes, wrapped in a `data` object.",
+      "required": ["data"],
+      "additionalProperties": true,
+      "properties": {
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["id", "type", "dimension", "source", "target", "directional"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier for this edge within the graph."
+            },
+            "type": {
+              "type": "string",
+              "description": "Name of the relationship (e.g. \"Controls\", \"Supplies\", \"LocatedIn\", \"DesignedBy\"). Free-form — this is the label shown on the edge and in the legend.",
+              "examples": ["Controls", "Supplies", "LocatedIn", "DesignedBy", "BuiltBy", "ProvidedBy"]
+            },
+            "dimension": {
+              "type": "string",
+              "description": "Which semantic category of relationship this is, used to group edges in the legend and for filtering. Free-form, but ONEXUS suggests these starter values: \"System\", \"Spatial\", \"Responsibility\", \"Vendor\". Any other string works fine and just becomes a new legend group.",
+              "examples": ["System", "Spatial", "Responsibility", "Vendor"]
+            },
+            "source": {
+              "type": "string",
+              "description": "`id` of the node this edge starts from. Must match an existing node's `id`."
+            },
+            "target": {
+              "type": "string",
+              "description": "`id` of the node this edge points to. Must match an existing node's `id`."
+            },
+            "directional": {
+              "type": "boolean",
+              "description": "Whether this edge has a direction (drawn with an arrowhead) or represents a symmetric relationship (drawn without one)."
+            },
+            "phase": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Which project phase(s) this relationship is active/relevant in (e.g. [\"Design\", \"Construction\"]). Free-form — should match names used in `meta.phases`."
+            },
+            "owner": {
+              "type": "string",
+              "description": "Who is responsible for this relationship (a discipline, team, or role name). Purely descriptive metadata."
+            },
+            "risk": {
+              "type": "string",
+              "enum": ["High", "Medium", "Low"],
+              "description": "Risk level of this relationship, used by the Risk layer to color and size edges. Use \"High\"/\"Medium\"/\"Low\" — ONEXUS also accepts lowercase or single-letter (\"h\"/\"m\"/\"l\") or numeric (1-3 or a raw 0-1 score) variants, but the three values here are the canonical form to generate."
+            },
+            "confidence": {
+              "type": "string",
+              "enum": ["Explicit", "Inferred"],
+              "description": "How certain this relationship is. \"Inferred\" renders as a dashed edge (lower confidence, e.g. derived or assumed); \"Explicit\" (or any other/omitted value) renders as a normal solid edge."
+            },
+            "notes": {
+              "type": "string",
+              "description": "Free-text explanation of this relationship, shown in the detail panel."
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "examples": [
+    {
+      "meta": {
+        "schema": "onexus-1.1",
+        "project": "Example Project",
+        "phases": ["Design", "Construction"]
+      },
+      "elements": {
+        "nodes": [
+          {
+            "data": {
+              "id": "N-1",
+              "nodeType": "Component",
+              "category": "Door",
+              "label": { "en": "Entrance Door A", "jp": "出入口ドアA" }
+            }
+          },
+          {
+            "data": {
+              "id": "N-2",
+              "nodeType": "System",
+              "category": "BuildingSystem",
+              "label": { "en": "Access Control System" }
+            }
+          }
+        ],
+        "edges": [
+          {
+            "data": {
+              "id": "E-1",
+              "type": "PartOfSystem",
+              "dimension": "System",
+              "source": "N-1",
+              "target": "N-2",
+              "directional": false,
+              "phase": ["Design"],
+              "risk": "Medium",
+              "confidence": "Explicit",
+              "notes": "Door is part of the access control system."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

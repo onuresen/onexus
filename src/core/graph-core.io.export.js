@@ -1,4 +1,4 @@
-/* ONEXUS – IO Export (PNG/SVG/JSON/CSV/Layout) */
+/* ONEXUS – IO Export (PNG/SVG/JSON/CSV/Layout/Schema) */
 (function () {
   const cy = window.cy;
 
@@ -104,9 +104,20 @@
     );
   }
 
+  function downloadSchema() {
+    download("onexus-graph.schema.json", "schemas/onexus-graph.schema.json");
+    try {
+      window.showTransientMessage?.(
+        "Schema downloaded — upload it to any AI and ask it to convert your data to match it.",
+        2600
+      );
+    } catch { }
+  }
+
   window.exportPNG = exportPNG;
   window.exportSVG = exportSVG;
   window.exportJSON = exportJSON;
   window.exportCSV = exportCSV;
   window.exportLayout = exportLayout;
+  window.downloadSchema = downloadSchema;
 })();

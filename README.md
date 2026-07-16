@@ -240,6 +240,11 @@ Each ONEXUS data file follows this minimal structure:
 - Extra fields are preserved and may be used by plugins
 - The `load_focused_graph` MCP tool accepts the same schema — Claude can construct and push a custom graph into the live viewer programmatically
 
+Converting your own data? Click the **Download JSON Schema** toolbar button (or
+grab [`schemas/onexus-graph.schema.json`](schemas/onexus-graph.schema.json)
+directly) and hand it to any AI assistant along with your data — the schema
+is written to be self-explanatory for that purpose.
+
 ---
 
 ## Directory Structure
