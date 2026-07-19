@@ -97,6 +97,9 @@
 
         // IMPORTANT: keep cy mounted and sized
         if (cyEl) {
+            // A completed graph-entry animation retains opacity:1 because its
+            // CSS uses fill-mode:both. Remove it before changing view opacity.
+            cyEl.classList.remove("onx-graph-enter");
             // never display:none
             cyEl.style.opacity = isGraph ? "1" : "0";
             cyEl.style.pointerEvents = isGraph ? "auto" : "none";

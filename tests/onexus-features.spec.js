@@ -29,8 +29,51 @@ async function loadSample(page) {
     }, SAMPLE);
     await page.evaluate((d) => window.onexusLoadGraph(d), data);
     await page.waitForFunction(() => window.cy.nodes().length > 0, { timeout: 10_000 });
+    await page.waitForTimeout(650);
+    await page.evaluate(() => window.ONEXUS_SCENARIOS?.hideChooser?.());
     return data;
 }
+
+function captureRuntimeErrors(page) {
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (message) => {
+        if (message.type() === "error") errors.push(message.text());
+    });
+    return errors;
+}
+
+test("flagship opens a three-story chooser backed by reusable scenario data", async ({ page }) => {
+    await page.goto(
+        `${BASE}/index.html?ci=1&sample=smart-access-connected-door`,
+        { waitUntil: "load" }
+    );
+    await page.waitForFunction(
+        () => window.cy?.getElementById("door-main")?.nonempty?.() &&
+            window.ONEXUS_SCENARIOS?.list?.().length === 3 &&
+            document.querySelector("#onx-story-chooser")?.style.display === "flex",
+        { timeout: 30_000 }
+    );
+
+    const chooser = page.locator("#onx-story-chooser");
+    await expect(chooser).toBeVisible();
+    const cards = page.locator(".onx-story-card");
+    await expect(cards).toHaveCount(3);
+    await expect(page.locator("#onx-story-heading")).toHaveText("Choose a story");
+
+    const impactCard = page.locator('[data-scenario="delivery-impact"]');
+    await expect(impactCard).toHaveCount(1);
+    await impactCard.click();
+
+    await page.waitForFunction(
+        () => window.ONEXUS_TOUR?.current?.().name === "delivery-impact"
+    );
+    expect(new URL(page.url()).searchParams.get("scenario")).toBe("delivery-impact");
+    await expect(chooser).toBeHidden();
+    await expect(page.locator("#onexus-tour-title")).toHaveText(
+        "A supplier reports a three-week delay"
+    );
+});
 
 test("shareable connected-door URL loads the flagship and starts its guided story", async ({ page }) => {
     await page.goto(
@@ -119,6 +162,72 @@ test("decision-intelligence URL preserves evidence, alternatives, and review sta
     expect(result.evidence).toBe(2);
     expect(result.selectedOptionEdges).toBe(1);
     expect(result.affectedDoorEdges).toBe(1);
+});
+
+// ---------------------------------------------------------------------------
+// Alternate visualisations: these are lazy-loaded plugin views, so exercise
+// the public layout selector path and verify the graph canvas is restored.
+// ---------------------------------------------------------------------------
+test("Sankey view renders flow data without errors and closes back to the graph", async ({ page }) => {
+    const errors = captureRuntimeErrors(page);
+    await bootPage(page);
+    await loadSample(page);
+    await page.waitForFunction(() =>
+        [...document.querySelectorAll("#layoutSelect option")]
+            .some((option) => option.value === "sankey")
+    );
+
+    await page.selectOption("#layoutSelect", "sankey");
+    await page.waitForFunction(() => {
+        const host = document.querySelector("#onx-sankey-host");
+        const svg = document.querySelector("#onxSankeySvg");
+        return host?.classList.contains("active") &&
+            svg?.querySelectorAll("path, rect").length > 0;
+    }, { timeout: 30_000 });
+
+    await expect(page.locator("#onx-sankey-host")).toBeVisible();
+    await expect(page.locator("#cy")).toHaveCSS("opacity", "0");
+    expect(errors).toEqual([]);
+
+    await page.click("#onxSankeyClose");
+    await expect(page.locator("#onx-sankey-host")).not.toHaveClass(/active/);
+    await expect(page.locator("#cy")).toHaveCSS("opacity", "1");
+    await expect(page.locator("#cy")).toHaveCSS("pointer-events", "auto");
+    expect(errors).toEqual([]);
+});
+
+test("Chord view renders, responds to zoom, and exits back to Cytoscape", async ({ page }) => {
+    const errors = captureRuntimeErrors(page);
+    await bootPage(page);
+    await loadSample(page);
+    await page.waitForFunction(() =>
+        [...document.querySelectorAll("#layoutSelect option")]
+            .some((option) => option.value === "chord")
+    );
+
+    await page.selectOption("#layoutSelect", "chord");
+    await page.waitForFunction(() => {
+        const host = document.querySelector("#onx-chord-host");
+        const svg = document.querySelector("#onxChordSvg");
+        return host?.classList.contains("active") &&
+            svg?.querySelectorAll("path").length > 0;
+    }, { timeout: 30_000 });
+
+    await expect(page.locator("#onx-chord-host")).toBeVisible();
+    await expect(page.locator("#cy")).toHaveCSS("opacity", "0");
+    const chartGroup = page.locator("#onxChordSvg > g").first();
+    const transformBefore = await chartGroup.getAttribute("transform");
+    await page.locator("#onxChordSvg").hover();
+    await page.mouse.wheel(0, -500);
+    await expect.poll(() => chartGroup.getAttribute("transform"))
+        .not.toBe(transformBefore);
+    expect(errors).toEqual([]);
+
+    await page.selectOption("#layoutSelect", "default");
+    await expect(page.locator("#onx-chord-host")).not.toHaveClass(/active/);
+    await expect(page.locator("#cy")).toHaveCSS("opacity", "1");
+    await expect(page.locator("#cy")).toHaveCSS("pointer-events", "auto");
+    expect(errors).toEqual([]);
 });
 
 // ---------------------------------------------------------------------------

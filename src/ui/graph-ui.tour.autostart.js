@@ -20,6 +20,10 @@
     // even for returning visitors who have already seen the first-run tour.
     if (new URLSearchParams(window.location.search).get("scenario")) return;
 
+    // Flagship graphs use the visible story chooser instead of silently
+    // launching one story on behalf of the visitor.
+    if (payload?.meta?.flagship) return;
+
     try {
       if (localStorage.getItem(STORAGE_KEY)) return;
     } catch {
@@ -28,9 +32,7 @@
 
     setTimeout(function () {
       try {
-        const requestedScenario = new URLSearchParams(window.location.search).get("scenario");
-        const tourName = requestedScenario || (payload?.meta?.flagship ? "connected-door" : "basic");
-        window.ONEXUS_TOUR?.start(tourName);
+        window.ONEXUS_TOUR?.start("basic");
         localStorage.setItem(STORAGE_KEY, "1");
       } catch { /* non-fatal */ }
     }, SETTLE_DELAY_MS);

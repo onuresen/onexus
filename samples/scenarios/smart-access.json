@@ -1,0 +1,54 @@
+{
+  "sampleId": "smart-access-connected-door",
+  "samplePath": "./samples/json/onexus_smart_access_flagship.json",
+  "stories": [
+    {
+      "id": "connected-door",
+      "kicker": "Connected Building",
+      "title": "Explore the Connected Door",
+      "question": "What does one entrance door require to function safely?",
+      "summary": "Follow D-101 through spaces, devices, systems, safety rules, suppliers, and maintainers.",
+      "accent": "#2563eb",
+      "steps": [
+        { "id": "door", "title": "A door is never just a door", "body": "Meet <b>Main Entrance Door D-101</b>. This story reveals the spaces, devices, systems, rules, suppliers, and people required for it to function safely.", "targetNodeId": "door-main", "focusNodeIds": ["door-main"] },
+        { "id": "space", "title": "The spatial context", "body": "D-101 serves the <b>Main Lobby</b> on Level 1 and sits on the public-to-secure boundary. The same object can be explored through spatial and system relationships.", "targetNodeId": "room-lobby", "focusNodeIds": ["door-main", "room-lobby", "floor-01", "zone-public"] },
+        { "id": "devices", "title": "The devices that make it work", "body": "Face recognition, card reader, electric lock, door contact, and camera each contribute a different relationship: authorize, secure, monitor, or report.", "targetNodeId": "device-face", "focusNodeIds": ["door-main", "device-face", "device-card", "device-lock", "device-contact", "device-camera"] },
+        { "id": "safety", "title": "Security must yield to life safety", "body": "The fire alarm overrides the electric lock. The statutory <b>Unlock on Fire Alarm</b> rule explains why that cross-system dependency exists.", "targetNodeId": "rule-egress", "focusNodeIds": ["door-main", "device-lock", "system-fire", "rule-egress"] },
+        { "id": "responsibility", "title": "Someone owns every relationship", "body": "Security operates the access system, Facilities maintains the door and lock, and SecureVision supplies key devices. ONEXUS connects technical dependencies to accountable organizations.", "targetNodeId": "org-fm", "focusNodeIds": ["door-main", "system-access", "org-security", "org-fm", "supplier-securevision"] },
+        { "id": "complete", "title": "One object, one connected story", "body": "ONEXUS shows that a door is connected to <b>spaces, systems, rules, people, risks, and suppliers</b>.", "targetSelector": "#metricsOverlay", "fitAll": true }
+      ]
+    },
+    {
+      "id": "delivery-impact",
+      "kicker": "Construction Impact Control",
+      "title": "Trace a Delivery Impact",
+      "question": "What happens when the face reader arrives three weeks late?",
+      "summary": "Trace a supplier signal into installation, testing, handover, cost exposure, ownership, and action.",
+      "accent": "#dc2626",
+      "steps": [
+        { "id": "delay", "title": "A supplier reports a three-week delay", "body": "The face recognition reader will arrive on <b>25 September</b>, twenty-one days later than planned. ONEXUS begins with the reported issue, not an abstract network.", "targetNodeId": "issue-reader-delay", "focusNodeIds": ["supplier-securevision", "po-face-reader", "delivery-face-reader", "issue-reader-delay"] },
+        { "id": "component", "title": "Trace the delayed item to the building", "body": "The purchase order procures the reader, the reader controls D-101, and D-101 secures the lobby boundary. Procurement risk is now connected to a real building function.", "targetNodeId": "device-face", "focusNodeIds": ["po-face-reader", "device-face", "door-main", "room-lobby"] },
+        { "id": "schedule", "title": "Follow the schedule blast radius", "body": "Late delivery blocks installation. Installation precedes integrated testing, and testing gates the Level 1 security handover milestone. The activities have no usable float.", "targetNodeId": "milestone-handover", "focusNodeIds": ["delivery-face-reader", "activity-install-access", "activity-test-security", "milestone-handover"] },
+        { "id": "cost", "title": "Translate delay into commercial exposure", "body": "Temporary access control, remobilisation, and extended preliminaries create an estimated <b>¥3.8–5.2M exposure</b>. The estimate remains visibly marked as an estimate.", "targetNodeId": "cost-delay-exposure", "focusNodeIds": ["issue-reader-delay", "cost-delay-exposure"] },
+        { "id": "decision", "title": "Turn impact into a decision", "body": "Project Controls must choose by 25 August: use a temporary reader or resequence the works. It is explicitly a <b>required, not yet official</b> decision.", "targetNodeId": "decision-reader-mitigation", "focusNodeIds": ["issue-reader-delay", "decision-reader-mitigation", "org-project-controls"] },
+        { "id": "impact-complete", "title": "From supplier signal to accountable action", "body": "One delay now has a traceable path through <b>supplier, component, door, activities, milestone, cost, owner, and decision</b>.", "targetSelector": "#metricsOverlay", "fitAll": true }
+      ]
+    },
+    {
+      "id": "decision-intelligence",
+      "kicker": "Decision Intelligence",
+      "title": "Understand the Decision",
+      "question": "Why was face recognition recommended, and what does it affect?",
+      "summary": "Trace the question through evidence, alternatives, weighted criteria, recommendation, action, and outcome.",
+      "accent": "#7c3aed",
+      "steps": [
+        { "id": "decision-question", "title": "Begin with the decision question", "body": "The team must decide: <b>how should entrance D-101 authenticate users?</b> ONEXUS keeps the question connected to the project elements it will affect.", "targetNodeId": "issue-access-method", "focusNodeIds": ["issue-access-method", "door-main"] },
+        { "id": "decision-evidence", "title": "Make the evidence traceable", "body": "A verified security audit found tailgating, while the FM incident register recorded eighteen lost cards per quarter. The recommendation can be traced back to both sources.", "targetNodeId": "evidence-security-audit", "focusNodeIds": ["issue-access-method", "evidence-security-audit", "evidence-operations"] },
+        { "id": "decision-options", "title": "Preserve the alternatives", "body": "The team considered card-only access, a mobile credential, and face recognition with card fallback. Rejected alternatives remain visible instead of disappearing from project memory.", "targetNodeId": "option-face-card", "focusNodeIds": ["option-face-card", "option-card-only", "option-mobile", "issue-access-method"] },
+        { "id": "decision-criteria", "title": "Show how the options were judged", "body": "Security effectiveness carries 45%, privacy and acceptance 30%, and whole-life cost 25%. Each option retains its reviewed score against the relevant criteria.", "targetNodeId": "criterion-security", "focusNodeIds": ["option-face-card", "criterion-security", "criterion-cost", "criterion-privacy"] },
+        { "id": "reviewed-decision", "title": "Reviewed does not mean official", "body": "The reviewed recommendation selects face recognition with card fallback. Its record deliberately retains <code>officialDecision: false</code> until formal project approval occurs.", "targetNodeId": "decision-access-method", "focusNodeIds": ["decision-access-method", "option-face-card", "evidence-security-audit", "evidence-operations"] },
+        { "id": "decision-outcome", "title": "Connect the decision to implementation and outcome", "body": "The recommendation authorizes procurement, implements the face and card readers, affects D-101, and targets secure entry with a resilient fallback. The pending outcome can later validate—or challenge—the decision.", "targetNodeId": "outcome-access-readiness", "focusNodeIds": ["decision-access-method", "action-procure-access", "device-face", "device-card", "door-main", "outcome-access-readiness"] }
+      ]
+    }
+  ]
+}

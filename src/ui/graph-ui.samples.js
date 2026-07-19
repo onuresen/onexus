@@ -133,7 +133,7 @@
                 toast(`Loaded: ${item.label ?? item.id}`, 1600);
                 if (item.description) toast(item.description, 2000);
                 if (options.scenario) {
-                    setTimeout(() => window.ONEXUS_TOUR?.start(options.scenario), 700);
+                    setTimeout(() => window.ONEXUS_SCENARIOS?.start(options.scenario), 700);
                 }
             } catch (e) {
                 console.error("[ONEXUS samples] load failed", e);

@@ -119,6 +119,9 @@
         if (host) host.classList.toggle("active", !isGraph);
 
         if (cyEl) {
+            // A completed graph-entry animation retains opacity:1 because its
+            // CSS uses fill-mode:both. Remove it before changing view opacity.
+            cyEl.classList.remove("onx-graph-enter");
             cyEl.style.opacity = isGraph ? "1" : "0";
             cyEl.style.pointerEvents = isGraph ? "auto" : "none";
             cyEl.style.visibility = "visible";
