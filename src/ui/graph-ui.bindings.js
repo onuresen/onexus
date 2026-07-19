@@ -147,7 +147,7 @@
   // ===============================
   // Preferences restore + core dropdowns
   // ids exist in both htmls:
-  // languageSelect, layoutSelect, themeSelect, layerModeSelect, sizeScale, sizeScaleLabel, colorModeSelect, fileInput
+  // languageSelect, layoutSelect, themeSelect, sizeScale, sizeScaleLabel, colorModeSelect, fileInput
   // ===============================
   function updateScaleLabel(v) {
     const el = document.getElementById("sizeScaleLabel");
@@ -158,7 +158,6 @@
     const lang = readPref("onexus.lang", "en");
     const theme = readPref("onexus.theme", "light");
     const layout = readPref("onexus.layout", "default");
-    const layerMode = readPref("onexus.layerMode", "relationship");
     const scale = parseFloat(readPref("onexus.scale", "1"));
     let colorMode = readPref("onexus.colorMode", "json_category");
     // migration: old JLPT mode "level" removed from core
@@ -167,18 +166,19 @@
     const $lang = document.getElementById("languageSelect");
     const $theme = document.getElementById("themeSelect");
     const $layout = document.getElementById("layoutSelect");
-    const $layer = document.getElementById("layerModeSelect");
     const $scale = document.getElementById("sizeScale");
     const $mode = document.getElementById("colorModeSelect");
 
     if ($lang) $lang.value = lang;
     if ($theme) $theme.value = theme;
     if ($layout) $layout.value = layout;
-    if ($layer) $layer.value = layerMode;
     if ($mode) $mode.value = colorMode;
 
     // Apply to engine (guarded)
-    try { window.setLayerMode?.(layerMode, { persist: false, silent: true }); } catch { }
+    // Layer modes are retained as an internal compatibility API, but the
+    // product always opens as a JSON-driven relationship graph.
+    try { localStorage.removeItem("onexus.layerMode"); } catch { }
+    try { window.setLayerMode?.("relationship", { persist: false, silent: true }); } catch { }
     try { window.setLanguage?.(lang); } catch { }
     try { window.applyTheme?.(theme); } catch { }
     try { window.applyLayout?.(layout); } catch { }
@@ -207,11 +207,6 @@
   on("themeSelect", "change", (e) => {
     writePref("onexus.theme", e.target.value);
     window.applyTheme?.(e.target.value);
-  });
-
-  on("layerModeSelect", "change", (e) => {
-    writePref("onexus.layerMode", e.target.value);
-    window.setLayerMode?.(e.target.value);
   });
 
   on("sizeScale", "input", (e) => {

@@ -54,7 +54,9 @@
     showNodeLabels: true,
     lodLevel: "high",
     // NEW: layer mode (controls interpretation + defaults)
-    layerMode: safeRead(LAYER_PREF_KEY, "relationship"),
+    // Legacy layer modes remain callable for integrations, but startup is
+    // deliberately stable and JSON-driven.
+    layerMode: "relationship",
   };
   const editState = { linkSource: null };
 

@@ -75,6 +75,16 @@ test("flagship opens a three-story chooser backed by reusable scenario data", as
     );
 });
 
+test("ONEXUS starts as a JSON-driven relationship graph without layer controls", async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("onexus.layerMode", "risk"));
+    await page.goto(`${BASE}/index.html?ci=1`, { waitUntil: "load" });
+
+    expect(await page.evaluate(() => window.getLayerMode?.())).toBe("relationship");
+    await expect(page.locator("#layerModeSelect")).toHaveCount(0);
+    await expect(page.locator("#onx-layer-fab")).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem("onexus.layerMode"))).toBeNull();
+});
+
 test("shareable connected-door URL loads the flagship and starts its guided story", async ({ page }) => {
     await page.goto(
         `${BASE}/index.html?ci=1&sample=smart-access-connected-door&scenario=connected-door`,
@@ -85,6 +95,15 @@ test("shareable connected-door URL loads the flagship and starts its guided stor
             window.ONEXUS_TOUR?.current?.().name === "connected-door",
         { timeout: 30_000 }
     );
+    await page.waitForFunction(() => {
+        const node = window.cy?.getElementById("door-main");
+        const spot = document.querySelector("#onexus-tour-spot")?.getBoundingClientRect();
+        const container = window.cy?.container?.()?.getBoundingClientRect();
+        if (!node?.nonempty?.() || !spot || !container) return false;
+        const bb = node.renderedBoundingBox();
+        return Math.abs(spot.left + spot.width / 2 - (container.left + bb.x1 + bb.w / 2)) < 2 &&
+            Math.abs(spot.top + spot.height / 2 - (container.top + bb.y1 + bb.h / 2)) < 2;
+    });
 
     const result = await page.evaluate(() => ({
         project: window.__onexus_meta?.project,
