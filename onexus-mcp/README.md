@@ -128,10 +128,10 @@ Pick random visible nodes to test the live bridge.
 Show me the path between the VIKTOR project and BHoM.
 → find_path("projects/VIKTOR.md", "concepts/BHoM.md") → focus_node on each hop
 
-Steel Fabricator A is delayed 3 weeks — what's at risk?
-→ what_if("SUP-STEEL-A") → narrate the affected chain using the returned
+The face reader is delayed 3 weeks — what's at risk?
+→ what_if("issue-reader-delay") → narrate the affected chain using the returned
   depth/via_edge_type/via_direction fields (loaded sample:
-  samples/json/onexus_ic_supply_chain_sample.json)
+  samples/json/onexus_smart_access_flagship.json)
 
 Filter the graph to only show Project and Concept nodes.
 → get_by_category("Project") + get_by_category("Concept") → filter_to_subgraph(ids)

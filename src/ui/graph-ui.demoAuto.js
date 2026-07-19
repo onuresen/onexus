@@ -9,10 +9,11 @@
  *   - Any subsequent file import naturally replaces the demo graph.
  */
 (function () {
-  const DEMO_PATH = "./samples/json/onexus_showcase.json";
+  const DEMO_PATH = "./samples/json/onexus_smart_access_flagship.json";
 
   // Skip in CI / headless test mode
-  if (new URLSearchParams(window.location.search).get("ci") === "1") return;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("ci") === "1" || params.get("sample")) return;
 
   document.addEventListener("DOMContentLoaded", function () {
     // Give all other DOMContentLoaded handlers time to settle (bindings,

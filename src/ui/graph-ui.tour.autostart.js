@@ -12,9 +12,13 @@
 
   let fired = false;
 
-  function onGraphLoaded() {
+  function onGraphLoaded(payload) {
     if (fired) return;
     fired = true;
+
+    // Explicit scenario links are handled by the samples loader every time,
+    // even for returning visitors who have already seen the first-run tour.
+    if (new URLSearchParams(window.location.search).get("scenario")) return;
 
     try {
       if (localStorage.getItem(STORAGE_KEY)) return;
@@ -24,7 +28,9 @@
 
     setTimeout(function () {
       try {
-        window.ONEXUS_TOUR?.start("basic");
+        const requestedScenario = new URLSearchParams(window.location.search).get("scenario");
+        const tourName = requestedScenario || (payload?.meta?.flagship ? "connected-door" : "basic");
+        window.ONEXUS_TOUR?.start(tourName);
         localStorage.setItem(STORAGE_KEY, "1");
       } catch { /* non-fatal */ }
     }, SETTLE_DELAY_MS);

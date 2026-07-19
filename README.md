@@ -14,6 +14,14 @@
 
 *Browser-based relationship graph with live AI/MCP control — for BIM, Obsidian vaults, and beyond.*
 
+**[Open the live ONEXUS flagship demo](https://onuresen.github.io/onexus/?sample=smart-access-connected-door&scenario=connected-door)**
+
+Two guided stories now use the same connected project:
+
+- [Connected Door](https://onuresen.github.io/onexus/?sample=smart-access-connected-door&scenario=connected-door) — what does one entrance door require to function safely?
+- [Construction Impact Control](https://onuresen.github.io/onexus/?sample=smart-access-connected-door&scenario=delivery-impact) — what happens when its face recognition reader arrives three weeks late?
+- [Decision Intelligence](https://onuresen.github.io/onexus/?sample=smart-access-connected-door&scenario=decision-intelligence) — why was face recognition recommended, what alternatives were considered, and what does the decision affect?
+
 </div>
 
 ---
@@ -31,6 +39,24 @@ Works standalone (open `index.html`, drag-and-drop your data) or wired to Claude
 ---
 
 ## Use Cases
+
+### Flagship: Connected Door
+Follow one entrance door across its room, security devices, access system,
+life-safety override, access rules, supplier, operator, and maintainer. The
+[shareable guided story](https://onuresen.github.io/onexus/?sample=smart-access-connected-door&scenario=connected-door)
+answers a simple question: **what does this door require to function safely?**
+
+### Flagship: Construction Impact Control
+Start with a supplier's three-week delay and trace the resulting path through
+the purchase order, face recognition reader, entrance door, installation,
+integrated testing, handover milestone, estimated cost exposure, responsible
+team, and required mitigation decision.
+
+### Flagship: Decision Intelligence
+Trace an access-method question through verified evidence, preserved
+alternatives, weighted evaluation criteria, a reviewed recommendation,
+implementation actions, affected door and devices, and a pending outcome. The
+sample keeps reviewed recommendations distinct from official decisions.
 
 ### BIM / Revit
 Load an IFC or COBie export and instantly see system, spatial, and responsibility relationships. Use the Revit add-in to push live model data directly from Revit 2026 into the browser viewer. Ask Claude:
@@ -176,7 +202,7 @@ Or with Python: `python -m http.server 4173`
 
 **Load your first graph**
 - Drag-and-drop any supported file onto the page, or use the `Load` button in the toolbar.
-- Try `samples/json/onexus_sample.json` to see a working graph immediately.
+- Try `samples/json/onexus_smart_access_flagship.json` to explore the three flagship stories immediately.
 
 <details>
 <summary>Keyboard shortcuts</summary>

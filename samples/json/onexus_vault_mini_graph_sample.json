@@ -11,27 +11,27 @@
   "elements": {
     "nodes": [
       { "data": { "id": "daily/2026-05-22.md", "nodeType": "DailyNote", "category": "Daily", "label": { "en": "Daily Note - 2026-05-22" }, "status": "captured", "updated": "2026-05-22", "tags": ["daily", "idea"] } },
-      { "data": { "id": "ideas/onexus-ic-supply-chain.md", "nodeType": "Idea", "category": "Idea", "label": { "en": "Idea: ONEXUS IC Supply Chain" }, "status": "draft", "updated": "2026-05-22", "tags": ["onexus", "ic", "supply-chain"] } },
+      { "data": { "id": "ideas/onexus-connected-building.md", "nodeType": "Idea", "category": "Idea", "label": { "en": "Idea: ONEXUS Connected Building" }, "status": "draft", "updated": "2026-05-22", "tags": ["onexus", "building", "relationships"] } },
       { "data": { "id": "concepts/graph-thinking.md", "nodeType": "Concept", "category": "Concept", "label": { "en": "Graph Thinking" }, "status": "active", "tags": ["graph", "reasoning"] } },
       { "data": { "id": "concepts/digital-thread.md", "nodeType": "Concept", "category": "Concept", "label": { "en": "Digital Thread" }, "status": "active", "tags": ["mcp", "ai"] } },
       { "data": { "id": "projects/onexus.md", "nodeType": "Project", "category": "Project", "label": { "en": "ONEXUS" }, "status": "shipped-v1", "updated": "2026-06-03", "tags": ["project", "graph", "mcp"] } },
-      { "data": { "id": "decisions/choose-ic-demo.md", "nodeType": "Decision", "category": "Decision", "label": { "en": "Decision: Use IC Supply Chain as Killer Demo" }, "status": "approved", "updated": "2026-06-09", "risk": "Medium" } },
-      { "data": { "id": "samples/onexus_ic_supply_chain_sample.json", "nodeType": "Artifact", "category": "Sample", "label": { "en": "IC Supply Chain Sample JSON" }, "status": "implemented", "updated": "2026-06-09" } },
-      { "data": { "id": "ideas/linkedin/post-onexus-ic-supply-chain.md", "nodeType": "Publishing", "category": "Publishing", "label": { "en": "LinkedIn Draft: IC Supply Chain" }, "status": "draft", "tags": ["linkedin", "demo"] } },
+      { "data": { "id": "decisions/choose-connected-building-demo.md", "nodeType": "Decision", "category": "Decision", "label": { "en": "Decision: Use Connected Building as Flagship" }, "status": "approved", "updated": "2026-07-18", "risk": "Low" } },
+      { "data": { "id": "samples/onexus_smart_access_flagship.json", "nodeType": "Artifact", "category": "Sample", "label": { "en": "Smart Access Flagship JSON" }, "status": "implemented", "updated": "2026-07-18" } },
+      { "data": { "id": "ideas/linkedin/post-onexus-connected-building.md", "nodeType": "Publishing", "category": "Publishing", "label": { "en": "LinkedIn Draft: Connected Building" }, "status": "draft", "tags": ["linkedin", "demo"] } },
       { "data": { "id": "projects/rod.md", "nodeType": "Project", "category": "Project", "label": { "en": "ROD Decision Intelligence" }, "status": "active", "tags": ["decision", "methodology"] } },
       { "data": { "id": "concepts/mcp-context-interface.md", "nodeType": "Concept", "category": "Concept", "label": { "en": "MCP as Context Interface" }, "status": "active", "tags": ["mcp", "ai"] } }
     ],
     "edges": [
-      { "data": { "id": "VAULT-001", "type": "mentions", "dimension": "Vault", "source": "daily/2026-05-22.md", "target": "ideas/onexus-ic-supply-chain.md", "directional": true, "phase": ["Capture"], "confidence": "Explicit" } },
-      { "data": { "id": "VAULT-002", "type": "supports", "dimension": "Concept", "source": "concepts/graph-thinking.md", "target": "ideas/onexus-ic-supply-chain.md", "directional": true, "phase": ["Connect"], "confidence": "Explicit" } },
-      { "data": { "id": "VAULT-003", "type": "supports", "dimension": "Concept", "source": "concepts/digital-thread.md", "target": "ideas/onexus-ic-supply-chain.md", "directional": true, "phase": ["Connect"], "confidence": "Explicit" } },
-      { "data": { "id": "VAULT-004", "type": "belongs_to", "dimension": "Project", "source": "ideas/onexus-ic-supply-chain.md", "target": "projects/onexus.md", "directional": true, "phase": ["Connect"], "confidence": "Explicit" } },
-      { "data": { "id": "VAULT-005", "type": "informed_by", "dimension": "Concept", "source": "decisions/choose-ic-demo.md", "target": "ideas/onexus-ic-supply-chain.md", "directional": true, "phase": ["Decide"], "risk": "Medium", "confidence": "Explicit" } },
-      { "data": { "id": "VAULT-006", "type": "produces", "dimension": "Artifact", "source": "decisions/choose-ic-demo.md", "target": "samples/onexus_ic_supply_chain_sample.json", "directional": true, "phase": ["Ship"], "confidence": "Explicit" } },
-      { "data": { "id": "VAULT-007", "type": "evolved_into", "dimension": "Publishing", "source": "ideas/onexus-ic-supply-chain.md", "target": "ideas/linkedin/post-onexus-ic-supply-chain.md", "directional": true, "phase": ["Ship"], "confidence": "Explicit" } },
+      { "data": { "id": "VAULT-001", "type": "mentions", "dimension": "Vault", "source": "daily/2026-05-22.md", "target": "ideas/onexus-connected-building.md", "directional": true, "phase": ["Capture"], "confidence": "Explicit" } },
+      { "data": { "id": "VAULT-002", "type": "supports", "dimension": "Concept", "source": "concepts/graph-thinking.md", "target": "ideas/onexus-connected-building.md", "directional": true, "phase": ["Connect"], "confidence": "Explicit" } },
+      { "data": { "id": "VAULT-003", "type": "supports", "dimension": "Concept", "source": "concepts/digital-thread.md", "target": "ideas/onexus-connected-building.md", "directional": true, "phase": ["Connect"], "confidence": "Explicit" } },
+      { "data": { "id": "VAULT-004", "type": "belongs_to", "dimension": "Project", "source": "ideas/onexus-connected-building.md", "target": "projects/onexus.md", "directional": true, "phase": ["Connect"], "confidence": "Explicit" } },
+      { "data": { "id": "VAULT-005", "type": "informed_by", "dimension": "Concept", "source": "decisions/choose-connected-building-demo.md", "target": "ideas/onexus-connected-building.md", "directional": true, "phase": ["Decide"], "risk": "Low", "confidence": "Explicit" } },
+      { "data": { "id": "VAULT-006", "type": "produces", "dimension": "Artifact", "source": "decisions/choose-connected-building-demo.md", "target": "samples/onexus_smart_access_flagship.json", "directional": true, "phase": ["Ship"], "confidence": "Explicit" } },
+      { "data": { "id": "VAULT-007", "type": "evolved_into", "dimension": "Publishing", "source": "ideas/onexus-connected-building.md", "target": "ideas/linkedin/post-onexus-connected-building.md", "directional": true, "phase": ["Ship"], "confidence": "Explicit" } },
       { "data": { "id": "VAULT-008", "type": "related_to", "dimension": "Project", "source": "projects/onexus.md", "target": "projects/rod.md", "directional": false, "phase": ["Connect"], "confidence": "Explicit", "notes": "ONEXUS is the relation exploration surface for ROD-style decision intelligence." } },
       { "data": { "id": "VAULT-009", "type": "enables", "dimension": "AI", "source": "concepts/mcp-context-interface.md", "target": "projects/onexus.md", "directional": true, "phase": ["Connect"], "confidence": "Explicit" } },
-      { "data": { "id": "VAULT-010", "type": "references", "dimension": "Vault", "source": "daily/2026-05-22.md", "target": "ideas/linkedin/post-onexus-ic-supply-chain.md", "directional": true, "phase": ["Capture"], "confidence": "Explicit" } }
+      { "data": { "id": "VAULT-010", "type": "references", "dimension": "Vault", "source": "daily/2026-05-22.md", "target": "ideas/linkedin/post-onexus-connected-building.md", "directional": true, "phase": ["Capture"], "confidence": "Explicit" } }
     ]
   }
 }

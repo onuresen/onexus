@@ -618,6 +618,227 @@
         return n;
     }
 
+    function flagshipNode(id) {
+        const n = window.cy?.getElementById?.(id);
+        return n?.nonempty?.() ? n : null;
+    }
+
+    function focusFlagship(ids) {
+        const cy = window.cy;
+        if (!cy) return;
+        const wanted = ids.map(id => cy.getElementById(id)).filter(n => n?.nonempty?.());
+        if (!wanted.length) return;
+        cy.nodes().unselect();
+        wanted.forEach(n => n.select());
+        const collection = wanted.reduce((all, n) => all.union(n), cy.collection());
+        try { cy.animate({ fit: { eles: collection, padding: 100 }, duration: 350 }); } catch { }
+    }
+
+    register("connected-door", [
+        {
+            id: "door",
+            title: "A door is never just a door",
+            body: "Meet <b>Main Entrance Door D-101</b>. This story reveals the spaces, devices, systems, rules, suppliers, and people required for it to function safely.",
+            target: () => {
+                const n = flagshipNode("door-main");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["door-main"]),
+            skipIfMissing: false
+        },
+        {
+            id: "space",
+            title: "The spatial context",
+            body: "D-101 serves the <b>Main Lobby</b> on Level 1 and sits on the public-to-secure boundary. The same object can be explored through spatial and system relationships.",
+            target: () => {
+                const n = flagshipNode("room-lobby");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["door-main", "room-lobby", "floor-01", "zone-public"]),
+            skipIfMissing: false
+        },
+        {
+            id: "devices",
+            title: "The devices that make it work",
+            body: "Face recognition, card reader, electric lock, door contact, and camera each contribute a different relationship: authorize, secure, monitor, or report.",
+            target: () => {
+                const n = flagshipNode("device-face");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["door-main", "device-face", "device-card", "device-lock", "device-contact", "device-camera"]),
+            skipIfMissing: false
+        },
+        {
+            id: "safety",
+            title: "Security must yield to life safety",
+            body: "The fire alarm overrides the electric lock. The statutory <b>Unlock on Fire Alarm</b> rule explains why that cross-system dependency exists.",
+            target: () => {
+                const n = flagshipNode("rule-egress");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["door-main", "device-lock", "system-fire", "rule-egress"]),
+            skipIfMissing: false
+        },
+        {
+            id: "responsibility",
+            title: "Someone owns every relationship",
+            body: "Security operates the access system, Facilities maintains the door and lock, and SecureVision supplies key devices. ONEXUS connects technical dependencies to accountable organizations.",
+            target: () => {
+                const n = flagshipNode("org-fm");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["door-main", "system-access", "org-security", "org-fm", "supplier-securevision"]),
+            skipIfMissing: false
+        },
+        {
+            id: "complete",
+            title: "One object, one connected story",
+            body: "ONEXUS shows that a door is connected to <b>spaces, systems, rules, people, risks, and suppliers</b>. Next, this same project can grow into delivery-impact and decision-intelligence stories.",
+            target: () => $("#metricsOverlay") || $("#cy"),
+            onEnter: () => {
+                try { window.cy?.nodes?.().unselect(); window.cy?.fit?.(undefined, 60); } catch { }
+            },
+            skipIfMissing: false
+        }
+    ]);
+
+    register("delivery-impact", [
+        {
+            id: "delay",
+            title: "A supplier reports a three-week delay",
+            body: "The face recognition reader will arrive on <b>25 September</b>, twenty-one days later than planned. ONEXUS begins with the reported issue, not an abstract network.",
+            target: () => {
+                const n = flagshipNode("issue-reader-delay");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["supplier-securevision", "po-face-reader", "delivery-face-reader", "issue-reader-delay"]),
+            skipIfMissing: false
+        },
+        {
+            id: "component",
+            title: "Trace the delayed item to the building",
+            body: "The purchase order procures the reader, the reader controls D-101, and D-101 secures the lobby boundary. Procurement risk is now connected to a real building function.",
+            target: () => {
+                const n = flagshipNode("device-face");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["po-face-reader", "device-face", "door-main", "room-lobby"]),
+            skipIfMissing: false
+        },
+        {
+            id: "schedule",
+            title: "Follow the schedule blast radius",
+            body: "Late delivery blocks installation. Installation precedes integrated testing, and testing gates the Level 1 security handover milestone. The activities have no usable float.",
+            target: () => {
+                const n = flagshipNode("milestone-handover");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["delivery-face-reader", "activity-install-access", "activity-test-security", "milestone-handover"]),
+            skipIfMissing: false
+        },
+        {
+            id: "cost",
+            title: "Translate delay into commercial exposure",
+            body: "Temporary access control, remobilisation, and extended preliminaries create an estimated <b>¥3.8–5.2M exposure</b>. The estimate remains visibly marked as an estimate.",
+            target: () => {
+                const n = flagshipNode("cost-delay-exposure");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["issue-reader-delay", "cost-delay-exposure"]),
+            skipIfMissing: false
+        },
+        {
+            id: "decision",
+            title: "Turn impact into a decision",
+            body: "Project Controls must choose by 25 August: use a temporary reader or resequence the works. It is explicitly a <b>required, not yet official</b> decision.",
+            target: () => {
+                const n = flagshipNode("decision-reader-mitigation");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["issue-reader-delay", "decision-reader-mitigation", "org-project-controls"]),
+            skipIfMissing: false
+        },
+        {
+            id: "impact-complete",
+            title: "From supplier signal to accountable action",
+            body: "One delay now has a traceable path through <b>supplier, component, door, activities, milestone, cost, owner, and decision</b>. That is the Construction Impact Control story.",
+            target: () => $("#metricsOverlay") || $("#cy"),
+            onEnter: () => {
+                try { window.cy?.nodes?.().unselect(); window.cy?.fit?.(undefined, 60); } catch { }
+            },
+            skipIfMissing: false
+        }
+    ]);
+
+    register("decision-intelligence", [
+        {
+            id: "decision-question",
+            title: "Begin with the decision question",
+            body: "The team must decide: <b>how should entrance D-101 authenticate users?</b> ONEXUS keeps the question connected to the project elements it will affect.",
+            target: () => {
+                const n = flagshipNode("issue-access-method");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["issue-access-method", "door-main"]),
+            skipIfMissing: false
+        },
+        {
+            id: "decision-evidence",
+            title: "Make the evidence traceable",
+            body: "A verified security audit found tailgating, while the FM incident register recorded eighteen lost cards per quarter. The recommendation can be traced back to both sources.",
+            target: () => {
+                const n = flagshipNode("evidence-security-audit");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["issue-access-method", "evidence-security-audit", "evidence-operations"]),
+            skipIfMissing: false
+        },
+        {
+            id: "decision-options",
+            title: "Preserve the alternatives",
+            body: "The team considered card-only access, a mobile credential, and face recognition with card fallback. Rejected alternatives remain visible instead of disappearing from project memory.",
+            target: () => {
+                const n = flagshipNode("option-face-card");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["option-face-card", "option-card-only", "option-mobile", "issue-access-method"]),
+            skipIfMissing: false
+        },
+        {
+            id: "decision-criteria",
+            title: "Show how the options were judged",
+            body: "Security effectiveness carries 45%, privacy and acceptance 30%, and whole-life cost 25%. Each option retains its reviewed score against the relevant criteria.",
+            target: () => {
+                const n = flagshipNode("criterion-security");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["option-face-card", "criterion-security", "criterion-cost", "criterion-privacy"]),
+            skipIfMissing: false
+        },
+        {
+            id: "reviewed-decision",
+            title: "Reviewed does not mean official",
+            body: "The reviewed recommendation selects face recognition with card fallback. Its record deliberately retains <code>officialDecision: false</code> until formal project approval occurs.",
+            target: () => {
+                const n = flagshipNode("decision-access-method");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["decision-access-method", "option-face-card", "evidence-security-audit", "evidence-operations"]),
+            skipIfMissing: false
+        },
+        {
+            id: "decision-outcome",
+            title: "Connect the decision to implementation and outcome",
+            body: "The recommendation authorizes procurement, implements the face and card readers, affects D-101, and targets secure entry with a resilient fallback. The pending outcome can later validate—or challenge—the decision.",
+            target: () => {
+                const n = flagshipNode("outcome-access-readiness");
+                return n ? { kind: "cyNode", node: n } : $("#cy");
+            },
+            onEnter: () => focusFlagship(["decision-access-method", "action-procure-access", "device-face", "device-card", "door-main", "outcome-access-readiness"]),
+            skipIfMissing: false
+        }
+    ]);
+
     // ---------- Default “basic” tour ----------
     register("basic", [
         {

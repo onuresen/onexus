@@ -94,9 +94,16 @@
         const sel = document.createElement("select");
         sel.className = "onx-samples-select";
         sel.id = "onx-samples-select";
-        sel.innerHTML =
-            `<option value="">Samples…</option>` +
-            list.map(s => `<option value="${String(s.id)}">${String(s.label ?? s.id)}</option>`).join("");
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "Samples…";
+        sel.appendChild(placeholder);
+        list.forEach(s => {
+            const option = document.createElement("option");
+            option.value = String(s.id);
+            option.textContent = String(s.label ?? s.id);
+            sel.appendChild(option);
+        });
 
         const btn = document.createElement("button");
         btn.type = "button";
@@ -117,8 +124,7 @@
 
         sel.addEventListener("change", onPick);
 
-        btn.addEventListener("click", async () => {
-            const item = getItem();
+        async function loadItem(item, options = {}) {
             if (!item?.path) return;
             try {
                 toast("Loading sample…", 900);
@@ -126,15 +132,48 @@
                 window.onexusLoadGraph?.(graph);
                 toast(`Loaded: ${item.label ?? item.id}`, 1600);
                 if (item.description) toast(item.description, 2000);
+                if (options.scenario) {
+                    setTimeout(() => window.ONEXUS_TOUR?.start(options.scenario), 700);
+                }
             } catch (e) {
                 console.error("[ONEXUS samples] load failed", e);
                 alert("Failed to load sample: " + (e?.message ?? e));
             }
+        }
+
+        btn.addEventListener("click", async () => {
+            await loadItem(getItem());
         });
 
         row.appendChild(sel);
         row.appendChild(btn);
         host.appendChild(row);
+
+        window.ONEXUS_SAMPLES = {
+            loadById(id, options = {}) {
+                const item = list.find(x => String(x.id) === String(id));
+                if (!item) return false;
+                sel.value = String(item.id);
+                onPick();
+                loadItem(item, options);
+                return true;
+            },
+            shareUrl(id, scenario = "") {
+                const url = new URL(window.location.href);
+                url.searchParams.set("sample", id);
+                if (scenario) url.searchParams.set("scenario", scenario);
+                else url.searchParams.delete("scenario");
+                return url.toString();
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const requestedSample = params.get("sample");
+        if (requestedSample) {
+            window.ONEXUS_SAMPLES.loadById(requestedSample, {
+                scenario: params.get("scenario") || ""
+            });
+        }
     }
 
     async function boot() {
