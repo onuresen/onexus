@@ -29,6 +29,7 @@ from typing import Any
 
 import websockets
 from fastmcp import FastMCP
+from grounding import grounded_path
 
 # ---------------------------------------------------------------------------
 # Config
@@ -443,6 +444,24 @@ def find_path(source_id: str, target_id: str) -> str:
 
 
 @mcp.tool()
+def get_grounded_path(source_id: str, target_id: str,
+                      allowed_truth_classes: list[str] | None = None,
+                      include_rejected: bool = False) -> str:
+    """Shortest inspectable path with relationship provenance, evidence, validity, and review state.
+
+    Deleted references are always excluded. Rejected proposals are excluded by default.
+    Use allowed_truth_classes to constrain answers to acceptable authority levels.
+
+    Args:
+        source_id: Starting node id.
+        target_id: Destination node id.
+        allowed_truth_classes: Optional canonical truth classes to permit.
+        include_rejected: Include rejected inferred proposals when true.
+    """
+    return _dump(grounded_path(_graph, source_id, target_id, allowed_truth_classes, include_rejected))
+
+
+@mcp.tool()
 def get_by_category(category: str, limit: int = 50) -> str:
     """All nodes in a category (case-insensitive prefix match).
 
@@ -658,6 +677,20 @@ async def get_live_neighbors(node_id: str, depth: int = 1, direction: str = "bot
         "id": node_id,
         "depth": depth,
         "direction": direction,
+    }))
+
+
+@mcp.tool()
+async def get_live_grounded_path(source_id: str, target_id: str,
+                                 allowed_truth_classes: list[str] | None = None,
+                                 include_rejected: bool = False) -> str:
+    """Inspectable grounded path from the graph currently loaded in ONEXUS."""
+    return _dump(await _request_browser({
+        "cmd": "get_live_grounded_path",
+        "source_id": source_id,
+        "target_id": target_id,
+        "allowed_truth_classes": allowed_truth_classes,
+        "include_rejected": include_rejected,
     }))
 
 

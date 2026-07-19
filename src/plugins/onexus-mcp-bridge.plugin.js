@@ -13,6 +13,7 @@
      search_live_nodes { cmd, query, limit }
      get_live_node { cmd, id }
      get_live_neighbors { cmd, id, depth, direction }
+     get_live_grounded_path { cmd, source_id, target_id, allowed_truth_classes, include_rejected }
      highlight_live_nodes_by_label { cmd, query, limit, color, focus_first }
      select_random_live_nodes { cmd, count, color }
 
@@ -131,6 +132,22 @@
           target: edge.target().id(),
           type: data.type ?? data.label ?? "",
           dimension: data.dimension ?? "",
+        };
+      }
+
+      function groundedEdgeSummary(edge) {
+        const data = edge.data();
+        const normalize = window.ONEXUS?.import?.normalizeRelationship;
+        const relationship = typeof normalize === "function" ? normalize(data) : (data.relationship || {});
+        return {
+          ...edgeSummary(edge),
+          truthClass: relationship.truthClass,
+          sourceRecord: relationship.source || {},
+          provenance: relationship.provenance || {},
+          confidence: relationship.confidence,
+          validity: relationship.validity || {},
+          review: relationship.review || {},
+          lifecycle: relationship.lifecycle || {},
         };
       }
 
@@ -391,6 +408,52 @@
               neighbor_count: neighbors.length,
               neighbors,
               edges: seenEdges,
+            });
+            break;
+          }
+
+          case "get_live_grounded_path": {
+            if (!cy) return ack(msgId, false, { reason: "cy not ready" });
+            const source = cy.getElementById(String(msg.source_id || ""));
+            const target = cy.getElementById(String(msg.target_id || ""));
+            if (!source.length) return ack(msgId, false, { reason: `source '${msg.source_id}' not found` });
+            if (!target.length) return ack(msgId, false, { reason: `target '${msg.target_id}' not found` });
+            const allowed = Array.isArray(msg.allowed_truth_classes) ? new Set(msg.allowed_truth_classes.map(value => String(value).toLowerCase())) : null;
+            const includeRejected = msg.include_rejected === true;
+            const excluded = { truth_class: 0, rejected: 0, deleted: 0 };
+            const usableEdges = cy.edges().filter(edge => {
+              const rel = groundedEdgeSummary(edge);
+              if (rel.lifecycle?.deleted === true) { excluded.deleted += 1; return false; }
+              if (!includeRejected && rel.review?.status === "rejected") { excluded.rejected += 1; return false; }
+              if (allowed && !allowed.has(String(rel.truthClass).toLowerCase())) { excluded.truth_class += 1; return false; }
+              return true;
+            });
+            const visited = new Set([source.id()]);
+            const queue = [source.id()];
+            const parent = new Map();
+            while (queue.length && !visited.has(target.id())) {
+              const current = queue.shift();
+              usableEdges.filter(edge => edge.source().id() === current || edge.target().id() === current).forEach(edge => {
+                const neighbor = edge.source().id() === current ? edge.target().id() : edge.source().id();
+                if (visited.has(neighbor)) return;
+                visited.add(neighbor); parent.set(neighbor, { previous: current, edge }); queue.push(neighbor);
+              });
+            }
+            if (!visited.has(target.id())) { ack(msgId, true, { found: false, source: source.id(), target: target.id(), excluded_edges: excluded }); break; }
+            const nodeIds = [target.id()];
+            const edges = [];
+            let current = target.id();
+            while (current !== source.id()) {
+              const step = parent.get(current);
+              edges.push(groundedEdgeSummary(step.edge)); nodeIds.push(step.previous); current = step.previous;
+            }
+            nodeIds.reverse(); edges.reverse();
+            const evidenceIds = [...new Set(edges.flatMap(edge => edge.provenance?.evidenceIds || []).map(String))].sort();
+            ack(msgId, true, {
+              found: true, length: edges.length, source: source.id(), target: target.id(),
+              nodes: nodeIds.map(id => ({ ...nodeSummary(cy.getElementById(id)), data: cy.getElementById(id).data() })),
+              edges, evidence_ids: evidenceIds,
+              grounding: { inspectable: true, excluded_edges: excluded, allowed_truth_classes: allowed ? [...allowed].sort() : "all", include_rejected: includeRejected },
             });
             break;
           }

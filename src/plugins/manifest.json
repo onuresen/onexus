@@ -1,6 +1,8 @@
 {
     "plugins": [
         "onexus-edgescsv.plugin.js",
+        "onexus-aps-relationships.plugin.js",
+        "onexus-oneroot-governance.plugin.js",
         "cobie-importer.js",
         "ifc-importer.js",
         "gd-importer.js",

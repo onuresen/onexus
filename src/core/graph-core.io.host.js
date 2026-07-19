@@ -87,36 +87,75 @@
 
   function validateOnexusJson(data) {
     const errors = [];
+    const warnings = [];
     if (!data || !data.elements) {
       errors.push("Missing `elements`.");
-      return { valid: false, errors };
+      return { valid: false, errors, warnings, stats: { nodes: 0, edges: 0 } };
     }
     if (!Array.isArray(data.elements.nodes)) errors.push("`elements.nodes` must be an array.");
     if (!Array.isArray(data.elements.edges)) errors.push("`elements.edges` must be an array.");
 
     const nodeIds = new Set();
+    const referencedNodeIds = new Set();
     (data.elements.nodes ?? []).forEach((n, i) => {
       const d = n?.data ?? {};
       if (!d.id) errors.push(`nodes[${i}].data.id is required`);
+      else if (nodeIds.has(d.id)) errors.push(`nodes[${i}].data.id "${d.id}" is duplicated`);
       else nodeIds.add(d.id);
       if (!d.nodeType) errors.push(`nodes[${i}].data.nodeType is required`);
       if (!d.category && !d.revitCategory) errors.push(`nodes[${i}].data.category or .revitCategory is required`);
       if (!(typeof d.label === "object" || typeof d.label === "string")) errors.push(`nodes[${i}].data.label must be an object or string`);
     });
 
+    const edgeIds = new Set();
+    const truthClasses = new Set(["source-native", "governed", "project-defined", "inferred", "decision-created", "historical"]);
     (data.elements.edges ?? []).forEach((e, i) => {
       const d = e?.data ?? {};
       if (!d.id) errors.push(`edges[${i}].data.id is required`);
+      else if (edgeIds.has(d.id)) errors.push(`edges[${i}].data.id "${d.id}" is duplicated`);
+      else edgeIds.add(d.id);
       if (!d.type) errors.push(`edges[${i}].data.type is required`);
       if (!d.dimension) errors.push(`edges[${i}].data.dimension is required`);
       if (!d.source) errors.push(`edges[${i}].data.source is required`);
       else if (nodeIds.size && !nodeIds.has(d.source)) errors.push(`edges[${i}].data.source "${d.source}" references unknown node`);
+      else referencedNodeIds.add(d.source);
       if (!d.target) errors.push(`edges[${i}].data.target is required`);
       else if (nodeIds.size && !nodeIds.has(d.target)) errors.push(`edges[${i}].data.target "${d.target}" references unknown node`);
+      else referencedNodeIds.add(d.target);
       if (typeof d.directional !== "boolean") errors.push(`edges[${i}].data.directional must be boolean`);
+      if (d.source && d.source === d.target) warnings.push(`edges[${i}] "${d.id || "(no id)"}" is a self-loop`);
+      const truthClass = d.relationship?.truthClass ?? d.truthClass;
+      if (truthClass && !truthClasses.has(String(truthClass).toLowerCase())) {
+        warnings.push(`edges[${i}].data.relationship.truthClass "${truthClass}" is not canonical`);
+      }
+      if (d.relationship?.review?.status === "approved" && String(truthClass).toLowerCase() === "inferred") {
+        warnings.push(`edges[${i}] "${d.id || "(no id)"}" is inferred but marked approved; promote it to governed or retain proposed review status`);
+      }
     });
 
-    return { valid: errors.length === 0, errors };
+    const orphanIds = [...nodeIds].filter(id => !referencedNodeIds.has(id));
+    if (orphanIds.length) {
+      const preview = orphanIds.slice(0, 5).join(", ");
+      warnings.push(`${orphanIds.length} orphan node${orphanIds.length === 1 ? "" : "s"} without relationships: ${preview}${orphanIds.length > 5 ? ", …" : ""}`);
+    }
+    if (nodeIds.size === 0) warnings.push("Graph contains no nodes.");
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings,
+      stats: {
+        nodes: data.elements.nodes?.length ?? 0,
+        edges: data.elements.edges?.length ?? 0,
+        orphanNodes: orphanIds.length,
+      },
+    };
+  }
+
+  function publishValidation(result, graph) {
+    window.ONEXUS_LAST_VALIDATION = result;
+    if (result.warnings?.length) console.warn("[ONEXUS validation]", ...result.warnings);
+    try { window.ONEXUS?.bus?.emit?.("graphValidated", { ...result, graph }); } catch { }
   }
 
   function loadJSON(event) {
@@ -129,7 +168,9 @@
       try { raw = JSON.parse(e.target.result); }
       catch (err) { alert("Invalid JSON: " + err.message); return; }
 
-      const { valid, errors } = validateOnexusJson(raw);
+      const validation = validateOnexusJson(raw);
+      const { valid, errors } = validation;
+      publishValidation(validation, raw);
       if (!valid) { alert("Schema errors:\n" + errors.join("\n")); return; }
 
       // ✅ Set C: unify meta + normalize via ONEXUS.import if available
@@ -222,6 +263,7 @@
       }
 
       const res = validateOnexusJson(g);
+      publishValidation(res, g);
       if (res && res.valid === false) {
         console.error("ONEXUS schema errors:", res.errors);
         alert("Invalid ONEXUS JSON:\n" + res.errors.join("\n"));

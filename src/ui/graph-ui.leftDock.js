@@ -115,6 +115,7 @@
 
         // Convert each button into dot+text pill
         const map = {
+            panelRelationshipIntelligence: { text: "Intelligence", dot: "#7c3aed" },
             panelFilter: { text: "Filter", dot: "#2563eb" },
             panelStyle: { text: "Style", dot: "#f59e0b" },
             panelAnim: { text: "Anim", dot: "#10b981" },

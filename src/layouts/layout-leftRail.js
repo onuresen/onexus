@@ -10,8 +10,9 @@
     const rail = document.getElementById("leftRail");
     if (!rail) return;
 
-    const PANELS = ["panelFilter", "panelStyle", "panelAnim"];
+    const PANELS = ["panelRelationshipIntelligence", "panelFilter", "panelStyle", "panelAnim"];
     const TITLES = {
+        panelRelationshipIntelligence: "Relationship Intelligence",
         panelFilter: "Filter / Lens",
         panelStyle: "Style",
         panelAnim: "Animation",

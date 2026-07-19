@@ -13,7 +13,7 @@
     const CFG = {
         viewKey: "chord",
         viewLabel: "Circle Chord",
-        d3Url: "https://d3js.org/d3.v7.min.js",
+        d3Url: "./src/vendor/d3.v7.9.0.min.js",
         cssUrl: "./src/views/chord/styles.css",
         chartUrl: "./src/views/chord/circle-chart.js",
         defaultNodeTypes: ["Solution", "Capability", "Format", "Standard"],

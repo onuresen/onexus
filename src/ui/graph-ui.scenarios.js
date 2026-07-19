@@ -6,7 +6,7 @@
 ========================================================= */
 (function () {
     const DEFAULT_MANIFEST = "./samples/scenarios/smart-access.json";
-    const state = { manifest: null, stories: new Map(), ready: null };
+    const state = { manifest: null, stories: new Map(), ready: null, diagnostics: null };
 
     function fetchJson(url) {
         return fetch(url, { cache: "no-cache" }).then(res => {
@@ -63,19 +63,60 @@
         };
     }
 
-    function validateStory(story) {
-        return !!story && typeof story.id === "string" &&
-            typeof story.title === "string" && Array.isArray(story.steps) &&
-            story.steps.length > 0;
+    function validateManifest(manifest) {
+        const errors = [];
+        const warnings = [];
+        const stories = Array.isArray(manifest?.stories) ? manifest.stories : [];
+        if (!manifest || typeof manifest !== "object") errors.push("Scenario manifest must be an object.");
+        if (!Array.isArray(manifest?.stories)) errors.push("`stories` must be an array.");
+        const storyIds = new Set();
+        stories.forEach((story, storyIndex) => {
+            const prefix = `stories[${storyIndex}]`;
+            if (!story?.id || typeof story.id !== "string") errors.push(`${prefix}.id is required`);
+            else if (storyIds.has(story.id)) errors.push(`${prefix}.id "${story.id}" is duplicated`);
+            else storyIds.add(story.id);
+            if (!story?.title || typeof story.title !== "string") errors.push(`${prefix}.title is required`);
+            if (!Array.isArray(story?.steps) || !story.steps.length) {
+                errors.push(`${prefix}.steps must be a non-empty array`);
+                return;
+            }
+            const stepIds = new Set();
+            story.steps.forEach((step, stepIndex) => {
+                const stepPrefix = `${prefix}.steps[${stepIndex}]`;
+                if (!step?.id || typeof step.id !== "string") errors.push(`${stepPrefix}.id is required`);
+                else if (stepIds.has(step.id)) errors.push(`${stepPrefix}.id "${step.id}" is duplicated within story "${story.id}"`);
+                else stepIds.add(step.id);
+                if (!step?.title) warnings.push(`${stepPrefix} has no title`);
+                const hasTarget = step?.targetNodeId || step?.targetSelector || step?.fitAll;
+                if (!hasTarget) warnings.push(`${stepPrefix} has no explicit target and will fall back to the graph canvas`);
+            });
+        });
+        return { valid: errors.length === 0, errors, warnings, storyCount: stories.length };
+    }
+
+    function validateGraphReferences() {
+        const missing = [];
+        state.stories.forEach(story => story.steps.forEach(step => {
+            const ids = [step.targetNodeId, ...(Array.isArray(step.focusNodeIds) ? step.focusNodeIds : [])]
+                .filter(Boolean);
+            ids.forEach(id => {
+                if (!graphNode(id)) missing.push(`${story.id}/${step.id}: node "${id}" was not found`);
+            });
+        }));
+        return missing;
     }
 
     async function load() {
         const url = window.ONEXUS_SCENARIO_MANIFEST || DEFAULT_MANIFEST;
         const manifest = await fetchJson(url);
         const stories = Array.isArray(manifest?.stories) ? manifest.stories : [];
+        const diagnostics = validateManifest(manifest);
+        state.diagnostics = diagnostics;
+        if (!diagnostics.valid) throw new Error(`Invalid scenario manifest:\n${diagnostics.errors.join("\n")}`);
+        if (diagnostics.warnings.length) console.warn("[ONEXUS scenarios]", ...diagnostics.warnings);
         state.manifest = manifest;
         state.stories.clear();
-        stories.filter(validateStory).forEach(story => {
+        stories.forEach(story => {
             state.stories.set(story.id, story);
             window.ONEXUS_TOUR?.register?.(story.id, story.steps.map(compileStep));
         });
@@ -231,6 +272,11 @@
         hideChooser,
         get: id => state.stories.get(String(id)) || null,
         list: () => [...state.stories.values()],
+        validate: validateManifest,
+        diagnostics: () => ({
+            ...(state.diagnostics || { valid: false, errors: ["Scenario manifest has not loaded."], warnings: [] }),
+            missingGraphReferences: validateGraphReferences(),
+        }),
         shareUrl(id) {
             const url = new URL(window.location.href);
             url.searchParams.set("sample", state.manifest?.sampleId || "smart-access-connected-door");
@@ -242,6 +288,10 @@
     document.addEventListener("DOMContentLoaded", () => {
         ensureStoriesButton();
         window.ONEXUS?.bus?.on?.("graphLoaded", payload => {
+            const missingReferences = validateGraphReferences();
+            if (payload?.meta?.flagship && missingReferences.length) {
+                console.warn("[ONEXUS scenarios] missing graph references", ...missingReferences);
+            }
             const params = new URLSearchParams(window.location.search);
             if (payload?.meta?.flagship && !params.get("scenario")) {
                 setTimeout(showChooser, 550);

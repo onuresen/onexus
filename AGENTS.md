@@ -38,6 +38,7 @@ npm install
 npx playwright install --with-deps chromium
 npm run serve &         # start http-server in background
 npm run test:smoke      # run all Playwright tests
+npm run test:performance # dedicated 50/500/2000-node benchmark tiers
 ```
 
 ## Linting and formatting
@@ -206,9 +207,25 @@ pip install -r requirements.txt
 
 ## Known gaps / future work
 
-- **IC Supply Chain Dependency Map sample dataset** — create `samples/ic-supply-chain.json` (ONEXUS 1.1 schema) modelling a realistic IC supply chain: `Supplier → Component → Process → Zone → Schedule` nodes with edges `supplies`, `requires`, `blocks`, `installed_in`, `drives`. Source the component data from Kit-of-Parts `advanced-kit.json` (parts already have `supply_risk`, `lead_time`, `sequence` fields). The goal is a concrete killer-use-case demo: "Supplier A delays 3 weeks — call `find_path(supplierA, M7_milestone)` via MCP to highlight everything at risk." Optionally add a thin `ic-supply-importer.plugin.js` for IC-specific node colours (suppliers = orange, schedule = blue, blocked = red). See esen-vault `projects/ONEXUS.md` → Positioning section for context.
+### Relationship Intelligence Mode (direction agreed 2026-07-19)
 
-- **Playwright tests for Sankey and Chord views** — both views received recent fixes (commits 992ccac, 475e67d, a3581a2) but have zero automated coverage. Add cases to `tests/onexus-features.spec.js`:
-  - Sankey view opens without console errors when a flow-data sample is loaded.
-  - Chord view renders an SVG overlay; zoom controls work; exiting restores Cytoscape canvas.
-  See `src/plugins/onexus-sankeyview.plugin.js` and `src/plugins/onexus-chordview.plugin.js` for the APIs to drive from tests.
+ONEXUS is not an Autodesk/ACC clone and must not become tied to one CDE. Source systems supply records and native relationships; ONEXUS supplies cross-source exploration, impact tracing, hotspot/data-quality analysis, history playback, and an inspectable grounding surface for AI.
+
+Implemented foundation:
+
+1. **Phase 2A shipped:** `src/ui/graph-ui.relationshipIntelligence.js` provides search, Dim/Hide non-matches, impact depth Off/1/2/3/All, ranked hotspots, data health, truth-class counts, dated playback, and contextual deep links.
+2. **Phase 2B shipped:** `ONEXUS.import.normalizeRelationship(data)` produces the backward-compatible `onexus.relationship.v1` envelope with source identity, provenance/evidence, truth class, confidence, validity, review state, and deleted-reference lifecycle. The JSON schema documents the optional envelope; ONEXUS 1.x edges remain valid.
+
+Next bounded phases:
+
+3. **Phase 2C feasibility adapter shipped:** `src/plugins/onexus-aps-relationships.plugin.js` maps saved APS responses and supports injected authenticated pagination. It never stores tokens, constructs undocumented endpoint URLs, or assumes relationship pairs are writable. Keep production OAuth in a trusted backend/connector. Real-tenant payload and module coverage validation remains open.
+4. Integrate OneRoot as the governed judgment layer: decisions, evidence, alternatives, approvals, validity conditions, and ontology changes can create or review relationships without losing source truth.
+5. Add GraphRAG only after retrieval can return the path, source, evidence, and review state used for an answer.
+
+**Phases 2D and 2E shipped:** `onexus-oneroot-governance.plugin.js` provides backward-compatible OneRoot package defaults and explicit inferred-edge approve/reject actions with audit history. `onexus-mcp/grounding.py`, `get_grounded_path`, and `get_live_grounded_path` return inspectable paths and exclude deleted/rejected relationships by default. These are grounding primitives, not a free-form chatbot; generated prose must stay downstream of the returned evidence contract.
+
+Relationship truth classes must stay visually and semantically distinct: `source-native`, `governed`, `project-defined`, `inferred`, `decision-created`, and `historical`. Never promote an AI-inferred edge to authoritative status without an explicit human review action.
+
+- **Large-graph performance** — the dedicated baseline currently takes roughly 49 seconds for 2,000 nodes / 6,000 edges on the development machine. Use `npm run test:performance` before and after scale-related changes; do not loosen budgets to conceal regressions.
+- **Story presentation mode** — the next product-quality slice should reduce unrelated chrome during guided playback and restore the prior workspace on exit.
+- **Scenario flexibility** — add generic scenario actions and semantic references only when the three flagship stories demonstrate a repeated need. Keep story definitions data-driven.

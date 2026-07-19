@@ -11,6 +11,7 @@
     },
     "scripts": {
         "test:smoke": "playwright test",
+        "test:performance": "playwright test --config=playwright.performance.config.js",
         "serve": "http-server -p 4173 -c-1 .",
         "lint": "eslint src/",
         "lint:fix": "eslint src/ --fix",

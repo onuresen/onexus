@@ -1,0 +1,27 @@
+{
+  "projectId": "b.demo-project",
+  "syncToken": "demo-sync-002",
+  "results": [
+    {
+      "id": "rel-issue-sheet-001",
+      "type": "references",
+      "createdAt": "2026-07-01T09:00:00Z",
+      "entities": [
+        { "domain": "autodesk-bim360-issues", "type": "issue", "id": "ISSUE-128", "displayName": "Issue 128 — Escape-route interference", "url": "https://example.com/acc/issues/ISSUE-128" },
+        { "domain": "autodesk-bim360-documentmanagement", "type": "documentlineage", "id": "DOC-A101", "displayName": "A101 — Entrance plan", "url": "https://example.com/acc/files/DOC-A101" }
+      ]
+    },
+    {
+      "id": "rel-rfi-sheet-002",
+      "type": "references",
+      "createdAt": "2026-07-03T09:00:00Z",
+      "deleted": true,
+      "deletedAt": "2026-07-15T09:00:00Z",
+      "entities": [
+        { "domain": "autodesk-bim360-rfi", "type": "rfi", "id": "RFI-044", "displayName": "RFI 44 — Reader mounting height" },
+        { "domain": "autodesk-bim360-documentmanagement", "type": "documentlineage", "id": "DOC-A101", "displayName": "A101 — Entrance plan" }
+      ]
+    }
+  ],
+  "pagination": { "limit": 50, "offset": 0, "totalResults": 2 }
+}

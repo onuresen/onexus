@@ -54,6 +54,7 @@
   <link rel="stylesheet" href="./src/common/onexus-common.css">
   <link rel="stylesheet" href="./src/common/onexus-mobile.css">
   <link rel="stylesheet" href="./src/layouts/layout-leftRail.css">
+  <link rel="stylesheet" href="./src/ui/graph-ui.relationshipIntelligence.css">
 
 
   <!-- Tiny inline SVG sprite for icons -->
@@ -357,6 +358,7 @@
 
     <!-- Left icon rail (tools) -->
     <div id="leftRail" aria-label="Tools">
+      <div class="rail-btn" data-panel="panelRelationshipIntelligence" title="Relationship Intelligence" aria-label="Relationship Intelligence">◎</div>
       <div class="rail-btn" data-panel="panelFilter" title="Filter / Lens">🧪 </div>
       <div class="rail-btn" data-panel="panelStyle" title="Style">🎨</div>
       <div class="rail-btn" data-panel="panelAnim" title="Animation">🌀</div>
@@ -369,6 +371,41 @@
         <button id="drawerClose" class="drawer-close" title="Close" aria-label="Close">✕</button>
       </div>
       <div id="drawerBody">
+        <section id="panelRelationshipIntelligence" class="drawer-panel" aria-label="Relationship Intelligence">
+          <div class="onx-ri-intro">
+            <span class="onx-ri-kicker">Relationship Intelligence</span>
+            <strong>Trace impact, quality, and authority.</strong>
+            <span>Select a node, then choose how far its relationships should ripple.</span>
+          </div>
+
+          <label class="onx-ri-label" for="onxRiSearch">Find an item</label>
+          <input id="onxRiSearch" type="search" placeholder="Door, issue, decision…" autocomplete="off">
+          <div class="onx-ri-inline"><span id="onxRiSearchCount">All items shown</span><button type="button" class="onx-ri-link" id="onxRiReset">Reset</button></div>
+
+          <div class="onx-ri-section">
+            <div class="onx-ri-section-head"><strong>Non-matching</strong><div class="onx-ri-segment" id="onxRiNonMatching"><button data-mode="dim" class="active">Dim</button><button data-mode="hide">Hide</button></div></div>
+          </div>
+
+          <div class="onx-ri-section">
+            <div class="onx-ri-section-head"><strong>Impact depth</strong><span id="onxRiReach">Select a node</span></div>
+            <div class="onx-ri-segment onx-ri-depth" id="onxRiDepth">
+              <button data-depth="0">Off</button><button data-depth="1">1</button><button data-depth="2">2</button><button data-depth="3" class="active">3</button><button data-depth="all">All</button>
+            </div>
+          </div>
+
+          <div class="onx-ri-card" id="onxRiQuality"><strong>Data health</strong><span>Load a graph to inspect relationship quality.</span></div>
+          <div class="onx-ri-card"><strong>Relationship truth</strong><div id="onxRiTruth"></div></div>
+          <div class="onx-ri-card"><strong>Hotspots</strong><div id="onxRiHotspots"></div></div>
+
+          <div class="onx-ri-card" id="onxRiHistoryCard">
+            <div class="onx-ri-section-head"><strong>Relationship history</strong><button type="button" class="onx-ri-link" id="onxRiHistoryPlay">Play</button></div>
+            <input id="onxRiHistory" type="range" min="0" max="0" value="0">
+            <span id="onxRiHistoryLabel">No dated relationships</span>
+          </div>
+
+          <a id="onxRiDeepLink" class="onx-ri-deep-link" hidden target="_blank" rel="noopener noreferrer">Open authoritative item ↗</a>
+        </section>
+
         <!-- Filter panel -->
         <section id="panelFilter" class="drawer-panel">
           <h3>Filter</h3>
@@ -568,6 +605,7 @@
   <script src=./src/ui/graph-ui.bindings.js></script>
   <script src="./src/ui/graph-ui.search.js"></script>
   <script src="./src/ui/graph-ui.statsPanel.js"></script>
+  <script src="./src/ui/graph-ui.relationshipIntelligence.js"></script>
   <script src=./src/ui/graph-ui.safeMode.js></script>
   <script src="./src/ui/graph-ui.persistence.js"></script>
   <script src="./src/ui/graph-ui.toolbar.layout.js"></script>

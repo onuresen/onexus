@@ -174,7 +174,69 @@
             "notes": {
               "type": "string",
               "description": "Free-text explanation of this relationship, shown in the detail panel."
+            },
+            "relationship": {
+              "$ref": "#/$defs/relationshipContract"
             }
+          }
+        }
+      }
+    },
+
+    "relationshipContract": {
+      "type": "object",
+      "description": "Optional canonical relationship envelope. Legacy ONEXUS 1.x edge fields remain valid and are normalized into this structure at load time.",
+      "additionalProperties": true,
+      "properties": {
+        "contract": { "type": "string", "const": "onexus.relationship.v1" },
+        "truthClass": {
+          "type": "string",
+          "enum": ["source-native", "governed", "project-defined", "inferred", "decision-created", "historical"],
+          "description": "How this relationship became accepted. Inferred relationships remain proposals until explicitly reviewed and promoted."
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "system": { "type": "string", "description": "Originating system or adapter, such as Autodesk ACC, OneRoot, Revit, or CSV." },
+            "recordId": { "type": "string", "description": "Stable relationship identifier in the originating system." },
+            "url": { "type": "string", "format": "uri", "description": "Deep link to the authoritative source item when available." }
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "method": { "type": "string", "description": "How the relationship was obtained, for example import, API, rule, inference, or human capture." },
+            "evidenceIds": { "type": "array", "items": { "type": "string" } },
+            "observedAt": { "type": "string", "format": "date-time" }
+          }
+        },
+        "confidence": { "description": "Confidence label or numeric score supplied by the source or inference process." },
+        "validity": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "from": { "type": "string", "format": "date-time" },
+            "to": { "type": "string", "format": "date-time" },
+            "status": { "type": "string", "enum": ["active", "expired", "superseded", "historical"] }
+          }
+        },
+        "review": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "status": { "type": "string", "enum": ["unreviewed", "proposed", "reviewed", "approved", "rejected"] },
+            "reviewedBy": { "type": "string" },
+            "reviewedAt": { "type": "string", "format": "date-time" }
+          }
+        },
+        "lifecycle": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "deleted": { "type": "boolean" },
+            "deletedAt": { "type": "string", "format": "date-time" }
           }
         }
       }

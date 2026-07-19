@@ -7,6 +7,7 @@ const js = require("@eslint/js");
 const globals = require("globals");
 
 module.exports = [
+  { ignores: ["src/vendor/**"] },
   js.configs.recommended,
   {
     files: ["src/**/*.js", "tests/**/*.js"],

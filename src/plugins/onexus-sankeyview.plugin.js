@@ -20,8 +20,8 @@
     const CFG = {
         viewKey: "sankey",
         viewLabel: "Sankey / Alluvial",
-        d3Url: "https://d3js.org/d3.v7.min.js",
-        d3SankeyUrl: "https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js",
+        d3Url: "./src/vendor/d3.v7.9.0.min.js",
+        d3SankeyUrl: "./src/vendor/d3-sankey.v0.12.3.min.js",
         cssUrl: "./src/views/sankey/styles.css",
         chartUrl: "./src/views/sankey/sankey-chart.js",
         defaultGroupBy: "nodeType", // nodeType | category | dimension | phase

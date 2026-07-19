@@ -230,6 +230,202 @@ test("Chord view renders, responds to zoom, and exits back to Cytoscape", async 
     expect(errors).toEqual([]);
 });
 
+test("graph validation reports duplicate IDs, unknown references, and orphan nodes", async ({ page }) => {
+    await bootPage(page);
+    const diagnostics = await page.evaluate(() => window.validateOnexusJson({
+        elements: {
+            nodes: [
+                { data: { id: "duplicate", nodeType: "Component", category: "Test", label: "First" } },
+                { data: { id: "duplicate", nodeType: "Component", category: "Test", label: "Second" } },
+                { data: { id: "orphan", nodeType: "Component", category: "Test", label: "Orphan" } },
+            ],
+            edges: [{
+                data: {
+                    id: "bad-edge",
+                    source: "duplicate",
+                    target: "missing",
+                    type: "depends_on",
+                    dimension: "System",
+                    directional: true,
+                },
+            }],
+        },
+    }));
+
+    expect(diagnostics.valid).toBe(false);
+    expect(diagnostics.errors.join("\n")).toContain("duplicated");
+    expect(diagnostics.errors.join("\n")).toContain("references unknown node");
+    expect(diagnostics.warnings.join("\n")).toContain("orphan node");
+    expect(diagnostics.stats.orphanNodes).toBe(1);
+});
+
+test("scenario diagnostics validate structure and resolve flagship graph references", async ({ page }) => {
+    await bootPage(page);
+    await loadSample(page);
+    await page.waitForFunction(() => window.ONEXUS_SCENARIOS?.list?.().length === 3);
+
+    const result = await page.evaluate(() => ({
+        current: window.ONEXUS_SCENARIOS.diagnostics(),
+        invalid: window.ONEXUS_SCENARIOS.validate({
+            stories: [
+                { id: "same", title: "First", steps: [{ id: "step", fitAll: true }] },
+                { id: "same", title: "Second", steps: [{ id: "step", fitAll: true }] },
+            ],
+        }),
+    }));
+
+    expect(result.current.valid).toBe(true);
+    expect(result.current.storyCount).toBe(3);
+    expect(result.current.missingGraphReferences).toEqual([]);
+    expect(result.invalid.valid).toBe(false);
+    expect(result.invalid.errors.join("\n")).toContain("duplicated");
+});
+
+test("Relationship Intelligence mode traces impact and switches non-matches between dim and hide", async ({ page }) => {
+    await bootPage(page);
+    await loadSample(page);
+
+    await page.click('[data-panel="panelRelationshipIntelligence"]');
+    await expect(page.locator("#panelRelationshipIntelligence")).toBeVisible();
+    await expect(page.locator("#onxRiQuality")).toContainText("link rate");
+    await expect(page.locator("#onxRiHotspots .onx-ri-row")).toHaveCount(6);
+
+    await page.evaluate(() => window.ONEXUS_RELATIONSHIP_INTELLIGENCE.focusNode("door-main"));
+    await page.click('#onxRiDepth [data-depth="1"]');
+    const oneHop = await page.evaluate(() => ({
+        impacted: window.cy.nodes(".ri-impact").length,
+        dimmed: window.cy.elements(".ri-dim").length,
+        hidden: window.cy.elements(".ri-hide").length,
+    }));
+    expect(oneHop.impacted).toBeGreaterThan(1);
+    expect(oneHop.dimmed).toBeGreaterThan(0);
+    expect(oneHop.hidden).toBe(0);
+
+    await page.click('#onxRiNonMatching [data-mode="hide"]');
+    expect(await page.evaluate(() => window.cy.elements(".ri-hide").length)).toBeGreaterThan(0);
+
+    await page.fill("#onxRiSearch", "decision");
+    await expect(page.locator("#onxRiSearchCount")).toContainText("matching item");
+});
+
+test("canonical relationship contract normalizes legacy edges and preserves governed metadata", async ({ page }) => {
+    await bootPage(page);
+    const result = await page.evaluate(() => {
+        const legacy = window.ONEXUS.import.normalizeGraph({
+            elements: {
+                nodes: [
+                    { data: { id: "a", nodeType: "Component", category: "Test", label: "A" } },
+                    { data: { id: "b", nodeType: "Component", category: "Test", label: "B" } },
+                ],
+                edges: [{ data: { id: "legacy", source: "a", target: "b", type: "relates", dimension: "System", directional: true, confidence: "Inferred", externalUrl: "https://example.com/item/1" } }],
+            },
+        });
+        const governed = window.ONEXUS.import.normalizeRelationship({
+            confidence: "Explicit",
+            relationship: {
+                truthClass: "governed",
+                source: { system: "OneRoot", recordId: "DEC-42" },
+                review: { status: "approved", reviewedBy: "Design Lead" },
+            },
+        });
+        return { legacy: legacy.elements.edges[0].data, governed };
+    });
+
+    expect(result.legacy.relationship.contract).toBe("onexus.relationship.v1");
+    expect(result.legacy.relationship.truthClass).toBe("inferred");
+    expect(result.legacy.relationship.review.status).toBe("proposed");
+    expect(result.legacy.relationship.source.url).toBe("https://example.com/item/1");
+    expect(result.legacy.truthClass).toBe("inferred");
+    expect(result.governed.truthClass).toBe("governed");
+    expect(result.governed.source.system).toBe("OneRoot");
+    expect(result.governed.review.status).toBe("approved");
+});
+
+test("OneRoot governance loop explicitly approves or rejects inferred relationship proposals", async ({ page }) => {
+    await bootPage(page);
+    await loadSample(page);
+    await page.waitForFunction(() => !!window.ONEXUS_ONEROOT_GOVERNANCE, { timeout: 10_000 });
+
+    const result = await page.evaluate(() => {
+        const api = window.ONEXUS_ONEROOT_GOVERNANCE;
+        const edge = window.cy.getElementById("e-issue-milestone");
+        const before = api.currentRelationship(edge);
+        const rejected = api.reviewEdge(edge.id(), { action: "reject", reviewer: "Planner", note: "Impact not supported." });
+        const rejectedState = edge.data("relationship");
+        edge.data("relationship", before);
+        edge.data("truthClass", before.truthClass);
+        const approved = api.reviewEdge(edge.id(), { action: "approve", reviewer: "Planner", note: "Schedule evidence confirmed." });
+        return { before, rejected, rejectedState, approved, after: edge.data("relationship") };
+    });
+
+    expect(result.before.truthClass).toBe("inferred");
+    expect(result.rejectedState.truthClass).toBe("inferred");
+    expect(result.rejectedState.review.status).toBe("rejected");
+    expect(result.approved.ok).toBe(true);
+    expect(result.after.truthClass).toBe("governed");
+    expect(result.after.review.status).toBe("approved");
+    expect(result.after.review.reviewedBy).toBe("Planner");
+    expect(result.after.audit).toHaveLength(1);
+});
+
+test("APS Relationships adapter maps native and soft-deleted references into canonical edges", async ({ page }) => {
+    await bootPage(page);
+    await page.waitForFunction(() => !!window.ONEXUS_APS_RELATIONSHIPS, { timeout: 10_000 });
+    const payload = await page.evaluate(async () => (await fetch("/samples/json/autodesk-aps-relationships-feasibility.json")).json());
+    const graph = await page.evaluate(data => window.ONEXUS_APS_RELATIONSHIPS.mapPayload(data), payload);
+
+    expect(graph.elements.nodes).toHaveLength(3);
+    expect(graph.elements.edges).toHaveLength(2);
+    expect(graph.meta.aps.syncToken).toBe("demo-sync-002");
+
+    const active = graph.elements.edges.find(edge => edge.data.id.includes("issue-sheet"));
+    const deleted = graph.elements.edges.find(edge => edge.data.id.includes("rfi-sheet"));
+    expect(active.data.relationship.truthClass).toBe("source-native");
+    expect(active.data.relationship.source.system).toBe("Autodesk APS Relationships API");
+    expect(deleted.data.relationship.truthClass).toBe("historical");
+    expect(deleted.data.relationship.lifecycle.deleted).toBe(true);
+    expect(deleted.data.deletedReference).toBe(true);
+});
+
+test("APS Relationships fetch client follows explicit next links without handling OAuth tokens", async ({ page }) => {
+    await bootPage(page);
+    await page.waitForFunction(() => !!window.ONEXUS_APS_RELATIONSHIPS, { timeout: 10_000 });
+    const result = await page.evaluate(async () => {
+        const calls = [];
+        const pages = {
+            "https://proxy.test/page-1": {
+                results: [{ id: "one", entities: [
+                    { domain: "issues", type: "issue", id: "I-1" },
+                    { domain: "docs", type: "sheet", id: "S-1" },
+                ] }],
+                links: { next: { href: "https://proxy.test/page-2" } },
+            },
+            "https://proxy.test/page-2": {
+                syncToken: "sync-final",
+                results: [{ id: "two", entities: [
+                    { domain: "rfi", type: "rfi", id: "R-1" },
+                    { domain: "docs", type: "sheet", id: "S-1" },
+                ] }],
+            },
+        };
+        const graph = await window.ONEXUS_APS_RELATIONSHIPS.fetchAll({
+            url: "https://proxy.test/page-1",
+            projectId: "b.test",
+            fetchImpl: async url => {
+                calls.push(url);
+                return { ok: true, status: 200, json: async () => pages[url] };
+            },
+        });
+        return { calls, graph };
+    });
+
+    expect(result.calls).toEqual(["https://proxy.test/page-1", "https://proxy.test/page-2"]);
+    expect(result.graph.meta.aps.pageCount).toBe(2);
+    expect(result.graph.meta.aps.syncToken).toBe("sync-final");
+    expect(result.graph.elements.nodes).toHaveLength(3);
+    expect(result.graph.elements.edges).toHaveLength(2);
+});
+
 // ---------------------------------------------------------------------------
 // Load fidelity: every node/edge in the file ends up in the graph.
 // ---------------------------------------------------------------------------

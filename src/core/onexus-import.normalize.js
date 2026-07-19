@@ -67,6 +67,59 @@
         return s.split(/\n/g).map(x => asStr(x, "")).filter(Boolean);
     }
 
+    const TRUTH_CLASSES = new Set(["source-native", "governed", "project-defined", "inferred", "decision-created", "historical"]);
+
+    function normalizeRelationship(d0) {
+        const incoming = isObj(d0.relationship) ? d0.relationship : {};
+        const legacyTruth = asStr(d0.truthClass, "");
+        const inferred = asStr(d0.confidence, "").toLowerCase() === "inferred";
+        const candidateTruth = asStr(incoming.truthClass, legacyTruth || (inferred ? "inferred" : "source-native")).toLowerCase();
+        const truthClass = TRUTH_CLASSES.has(candidateTruth) ? candidateTruth : "source-native";
+
+        const source0 = isObj(incoming.source) ? incoming.source : {};
+        const provenance0 = isObj(incoming.provenance) ? incoming.provenance : {};
+        const validity0 = isObj(incoming.validity) ? incoming.validity : {};
+        const review0 = isObj(incoming.review) ? incoming.review : {};
+        const lifecycle0 = isObj(incoming.lifecycle) ? incoming.lifecycle : {};
+        const legacyEvidence = Array.isArray(d0.evidenceIds) ? d0.evidenceIds.map(String) : [];
+
+        return {
+            ...incoming,
+            contract: "onexus.relationship.v1",
+            truthClass,
+            source: {
+                ...source0,
+                system: asStr(source0.system, asStr(d0.sourceSystem, "unknown")),
+                recordId: asStr(source0.recordId, asStr(d0.externalId, "")),
+                url: asStr(source0.url, asStr(d0.externalUrl, "")),
+            },
+            provenance: {
+                ...provenance0,
+                method: asStr(provenance0.method, inferred ? "inference" : "import"),
+                evidenceIds: Array.isArray(provenance0.evidenceIds) ? provenance0.evidenceIds.map(String) : legacyEvidence,
+                observedAt: asStr(provenance0.observedAt, asStr(d0.createdAt, "")),
+            },
+            confidence: incoming.confidence ?? d0.confidence ?? "Explicit",
+            validity: {
+                ...validity0,
+                from: asStr(validity0.from, ""),
+                to: asStr(validity0.to, ""),
+                status: asStr(validity0.status, truthClass === "historical" ? "historical" : "active"),
+            },
+            review: {
+                ...review0,
+                status: asStr(review0.status, truthClass === "inferred" ? "proposed" : "unreviewed"),
+                reviewedBy: asStr(review0.reviewedBy, ""),
+                reviewedAt: asStr(review0.reviewedAt, ""),
+            },
+            lifecycle: {
+                ...lifecycle0,
+                deleted: lifecycle0.deleted === true || d0.deletedReference === true,
+                deletedAt: asStr(lifecycle0.deletedAt, ""),
+            },
+        };
+    }
+
     function normalizeEdgeWrap(ew) {
         const d0 = (ew && ew.data) ? ew.data : (ew || {});
         const source = asStr(d0.source, "");
@@ -88,6 +141,7 @@
             {};
 
         const displayType = asStr(d0.displayType, labelsMap[type] ?? type);
+        const relationship = normalizeRelationship(d0);
 
         const data = {
             ...d0,
@@ -103,6 +157,8 @@
             confidence,
             notes,
             displayType,
+            relationship,
+            truthClass: relationship.truthClass,
         };
 
         return { data, classes: ew?.classes ?? "" };
@@ -299,4 +355,6 @@
     ONX.import.stampSession = stampSession;
     ONX.import.tagElements = tagElements;
     ONX.import.applyMeta = applyMeta; // ✅ Set C export
+    ONX.import.normalizeRelationship = normalizeRelationship;
+    ONX.import.RELATIONSHIP_TRUTH_CLASSES = [...TRUTH_CLASSES];
 })();

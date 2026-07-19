@@ -78,6 +78,7 @@ When ONEXUS loads, it automatically connects to `ws://localhost:8765`.
 | `get_node(node_id)` | Full data + incoming/outgoing edges for one node |
 | `get_neighbors(node_id, depth, direction)` | All nodes within N hops |
 | `find_path(source_id, target_id)` | Shortest path between two nodes |
+| `get_grounded_path(source_id, target_id, allowed_truth_classes, include_rejected)` | Inspectable path with source, provenance, evidence, truth class, validity, and review state |
 | `what_if(node_id, edge_types, direction, max_depth)` | Downstream impact analysis — what's reachable from a node, optionally restricted to specific edge types (e.g. `["blocks"]`). Returns structured data only; the calling agent narrates the result |
 | `get_by_category(category, limit)` | All nodes in a category |
 | `get_edge_types` | All edge types and their counts |
@@ -92,6 +93,9 @@ These tools inspect `window.cy`, so they work against whatever JSON/import is cu
 | `search_live_nodes(query, limit)` | Search live node ids, labels, categories, statuses, and tags |
 | `get_live_node(node_id)` | Full live node data + incoming/outgoing edge summaries |
 | `get_live_neighbors(node_id, depth, direction)` | Live neighbors within 1-3 hops |
+| `get_live_grounded_path(source_id, target_id, allowed_truth_classes, include_rejected)` | Grounded path from the currently loaded browser graph |
+
+Grounded-path tools always exclude soft-deleted references and exclude rejected proposals by default. Use `allowed_truth_classes` when an answer must rely only on specific authority levels, such as `governed` and `decision-created`. These tools return structured grounding; the calling AI may summarize it but must not invent evidence absent from the response.
 
 ### Live browser control tools (browser must be open)
 

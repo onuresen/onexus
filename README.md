@@ -36,6 +36,28 @@ It does **not** replace any CDE or existing tool. It exposes the hidden, implici
 
 Works standalone (open `index.html`, drag-and-drop your data) or wired to Claude via the MCP server.
 
+### Relationship intelligence, not another CDE viewer
+
+Autodesk Forma/ACC and other project systems can already hold source-native links such as Issue → Drawing, RFI → Submittal, and Asset → Document. ONEXUS is the independent intelligence layer above those systems: it combines relationships from multiple sources, traces change impact, exposes hotspots and data-quality gaps, replays how a graph formed, and gives AI a visible, inspectable grounding surface.
+
+The intended boundary is:
+
+```text
+Autodesk / Microsoft / internal systems / documents / OneRoot
+                         ↓ source adapters + identity resolution
+              Canonical relationship layer
+                         ↓
+        ONEXUS exploration, impact, quality, history
+                         ↓
+         OneRoot governed decisions and judgment
+                         ↓
+              Grounded GraphRAG / assistants
+```
+
+APS Relationships API is therefore a valuable future adapter, not an ONEXUS dependency. The same analysis experience must work with samples, files, other CDEs, and governed organizational knowledge.
+
+Every imported or created relationship should preserve its truth class and evidence: **source-native, governed, project-defined, inferred, decision-created, or historical**, together with provenance, confidence, validity, and review status where available. AI suggestions must never become authoritative edges silently.
+
 ---
 
 ## Use Cases
@@ -129,11 +151,13 @@ Add to `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/App
 
 | Layer | Tools |
 |---|---|
-| **Snapshot** (no browser needed) | `get_graph_summary`, `search_nodes`, `get_node`, `get_neighbors`, `find_path`, `get_by_category`, `get_edge_types` |
-| **Live query** (browser open) | `get_live_graph_summary`, `search_live_nodes`, `get_live_node`, `get_live_neighbors` |
+| **Snapshot** (no browser needed) | `get_graph_summary`, `search_nodes`, `get_node`, `get_neighbors`, `find_path`, `get_grounded_path`, `get_by_category`, `get_edge_types` |
+| **Live query** (browser open) | `get_live_graph_summary`, `search_live_nodes`, `get_live_node`, `get_live_neighbors`, `get_live_grounded_path` |
 | **Live control** (browser open) | `focus_node`, `highlight_nodes`, `highlight_live_nodes_by_label`, `filter_to_subgraph`, `reset_view`, `set_layout`, `load_focused_graph` |
 
 Full tool reference: [`onexus-mcp/README.md`](onexus-mcp/README.md)
+
+Autodesk integration feasibility and security boundary: [`docs/autodesk-aps-relationships-adapter.md`](docs/autodesk-aps-relationships-adapter.md)
 
 ---
 
@@ -143,9 +167,11 @@ Full tool reference: [`onexus-mcp/README.md`](onexus-mcp/README.md)
 |---|---|
 | **Graph engine** | Pan/zoom, minimap, path tracing, A/B comparison, undo/redo |
 | **Importers** | ONEXUS JSON, IFC/IFCZIP, COBie CSV, Edges CSV, Obsidian vault, Generative Design JSON |
+| **External relationships** | Read-first Autodesk APS Relationships adapter for saved responses or a trusted authenticated fetch boundary |
 | **Layer modes** | Relationship, Lifecycle (phase timeline + playback), Risk, Option |
 | **Layouts** | 10+ presets: cose, tree, swimlanes, degree rings, dependency flow, system/spatial/responsibility atlases |
 | **Filtering** | Category filter, relationship lens, phase filter, focus depth (1–3 hops), node search |
+| **Relationship intelligence** | Contextual search, Dim/Hide, impact depth, hotspots, link health, truth classes, history playback, source deep links |
 | **Theming** | Light / Dark, auto-updating legend, multilingual (EN / JP) |
 | **Export** | PNG, SVG, JSON, CSV, Layout JSON |
 | **Plugins** | Register importers, edge types, UI extensions via `src/plugins/manifest.json` |
@@ -265,6 +291,29 @@ Each ONEXUS data file follows this minimal structure:
 - `label` supports multi-language keys (`{ en, jp }`)
 - Extra fields are preserved and may be used by plugins
 - The `load_focused_graph` MCP tool accepts the same schema — Claude can construct and push a custom graph into the live viewer programmatically
+
+### Canonical relationship contract
+
+ONEXUS 1.x edge fields remain valid. During import, every edge is also normalized into `data.relationship` using the `onexus.relationship.v1` envelope:
+
+```json
+{
+  "relationship": {
+    "contract": "onexus.relationship.v1",
+    "truthClass": "governed",
+    "source": { "system": "OneRoot", "recordId": "DEC-42", "url": "https://example.com/item/42" },
+    "provenance": { "method": "human capture", "evidenceIds": ["EV-1"], "observedAt": "2026-07-19T09:00:00Z" },
+    "confidence": "Explicit",
+    "validity": { "from": "2026-07-19T09:00:00Z", "to": "", "status": "active" },
+    "review": { "status": "approved", "reviewedBy": "Design Lead", "reviewedAt": "2026-07-19T10:00:00Z" },
+    "lifecycle": { "deleted": false, "deletedAt": "" }
+  }
+}
+```
+
+Allowed truth classes are `source-native`, `governed`, `project-defined`, `inferred`, `decision-created`, and `historical`. Legacy `confidence: "Inferred"` edges automatically become proposed `inferred` relationships; they are never silently promoted to governed truth.
+
+OneRoot governed packages retain decision evidence, validity, and review state. In the Relationship Intelligence workspace, selecting an inferred edge exposes explicit Approve/Reject actions. Approval promotes it to `governed`; both actions append an audit entry. MCP grounded-path tools exclude deleted and rejected relationships by default and return every edge's source record, provenance, evidence IDs, confidence, validity, and review state.
 
 Converting your own data? Click the **Download JSON Schema** toolbar button (or
 grab [`schemas/onexus-graph.schema.json`](schemas/onexus-graph.schema.json)
