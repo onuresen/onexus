@@ -60,20 +60,20 @@
       }
       #onexus-tour-tip{
         position:fixed;
-        max-width:min(420px, calc(100vw - 40px));
+        width:min(380px, calc(100vw - 32px));
         background:#fff;
         color:#111;
         border: 1px solid rgba(0,0,0,.10);
         box-shadow: 0 12px 28px rgba(0,0,0,.22);
         border-radius: 12px;
-        padding: 12px;
+        padding: 11px;
         pointer-events:auto;
         font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-        font-size: 13px;
+        font-size: 12px;
         z-index:10041;
       }
-      #onexus-tour-tip .t-title{ font-weight:700; margin-bottom:6px; }
-      #onexus-tour-tip .t-body{ color:#1f2937; line-height:1.45; }
+      #onexus-tour-tip .t-title{ font-size:13px; line-height:1.3; font-weight:700; margin-bottom:5px; }
+      #onexus-tour-tip .t-body{ color:#1f2937; font-size:12px; line-height:1.42; }
       #onexus-tour-tip .t-foot{ display:flex; align-items:center; gap:8px; margin-top:10px; }
       #onexus-tour-tip .t-progress{ margin-right:auto; font-size:12px; color:#6b7280; }
       #onexus-tour-tip button{
@@ -219,7 +219,6 @@
         const vw = window.innerWidth;
         const vh = window.innerHeight;
 
-        // Default: right side of rect
         tip.style.left = "0px";
         tip.style.top = "0px";
 
@@ -229,18 +228,19 @@
         const tr = tip.getBoundingClientRect();
         tip.style.visibility = "visible";
 
-        let left = rect.left + rect.width + margin;
-        let top = rect.top;
-
-        // If overflow right, place left of rect
-        if (left + tr.width > vw - margin) left = rect.left - tr.width - margin;
-
-        // If still overflow, clamp
-        left = clamp(left, margin, vw - tr.width - margin);
-
-        // Vertical clamp
-        if (top + tr.height > vh - margin) top = vh - tr.height - margin;
-        top = clamp(top, margin, vh - tr.height - margin);
+        const centeredTop = rect.top + (rect.height - tr.height) / 2;
+        const centeredLeft = rect.left + (rect.width - tr.width) / 2;
+        const candidates = [
+            { left: rect.left + rect.width + margin, top: centeredTop },
+            { left: rect.left - tr.width - margin, top: centeredTop },
+            { left: centeredLeft, top: rect.top + rect.height + margin },
+            { left: centeredLeft, top: rect.top - tr.height - margin },
+        ];
+        const fits = p => p.left >= margin && p.top >= margin
+            && p.left + tr.width <= vw - margin && p.top + tr.height <= vh - margin;
+        const chosen = candidates.find(fits) || candidates[2];
+        const left = clamp(chosen.left, margin, Math.max(margin, vw - tr.width - margin));
+        const top = clamp(chosen.top, margin, Math.max(margin, vh - tr.height - margin));
 
         tip.style.left = `${left}px`;
         tip.style.top = `${top}px`;
@@ -277,13 +277,17 @@
                 if (cy && n && n.nonempty && n.nonempty()) {
                     const bb = (typeof n.renderedBoundingBox === "function") ? n.renderedBoundingBox() : null;
                     if (bb && Number.isFinite(bb.w) && Number.isFinite(bb.h)) {
-                        return { left: bb.x1, top: bb.y1, width: bb.w, height: bb.h, _kind: "cyNode" };
+                        const cr = cy.container?.()?.getBoundingClientRect?.() || { left: 0, top: 0 };
+                        return { left: cr.left + bb.x1, top: cr.top + bb.y1, width: bb.w, height: bb.h, _kind: "cyNode" };
                     }
                     // Fallback: renderedPosition + size
                     const rp = n.renderedPosition ? n.renderedPosition() : null;
                     const w = parseFloat(n.style("width")) || 60;
                     const h = parseFloat(n.style("height")) || 60;
-                    if (rp) return { left: rp.x - w / 2, top: rp.y - h / 2, width: w, height: h, _kind: "cyNode" };
+                    if (rp) {
+                        const cr = cy.container?.()?.getBoundingClientRect?.() || { left: 0, top: 0 };
+                        return { left: cr.left + rp.x - w / 2, top: cr.top + rp.y - h / 2, width: w, height: h, _kind: "cyNode" };
+                    }
                 }
             } catch { /* noop */ }
             return null;

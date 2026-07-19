@@ -93,6 +93,21 @@ test("shareable connected-door URL loads the flagship and starts its guided stor
         tour: window.ONEXUS_TOUR.current(),
         title: document.querySelector("#onexus-tour-title")?.textContent,
         selected: window.cy.nodes(":selected").map(n => n.id()),
+        geometry: (() => {
+            const node = window.cy.getElementById("door-main");
+            const bb = node.renderedBoundingBox();
+            const container = window.cy.container().getBoundingClientRect();
+            const spot = document.querySelector("#onexus-tour-spot").getBoundingClientRect();
+            const tip = document.querySelector("#onexus-tour-tip").getBoundingClientRect();
+            return {
+                expectedX: container.left + bb.x1 + bb.w / 2,
+                expectedY: container.top + bb.y1 + bb.h / 2,
+                spotX: spot.left + spot.width / 2,
+                spotY: spot.top + spot.height / 2,
+                separated: tip.right <= spot.left || tip.left >= spot.right ||
+                    tip.bottom <= spot.top || tip.top >= spot.bottom,
+            };
+        })(),
     }));
 
     expect(result.project).toBe("Smart Access — Connected Door Story");
@@ -102,6 +117,9 @@ test("shareable connected-door URL loads the flagship and starts its guided stor
     expect(result.tour.total).toBe(6);
     expect(result.title).toBe("A door is never just a door");
     expect(result.selected).toContain("door-main");
+    expect(Math.abs(result.geometry.spotX - result.geometry.expectedX)).toBeLessThan(2);
+    expect(Math.abs(result.geometry.spotY - result.geometry.expectedY)).toBeLessThan(2);
+    expect(result.geometry.separated).toBe(true);
 });
 
 test("delivery-impact URL traces the flagship delay into cost and decision nodes", async ({ page }) => {
