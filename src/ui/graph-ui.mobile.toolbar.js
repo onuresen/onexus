@@ -223,11 +223,13 @@
         // Label visibility toggles (mirror the hidden #legendControls checkboxes)
         const edgeCb = $("toggleEdgeLabels");
         const nodeCb = $("toggleNodeLabels");
-        if (edgeCb || nodeCb) {
+        const insideCb = $("toggleLabelsInside");
+        if (edgeCb || nodeCb || insideCb) {
             const labSection = document.createElement("div");
             labSection.style.marginTop = "6px";
             if (edgeCb) labSection.appendChild(wrapCheckboxRow("Edge labels", edgeCb));
             if (nodeCb) labSection.appendChild(wrapCheckboxRow("Node labels", nodeCb));
+            if (insideCb) labSection.appendChild(wrapCheckboxRow("Labels inside nodes", insideCb));
             hostPrimary.appendChild(labSection);
         }
 
