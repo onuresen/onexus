@@ -46,6 +46,10 @@ serverless, no-build nature.
   (browser-access header) instead of importing the SDK from `esm.sh` — one fewer
   CDN supply-chain path; the only possible AI destination is the configured
   Anthropic endpoint, and it is deployment-gated.
+- **Replaced the GPL-3.0 SVG exporter** (`cytoscape-svg`) with the MIT
+  `canvas2svg` engine plus ONEXUS's own Apache-2.0 `cy.svg()` glue
+  (`src/helpers/onexus-cy-svg.js`), so the whole distribution is
+  Apache-2.0-compatible with no remaining copyleft component.
 - README license corrected from a broken MIT claim (no file existed) to
   Apache-2.0; removed a dead banner-image reference and a stale license section.
 
@@ -56,9 +60,8 @@ serverless, no-build nature.
   regression-tested.
 
 ### Notes
-- **Redistribution caveat:** the optional *Export SVG* feature uses a **GPL-3.0**
-  component (`cytoscape-svg`); see `THIRD-PARTY-NOTICES.md`. Running ONEXUS is
-  unaffected.
+- All bundled runtime components are under permissive licenses; there is no
+  remaining copyleft dependency (see `THIRD-PARTY-NOTICES.md`).
 - The `onexus-backend/` service remains **no-auth by design** (local/trusted
   network only).
 

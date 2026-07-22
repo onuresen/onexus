@@ -96,10 +96,12 @@ remotely. All server logging goes to stderr (stdout is the MCP transport).
 ## Dependency posture
 
 Third-party runtime code is **vendored and pinned** under `src/vendor/` (no
-runtime CDN). Versions and licenses are inventoried in `THIRD-PARTY-NOTICES.md`.
-Development dependencies are pinned via `package-lock.json`. Update vendored
-assets deliberately (re-vendor from the pinned npm package), then re-run the
-egress and smoke tests.
+runtime CDN). Versions and licenses are inventoried in `THIRD-PARTY-NOTICES.md`;
+every bundled runtime component is under a permissive license
+(MIT / ISC / BSD-3-Clause / MPL-2.0 / OFL-1.1) compatible with redistribution
+under Apache-2.0. Development dependencies are pinned via `package-lock.json`.
+Update vendored assets deliberately (re-vendor from the pinned npm package),
+then re-run the egress and smoke tests.
 
 ## Known limitations (explicitly NOT provided)
 
@@ -107,10 +109,6 @@ egress and smoke tests.
 - **No audit log, no SLA, no LTS.**
 - **The optional backend has no auth** (see above).
 - **Shared browser-profile separation is not authentication.**
-- **Redistribution caveat:** the optional *Export SVG* feature uses a **GPL-3.0**
-  component (`cytoscape-svg`). Running ONEXUS is unaffected, but redistributors
-  should have legal review decide how to treat that component — see
-  `THIRD-PARTY-NOTICES.md`.
 
 ## Operator responsibilities
 

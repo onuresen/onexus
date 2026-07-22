@@ -25,7 +25,7 @@ Scope key:
 |---|---|---|---|
 | [Cytoscape.js](https://js.cytoscape.org/) | 3.23.0 | MIT | `src/vendor/cytoscape.3.23.0.min.js` |
 | [cytoscape-navigator](https://github.com/cytoscape/cytoscape.js-navigator) | 2.0.2 | MIT | `src/vendor/cytoscape-navigator.2.0.2.js` / `.css` |
-| [cytoscape-svg](https://github.com/kinimesi/cytoscape-svg) | 0.4.0 | **GPL-3.0** ⚠ | `src/vendor/cytoscape-svg.0.4.0.js` |
+| [canvas2svg](https://github.com/gliffy/canvas2svg) | 1.0.16 | MIT | `src/vendor/canvas2svg.1.0.16.js` — SVG-export engine |
 | [D3](https://d3js.org/) | 7.9.0 | ISC | `src/vendor/d3.v7.9.0.min.js` |
 | [d3-sankey](https://github.com/d3/d3-sankey) | 0.12.3 | BSD-3-Clause | `src/vendor/d3-sankey.v0.12.3.min.js` |
 | [web-ifc](https://github.com/ThatOpen/engine_web-ifc) | 0.0.44 | MPL-2.0 | `src/vendor/web-ifc/web-ifc-api.js` + `web-ifc.wasm` |
@@ -37,17 +37,13 @@ Scope key:
 `@fontsource/*` npm package (the package version is shown; the packages
 themselves are MIT, the font outlines are OFL-1.1).
 
-### ⚠ GPL-3.0 note — cytoscape-svg
+### SVG export is GPL-free
 
-`cytoscape-svg@0.4.0` declares `GPL-3.0` in its own `package.json` and ships a
-GPL-3.0 `LICENSE`. It powers **one optional feature: "Export SVG."** GPL-3.0 is a
-strong copyleft license, which is generally considered incompatible with placing
-the *combined* distribution solely under Apache-2.0. This does not affect running
-ONEXUS internally, but an organization that **redistributes** ONEXUS should have
-legal review confirm how it wants to treat the SVG-export component — options
-include keeping it and honoring GPL-3.0 obligations for that file, replacing it,
-or dropping SVG export. This is recorded as an open item rather than silently
-resolved; see `SECURITY.md` → "Known limitations."
+"Export SVG" previously relied on the GPL-3.0 `cytoscape-svg` wrapper. It has been
+**replaced**: SVG serialization now uses the MIT-licensed `canvas2svg` engine
+plus ONEXUS's own Apache-2.0 `cy.svg()` glue (`src/helpers/onexus-cy-svg.js`).
+The full distribution is therefore Apache-2.0-compatible; there is no remaining
+copyleft component. Do not reintroduce `cytoscape-svg`.
 
 ---
 

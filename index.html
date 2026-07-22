@@ -50,7 +50,10 @@
   <link rel="stylesheet" href="./src/vendor/cytoscape-navigator.2.0.2.css">
   <script src="./src/vendor/cytoscape.3.23.0.min.js"></script>
   <script src="./src/vendor/cytoscape-navigator.2.0.2.js"></script>
-  <script src="./src/vendor/cytoscape-svg.0.4.0.js"></script>
+  <!-- SVG export: MIT canvas2svg engine + ONEXUS's own cy.svg() glue
+       (replaces the GPL-3.0 cytoscape-svg wrapper). -->
+  <script src="./src/vendor/canvas2svg.1.0.16.js"></script>
+  <script src="./src/helpers/onexus-cy-svg.js"></script>
   <!-- App base -->
   <!-- Deployment-owned policy (must load before any plugin). -->
   <script src="./src/config/onexus-enterprise.config.js"></script>

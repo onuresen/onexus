@@ -389,9 +389,8 @@ Reviewer front door:
 | Deployment topology, HTTP headers, backup/rollback, offboarding | [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) |
 | Versioning, changelog, release verification | [`docs/RELEASING.md`](docs/RELEASING.md), [`CHANGELOG.md`](CHANGELOG.md) |
 
-> **Note on redistribution:** the optional *Export SVG* feature uses a GPL-3.0
-> component (`cytoscape-svg`). Running ONEXUS is unaffected; organizations that
-> redistribute it should read the note in `THIRD-PARTY-NOTICES.md`.
+All bundled runtime components are under permissive licenses compatible with
+redistribution under Apache-2.0 (see [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)).
 
 The optional `onexus-backend/` has **no authentication by design** and is for
 local / trusted-network use only — never expose it publicly without a reverse

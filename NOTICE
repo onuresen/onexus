@@ -5,7 +5,6 @@ This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 
 This product bundles and depends on third-party components that are licensed
 separately from ONEXUS itself. A complete inventory of those components, their
-versions, licenses, and — where relevant — license-compatibility notes is in
-THIRD-PARTY-NOTICES.md. Notably, the optional SVG-export feature relies on a
-GPL-3.0-licensed component (cytoscape-svg); reviewers redistributing ONEXUS
-should read the note in that file.
+versions, and licenses is in THIRD-PARTY-NOTICES.md. All bundled runtime
+components are under permissive licenses (MIT / ISC / BSD-3-Clause / MPL-2.0 /
+OFL-1.1) compatible with redistribution under Apache-2.0.
