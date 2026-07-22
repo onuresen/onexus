@@ -4,6 +4,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- Content Security Policy — enforced boundary. All libraries, fonts, and the
+       IFC/WASM engine are self-hosted, so a default page load stays within 'self'.
+       'unsafe-inline' (script) is required by ~27 inline event handlers in the
+       no-build architecture; 'wasm-unsafe-eval' lets the on-demand IFC importer
+       compile web-ifc.wasm. connect-src allows only the optional local MCP bridge
+       and — when a deployment enables AI and a user supplies their own key — the
+       Anthropic API. frame-ancestors / HSTS / X-Content-Type-Options must be sent
+       as real HTTP headers at the hosting layer (see docs/DEPLOYMENT.md); they are
+       intentionally omitted here because a <meta> CSP cannot deliver them. -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws://localhost:8765 ws://127.0.0.1:8765 https://api.anthropic.com; worker-src 'self' blob:; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+
   <title>ONEXUS — Graph Intelligence Layer</title>
   <meta name="description"
     content="ONEXUS connects building elements, project impacts, and the decisions behind them. Explore live relationship graphs for AEC in the browser or through AI/MCP control.">
@@ -26,19 +40,20 @@
     content="A graph viewer that Claude can query and control live via MCP. Built for AEC — IFC, JSON, CSV supported.">
   <meta name="twitter:image" content="https://onuresen.github.io/Kit-of-Parts/og-preview.png">
 
-  <!-- Fonts: Archivo (display) + IBM Plex Sans/Mono (body + data) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
+  <!-- Fonts: Archivo (display) + IBM Plex Sans/Mono (body + data) — self-hosted.
+       Replaces the former Google Fonts <link> (which beaconed every load to
+       fonts.googleapis.com / fonts.gstatic.com). See assets/fonts/fonts.css. -->
+  <link rel="stylesheet" href="./assets/fonts/fonts.css">
 
-  <!-- Libraries -->
-  <link rel="stylesheet" href="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape.js-navigator.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
-  <script src="https://unpkg.com/cytoscape-navigator@2.0.2/cytoscape-navigator.js"></script>
-  <script src="https://unpkg.com/cytoscape-svg@0.4.0"></script>
+  <!-- Libraries — self-hosted (vendored under src/vendor/). Versions and licenses
+       are recorded in THIRD-PARTY-NOTICES.md. Do not re-point these at a CDN. -->
+  <link rel="stylesheet" href="./src/vendor/cytoscape-navigator.2.0.2.css">
+  <script src="./src/vendor/cytoscape.3.23.0.min.js"></script>
+  <script src="./src/vendor/cytoscape-navigator.2.0.2.js"></script>
+  <script src="./src/vendor/cytoscape-svg.0.4.0.js"></script>
   <!-- App base -->
+  <!-- Deployment-owned policy (must load before any plugin). -->
+  <script src="./src/config/onexus-enterprise.config.js"></script>
   <script src="./src/helpers/onexus-logger.js"></script>
   <script src="./src/helpers/onexus-ns.js"></script>
   <script src="./src/helpers/onexus-compat.js"></script>

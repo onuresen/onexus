@@ -1,10 +1,12 @@
 /* ONEXUS AI Plugin
    Browser-side "what if" impact narration — no Python/MCP server required.
    Mirrors Thinking Hub's hub-ai.js key-management pattern (own Anthropic API
-   key stored in localStorage, official SDK loaded from esm.sh), but the
-   graph traversal itself is pure client-side logic against window.cy —
-   it ports the onexus-mcp what_if() tool's BFS so it works with no
-   server running at all, just the page open in a browser.
+   key stored in localStorage), but calls the Anthropic HTTP API directly — no
+   SDK, no CDN — and is gated by a deployment-owned kill switch
+   (src/config/onexus-enterprise.config.js). The graph traversal itself is pure
+   client-side logic against window.cy — it ports the onexus-mcp what_if()
+   tool's BFS so it works with no server running at all, just the page open in a
+   browser.
 
    window.ONEXUS_AI exposes:
      getKey() / saveKey(key) / isConfigured()
@@ -19,14 +21,27 @@
   }
 
   const SETTINGS_KEY = "onexus.ai.v1";
-  const MODEL = "claude-haiku-4-5";
-  const SDK_URL = "https://esm.sh/@anthropic-ai/sdk@0.52.0"; // pinned — update manually after testing
 
-  let _sdkPromise = null;
-  let _clientCache = null;
+  // ── Deployment policy ─────────────────────────────────────────────────────
+  // Optional AI is governed by src/config/onexus-enterprise.config.js. A missing
+  // or malformed config is treated as "disabled" (fail closed).
+  function aiPolicy() {
+    const p = window.ONEXUS_ENTERPRISE && window.ONEXUS_ENTERPRISE.ai;
+    return {
+      enabled: !!(p && p.enabled === true),
+      endpoint: (p && p.endpoint) || "https://api.anthropic.com/v1/messages",
+      apiVersion: (p && p.apiVersion) || "2023-06-01",
+      model: (p && p.model) || "claude-haiku-4-5",
+    };
+  }
+  function aiEnabled() { return aiPolicy().enabled; }
 
   // ── Key management ──────────────────────────────────────────────────────
+  // Reads/writes are refused when the deployment disabled AI — the kill switch
+  // is independent of whether a key happens to be present (a stored key must
+  // never re-enable a disallowed feature).
   function getKey() {
+    if (!aiEnabled()) return "";
     try {
       const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
       return (s.anthropicKey || "").trim();
@@ -34,42 +49,53 @@
   }
 
   function saveKey(key) {
+    if (!aiEnabled()) return; // fail closed
     try {
       const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
       s.anthropicKey = String(key ?? "").trim();
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-      _clientCache = null;
     } catch { /* localStorage unavailable — key just won't persist */ }
   }
 
   function isConfigured() { return getKey().length > 10; }
 
-  // ── SDK ──────────────────────────────────────────────────────────────────
-  async function _loadSDK() {
-    if (!_sdkPromise) {
-      _sdkPromise = import(SDK_URL).then((m) => m.default || m.Anthropic || m);
+  // ── Direct Anthropic Messages API call (no SDK, no CDN) ──────────────────
+  // The official SDK is intentionally NOT bundled: a single request shape does
+  // not justify pulling an ESM bundle from a third-party CDN (esm.sh). We call
+  // the HTTP API directly with the documented browser-access header. This mirrors
+  // Thinking Hub's "SDK removed" enterprise-readiness decision and keeps the only
+  // possible AI egress destination equal to the configured Anthropic endpoint.
+  async function callMessages(body, keyOverride) {
+    if (!aiEnabled()) throw new Error("AI is disabled by deployment policy.");
+    const key = keyOverride || getKey();
+    if (!key) throw new Error("No Anthropic API key configured. Use the 🔮 button to add one.");
+    const { endpoint, apiVersion } = aiPolicy();
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": apiVersion,
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      let detail = `HTTP ${res.status}`;
+      try { const e = await res.json(); detail = e?.error?.message || detail; } catch { /* keep status */ }
+      throw new Error(detail);
     }
-    return _sdkPromise;
-  }
-
-  async function _getClient() {
-    const key = getKey();
-    if (!key) throw new Error("No Anthropic API key configured. Call ONEXUS_AI.saveKey(key) or use the 🔮 button.");
-    if (_clientCache && _clientCache._key === key) return _clientCache._client;
-    const Anthropic = await _loadSDK();
-    const client = new Anthropic({ apiKey: key, dangerouslyAllowBrowser: true });
-    _clientCache = { _key: key, _client: client };
-    return client;
+    return res.json();
   }
 
   async function testKey(keyOverride) {
+    if (!aiEnabled()) return { ok: false, message: "AI is disabled by deployment policy." };
     const key = keyOverride || getKey();
     if (!key) return { ok: false, message: "No key provided" };
+    const { model } = aiPolicy();
     try {
-      const Anthropic = await _loadSDK();
-      const client = new Anthropic({ apiKey: key, dangerouslyAllowBrowser: true });
-      await client.messages.create({ model: MODEL, max_tokens: 16, messages: [{ role: "user", content: "Hi" }] });
-      return { ok: true, message: `Connected · ${MODEL}` };
+      await callMessages({ model, max_tokens: 16, messages: [{ role: "user", content: "Hi" }] }, key);
+      return { ok: true, message: `Connected · ${model}` };
     } catch (err) {
       return { ok: false, message: err.message || String(err) };
     }
@@ -150,18 +176,19 @@
 
   // ── Traversal + Claude narration ──────────────────────────────────────────
   async function askWhatIf(nodeId, question, opts = {}) {
+    if (!aiEnabled()) throw new Error("AI is disabled by deployment policy.");
     const result = whatIf(nodeId, opts);
     if (result.error) throw new Error(result.error);
 
-    const client = await _getClient();
+    const { model } = aiPolicy();
     const system = `You are a graph-impact analyst for ONEXUS. You are given structured downstream-impact data — a BFS traversal of a relationship graph: affected nodes, their hop depth from the origin, and which edge type/direction connected each one. Narrate the cascade in plain, concrete language: name the actual nodes and the causal chain, don't just repeat the JSON. Be concise (a few sentences to a short paragraph). If "affected" is empty, say plainly that nothing is reachable with the given filters.`;
     const userMsg = `Origin: ${result.origin_label} (${result.origin})\nQuestion: ${question || "What happens downstream if this changes?"}\n\nImpact data:\n${JSON.stringify(result, null, 2)}`;
 
-    const msg = await client.messages.create({
-      model: MODEL, max_tokens: 600, system,
+    const data = await callMessages({
+      model, max_tokens: 600, system,
       messages: [{ role: "user", content: userMsg }],
     });
-    return { narration: msg.content?.[0]?.text || "", impact: result };
+    return { narration: data.content?.[0]?.text || "", impact: result };
   }
 
   window.ONEXUS_AI = { getKey, saveKey, isConfigured, testKey, whatIf, askWhatIf };
@@ -176,6 +203,11 @@
     version: "1.0.0",
 
     register(_api) {
+      // Fail closed: if the deployment disabled AI, render no surface at all.
+      if (!aiEnabled()) {
+        console.info("[ONEXUS-AI] Disabled by deployment policy — UI hidden, no egress possible.");
+        return;
+      }
       const btn = document.createElement("button");
       btn.id = "onx-ai-btn";
       btn.title = "What if? (browser-side AI impact narration)";
