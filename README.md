@@ -1,10 +1,8 @@
 # ONEXUS — Graph Intelligence Layer
 
-![ONEXUS Banner](assets/banner.png)
-
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![Cytoscape.js](https://img.shields.io/badge/Cytoscape.js-3.23-blue)
 ![MCP](https://img.shields.io/badge/MCP-FastMCP-7c3aed)
@@ -370,6 +368,37 @@ For AI-assisted development, see [`CLAUDE.md`](CLAUDE.md) for project convention
 
 ---
 
+## Enterprise & security review
+
+ONEXUS is a static, no-build browser app. **A default page load makes no
+third-party network requests** — all libraries, fonts, and the IFC/WASM engine
+are self-hosted (see `src/vendor/` and `assets/fonts/`). The only outbound
+destinations are optional and documented:
+
+- `ws://localhost:8765` — the local MCP bridge, when the companion server is run.
+- `https://api.anthropic.com` — only if a deployment enables AI **and** a user
+  supplies their own Anthropic key and invokes the "What-if?" narration.
+
+Reviewer front door:
+
+| Concern | Document |
+|---|---|
+| What am I allowed to do? | [`LICENSE`](LICENSE) (Apache-2.0), [`NOTICE`](NOTICE), [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md) |
+| Vulnerability reporting, supported versions, threat boundary | [`SECURITY.md`](SECURITY.md) |
+| Data locations, retention, and the full egress table | [`PRIVACY.md`](PRIVACY.md) |
+| Deployment topology, HTTP headers, backup/rollback, offboarding | [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) |
+| Versioning, changelog, release verification | [`docs/RELEASING.md`](docs/RELEASING.md), [`CHANGELOG.md`](CHANGELOG.md) |
+
+> **Note on redistribution:** the optional *Export SVG* feature uses a GPL-3.0
+> component (`cytoscape-svg`). Running ONEXUS is unaffected; organizations that
+> redistribute it should read the note in `THIRD-PARTY-NOTICES.md`.
+
+The optional `onexus-backend/` has **no authentication by design** and is for
+local / trusted-network use only — never expose it publicly without a reverse
+proxy and auth layer. See `SECURITY.md` and `docs/DEPLOYMENT.md`.
+
 ## License
 
-[MIT License](LICENSE) — freely usable and modifiable for any purpose.
+Licensed under the [Apache License 2.0](LICENSE) — permissive, with an explicit
+patent grant. See [`NOTICE`](NOTICE) and [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)
+for third-party components and their licenses.
