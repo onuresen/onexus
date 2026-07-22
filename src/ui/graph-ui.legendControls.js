@@ -88,8 +88,12 @@ Works for both layouts without duplicating IDs
         // Safer: don't move existing, just ensure host has them.
         const st = window.__onexus_state || {};
 
+        const existingInside = $("toggleLabelsInside");
+
         const edge = existingEdge ? existingEdge : ensureCheckbox("toggleEdgeLabels", "Show edge labels", st.showEdgeLabels !== false);
         const node = existingNode ? existingNode : ensureCheckbox("toggleNodeLabels", "Show node labels", st.showNodeLabels !== false);
+        const labelsInside = window.ONEXUS?.style?.getNodeLabelPosition?.() !== "outside";
+        const inside = existingInside ? existingInside : ensureCheckbox("toggleLabelsInside", "Labels inside nodes", labelsInside);
 
         // If ensureCheckbox returned objects, append label wrappers; else create wrappers if needed
         host.innerHTML = "";
@@ -111,15 +115,27 @@ Works for both layouts without duplicating IDs
             host.appendChild(lab);
         }
 
+        if (inside && inside.cb) host.appendChild(inside.label);
+        else if (inside instanceof HTMLInputElement) {
+            const lab = document.createElement("label");
+            lab.appendChild(inside);
+            lab.appendChild(document.createTextNode(" Labels inside nodes"));
+            host.appendChild(lab);
+        }
+
         const edgeCb = $("toggleEdgeLabels");
         const nodeCb = $("toggleNodeLabels");
+        const insideCb = $("toggleLabelsInside");
 
         // Wire handlers to state methods (provided by graph-core.state.js)
         wire(edgeCb, (checked) => window.setEdgeLabelVisibility?.(checked));
         wire(nodeCb, (checked) => window.setNodeLabelVisibility?.(checked));
+        // Checked = labels inside the node (default); unchecked = below the node.
+        wire(insideCb, (checked) => window.ONEXUS?.style?.setNodeLabelPosition?.(checked ? "inside" : "outside"));
 
         // Sync initial state (graph-core.state.js keeps showEdgeLabels/showNodeLabels)
         syncFromState(edgeCb, nodeCb);
+        if (insideCb) insideCb.checked = window.ONEXUS?.style?.getNodeLabelPosition?.() !== "outside";
     }
 
     function boot() {

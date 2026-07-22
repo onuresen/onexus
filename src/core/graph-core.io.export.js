@@ -41,7 +41,7 @@
         new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
       );
     } else {
-      alert("SVG export requires cytoscape-svg plugin.");
+      alert("SVG export engine not loaded (src/helpers/onexus-cy-svg.js).");
     }
   }
 

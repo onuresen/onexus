@@ -2,7 +2,8 @@
  ONEXUS — IFC Importer (Full Graph + IFCZIP), web-ifc/WASM
  - Pure browser, zero install, portable.
  - IFC: STEP text (.ifc) and IFCZIP (.ifczip with a .ifc entry)
- - web-ifc version-locked via CDN (JS+WASM): OpenModel(Uint8Array)
+ - web-ifc version-locked, self-hosted (JS+WASM) under src/vendor/web-ifc/:
+   OpenModel(Uint8Array). No CDN — the engine loads from the same origin.
 
  FIXES (already in your file):
  - Stable IDs: GlobalId-first (fallback to expressID)
@@ -13,7 +14,10 @@
  - Canonical meta stamping via ONEXUS.import.applyMeta(graph, { importer, sourceFiles, sourceKind })
  - Single source of truth for import session stamping
  ============================================ */
-const WEBIFC_BASE = "https://cdn.jsdelivr.net/npm/web-ifc@0.0.44/";
+// Self-hosted web-ifc 0.0.44 (api glue + matching wasm), same origin as the app.
+// Relative to the document base URL so it resolves on both localhost root and the
+// project GitHub Pages path. Do not re-point at a CDN — see THIRD-PARTY-NOTICES.md.
+const WEBIFC_BASE = "src/vendor/web-ifc/";
 (function () {
   let apiInstance = null;
 

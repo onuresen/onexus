@@ -346,6 +346,51 @@ UI/UX + hardening pass (branch `claude/amazing-galileo-gg446`):
 
 ---
 
+## Changelog — 2026-07-22
+
+Enterprise-readiness pass (branch `claude/enterprise-readiness-improvements-skfwr5`),
+following the esen-vault *Enterprise-Ready Tool Release Playbook* — the same
+method applied to Thinking Hub. Goal: make ONEXUS reviewable/deployable by IT,
+security, privacy, and legal **without** changing its serverless no-build nature.
+
+**New invariants — do not regress these:**
+- **No runtime CDNs. Self-host everything.** All runtime third-party assets are
+  vendored under `src/vendor/` (Cytoscape, cytoscape-navigator, cytoscape-svg,
+  web-ifc glue+wasm, D3, d3-sankey) and `assets/fonts/` (Archivo + IBM Plex
+  WOFF2, `@font-face` in `assets/fonts/fonts.css`). **Never re-point a `<script>`,
+  `<link>`, font, or importer at a CDN.** To add/update a vendored lib, re-vendor
+  from the pinned npm package and update `THIRD-PARTY-NOTICES.md`, then re-run the
+  egress + smoke tests. A default page load must make **zero** third-party
+  requests — enforced by `tests/onexus-egress.spec.js`.
+- **CSP is enforced** via a `<meta>` in `index.html`. `'unsafe-inline'`
+  (script/style) and `'wasm-unsafe-eval'` are deliberate, documented allowances
+  (inline handlers + IFC wasm). Header-level CSP/HSTS/etc. live in
+  `docs/DEPLOYMENT.md`. If you change what the app connects to, update
+  `connect-src` **and** the egress test.
+- **Optional AI is deployment-owned and fail-closed.** Policy lives in
+  `src/config/onexus-enterprise.config.js` (`window.ONEXUS_ENTERPRISE`, loaded
+  before any plugin). `ai.enabled:false` hides the 🔮 surface and refuses key
+  ops regardless of a stored key. The AI plugin calls the Anthropic HTTP API
+  **directly** (no SDK, no esm.sh). Never treat "user has no key" as the kill
+  switch, and never let a stored preference re-enable a disallowed provider.
+- **Release provenance:** `VERSION` (SemVer, currently `1.0.0`) is canonical;
+  `CHANGELOG.md` is dated; `.github/workflows/onexus-release.yml` gates `v*` tags
+  (tag↔VERSION↔CHANGELOG + main ancestry + tests + SHA-256 + immutable Release).
+  See `docs/RELEASING.md`. Never publish from a moving branch or replace a
+  published asset.
+
+- **SVG export is GPL-free.** The old GPL-3.0 `cytoscape-svg` wrapper was
+  replaced by the MIT `canvas2svg` engine (`src/vendor/canvas2svg.1.0.16.js`) +
+  ONEXUS's own Apache-2.0 `cy.svg()` glue (`src/helpers/onexus-cy-svg.js`, which
+  calls `cytoscape("core","svg",…)` against the public renderer API). All
+  bundled runtime components are now permissively licensed. Don't reintroduce
+  `cytoscape-svg`.
+
+**Reviewer package:** `LICENSE` (Apache-2.0), `NOTICE`, `THIRD-PARTY-NOTICES.md`,
+`SECURITY.md`, `PRIVACY.md`, `docs/DEPLOYMENT.md`. Front door in `README.md`.
+
+---
+
 ## Decision Log Convention
 <!-- decision-schema v1 · canonical: esen-vault/work/playbook/Decision Schema (Canonical).md -->
 When a non-obvious choice is made (a tradeoff, "why this over that", a convention to

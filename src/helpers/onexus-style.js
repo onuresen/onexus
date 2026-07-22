@@ -417,6 +417,56 @@ window.ONEXUS.style.shouldShowNodeLabels = function shouldShowNodeLabels() {
 })();
 
 // =====================================================
+// Node label position — inside the node vs. below it
+// - Preference: localStorage "onexus.nodeLabelPos"  ("inside" | "outside")
+// - "inside" (DEFAULT): label centered on the node (text-valign center) — the
+//   original look; compact, keeps the graph dense.
+// - "outside": label sits just below the node (text-valign bottom + margin) —
+//   never overlaps the node fill; better for long labels / dense hubs.
+// Image nodes keep their own imgShowLabel handling and are unaffected.
+// =====================================================
+(function () {
+  const LS_KEY = "onexus.nodeLabelPos";
+
+  function readPref() {
+    try {
+      return localStorage.getItem(LS_KEY) === "outside" ? "outside" : "inside";
+    } catch {
+      return "inside";
+    }
+  }
+
+  function writePref(pos) {
+    try { localStorage.setItem(LS_KEY, pos === "outside" ? "outside" : "inside"); }
+    catch { /* noop */ }
+  }
+
+  window.ONEXUS = window.ONEXUS || {};
+  window.ONEXUS.style = window.ONEXUS.style || {};
+
+  // Policy used by buildStyle().
+  window.ONEXUS.style.getNodeLabelPosition = function getNodeLabelPosition() {
+    return readPref();
+  };
+
+  window.ONEXUS.style.setNodeLabelPosition = function setNodeLabelPosition(pos) {
+    const norm = pos === "outside" ? "outside" : "inside";
+    if (readPref() === norm) return; // no change → skip rebuild + toast
+    writePref(norm);
+    // re-apply style (same pattern as setImageNodesEnabled)
+    try {
+      const cy = window.cy;
+      NEXUS_STYLE = buildStyle(currentTheme);
+      if (cy?.style) cy.style(NEXUS_STYLE);
+      window.showTransientMessage?.(
+        readPref() === "outside" ? "Labels: below nodes" : "Labels: inside nodes",
+        1400
+      );
+    } catch { /* noop */ }
+  };
+})();
+
+// =====================================================
 // Color mode (active) + applyColorMode()
 // =====================================================
 let currentColorMode = "json_category";
@@ -504,6 +554,11 @@ function buildStyle(themeKey) {
   const textOutlineW = clamp(2 * Math.pow(S, 0.75), 1, 4);
   const textBgPad = `${clamp(3 * S, 2, 8)}px`;
 
+  // Node label position (inside the node by default; below when set to outside).
+  const labelOutside = window.ONEXUS?.style?.getNodeLabelPosition?.() === "outside";
+  const nodeLabelValign = labelOutside ? "bottom" : "center";
+  const nodeLabelMarginY = labelOutside ? clamp(3 * S, 2, 7) : 0;
+
   const edgeW = clamp(3 * Math.pow(S, 0.9), 1.5, 6);
   const edgeWThin = clamp(2 * Math.pow(S, 0.9), 1, 5);
   const arrowScale = clamp(1 * Math.pow(S, 0.9), 0.7, 1.6);
@@ -548,9 +603,9 @@ function buildStyle(themeKey) {
         "font-weight": "bold",
         width:  (ele) => nodeSizeForEle(ele),
         height: (ele) => nodeSizeForEle(ele),
-        "text-valign": "bottom",
+        "text-valign": nodeLabelValign,
         "text-halign": "center",
-        "text-margin-y": clamp(3 * S, 2, 7),
+        "text-margin-y": nodeLabelMarginY,
       },
     },
 
