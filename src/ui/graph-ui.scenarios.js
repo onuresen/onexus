@@ -285,6 +285,20 @@
         }
     };
 
+    // The flagship story chooser auto-opens only on a visitor's FIRST flagship
+    // load (onboarding). After that it's remembered so it doesn't pop up every
+    // time — the persistent "Stories" button reopens it on demand. A direct
+    // ?scenario=... link never triggers it (it starts that story straight away).
+    const CHOOSER_SEEN_KEY = "onexus.storyChooser.seen";
+    function chooserSeen() {
+        try { return localStorage.getItem(CHOOSER_SEEN_KEY) === "1"; }
+        catch { return false; }
+    }
+    function markChooserSeen() {
+        try { localStorage.setItem(CHOOSER_SEEN_KEY, "1"); }
+        catch { /* localStorage unavailable — chooser may show again next time */ }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         ensureStoriesButton();
         window.ONEXUS?.bus?.on?.("graphLoaded", payload => {
@@ -293,7 +307,8 @@
                 console.warn("[ONEXUS scenarios] missing graph references", ...missingReferences);
             }
             const params = new URLSearchParams(window.location.search);
-            if (payload?.meta?.flagship && !params.get("scenario")) {
+            if (payload?.meta?.flagship && !params.get("scenario") && !chooserSeen()) {
+                markChooserSeen();
                 setTimeout(showChooser, 550);
             }
         });

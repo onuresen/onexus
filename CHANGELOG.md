@@ -7,6 +7,27 @@ lives in `VERSION`; a release tag must match it (see `docs/RELEASING.md`).
 
 ## [Unreleased]
 
+### Changed
+- **Faster load:** all app/library `<script>` tags are now `defer`red so they
+  download in parallel and no longer block HTML parsing or first paint. The
+  toolbar/canvas chrome appears in ~⅓s instead of staying blank until every
+  module has executed; time-to-interactive dropped roughly 2–3× in local
+  profiling. No load-order change (deferred scripts still execute in document
+  order; there are no inline scripts to desync). `docs/DEPLOYMENT.md` documents
+  the complementary hosting-layer levers (HTTP/2, compression, cache headers).
+
+### Added
+- Node-label position toggle ("Labels inside nodes", in the legend controls and
+  the mobile menu): labels are centered inside the node by default (the original
+  look) with an option to move them below the node. Persisted in
+  `localStorage["onexus.nodeLabelPos"]`.
+
+### Changed
+- The flagship **story chooser now auto-opens only on a visitor's first flagship
+  load** (onboarding), instead of every visit. Remembered via
+  `localStorage["onexus.storyChooser.seen"]`; the persistent "Stories" button
+  still reopens it on demand, and direct `?scenario=…` links are unaffected.
+
 ## [1.0.0] - 2026-07-22
 
 First release governed by the formal versioning, security, and release contract.
