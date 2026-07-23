@@ -53,6 +53,34 @@ Notes:
   `https://api.anthropic.com`. **If you don't run the MCP server**, remove
   `ws://localhost:8765` too. With both removed, `connect-src 'self'` is exact.
 
+## Performance (static-hosting tuning)
+
+ONEXUS loads as ~50 small JavaScript modules (no bundler, by design). All app and
+library `<script>` tags are `defer`red, so they download in parallel and never
+block first paint — the toolbar/canvas chrome appears immediately and the graph
+fills in once modules finish. The heavy optional pieces are already loaded
+on-demand, not at startup: the web-ifc/WASM engine (only on IFC import) and D3 +
+d3-sankey (only when the Sankey/Chord views open).
+
+Because the module count is high, **the hosting layer's transport settings are the
+biggest lever on real-world load time.** Configure your host/CDN to:
+
+- **Serve over HTTP/2 (or HTTP/3).** Multiplexing many small files over one
+  connection removes almost all per-request overhead. GitHub Pages, Cloudflare,
+  nginx (`http2 on;`), and most CDNs do this by default.
+- **Enable gzip or brotli compression** for `.js` / `.css` / `.json` / `.svg`.
+  The JS is highly compressible (~935 KB → ~250 KB gzipped). `http-server`
+  (the dev server) does **not** compress — use a real host/CDN in production.
+- **Set long-lived cache headers** for the static assets (e.g.
+  `Cache-Control: public, max-age=31536000, immutable` for the versioned
+  `src/vendor/*` and font files; a shorter TTL for `index.html`). Repeat visits
+  then cost almost nothing. Pin to a reviewed release so cached asset URLs are
+  stable (see `docs/RELEASING.md`).
+
+On a plain single-threaded dev server (`http-server`, `python -m http.server`)
+the first cold load serializes every request and can feel slow — that is a
+property of the dev server, not the app. A real HTTP/2 + compressed host is fast.
+
 ## Feature policy (allow/deny)
 
 Deployment-owned policy lives in **`src/config/onexus-enterprise.config.js`**.
