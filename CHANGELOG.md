@@ -22,6 +22,12 @@ lives in `VERSION`; a release tag must match it (see `docs/RELEASING.md`).
   look) with an option to move them below the node. Persisted in
   `localStorage["onexus.nodeLabelPos"]`.
 
+### Changed
+- The flagship **story chooser now auto-opens only on a visitor's first flagship
+  load** (onboarding), instead of every visit. Remembered via
+  `localStorage["onexus.storyChooser.seen"]`; the persistent "Stories" button
+  still reopens it on demand, and direct `?scenario=…` links are unaffected.
+
 ## [1.0.0] - 2026-07-22
 
 First release governed by the formal versioning, security, and release contract.
