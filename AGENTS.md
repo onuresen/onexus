@@ -203,6 +203,7 @@ pip install -r requirements.txt
 - `Onexus.addin` points to `C:\ProgramData\Autodesk\Revit\Addins\Onexus\Ver2026\Onexus.dll` so WebView2/Newtonsoft dependencies travel with the add-in.
 - Visual Studio debug profiles start `C:\Program Files\Autodesk\Revit 2026\Revit.exe` (`Properties/launchSettings.json` and `Onexus.csproj.user`).
 - ONEXUS opens as a standalone WPF `OnexusViewerWindow` with WebView2, not as a Revit dockable pane. Keep graph commands routed through `OnexusPaneManager.ShowGraph(...)`; despite the legacy name, it now opens/reuses the standalone viewer window.
+- `3D Rooms` is a separate read-only companion exporter, not an ONEXUS graph mutation. Keep its `cdi-room-geometry-v1` DTO/extraction code modular and use stable Revit `UniqueId` values so CDI or another viewer can consume it without coupling mesh data to the graph contract.
 - To compile without deploying, run `dotnet build Revit_Addin\Onexus\Onexus.csproj -c Debug -p:DeployToRevit=false`.
 
 ## Known gaps / future work

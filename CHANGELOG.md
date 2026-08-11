@@ -17,6 +17,10 @@ lives in `VERSION`; a release tag must match it (see `docs/RELEASING.md`).
   the complementary hosting-layer levers (HTTP/2, compression, cache headers).
 
 ### Added
+- Revit add-in **3D Rooms** command beside Room Graph. It calculates genuine
+  architectural Room solids with `SpatialElementGeometryCalculator`, exports a
+  versioned `cdi-room-geometry-v1` companion JSON with stable Revit identities,
+  and reports unplaced, unenclosed, and failed Rooms without modifying the model.
 - Node-label position toggle ("Labels inside nodes", in the legend controls and
   the mobile menu): labels are centered inside the node by default (the original
   look) with an option to move them below the node. Persisted in

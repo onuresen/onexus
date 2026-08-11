@@ -32,6 +32,13 @@ namespace Onexus
             set { var s = Load(); s.OnexusFolder = value; Save(s); }
         }
 
+        /// <summary>Last folder used by the neutral 3D Room companion export.</summary>
+        public static string RoomGeometryFolder
+        {
+            get => Load().RoomGeometryFolder;
+            set { var s = Load(); s.RoomGeometryFolder = value; Save(s); }
+        }
+
         // ── Public helpers ─────────────────────────────────────────────────────
 
         /// <summary>
@@ -126,6 +133,7 @@ namespace Onexus
         private class SettingsData
         {
             public string OnexusFolder { get; set; }
+            public string RoomGeometryFolder { get; set; }
         }
     }
 }

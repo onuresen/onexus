@@ -145,6 +145,20 @@ namespace Onexus
             };
             graphPanel.AddItem(spacesData);
 
+            // Real Revit Room solids for CDI/compatible selectable 3D viewers.
+            // This is intentionally separate from Room Graph: the graph remains
+            // relationship data while this command emits a neutral mesh sidecar.
+            var roomGeometryData = new PushButtonData(
+                "OnexusRoomGeometry", "3D\nRooms", asm,
+                "Onexus.OnexusRoomGeometry")
+            {
+                ToolTip =
+                    "Export real Revit Room solids as a selectable 3D geometry companion file.\n\n" +
+                    "If Rooms are selected, only those Rooms are exported; otherwise all Rooms are checked. " +
+                    "The command is read-only and reports unplaced, unenclosed, and failed Rooms."
+            };
+            graphPanel.AddItem(roomGeometryData);
+
             // ── Panel: Views ──────────────────────────────────────────────────
             var viewsPanel = app.CreateRibbonPanel(TabName, "Views");
 
