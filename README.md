@@ -86,6 +86,9 @@ Which mechanical components are in Zone B and have a risk flag?
 → search_live_nodes("Zone B") → filter_to_subgraph → highlight_nodes
 ```
 
+### Revit 3D Room Geometry Handoff
+Use the add-in's separate **3D Rooms** command to export genuine architectural Room solids for downstream spatial viewers and coordination experiments. It writes the versioned `cdi-room-geometry-v1` companion contract with stable Revit identities, supports selected rooms or the whole model, and reports unplaced, unenclosed, or failed rooms without modifying the ONEXUS graph.
+
 ### Obsidian Vault
 Drop your vault folder onto ONEXUS — every note becomes a node, every `[[wikilink]]` becomes an edge. Folder structure auto-maps to node categories (projects/, concepts/, daily/, etc.). Ask Claude:
 
@@ -166,6 +169,7 @@ Autodesk integration feasibility and security boundary: [`docs/autodesk-aps-rela
 | **Graph engine** | Pan/zoom, minimap, path tracing, A/B comparison, undo/redo |
 | **Importers** | ONEXUS JSON, IFC/IFCZIP, COBie CSV, Edges CSV, Obsidian vault, Generative Design JSON |
 | **External relationships** | Read-first Autodesk APS Relationships adapter for saved responses or a trusted authenticated fetch boundary |
+| **Revit companion** | Live room graph plus a separate read-only 3D Room geometry export with stable Revit identities |
 | **Layer modes** | Relationship, Lifecycle (phase timeline + playback), Risk, Option |
 | **Layouts** | 10+ presets: cose, tree, swimlanes, degree rings, dependency flow, system/spatial/responsibility atlases |
 | **Filtering** | Category filter, relationship lens, phase filter, focus depth (1–3 hops), node search |
@@ -203,6 +207,8 @@ Best for exploring design options and GD-driven variants. Import a GD payload (O
 ## Revit Add-in
 
 The `Revit_Addin/` folder contains a .NET 8 WPF host window with WebView2 that embeds the ONEXUS browser viewer directly inside Revit 2026. The add-in pushes live model data from Revit into the graph viewer via `window.onexusLoadGraph(data)`.
+
+Its **Room Graph** workflow controls graph content. The separate, read-only **3D Rooms** command exports actual room geometry to `cdi-room-geometry-v1` JSON for companion consumers; it does not mutate graph state. Stable `UniqueId` values keep the graph and geometry payloads joinable without blurring those two responsibilities.
 
 - Solution: `Revit_Addin/Onexus/Onexus.csproj` — targets `net8.0-windows`, Revit 2026
 - Build without deploying: `dotnet build Revit_Addin\Onexus\Onexus.csproj -c Debug -p:DeployToRevit=false`
@@ -332,7 +338,7 @@ src/
   common/               # Shared CSS/JS and boot check
 onexus-mcp/             # Python MCP server (FastMCP + WebSocket bridge)
 onexus-backend/         # Optional Express.js graph storage server
-Revit_Addin/            # .NET 8 WPF Revit 2026 add-in
+Revit_Addin/            # Revit 2026 graph host + read-only 3D Rooms exporter
 samples/                # Example datasets (JSON, COBie, IFC)
 assets/                 # Images, WASM, and media
 tests/                  # Playwright end-to-end tests
@@ -401,3 +407,5 @@ proxy and auth layer. See `SECURITY.md` and `docs/DEPLOYMENT.md`.
 Licensed under the [Apache License 2.0](LICENSE) — permissive, with an explicit
 patent grant. See [`NOTICE`](NOTICE) and [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)
 for third-party components and their licenses.
+
+More public projects: [Onur Esen's builder portfolio](https://onuresen.github.io/).
