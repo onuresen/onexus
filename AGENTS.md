@@ -204,6 +204,7 @@ pip install -r requirements.txt
 - Visual Studio debug profiles start `C:\Program Files\Autodesk\Revit 2026\Revit.exe` (`Properties/launchSettings.json` and `Onexus.csproj.user`).
 - ONEXUS opens as a standalone WPF `OnexusViewerWindow` with WebView2, not as a Revit dockable pane. Keep graph commands routed through `OnexusPaneManager.ShowGraph(...)`; despite the legacy name, it now opens/reuses the standalone viewer window.
 - `3D Rooms` is a separate read-only companion exporter, not an ONEXUS graph mutation. Keep its `cdi-room-geometry-v1` DTO/extraction code modular and use stable Revit `UniqueId` values so CDI or another viewer can consume it without coupling mesh data to the graph contract.
+- `CDI Rooms` (`OnexusRoomCdiExport.cs` / `OnexusRoomCdiExporter.cs` / `CdiRevitExportContract.cs`) writes `cdi-revit-onexus-export-v1` — a different, older CDI contract than `cdi-room-geometry-v1`. It exists because Autodesk Model Derivative's 3D translation cannot carry Room elements at all (no 3D solid to tessellate), so real Room parameters can only reach CDI through this Revit-side read. It reads every real `room.Parameters` entry present (not a hardcoded field list) and does not touch the `3D Rooms` geometry command.
 - To compile without deploying, run `dotnet build Revit_Addin\Onexus\Onexus.csproj -c Debug -p:DeployToRevit=false`.
 
 ## Known gaps / future work

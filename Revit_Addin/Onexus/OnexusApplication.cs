@@ -159,6 +159,24 @@ namespace Onexus
             };
             graphPanel.AddItem(roomGeometryData);
 
+            // Room facts (name, level, real user-entered parameters) for CDI's
+            // decision graph — cdi-revit-onexus-export-v1. Separate from both
+            // Room Graph (ONEXUS viewer relationships) and 3D Rooms (mesh
+            // geometry): Model Derivative's 3D translation cannot carry Room
+            // elements at all, so CDI needs this Revit-side export to get real
+            // Room parameters instead of an empty stub.
+            var roomCdiExportData = new PushButtonData(
+                "OnexusRoomCdiExport", "CDI\nRooms", asm,
+                "Onexus.OnexusRoomCdiExport")
+            {
+                ToolTip =
+                    "Export Rooms (identity, level, and whatever real parameters are filled in) " +
+                    "as cdi-revit-onexus-export-v1, for Construction Decision Intelligence.\n\n" +
+                    "If Rooms are selected, only those Rooms are exported; otherwise all Rooms " +
+                    "with enclosed area are checked. Read-only."
+            };
+            graphPanel.AddItem(roomCdiExportData);
+
             // ── Panel: Views ──────────────────────────────────────────────────
             var viewsPanel = app.CreateRibbonPanel(TabName, "Views");
 

@@ -39,6 +39,13 @@ namespace Onexus
             set { var s = Load(); s.RoomGeometryFolder = value; Save(s); }
         }
 
+        /// <summary>Last folder used by the CDI Room export (cdi-revit-onexus-export-v1).</summary>
+        public static string RoomCdiExportFolder
+        {
+            get => Load().RoomCdiExportFolder;
+            set { var s = Load(); s.RoomCdiExportFolder = value; Save(s); }
+        }
+
         // ── Public helpers ─────────────────────────────────────────────────────
 
         /// <summary>
@@ -134,6 +141,7 @@ namespace Onexus
         {
             public string OnexusFolder { get; set; }
             public string RoomGeometryFolder { get; set; }
+            public string RoomCdiExportFolder { get; set; }
         }
     }
 }
