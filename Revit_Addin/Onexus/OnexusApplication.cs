@@ -159,21 +159,28 @@ namespace Onexus
             };
             graphPanel.AddItem(roomGeometryData);
 
-            // Room facts (name, level, real user-entered parameters) for CDI's
+            // Geometry-light model-context export (identity, level, real
+            // parameters, and stable source-native relationships) for CDI's
             // decision graph — cdi-revit-onexus-export-v1. Separate from both
             // Room Graph (ONEXUS viewer relationships) and 3D Rooms (mesh
             // geometry): Model Derivative's 3D translation cannot carry Room
             // elements at all, so CDI needs this Revit-side export to get real
-            // Room parameters instead of an empty stub.
+            // Room parameters instead of an empty stub. Generalised (docs/71
+            // Group B) from the original Room-only export to also cover
+            // Doors, Windows, and (when selected) Room/Space-associated
+            // equipment such as card readers — always facts only, never an
+            // inferred `controls` or other functional relationship.
             var roomCdiExportData = new PushButtonData(
-                "OnexusRoomCdiExport", "CDI\nRooms", asm,
+                "OnexusRoomCdiExport", "CDI\nContext", asm,
                 "Onexus.OnexusRoomCdiExport")
             {
                 ToolTip =
-                    "Export Rooms (identity, level, and whatever real parameters are filled in) " +
-                    "as cdi-revit-onexus-export-v1, for Construction Decision Intelligence.\n\n" +
-                    "If Rooms are selected, only those Rooms are exported; otherwise all Rooms " +
-                    "with enclosed area are checked. Read-only."
+                    "Export Rooms, Doors, Windows, and selected equipment (identity, level, real " +
+                    "parameters, and stable Room/Host/System relationships) as cdi-revit-onexus-export-v1, " +
+                    "for Construction Decision Intelligence.\n\n" +
+                    "If elements are selected, only those are exported (plus any Room/host/system they " +
+                    "reference); otherwise all Rooms with enclosed area plus all Doors and Windows are " +
+                    "checked. Read-only — facts only, never an inferred relationship."
             };
             graphPanel.AddItem(roomCdiExportData);
 

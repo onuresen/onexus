@@ -28,17 +28,19 @@ namespace Onexus
                 var package = OnexusRoomCdiExporter.BuildPackage(uidoc.Document, uidoc.Selection.GetElementIds());
                 if (package.elements.Count == 0)
                 {
-                    TaskDialog.Show("ONEXUS — Room Export (CDI)",
-                        "No Rooms with area were found to export.\n\n" +
-                        "Select one or more Rooms first, or place/enclose Rooms in the model.");
+                    TaskDialog.Show("ONEXUS — Model Context Export (CDI)",
+                        "No Rooms, Doors, or Windows were found to export.\n\n" +
+                        "Select one or more Rooms/Doors/Windows/equipment first, or place/enclose Rooms " +
+                        "in the model.");
                     return Result.Cancelled;
                 }
 
                 var path = OnexusRoomCdiExporter.SaveWithDialog(package);
                 if (path == null) return Result.Cancelled;
 
-                TaskDialog.Show("ONEXUS — Room Export (CDI)",
-                    $"Exported {package.elements.Count} Room(s) as cdi-revit-onexus-export-v1.\n\n" +
+                TaskDialog.Show("ONEXUS — Model Context Export (CDI)",
+                    $"Exported {package.elements.Count} element(s) and {package.relationships.Count} " +
+                    $"relationship(s) as cdi-revit-onexus-export-v1.\n\n" +
                     $"File: {path}\n\n" +
                     "Convert with convert_revit_onexus_snapshot.py, then merge into the live CDI " +
                     "snapshot with merge_onexus_rooms.py (Spatial_Decision_Graph/source-adapters).");
