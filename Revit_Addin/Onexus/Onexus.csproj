@@ -44,6 +44,13 @@
     </None>
     <Resource Include="Assets\Onexus.png" />
     <Resource Include="Assets\Onexus16.png" />
+    <!-- Ribbon button icons, loaded at runtime from a plain file next to the
+         assembly (OnexusApplication.LoadIcon): Content plus CopyToOutputDirectory
+         so they land in $(TargetDir) and travel with the DeployToRevit bundle
+         the same way Onexus.addin does. -->
+    <Content Include="Assets\icons\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
