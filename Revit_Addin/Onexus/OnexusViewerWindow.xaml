@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     Title="ONEXUS Viewer"
+    Icon="Assets/Onexus.png"
     Width="1500"
     Height="920"
     MinWidth="900"

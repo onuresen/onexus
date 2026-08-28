@@ -5,6 +5,7 @@
 // (C) Copyright 2020 by Onur Esen
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -116,7 +117,9 @@ namespace Onexus
                 "OnexusOpenFile", "Open\nFile", asm,
                 "Onexus.OnexusOpenFile")
             {
-                ToolTip = "Open a previously saved ONEXUS graph (*.json) from disk."
+                ToolTip = "Open a previously saved ONEXUS graph (*.json) from disk.",
+                Image = LoadIcon("open_file_16.png"),
+                LargeImage = LoadIcon("open_file_32.png")
             };
             graphPanel.AddItem(toggleData);
 
@@ -130,7 +133,9 @@ namespace Onexus
                 ToolTip =
                     "Build a Category → Type → Instance graph from the current selection.\n\n" +
                     "If nothing is selected, all visible elements in the active view are used.\n" +
-                    "Works on any Revit model — no special families or MEP systems required."
+                    "Works on any Revit model — no special families or MEP systems required.",
+                Image = LoadIcon("explore_elements_16.png"),
+                LargeImage = LoadIcon("explore_elements_32.png")
             };
             graphPanel.AddItem(exploreData);
 
@@ -141,7 +146,9 @@ namespace Onexus
             {
                 ToolTip =
                     "Export architectural rooms, placed family instances, and levels to the ONEXUS viewer.\n\n" +
-                    "Select elements first to limit to a subset. Also exports MEP Spaces when present."
+                    "Select elements first to limit to a subset. Also exports MEP Spaces when present.",
+                Image = LoadIcon("room_graph_16.png"),
+                LargeImage = LoadIcon("room_graph_32.png")
             };
             graphPanel.AddItem(spacesData);
 
@@ -155,7 +162,9 @@ namespace Onexus
                 ToolTip =
                     "Export real Revit Room solids as a selectable 3D geometry companion file.\n\n" +
                     "If Rooms are selected, only those Rooms are exported; otherwise all Rooms are checked. " +
-                    "The command is read-only and reports unplaced, unenclosed, and failed Rooms."
+                    "The command is read-only and reports unplaced, unenclosed, and failed Rooms.",
+                Image = LoadIcon("room_geometry_16.png"),
+                LargeImage = LoadIcon("room_geometry_32.png")
             };
             graphPanel.AddItem(roomGeometryData);
 
@@ -180,7 +189,9 @@ namespace Onexus
                     "for Construction Decision Intelligence.\n\n" +
                     "If elements are selected, only those are exported (plus any Room/host/system they " +
                     "reference); otherwise all Rooms with enclosed area plus all Doors and Windows are " +
-                    "checked. Read-only — facts only, never an inferred relationship."
+                    "checked. Read-only — facts only, never an inferred relationship.",
+                Image = LoadIcon("cdi_context_16.png"),
+                LargeImage = LoadIcon("cdi_context_32.png")
             };
             graphPanel.AddItem(roomCdiExportData);
 
@@ -191,7 +202,9 @@ namespace Onexus
                 "OnexusDoors", "Door\nTypes", asm,
                 "Onexus.OnexusDoors")
             {
-                ToolTip = "Export door type hierarchy and subcomponents."
+                ToolTip = "Export door type hierarchy and subcomponents.",
+                Image = LoadIcon("doors_16.png"),
+                LargeImage = LoadIcon("doors_32.png")
             };
             viewsPanel.AddItem(doorsData);
 
@@ -199,7 +212,9 @@ namespace Onexus
                 "OnexusProximityLinks", "Proximity\nLinks", asm,
                 "Onexus.OnexusProximityLinks")
             {
-                ToolTip = "Find elements near the selected elements of the same category and show proximity relationships.\n\nWorks on any element type — select any elements and run."
+                ToolTip = "Find elements near the selected elements of the same category and show proximity relationships.\n\nWorks on any element type — select any elements and run.",
+                Image = LoadIcon("proximity_links_16.png"),
+                LargeImage = LoadIcon("proximity_links_32.png")
             };
             viewsPanel.AddItem(proximityLinksData);
 
@@ -207,7 +222,9 @@ namespace Onexus
                 "OnexusParameters", "Param-\neters", asm,
                 "Onexus.OnexusParameters")
             {
-                ToolTip = "Export parameter bindings (scoped to selection when elements are selected)."
+                ToolTip = "Export parameter bindings (scoped to selection when elements are selected).",
+                Image = LoadIcon("parameters_16.png"),
+                LargeImage = LoadIcon("parameters_32.png")
             };
             viewsPanel.AddItem(paramsData);
 
@@ -221,7 +238,9 @@ namespace Onexus
                 ToolTip =
                     "Export all MEP systems (Mechanical, Electrical, Piping) and their " +
                     "connected equipment, terminals and fixtures to the ONEXUS viewer window.\n\n" +
-                    "Works best on MEP or combined models."
+                    "Works best on MEP or combined models.",
+                Image = LoadIcon("mep_16.png"),
+                LargeImage = LoadIcon("mep_32.png")
             };
             mepPanel.AddItem(mepData);
 
@@ -235,7 +254,9 @@ namespace Onexus
                 ToolTip =
                     "Export all drawing sheets, the views placed on them, and the rooms " +
                     "visible in each floor-plan view.\n\n" +
-                    "Shows which sheets document which spaces."
+                    "Shows which sheets document which spaces.",
+                Image = LoadIcon("sheets_16.png"),
+                LargeImage = LoadIcon("sheets_32.png")
             };
             docsPanel.AddItem(sheetsData);
 
@@ -246,9 +267,44 @@ namespace Onexus
                 "OnexusSetFolder", "Set\nFolder", asm,
                 "Onexus.OnexusSetFolder")
             {
-                ToolTip = "Choose the ONEXUS folder (the folder containing index.html)."
+                ToolTip = "Choose the ONEXUS folder (the folder containing index.html).",
+                Image = LoadIcon("settings_16.png"),
+                LargeImage = LoadIcon("settings_32.png")
             };
             settingsPanel.AddItem(setFolderData);
+        }
+
+        // ══════════════════════════════════════════════════════════════════════
+        //  Ribbon icons — one distinct icon per command, loaded from a plain
+        //  file next to the assembly (Content + CopyToOutputDirectory, not a
+        //  WPF pack-URI Resource) so it works the same way regardless of how
+        //  the add-in bundle is assembled.
+        // ══════════════════════════════════════════════════════════════════════
+
+        private static BitmapImage LoadIcon(string fileName)
+        {
+            try
+            {
+                var asmDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                if (string.IsNullOrEmpty(asmDir)) return null;
+
+                var path = Path.Combine(asmDir, "Assets", "icons", fileName);
+                if (!File.Exists(path)) return null;
+
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.UriSource = new Uri(path, UriKind.Absolute);
+                image.EndInit();
+                image.Freeze();
+                return image;
+            }
+            catch
+            {
+                // A missing/unreadable icon must never stop the ribbon from
+                // building — Revit falls back to a blank button image.
+                return null;
+            }
         }
     }
 
