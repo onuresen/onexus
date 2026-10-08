@@ -94,6 +94,14 @@ window.ONEXUS_ENTERPRISE = Object.freeze({
     apiVersion: "2023-06-01",
     model: "claude-haiku-4-5",
   }),
+  windowLink: Object.freeze({
+    enabled: true,   // set false to turn the window link off (fail closed)
+    allowedOrigins: Object.freeze([
+      "https://onuresen.github.io",
+      "http://localhost:*",   // any port on this host
+      "http://127.0.0.1:*",
+    ]),
+  }),
 });
 ```
 
@@ -104,6 +112,11 @@ window.ONEXUS_ENTERPRISE = Object.freeze({
   and braces (CSP).
 - **To allow AI:** users supply their **own** Anthropic key (stored in their own
   browser; sent only to Anthropic). ONEXUS bundles no key and no SDK.
+- **Window link:** lets the app that opened an ONEXUS window send it a graph and
+  selections, and receive node taps. It is browser-window messaging only, so it
+  makes no request and needs no CSP entry. Only the opener window is heard, only
+  from `allowedOrigins`. To forbid it, set `windowLink.enabled: false`; to allow
+  your own host of Object-Centric Drawing, add its exact origin.
 
 ## Browser / device policy
 
