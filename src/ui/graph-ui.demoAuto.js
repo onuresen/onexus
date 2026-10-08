@@ -13,7 +13,8 @@
 
   // Skip in CI / headless test mode
   const params = new URLSearchParams(window.location.search);
-  if (params.get("ci") === "1" || params.get("sample")) return;
+  // A linked window (?link=…) waits for its opener's graph instead of the demo.
+  if (params.get("ci") === "1" || params.get("sample") || params.get("link")) return;
 
   document.addEventListener("DOMContentLoaded", function () {
     // Give all other DOMContentLoaded handlers time to settle (bindings,

@@ -7,6 +7,15 @@ lives in `VERSION`; a release tag must match it (see `docs/RELEASING.md`).
 
 ## [Unreleased]
 
+### Added
+- **Window link** (`src/plugins/onexus-window-link.plugin.js`): an app that opens
+  ONEXUS in a window (Object-Centric Drawing) can send a graph and selections and
+  receive node taps. It reuses the Revit-host messages (`onexus-graph`,
+  `highlight-nodes`, `select-node`) over browser-window messaging: no server, no
+  network request, no CSP change. Only the opener is heard, only from origins in
+  `ONEXUS_ENTERPRISE.windowLink`, and replies go to that exact origin. A linked
+  window (`?link=…`) skips the demo graph and the first-run tour.
+
 ### Changed
 - **Faster load:** all app/library `<script>` tags are now `defer`red so they
   download in parallel and no longer block HTML parsing or first paint. The

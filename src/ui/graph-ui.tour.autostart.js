@@ -8,7 +8,9 @@
   const SETTLE_DELAY_MS = 1000;
 
   // Skip in CI / headless test mode — matches graph-ui.demoAuto.js's own guard.
-  if (new URLSearchParams(window.location.search).get("ci") === "1") return;
+  // A linked window (?link=…) is driven by its opener, so the tour stays out of the way.
+  const startParams = new URLSearchParams(window.location.search);
+  if (startParams.get("ci") === "1" || startParams.get("link")) return;
 
   let fired = false;
 

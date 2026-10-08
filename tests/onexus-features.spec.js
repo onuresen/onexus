@@ -628,3 +628,47 @@ test("blocking edges render a distinct arrow shape, including at high LOD", asyn
     );
     expect(blocksArrowAtHighLod).toBe("tee");
 });
+
+test("a linked window loads its opener's graph, highlights, and reports node taps back", async ({ page, context }) => {
+    await bootPage(page);
+    const popupPromise = context.waitForEvent("page");
+    await page.evaluate(() => {
+        window.__linkMessages = [];
+        window.addEventListener("message", (event) => window.__linkMessages.push(event.data));
+        window.__linked = window.open("/index.html?ci=1&link=test");
+    });
+    const popup = await popupPromise;
+    const errors = captureRuntimeErrors(popup);
+    await popup.waitForFunction(() => !!window.cy && typeof window.onexusLoadGraph === "function", { timeout: 30_000 });
+
+    // The opener says hello until the plugin answers, as Object-Centric Drawing does.
+    await page.waitForFunction(() => {
+        window.__linked.postMessage({ type: "objdraw-hello" }, window.location.origin);
+        return window.__linkMessages.some((message) => message?.type === "onexus-ready");
+    }, null, { timeout: 15_000, polling: 200 });
+
+    const graph = {
+        meta: { schema: "onexus-1.1", project: "link" },
+        elements: {
+            nodes: [
+                { data: { id: "door", nodeType: "Component", category: "Doors", label: { en: "D-105" } } },
+                { data: { id: "room", nodeType: "Space", category: "Rooms", label: { en: "105" } } },
+            ],
+            edges: [{ data: { id: "REL-1", type: "connectsTo", dimension: "Relation", source: "door", target: "room", directional: true } }],
+        },
+    };
+    await page.evaluate((g) => window.__linked.postMessage({ type: "onexus-graph", graph: g }, window.location.origin), graph);
+    await popup.waitForFunction(() => window.cy.nodes().length === 2 && window.cy.edges().length === 1);
+
+    await page.evaluate(() => window.__linked.postMessage({ type: "highlight-nodes", ids: ["room"], fitView: false }, window.location.origin));
+    await popup.waitForFunction(() => window.cy.getElementById("room").hasClass("highlight"));
+
+    await popup.evaluate(() => window.cy.getElementById("door").emit("tap"));
+    await page.waitForFunction(() => window.__linkMessages.some((message) => message?.type === "select-node" && message.id === "door"));
+
+    // A message that does not come from the opener is ignored.
+    await popup.evaluate(() => window.postMessage({ type: "highlight-nodes", ids: ["door"], fitView: false }, "*"));
+    await popup.waitForTimeout(200);
+    expect(await popup.evaluate(() => window.cy.getElementById("door").hasClass("highlight"))).toBe(false);
+    expect(errors).toEqual([]);
+});
