@@ -36,6 +36,10 @@ There are **no cookies** set by ONEXUS and no third-party storage.
 | `https://api.anthropic.com` | AI enabled in deployment policy **and** you entered your own key **and** you clicked "What-if?" narration | A graph-impact summary (origin node label + BFS of affected node labels/categories) and your prompt, plus your API key in the request header | **Off by user default** (no key = no request); removable entirely by deployment policy |
 | The optional backend's address | You save/load a graph to `onexus-backend/` | The graph JSON | Off unless you run and use it |
 
+The optional window link is not a request and is not in this table: when an app
+opens ONEXUS in a window, the two windows exchange graph data and selections in the
+browser only, and only with an origin allowed in `ONEXUS_ENTERPRISE.windowLink`.
+
 No other host is contacted. If you disable AI (`ai.enabled: false` in
 `src/config/onexus-enterprise.config.js`) and don't run the MCP/backend servers,
 ONEXUS makes **zero** off-origin requests, period.

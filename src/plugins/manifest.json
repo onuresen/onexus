@@ -12,6 +12,7 @@
         "onexus-obsidian.plugin.js",
         "onexus-imagebadges.plugin.js",
         "onexus-mcp-bridge.plugin.js",
+        "onexus-window-link.plugin.js",
         "onexus-ai.plugin.js"
     ]
 }

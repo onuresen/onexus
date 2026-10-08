@@ -307,6 +307,20 @@ The vault graph path resolves from `ONEXUS_VAULT_GRAPH` first (no more hardcoded
 - Browser commands must wait for ACKs: the server assigns `_id`, the bridge replies with `{ack, ok, ...}`, and tools should report actual highlighted/missing nodes instead of only "sent".
 - Live controls use Cytoscape node IDs. For label-driven use, prefer `search_live_nodes` or `highlight_live_nodes_by_label`.
 
+## Window link (2026-10-08)
+
+`src/plugins/onexus-window-link.plugin.js` links ONEXUS to the window that opened it
+(Object-Centric Drawing). It reuses the Revit-host messages from
+`graph-core.io.host.js`: in `objdraw-hello` → out `onexus-ready`; in `onexus-graph`,
+`highlight-nodes`; out `select-node` on the `nodeSelected` bus event.
+
+- Browser-window `postMessage` only. No server, no request, no CSP change.
+- Hear only `window.opener`, only from `ONEXUS_ENTERPRISE.windowLink.allowedOrigins`
+  (`host:*` = any port). Reply only to the accepted origin, never `"*"`.
+- `?link=…` skips the demo auto-load and the first-run tour.
+- Object-Centric Drawing's local server also uses port 8765, the MCP bridge's port.
+  Running both servers at once fails; the window link needs neither.
+
 ## Revit Add-in
 
 `Revit_Addin/Onexus/` targets Revit 2026 on .NET 8:

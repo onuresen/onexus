@@ -32,6 +32,21 @@
       apiVersion: "2023-06-01",
       model: "claude-haiku-4-5",
     }),
+
+    /* --- Window link (src/plugins/onexus-window-link.plugin.js) ---
+       Lets the app that opened this ONEXUS window (e.g. Object-Centric Drawing)
+       send a graph and selections, and receive node taps. Browser-window
+       messaging only: no network request, no server, no CSP change.
+       Only the opener is heard, and only from these origins. "host:*" allows any
+       port on that host. enabled:false turns the link off completely. */
+    windowLink: Object.freeze({
+      enabled: true,
+      allowedOrigins: Object.freeze([
+        "https://onuresen.github.io",
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+      ]),
+    }),
   });
 
   // Convenience accessor used by plugins; treats a malformed/absent config as
