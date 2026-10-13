@@ -26,7 +26,7 @@ namespace Onexus
     [Regeneration(RegenerationOption.Manual)]
     public class OnexusApplication : IExternalApplication
     {
-        private const string TabName = "ONEXUS";
+        private const string TabName = "OneMore";
 
         public Result OnStartup(UIControlledApplication app)
         {
